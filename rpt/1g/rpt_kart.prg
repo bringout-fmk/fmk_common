@@ -256,7 +256,7 @@ IF lSkrivena
 	P_12CPI
 	?? cLMSK+"OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS)),gNFirma
 	? cLMSK+idradn,"-",RADNIK,"  Mat.br:",radn->matbr
-	ShowHiredFromTo(radn->hiredfrom, radn->hiredto)
+	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, cLMSK)
 	? cLMSK+"Radno mjesto:",radn->rmjesto,"  STR.SPR:",IDSTRSPR
 	? cLMSK+"Vrsta posla :",idvposla,vposla->naz,"         Radi od:",radn->datod
 	FOR i:=1 TO nIZRSK
@@ -273,7 +273,7 @@ ELSE
 	? "OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS)),gNFirma
 	? "RJ:",idrj,rj->naz
 	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
-	ShowHiredFromTo(radn->hiredfrom, radn->hiredto)
+	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")
 	? "Radno mjesto:",radn->rmjesto,"  STR.SPR:",IDSTRSPR
 	? "Vrsta posla :",idvposla,vposla->naz,"         Radi od:",radn->datod
 	? IF(gBodK=="1","Broj bodova :","Koeficijent :"),transform(brbod,"99999.99"),space(24)

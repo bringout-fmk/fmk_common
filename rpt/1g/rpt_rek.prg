@@ -285,6 +285,7 @@ if cMjesec==cMjesecDo
    		@ prow(),pcol()+1 SAY iznos pict "99.99%"
    		nC1:=pcol()+1
    		if !empty(poopst)
+			altd()
      			if poopst=="1"
        				?? " (po opst.stan)"
      			elseif poopst=="2"
@@ -1043,7 +1044,6 @@ do while !eof() .and. eval(bUSlov)
  	endif
 
 	PopuniOpsLD()
- 		
 
 	nPom:=ASCAN(aNeta,{|x| x[1]==vposla->idkbenef})
  	if nPom==0
@@ -1110,7 +1110,6 @@ do while !eof() .and. eval(bUSlov)
 	skip
 enddo
 	// vrti se u bazi LD.DBF *******
-
 
 return
 *}
