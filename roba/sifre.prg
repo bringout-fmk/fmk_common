@@ -74,7 +74,13 @@ if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SASTOPEN"))
 else
 endif
 
-AADD(opc,"7. sifk - karakteristike")  
+AADD(opc,"7. Rabatne skale")
+if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","RABSOPEN"))
+	AADD(opcexe, {|| P_Rabat()} )
+else
+endif
+
+AADD(opc,"8. sifk - karakteristike")  
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SIFKOPEN"))
 	AADD(opcexe, {|| P_SifK()} )
 else
