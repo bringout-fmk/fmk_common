@@ -72,10 +72,6 @@ if cPosID <> nil
 	SELECT (F_F_OSTAV)
 	USE (cTKPath+"OSTAV")
 	set order to tag "ID"
-	// PARAMS
-	SELECT (F_F_PARAMS)
-	USE (cTKPath+"PARAMS")
-	set order to tag "ID"
 	// PARTN
 	SELECT (F_F_PARTN)
 	USE (cTKPath+"PARTN")

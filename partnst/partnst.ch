@@ -4,6 +4,7 @@
 #define F_F_OSTAV	243
 #define F_F_KONCIJ	244
 #define F_F_PARTN	245
+#define F_F_PARAMS	246
 
 #xcommand O_OSTAV => SELECT (F_STOSTAV); USE (KUMPATH+"OSTAV"); set order to tag "ID"
 #xcommand O_PARAMS => SELECT (F_STPARAMS); USE (KUMPATH+"PARAMS"); set order to tag "ID"
