@@ -1,4 +1,0 @@
-Prodavac #01# odobrava kupcu #02# rabat u iznosu #03# za robu prodatu po fakturi #04# od #05#.
-Ugovoreni rabat †e biti iskazan na fakturi u procentima po svakom artiklu i u ukupnom iznosu.
-Eventualni nedostaci iz ovog ugovora rjeçava†e se u skladu sa odredbama ZOO.
-Za sve sporove nastale iz ovog ugovora nadle§an je sud u Zenici.

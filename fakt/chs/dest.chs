@@ -1,6 +1,0 @@
-*FAKT
-A DEST C 20 0
-
-*PRIPR
-A DEST C 20 0
-

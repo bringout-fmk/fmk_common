@@ -1,3 +1,0 @@
-*RUGOV.DBF
-A DESTIN C 1 0
-

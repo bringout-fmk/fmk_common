@@ -1,5 +1,0 @@
-*SIFK.DBF
-A UNIQUE C 1 0
-
-*ROBA.DBF
-A _M1_ C 1 0
