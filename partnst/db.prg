@@ -66,6 +66,7 @@ altd()
 
 if cPosID <> nil
 	O_KONCIJ
+	altd()
 	cTKPath:=GetTopsKumPathFromKoncij(cPosId)
 	// OSTAV
 	SELECT (F_F_OSTAV)
@@ -96,15 +97,16 @@ return
  *  \param cTId - idpm TOPS
  *  \todo razraditi procedure ako nema podesenog PATH-a
  */
-function GetTopsKumPathFromKoncij(cTId)
+function GetTopsKumPathFromKoncij(cIdPos)
 *{
+altd()
 cTKPath:=""
 O_KONCIJ
 select koncij
 // setuj filter po cProdId
-set filter to idprodmjes=cTId
+set filter to idprodmjes=cIdPos
 go top
-if (field->idprodmjes == cTId)
+if (field->idprodmjes == cIdPos)
 	cTKPath:=ALLTRIM(koncij->kumtops)
 endif
 set filter to

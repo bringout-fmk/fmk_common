@@ -15,6 +15,8 @@ local cDN:="D"
 altd()
 if cPosId == nil
 	cPosId := ""
+else
+	cPosId := "1 "
 endif
 
 lGenPartnSt:=.f.
