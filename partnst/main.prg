@@ -42,25 +42,50 @@ return
 
 
 
-function AzurTopsOstav(nId, cIdFmk, cNaziv, nIznosG)
+function AzurTopsOstav(nId, cIdFmk, cNaziv, nIznosG, nSldMinIzn)
 *{
+if nIznosG < nSldMinIzn
+	return
+endif
 O_PrenHH()
 AddToOstav(nId, cIdFmk, cNaziv, nIznosG)
 return
 *}
 
-function AzurTopsParams(nId, cNaziv, cOpis)
+function AzurTopsParams(cId, cNaziv, cOpis)
 *{
 O_PrenHH()
-AddToParams(nId, cNaziv, cOpis)
+AddToParams(cId, cNaziv, cOpis)
 return
 *}
 
 
-function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4)
+function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
 *{
+if nIznos1+nIznos2+nIznos3+nIznos4 < nSldMinIzn
+	return
+endif
 O_PrenHH(cPosId)
 AddFinIntervalsToOstav(cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4)
+return
+*}
+
+
+function AddPAzToParams(dDate)
+*{
+AzurTopsParams("PAZ", "Posljednje azuriranje", DToS(dDate))
+return
+*}
+
+function AddSCnToParams(nPartners, lSilent)
+*{
+if lSilent == nil
+	lSilent := .t.
+endif
+AzurTopsParams("SCN", "Broj prenesenih partnera", STR(nPartners))
+if !lSilent
+	MsgBeep("Preneseno " + ALLTRIM(STR(nPartners)) + " partnera!")
+endif
 return
 *}
 

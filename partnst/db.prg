@@ -49,6 +49,7 @@ return
  */
 function O_PrenHH(cPosID)
 *{
+altd()
 if cPosId == nil
 	cPosID:=""
 endif
