@@ -184,6 +184,15 @@ static lSigmaCom
 *;
 
 
+/*! \var lRobaGroup
+ *  \ingroup RobaGroup
+ *  \sa IsRobaGroup
+ */
+*bool 
+static lRobaGroup
+*;
+
+
 /*! \var lJerry
  *  \ingroup Jerry
  *  \sa IsJerry
@@ -347,6 +356,16 @@ return lPlNS
 function SetPlNS(lValue)
 *{
 lPlNS:=lValue
+*}
+
+function IsRobaGroup()
+*{
+return lRobaGroup
+*}
+
+function SetRobaGroup(lValue)
+*{
+lRobaGroup:=lValue
 *}
 
 
@@ -570,6 +589,12 @@ if IzFmkIni("FMK","DomZdr","N",KUMPATH)=="D"
 	SetDomZdr(.t.)
 else
 	SetDomZdr(.f.)
+endif
+
+if IzFmkIni("FMK","RobaGroup","N",KUMPATH)=="D"
+	SetRobaGroup(.t.)
+else
+	SetRobaGroup(.f.)
 endif
 
 if IzFmkIni("FMK","Tehnoprom","N",KUMPATH)=="D"
