@@ -9,20 +9,29 @@ function CreRabDB()
 *{
 
 // RABAT.DBF
+
+ferase(SIFPATH + "rabat.dbf")
+ferase(SIFPATH + "rabat.cdx")
+
 aDbf:={}
-AADD(aDbf,{"IDRAB"      , "C", 10, 0})  
-AADD(aDbf,{"TIPRAB"     , "C", 10, 0})  
-AADD(aDbf,{"DATUM"      , "D",  8, 0})  
-AADD(aDbf,{"DANI"       , "N", 10, 0})  
-AADD(aDbf,{"IDROBA"     , "C", 10, 0})  
-AADD(aDbf,{"IZNOS1"     , "N", 10, 2})  
+AADD(aDbf,{"IDRABAT"      , "C", 10, 0})
+AADD(aDbf,{"TIPRABAT"     , "C", 10, 0})
+AADD(aDbf,{"DATUM"        , "D",  8, 0})
+AADD(aDbf,{"DANA"         , "N",  3, 2})
+AADD(aDbf,{"IDROBA"       , "C", 10, 0})
+AADD(aDbf,{"IZNOS1"       , "N", 10, 5})
+AADD(aDbf,{"IZNOS2"       , "N", 10, 5})
+AADD(aDbf,{"IZNOS3"       , "N", 10, 5})
+AADD(aDbf,{"IZNOS4"       , "N", 10, 5})
+AADD(aDbf,{"IZNOS5"       , "N", 10, 5})
+AADD(aDbf,{"SKONTO"       , "N", 10, 5})
 
 if !File((SIFPATH + "rabat.dbf"))
 	DBCREATE2(SIFPATH + "rabat.dbf", aDbf)
 endif
 
-CREATE_INDEX("1", "IDRAB+TIPRAB+IDROBA", SIFPATH + "rabat.dbf", .t.)
-CREATE_INDEX("2", "IDRAB+TIPRAB+DTOS(DATUM)", SIFPATH + "rabat.dbf", .t.)
+CREATE_INDEX("1", "IDRABAT+TIPRABAT+IDROBA", SIFPATH + "rabat.dbf", .t.)
+CREATE_INDEX("2", "IDRABAT+TIPRABAT+DTOS(DATUM)", SIFPATH + "rabat.dbf", .t.)
 
 
 return
