@@ -1,0 +1,3646 @@
+object ppReport: TppReport
+  AutoStop = False
+  PrinterSetup.BinName = 'Default'
+  PrinterSetup.DocumentName = 'ppReport1'
+  PrinterSetup.PaperName = 'A4'
+  PrinterSetup.PrinterName = 'Default'
+  PrinterSetup.mmMarginBottom = 0
+  PrinterSetup.mmMarginLeft = 0
+  PrinterSetup.mmMarginRight = 0
+  PrinterSetup.mmMarginTop = 0
+  PrinterSetup.mmPaperHeight = 297000
+  PrinterSetup.mmPaperWidth = 210000
+  PrinterSetup.PaperSize = 9
+  Template.FileName = 'C:\re\LD\ldspec3.rtm'
+  Template.Format = ftASCII
+  Units = utMillimeters
+  AfterPrint = ppReportPreviewFormClose
+  DeviceType = 'Screen'
+  OnCancel = ppReportPreviewFormClose
+  OnPreviewFormClose = ppReportPreviewFormClose
+  Left = 12
+  Top = 5
+  Version = '6.03'
+  mmColumnWidth = 297000
+  object ppHeaderBand1: TppHeaderBand
+    mmBottomOffset = 0
+    mmHeight = 529
+    mmPrintPosition = 0
+  end
+  object ppDetailBand1: TppDetailBand
+    mmBottomOffset = 0
+    mmHeight = 280988
+    mmPrintPosition = 0
+    object ppShape3: TppShape
+      UserName = 'Shape3'
+      mmHeight = 101071
+      mmLeft = 15081
+      mmTop = 83344
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppShape2: TppShape
+      UserName = 'Shape2'
+      mmHeight = 5027
+      mmLeft = 112977
+      mmTop = 32015
+      mmWidth = 38100
+      BandType = 4
+    end
+    object ppLine1: TppLine
+      UserName = 'Line1'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 24871
+      mmTop = 274109
+      mmWidth = 32000
+      BandType = 4
+    end
+    object ppLine2: TppLine
+      UserName = 'Line2'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 25400
+      mmWidth = 60000
+      BandType = 4
+    end
+    object ppLine3: TppLine
+      UserName = 'Line3'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 111919
+      mmTop = 42069
+      mmWidth = 39000
+      BandType = 4
+    end
+    object ppLine4: TppLine
+      UserName = 'Line4'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 19050
+      mmWidth = 60000
+      BandType = 4
+    end
+    object ppShape1: TppShape
+      UserName = 'Shape1'
+      mmHeight = 4900
+      mmLeft = 89429
+      mmTop = 14552
+      mmWidth = 61500
+      BandType = 4
+    end
+    object ppLine8: TppLine
+      UserName = 'Line8'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 42000
+      mmWidth = 60000
+      BandType = 4
+    end
+    object ppShape4: TppShape
+      UserName = 'Shape4'
+      mmHeight = 5027
+      mmLeft = 117475
+      mmTop = 48000
+      mmWidth = 9525
+      BandType = 4
+    end
+    object ppShape5: TppShape
+      UserName = 'Shape5'
+      mmHeight = 5027
+      mmLeft = 151077
+      mmTop = 48000
+      mmWidth = 19050
+      BandType = 4
+    end
+    object ppLine18: TppLine
+      UserName = 'Line18'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 132292
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine19: TppLine
+      UserName = 'Line19'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 98954
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine20: TppLine
+      UserName = 'Line20'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 146315
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine21: TppLine
+      UserName = 'Line21'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 141552
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine22: TppLine
+      UserName = 'Line22'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 94192
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine23: TppLine
+      UserName = 'Line23'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 146050
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine24: TppLine
+      UserName = 'Line24'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 127529
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine25: TppLine
+      UserName = 'Line25'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 137054
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine26: TppLine
+      UserName = 'Line26'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 108479
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine27: TppLine
+      UserName = 'Line27'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 118004
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine28: TppLine
+      UserName = 'Line28'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 122767
+      mmTop = 32015
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine29: TppLine
+      UserName = 'Line29'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 103717
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine30: TppLine
+      UserName = 'Line30'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 136790
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine31: TppLine
+      UserName = 'Line31'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 132027
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine32: TppLine
+      UserName = 'Line32'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 127529
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine33: TppLine
+      UserName = 'Line33'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 122767
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine34: TppLine
+      UserName = 'Line34'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 118004
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine35: TppLine
+      UserName = 'Line35'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 113242
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine36: TppLine
+      UserName = 'Line36'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 141552
+      mmTop = 14552
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine37: TppLine
+      UserName = 'Line37'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 121973
+      mmTop = 48000
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine38: TppLine
+      UserName = 'Line38'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 155840
+      mmTop = 48000
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine39: TppLine
+      UserName = 'Line39'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 160338
+      mmTop = 48000
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine40: TppLine
+      UserName = 'Line40'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 165100
+      mmTop = 48000
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppShape6: TppShape
+      UserName = 'Shape6'
+      mmHeight = 26988
+      mmLeft = 15000
+      mmTop = 55298
+      mmWidth = 178065
+      BandType = 4
+    end
+    object ppShape7: TppShape
+      UserName = 'Shape7'
+      mmHeight = 38100
+      mmLeft = 15000
+      mmTop = 186002
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine5: TppLine
+      UserName = 'Line401'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 26988
+      mmLeft = 25000
+      mmTop = 55298
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine6: TppLine
+      UserName = 'Line6'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 26988
+      mmLeft = 127000
+      mmTop = 55298
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine7: TppLine
+      UserName = 'Line5'
+      Weight = 0.75
+      mmHeight = 2910
+      mmLeft = 15000
+      mmTop = 64029
+      mmWidth = 178065
+      BandType = 4
+    end
+    object ppLine9: TppLine
+      UserName = 'Line9'
+      Weight = 0.75
+      mmHeight = 2910
+      mmLeft = 15000
+      mmTop = 73819
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine10: TppLine
+      UserName = 'Line10'
+      Weight = 0.75
+      mmHeight = 2910
+      mmLeft = 15000
+      mmTop = 77523
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine11: TppLine
+      UserName = 'Line11'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 18256
+      mmLeft = 161000
+      mmTop = 64029
+      mmWidth = 4233
+      BandType = 4
+    end
+    object ppLine12: TppLine
+      UserName = 'Line12'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 18256
+      mmLeft = 52000
+      mmTop = 64029
+      mmWidth = 4233
+      BandType = 4
+    end
+    object ppLine13: TppLine
+      UserName = 'Line13'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 8467
+      mmLeft = 88900
+      mmTop = 73819
+      mmWidth = 4233
+      BandType = 4
+    end
+    object ppLine14: TppLine
+      UserName = 'Line7'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 94192
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine15: TppLine
+      UserName = 'Line15'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 99219
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine16: TppLine
+      UserName = 'Line16'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 109273
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine17: TppLine
+      UserName = 'Line17'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 104246
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine41: TppLine
+      UserName = 'Line41'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 119063
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine42: TppLine
+      UserName = 'Line42'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 114036
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine43: TppLine
+      UserName = 'Line43'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 124090
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine44: TppLine
+      UserName = 'Line44'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 134144
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine45: TppLine
+      UserName = 'Line45'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 129117
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine46: TppLine
+      UserName = 'Line46'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 139171
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine47: TppLine
+      UserName = 'Line47'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 144198
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine48: TppLine
+      UserName = 'Line48'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 149225
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine49: TppLine
+      UserName = 'Line49'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 154252
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine50: TppLine
+      UserName = 'Line50'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 159279
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine51: TppLine
+      UserName = 'Line501'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 164042
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine52: TppLine
+      UserName = 'Line52'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 169069
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine53: TppLine
+      UserName = 'Line53'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 174096
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine54: TppLine
+      UserName = 'Line54'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 101071
+      mmLeft = 24871
+      mmTop = 83344
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine55: TppLine
+      UserName = 'Line55'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 101071
+      mmLeft = 127000
+      mmTop = 83344
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine56: TppLine
+      UserName = 'Line56'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 100806
+      mmLeft = 161000
+      mmTop = 83344
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine57: TppLine
+      UserName = 'Line57'
+      Weight = 0.75
+      mmHeight = 2910
+      mmLeft = 127000
+      mmTop = 90488
+      mmWidth = 34396
+      BandType = 4
+    end
+    object ppLine58: TppLine
+      UserName = 'Line58'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 93927
+      mmLeft = 144500
+      mmTop = 90488
+      mmWidth = 4233
+      BandType = 4
+    end
+    object ppLine59: TppLine
+      UserName = 'Line59'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 193146
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine60: TppLine
+      UserName = 'Line60'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 200555
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine61: TppLine
+      UserName = 'Line601'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 208227
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine62: TppLine
+      UserName = 'Line62'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15000
+      mmTop = 215900
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLine63: TppLine
+      UserName = 'Line63'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 38100
+      mmLeft = 25000
+      mmTop = 186002
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine64: TppLine
+      UserName = 'Line64'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 38100
+      mmLeft = 127000
+      mmTop = 186002
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine65: TppLine
+      UserName = 'Line65'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 80963
+      mmTop = 274109
+      mmWidth = 32000
+      BandType = 4
+    end
+    object ppLine66: TppLine
+      UserName = 'Line66'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 152929
+      mmTop = 274109
+      mmWidth = 32000
+      BandType = 4
+    end
+    object ppLabel4: TppLabel
+      UserName = 'Label4'
+      Caption = '( naziv i sjedi'#353'te-prebivali'#353'te isplatioca pla'#263'e )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 16140
+      mmTop = 26194
+      mmWidth = 57150
+      BandType = 4
+    end
+    object ppLabel7: TppLabel
+      UserName = 'Label7'
+      Caption = '( broj ra'#269'una )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 35983
+      mmTop = 43392
+      mmWidth = 18256
+      BandType = 4
+    end
+    object ppLabel8: TppLabel
+      UserName = 'Label8'
+      Caption = '( datum isplate pla'#263'a ) '
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 117211
+      mmTop = 43127
+      mmWidth = 29104
+      BandType = 4
+    end
+    object ppLabel9: TppLabel
+      UserName = 'Label9'
+      Caption = 'Porezni djelovodni broj'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 153988
+      mmTop = 33073
+      mmWidth = 28575
+      BandType = 4
+    end
+    object ppLabel10: TppLabel
+      UserName = 'Label10'
+      Caption = 'JMBG'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 12
+      Font.Style = []
+      Transparent = True
+      mmHeight = 5027
+      mmLeft = 158486
+      mmTop = 14288
+      mmWidth = 10319
+      BandType = 4
+    end
+    object ppLabel11: TppLabel
+      UserName = 'Label11'
+      Caption = 'Statisti'#269'ki broj i podbroj'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 155311
+      mmTop = 22490
+      mmWidth = 29633
+      BandType = 4
+    end
+    object ppLabel12: TppLabel
+      UserName = 'Label12'
+      Caption = 'Specifikacija uz isplatu pla'#263'e za'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 72496
+      mmTop = 48948
+      mmWidth = 41010
+      BandType = 4
+    end
+    object ppLabel13: TppLabel
+      UserName = 'Label13'
+      Caption = 'mjesec'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 134673
+      mmTop = 49213
+      mmWidth = 8731
+      BandType = 4
+    end
+    object ppLabel14: TppLabel
+      UserName = 'Label14'
+      Caption = 'godine'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 174625
+      mmTop = 49213
+      mmWidth = 8467
+      BandType = 4
+    end
+    object ppLabel15: TppLabel
+      UserName = 'Label15'
+      Caption = 'Redni'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 15875
+      mmTop = 56356
+      mmWidth = 7144
+      BandType = 4
+    end
+    object ppLabel16: TppLabel
+      UserName = 'Label16'
+      Caption = 'broj'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 16404
+      mmTop = 60061
+      mmWidth = 5027
+      BandType = 4
+    end
+    object ppLabel17: TppLabel
+      UserName = 'Label17'
+      Caption = 'Za uposlene radnike - djelatnike'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 53975
+      mmTop = 57679
+      mmWidth = 39952
+      BandType = 4
+    end
+    object ppLabel18: TppLabel
+      UserName = 'Label18'
+      Caption = 'Ukupan broj '
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 29369
+      mmTop = 65088
+      mmWidth = 16140
+      BandType = 4
+    end
+    object ppLabel19: TppLabel
+      UserName = 'Label19'
+      Caption = 'Ukupno'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 103188
+      mmTop = 65088
+      mmWidth = 9525
+      BandType = 4
+    end
+    object ppLabel20: TppLabel
+      UserName = 'Label20'
+      Caption = 'Ukupno'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 65352
+      mmTop = 64823
+      mmWidth = 9525
+      BandType = 4
+    end
+    object ppLabel21: TppLabel
+      UserName = 'Label21'
+      Caption = 'Za fizi'#269'ku osobu'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 148961
+      mmTop = 56356
+      mmWidth = 20108
+      BandType = 4
+    end
+    object ppLabel22: TppLabel
+      UserName = 'Label22'
+      Caption = 'vlasnika / suvlasnika'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 146050
+      mmTop = 60061
+      mmWidth = 25400
+      BandType = 4
+    end
+    object ppLabel23: TppLabel
+      UserName = 'Label23'
+      Caption = 'radnika djelatnika'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 69321
+      mmWidth = 21960
+      BandType = 4
+    end
+    object ppLabel24: TppLabel
+      UserName = 'Label24'
+      Caption = 'neto pla'#263'e'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 101600
+      mmTop = 69321
+      mmWidth = 12965
+      BandType = 4
+    end
+    object ppLabel25: TppLabel
+      UserName = 'Label25'
+      Caption = 'bruto pla'#263'e'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 62971
+      mmTop = 69321
+      mmWidth = 14023
+      BandType = 4
+    end
+    object ppLabel26: TppLabel
+      UserName = 'Label26'
+      Caption = 'bruto pla'#263'e'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 136790
+      mmTop = 67998
+      mmWidth = 14023
+      BandType = 4
+    end
+    object ppLabel27: TppLabel
+      UserName = 'Label27'
+      Caption = 'neto pla'#263'e'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 170921
+      mmTop = 67998
+      mmWidth = 12965
+      BandType = 4
+    end
+    object ppLabel28: TppLabel
+      UserName = 'Label28'
+      Caption = '6'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 37835
+      mmTop = 74083
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLabel29: TppLabel
+      UserName = 'Label29'
+      Caption = '7'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 69321
+      mmTop = 74083
+      mmWidth = 1588
+      BandType = 4
+    end
+    object ppLabel30: TppLabel
+      UserName = 'Label30'
+      Caption = '8'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 107156
+      mmTop = 74083
+      mmWidth = 1588
+      BandType = 4
+    end
+    object ppLabel31: TppLabel
+      UserName = 'Label31'
+      Caption = '9'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 143140
+      mmTop = 74083
+      mmWidth = 1588
+      BandType = 4
+    end
+    object ppLabel32: TppLabel
+      UserName = 'Label32'
+      Caption = '10'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 176213
+      mmTop = 74083
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel33: TppLabel
+      UserName = 'Label33'
+      Caption = '01'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 78052
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel34: TppLabel
+      UserName = 'Label34'
+      Caption = 'Redni'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 16140
+      mmTop = 84402
+      mmWidth = 7144
+      BandType = 4
+    end
+    object ppLabel35: TppLabel
+      UserName = 'Label35'
+      Caption = 'broj'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17463
+      mmTop = 88900
+      mmWidth = 5027
+      BandType = 4
+    end
+    object ppLabel36: TppLabel
+      UserName = 'Label36'
+      Caption = 'O B A V E Z E - O B V E Z E'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 12
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 5027
+      mmLeft = 40481
+      mmTop = 86519
+      mmWidth = 58738
+      BandType = 4
+    end
+    object ppLabel37: TppLabel
+      UserName = 'Label37'
+      Caption = 'STOPE'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 11
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 137319
+      mmTop = 84667
+      mmWidth = 11906
+      BandType = 4
+    end
+    object ppLabel38: TppLabel
+      UserName = 'Label38'
+      Caption = 'IZNOS'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 12
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 5027
+      mmLeft = 170921
+      mmTop = 86519
+      mmWidth = 14023
+      BandType = 4
+    end
+    object ppLabel39: TppLabel
+      UserName = 'Label39'
+      Caption = 'na bruto'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 130175
+      mmTop = 90752
+      mmWidth = 10583
+      BandType = 4
+    end
+    object ppLabel40: TppLabel
+      UserName = 'Label40'
+      Caption = 'na neto'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 148167
+      mmTop = 90752
+      mmWidth = 9525
+      BandType = 4
+    end
+    object ppLabel41: TppLabel
+      UserName = 'Label41'
+      Caption = '11'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18521
+      mmTop = 94986
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel42: TppLabel
+      UserName = 'Label42'
+      Caption = 'Doprinosi iz pla'#263'a'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 94986
+      mmWidth = 22490
+      BandType = 4
+    end
+    object ppLabel43: TppLabel
+      UserName = 'Label43'
+      Caption = '11.1'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 100013
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel44: TppLabel
+      UserName = 'Label44'
+      Caption = '11.2'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 105304
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel45: TppLabel
+      UserName = 'Label45'
+      Caption = '11.3'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 110067
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel46: TppLabel
+      UserName = 'Label46'
+      Caption = '12'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 114829
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel47: TppLabel
+      UserName = 'Label47'
+      Caption = '13'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 135202
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel48: TppLabel
+      UserName = 'Label48'
+      Caption = '14'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 150019
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel49: TppLabel
+      UserName = 'Label49'
+      Caption = 'Redni'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 15875
+      mmTop = 186532
+      mmWidth = 7144
+      BandType = 4
+    end
+    object ppLabel50: TppLabel
+      UserName = 'Label50'
+      Caption = 'broj'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 16404
+      mmTop = 189707
+      mmWidth = 5027
+      BandType = 4
+    end
+    object ppLabel51: TppLabel
+      UserName = 'Label51'
+      Caption = '12.1'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 120121
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel52: TppLabel
+      UserName = 'Label52'
+      Caption = '12.2'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 124884
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel53: TppLabel
+      UserName = 'Label53'
+      Caption = '12.3'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 130175
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel54: TppLabel
+      UserName = 'Label54'
+      Caption = '13.1'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 139965
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel55: TppLabel
+      UserName = 'Label55'
+      Caption = '13.2'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 144992
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel56: TppLabel
+      UserName = 'Label56'
+      Caption = '14.1'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17198
+      mmTop = 155046
+      mmWidth = 5556
+      BandType = 4
+    end
+    object ppLabel57: TppLabel
+      UserName = 'Label57'
+      Caption = '15'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 160073
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel58: TppLabel
+      UserName = 'Label58'
+      Caption = '16'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 17992
+      mmTop = 165100
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel59: TppLabel
+      UserName = 'Label59'
+      Caption = '17'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 169863
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel60: TppLabel
+      UserName = 'Label60'
+      Caption = '18'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 174890
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel61: TppLabel
+      UserName = 'Label61'
+      Caption = 'za penzijsko - mirovinsko i invalidsko osiguranje'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27781
+      mmTop = 100013
+      mmWidth = 59531
+      BandType = 4
+    end
+    object ppLabel62: TppLabel
+      UserName = 'Label62'
+      Caption = 'za penzijsko - mirovinsko  i invalidsko osiguranje'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27517
+      mmTop = 120121
+      mmWidth = 60590
+      BandType = 4
+    end
+    object ppLabel64: TppLabel
+      UserName = 'Label64'
+      Caption = 'Porez na pla'#263'u - obra'#269'unato'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27517
+      mmTop = 139965
+      mmWidth = 40217
+      BandType = 4
+    end
+    object ppLabel66: TppLabel
+      UserName = 'Label66'
+      Caption = 'za osiguranje od nezaposlenosti'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27781
+      mmTop = 110067
+      mmWidth = 39688
+      BandType = 4
+    end
+    object ppLabel67: TppLabel
+      UserName = 'Label67'
+      Caption = 'za zdravstveno osiguranje'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27781
+      mmTop = 105040
+      mmWidth = 32279
+      BandType = 4
+    end
+    object ppLabel68: TppLabel
+      UserName = 'Label68'
+      Caption = 'Doprinosi na pla'#263'e'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 114829
+      mmWidth = 23813
+      BandType = 4
+    end
+    object ppLabel65: TppLabel
+      UserName = 'Label65'
+      Caption = 'za zdravstveno osiguranje'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27517
+      mmTop = 124884
+      mmWidth = 32279
+      BandType = 4
+    end
+    object ppLabel69: TppLabel
+      UserName = 'Label69'
+      Caption = 'za osiguranje od nezaposlenosti'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27517
+      mmTop = 129911
+      mmWidth = 39688
+      BandType = 4
+    end
+    object ppLabel70: TppLabel
+      UserName = 'Label70'
+      Caption = 'Porez na pla'#263'u - obaveze - obveze ( 13.1. - 13.2. )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 134938
+      mmWidth = 80698
+      BandType = 4
+    end
+    object ppLabel72: TppLabel
+      UserName = 'Label72'
+      Caption = 'Ukupno obaveze ( 11 + 12 + 13 + 14 )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25665
+      mmTop = 160073
+      mmWidth = 51065
+      BandType = 4
+    end
+    object ppLabel73: TppLabel
+      UserName = 'Label73'
+      Caption = 'Umanjenje porezne obaveze'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 27517
+      mmTop = 145257
+      mmWidth = 35190
+      BandType = 4
+    end
+    object ppLabel74: TppLabel
+      UserName = 'Label74'
+      Caption = 'Ostale obaveze - obveze  ( 14.1. )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 150019
+      mmWidth = 55827
+      BandType = 4
+    end
+    object ppLabel75: TppLabel
+      UserName = 'Label75'
+      Caption = 'Obustave iz pla'#263'e'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 175155
+      mmWidth = 22490
+      BandType = 4
+    end
+    object ppLabel76: TppLabel
+      UserName = 'Label76'
+      Caption = 'Neto za isplatu ( 16+17-15-18 )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 179917
+      mmWidth = 53711
+      BandType = 4
+    end
+    object ppLabel77: TppLabel
+      UserName = 'Label77'
+      Caption = 'O B A V E Z E - O B V E Z E '
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 12
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 5027
+      mmLeft = 40481
+      mmTop = 187325
+      mmWidth = 61383
+      BandType = 4
+    end
+    object ppLabel78: TppLabel
+      UserName = 'Label78'
+      Caption = 'IZNOS ZA UPLATU'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 11
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 141288
+      mmTop = 187061
+      mmWidth = 38894
+      BandType = 4
+    end
+    object ppLabel80: TppLabel
+      UserName = 'Label601'
+      Caption = '20'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 195263
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel81: TppLabel
+      UserName = 'Label81'
+      Caption = '21'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 202671
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel82: TppLabel
+      UserName = 'Label82'
+      Caption = '22'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 210344
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel83: TppLabel
+      UserName = 'Label83'
+      Caption = '23'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 218282
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel84: TppLabel
+      UserName = 'Label84'
+      Caption = 'Doprinos za penzijsko-mirovinsko i invalidsko osiguranje '
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 26458
+      mmTop = 193411
+      mmWidth = 70644
+      BandType = 4
+    end
+    object ppLabel88: TppLabel
+      UserName = 'Label88'
+      Caption = 
+        'Porezni obveznik - pravne i fizi'#269'ke osobe kojima je dodjeljen Ma' +
+        'ti'#269'ni broj u Zavodu za  Statistiku Federacije BiH ovaj broj upis' +
+        'uju pod rednim brojem 2'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Transparent = True
+      mmHeight = 2910
+      mmLeft = 15081
+      mmTop = 232834
+      mmWidth = 162719
+      BandType = 4
+    end
+    object ppLabel89: TppLabel
+      UserName = 'Label89'
+      Caption = '(zbir naloga za penz.- mirov. fond  11.1. + 12.1. )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 44186
+      mmTop = 196850
+      mmWidth = 62442
+      BandType = 4
+    end
+    object ppLabel90: TppLabel
+      UserName = 'Label90'
+      Caption = 'Doprinos za zdravstvo'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 26194
+      mmTop = 201348
+      mmWidth = 27517
+      BandType = 4
+    end
+    object ppLabel91: TppLabel
+      UserName = 'Label91'
+      Caption = '(zbir naloga po kantonima  11.2. + 12.2. )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 43656
+      mmTop = 204523
+      mmWidth = 52917
+      BandType = 4
+    end
+    object ppLabel92: TppLabel
+      UserName = 'Label901'
+      Caption = 'Doprinos za osiguranje od nezaposlenosti - neuposlenosti'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 208757
+      mmWidth = 71438
+      BandType = 4
+    end
+    object ppLabel93: TppLabel
+      UserName = 'Label93'
+      Caption = '(zbir naloga za fond nezap.- neup. 11.3. + 12.3. )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 43656
+      mmTop = 212196
+      mmWidth = 62442
+      BandType = 4
+    end
+    object ppLabel94: TppLabel
+      UserName = 'Label94'
+      Caption = 'Porez na pla'#263'u '
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 26194
+      mmTop = 216430
+      mmWidth = 19050
+      BandType = 4
+    end
+    object ppLabel95: TppLabel
+      UserName = 'Label95'
+      Caption = '(zbir naloga po op'#263'inama red.br. 13 )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 43127
+      mmTop = 220134
+      mmWidth = 46831
+      BandType = 4
+    end
+    object ppLabel96: TppLabel
+      UserName = 'Label96'
+      Caption = 'Napomena :'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 10
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 15346
+      mmTop = 227278
+      mmWidth = 19579
+      BandType = 4
+    end
+    object ppLabel97: TppLabel
+      UserName = 'Label97'
+      Caption = 
+        'U rubriku porezni djelovodni broj upisati broj pod kojim se obve' +
+        'znik vodi u nadle'#382'noj Poreznoj ispostavi.'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Transparent = True
+      mmHeight = 2910
+      mmLeft = 15081
+      mmTop = 243417
+      mmWidth = 112713
+      BandType = 4
+    end
+    object ppLabel98: TppLabel
+      UserName = 'Label98'
+      Caption = 
+        'Porezni obveznici - fizi'#269'ka osobe koje nemaju Mati'#269'ni broj u Zav' +
+        'odu za  Statistiku Federacije BiH, a du'#382'ni su podnjeti specifika' +
+        'ciju , pod rednim brojem 1 upisuju svoj'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Transparent = True
+      mmHeight = 2910
+      mmLeft = 15081
+      mmTop = 236538
+      mmWidth = 178594
+      BandType = 4
+    end
+    object ppLabel99: TppLabel
+      UserName = 'Label99'
+      Caption = 'Jedinstveni Mati'#269'ni Broj Gra'#273'ana.'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Transparent = True
+      mmHeight = 2910
+      mmLeft = 15081
+      mmTop = 239978
+      mmWidth = 35983
+      BandType = 4
+    end
+    object ppLabel105: TppLabel
+      UserName = 'Label105'
+      Caption = 'M.P.'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 130175
+      mmTop = 272257
+      mmWidth = 6350
+      BandType = 4
+    end
+    object ppLabel85: TppLabel
+      UserName = 'Label85'
+      Caption = '( Mjesto i datum )'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 29898
+      mmTop = 274638
+      mmWidth = 22490
+      BandType = 4
+    end
+    object ppLabel103: TppLabel
+      UserName = 'Label103'
+      Caption = 'Obra'#269'un sa'#269'inio'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 88106
+      mmTop = 274638
+      mmWidth = 23813
+      BandType = 4
+    end
+    object ppLabel104: TppLabel
+      UserName = 'Label104'
+      Caption = 'Odgovorno lice'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 160338
+      mmTop = 274638
+      mmWidth = 22490
+      BandType = 4
+    end
+    object ppMemo1: TppMemo
+      UserName = 'Memo1'
+      Caption = 'Memo1'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Lines.Strings = (
+        'Ukupno pla'#263'e i obaveze - obveze  ( 8+10+13.2.+15 )')
+      TabStopPositions.Strings = (
+        '0')
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25665
+      mmTop = 164836
+      mmWidth = 93398
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppShape8: TppShape
+      UserName = 'Shape8'
+      mmHeight = 5027
+      mmLeft = 89429
+      mmTop = 21167
+      mmWidth = 38100
+      BandType = 4
+    end
+    object ppLine67: TppLine
+      UserName = 'Line67'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 94456
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine68: TppLine
+      UserName = 'Line68'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 99219
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine69: TppLine
+      UserName = 'Line69'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 103981
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine70: TppLine
+      UserName = 'Line70'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 108744
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine71: TppLine
+      UserName = 'Line71'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 113506
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine72: TppLine
+      UserName = 'Line72'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 118004
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine73: TppLine
+      UserName = 'Line201'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 122767
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppShape9: TppShape
+      UserName = 'Shape9'
+      mmHeight = 5027
+      mmLeft = 131763
+      mmTop = 21167
+      mmWidth = 19050
+      BandType = 4
+    end
+    object ppLine74: TppLine
+      UserName = 'Line74'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 136525
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine75: TppLine
+      UserName = 'Line75'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 141023
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine76: TppLine
+      UserName = 'Line402'
+      Position = lpLeft
+      Weight = 0.75
+      mmHeight = 5027
+      mmLeft = 145786
+      mmTop = 21167
+      mmWidth = 2117
+      BandType = 4
+    end
+    object ppLine77: TppLine
+      UserName = 'Line77'
+      Weight = 0.75
+      mmHeight = 3969
+      mmLeft = 15081
+      mmTop = 179123
+      mmWidth = 178000
+      BandType = 4
+    end
+    object ppLabel1: TppLabel
+      UserName = 'Label602'
+      Caption = '19'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 18256
+      mmTop = 179917
+      mmWidth = 3175
+      BandType = 4
+    end
+    object ppLabel2: TppLabel
+      UserName = 'Label2'
+      Caption = 'Naknada za bolovanje preko 42 dana'
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = [fsBold]
+      Transparent = True
+      mmHeight = 3440
+      mmLeft = 25929
+      mmTop = 169863
+      mmWidth = 47625
+      BandType = 4
+    end
+    object ppMemo2: TppMemo
+      UserName = 'Memo2'
+      Caption = '#NAZISJ#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 11
+      Font.Style = []
+      Lines.Strings = (
+        '#NAZISJ#')
+      Transparent = True
+      mmHeight = 10319
+      mmLeft = 15875
+      mmTop = 14552
+      mmWidth = 58738
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo4: TppMemo
+      UserName = 'Memo4'
+      Caption = '#BRRAC#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#BRRAC#')
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 16404
+      mmTop = 37571
+      mmWidth = 57944
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo3: TppMemo
+      UserName = 'Memo3'
+      ForceJustifyLastLine = True
+      Caption = '#MATBR#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#MATBR#')
+      TextAlignment = taFullJustified
+      Transparent = True
+      mmHeight = 3969
+      mmLeft = 90752
+      mmTop = 15081
+      mmWidth = 62442
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo5: TppMemo
+      UserName = 'Memo5'
+      ForceJustifyLastLine = True
+      Caption = '#PORDBR#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#PORDBR#')
+      TextAlignment = taFullJustified
+      Transparent = True
+      mmHeight = 3969
+      mmLeft = 114036
+      mmTop = 32808
+      mmWidth = 39158
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo6: TppMemo
+      UserName = 'Memo6'
+      Caption = '#DATISPL#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#DATISPL#')
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 112977
+      mmTop = 38100
+      mmWidth = 36777
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo7: TppMemo
+      UserName = 'Memo7'
+      ForceJustifyLastLine = True
+      Caption = '#MJ#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#MJ#')
+      TextAlignment = taFullJustified
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 119063
+      mmTop = 48683
+      mmWidth = 9790
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo8: TppMemo
+      UserName = 'Memo8'
+      ForceJustifyLastLine = True
+      Caption = '#GOD#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#GOD#')
+      TextAlignment = taFullJustified
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 152400
+      mmTop = 48154
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo9: TppMemo
+      UserName = 'Memo9'
+      Caption = '#U016#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U016#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 3969
+      mmLeft = 27517
+      mmTop = 77788
+      mmWidth = 22754
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo10: TppMemo
+      UserName = 'Memo10'
+      Caption = '#U017#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U017#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 57944
+      mmTop = 78052
+      mmWidth = 23548
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo11: TppMemo
+      UserName = 'Memo11'
+      Caption = '#U018#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U018#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 95250
+      mmTop = 78052
+      mmWidth = 23548
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo12: TppMemo
+      UserName = 'Memo12'
+      Caption = '#U019#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U019#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 135732
+      mmTop = 78052
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo13: TppMemo
+      UserName = 'Memo13'
+      Caption = '#U0110#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U0110#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 170127
+      mmTop = 78052
+      mmWidth = 15081
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo14: TppMemo
+      UserName = 'Memo14'
+      Caption = '#D11B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 94721
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo15: TppMemo
+      UserName = 'Memo15'
+      Caption = '#D11_1B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_1B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 99748
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo16: TppMemo
+      UserName = 'Memo16'
+      Caption = '#D11_2B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_2B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 104775
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo20: TppMemo
+      UserName = 'Memo20'
+      Caption = '#D11_3B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_3B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 109802
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo25: TppMemo
+      UserName = 'Memo25'
+      Caption = '#D12B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 114565
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo31: TppMemo
+      UserName = 'Memo31'
+      Caption = '#D12_1B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_1B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 119592
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo32: TppMemo
+      UserName = 'Memo32'
+      Caption = '#D12_2B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_2B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 124619
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo33: TppMemo
+      UserName = 'Memo33'
+      Caption = '#D12_3B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_3B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 129646
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo22: TppMemo
+      UserName = 'Memo22'
+      Caption = '#D11N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 94721
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo18: TppMemo
+      UserName = 'Memo18'
+      Caption = '#D11I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 94721
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo19: TppMemo
+      UserName = 'Memo19'
+      Caption = '#D11_1I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_1I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 99748
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo17: TppMemo
+      UserName = 'Memo17'
+      Caption = '#D11_1N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_1N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 99748
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo21: TppMemo
+      UserName = 'Memo21'
+      Caption = '#D11_2N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_2N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 104775
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo27: TppMemo
+      UserName = 'Memo27'
+      Caption = '#D11_3N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_3N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 109802
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo30: TppMemo
+      UserName = 'Memo30'
+      Caption = '#D12N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 114565
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo34: TppMemo
+      UserName = 'Memo301'
+      Caption = '#D12_1N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_1N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 119592
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo35: TppMemo
+      UserName = 'Memo35'
+      Caption = '#D12_2N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_2N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 124619
+      mmWidth = 16000
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo36: TppMemo
+      UserName = 'Memo36'
+      Caption = '#D12_3N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_3N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 129646
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo44: TppMemo
+      UserName = 'Memo44'
+      Caption = '#D12_3I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_3I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 129646
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo43: TppMemo
+      UserName = 'Memo43'
+      Caption = '#D12_2I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_2I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 124619
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo42: TppMemo
+      UserName = 'Memo42'
+      Caption = '#D12_1I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12_1I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 119592
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo41: TppMemo
+      UserName = 'Memo41'
+      Caption = '#D12I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D12I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 114565
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo26: TppMemo
+      UserName = 'Memo26'
+      Caption = '#D11_3I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_3I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 109802
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo24: TppMemo
+      UserName = 'Memo24'
+      Caption = '#D11_2I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D11_2I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 104775
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo28: TppMemo
+      UserName = 'Memo28'
+      Caption = '#D13B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 134673
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo37: TppMemo
+      UserName = 'Memo37'
+      Caption = '#D13_1B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13_1B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 139700
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo38: TppMemo
+      UserName = 'Memo38'
+      Caption = '#D13_2B#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13_2B#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 128000
+      mmTop = 144727
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo29: TppMemo
+      UserName = 'Memo29'
+      Caption = '#D13N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 134673
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo39: TppMemo
+      UserName = 'Memo39'
+      Caption = '#D13_1N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13_1N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 139700
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo40: TppMemo
+      UserName = 'Memo40'
+      Caption = '#D13_2N#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13_2N#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 145000
+      mmTop = 144727
+      mmWidth = 15875
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo45: TppMemo
+      UserName = 'Memo45'
+      Caption = '#D13I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 134673
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo46: TppMemo
+      UserName = 'Memo46'
+      Caption = '#D13_1I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13_1I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 139700
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo47: TppMemo
+      UserName = 'Memo47'
+      Caption = '#D13_2I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#D13_2I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 144727
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo49: TppMemo
+      UserName = 'Memo49'
+      Caption = '#O14I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#O14I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 150019
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo50: TppMemo
+      UserName = 'Memo50'
+      Caption = '#O14_1I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#O14_1I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 154782
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo51: TppMemo
+      UserName = 'Memo501'
+      Caption = '#U15I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U15I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 159809
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo52: TppMemo
+      UserName = 'Memo52'
+      Caption = '#U16I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#U16I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 164571
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo53: TppMemo
+      UserName = 'Memo53'
+      Caption = '#N17I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#N17I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 169598
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo48: TppMemo
+      UserName = 'Memo48'
+      Caption = '#O18I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#O18I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 174625
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo23: TppMemo
+      UserName = 'Memo23'
+      Caption = '#D20#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = [fsBold]
+      Lines.Strings = (
+        '#D20#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 163777
+      mmTop = 194469
+      mmWidth = 28046
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo54: TppMemo
+      UserName = 'Memo54'
+      Caption = '#D21#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = [fsBold]
+      Lines.Strings = (
+        '#D21#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 163777
+      mmTop = 202142
+      mmWidth = 28046
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo55: TppMemo
+      UserName = 'Memo55'
+      Caption = '#D22#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = [fsBold]
+      Lines.Strings = (
+        '#D22#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 163248
+      mmTop = 209815
+      mmWidth = 28575
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo56: TppMemo
+      UserName = 'Memo56'
+      Caption = '#P23#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = [fsBold]
+      Lines.Strings = (
+        '#P23#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4763
+      mmLeft = 162984
+      mmTop = 217488
+      mmWidth = 28575
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo57: TppMemo
+      UserName = 'Memo57'
+      Caption = '#N19I#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#N19I#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 172000
+      mmTop = 179652
+      mmWidth = 20373
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo58: TppMemo
+      UserName = 'Memo58'
+      ForceJustifyLastLine = True
+      Caption = '#SBR#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#SBR#')
+      TextAlignment = taFullJustified
+      Transparent = True
+      mmHeight = 3969
+      mmLeft = 90223
+      mmTop = 21696
+      mmWidth = 43656
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppMemo59: TppMemo
+      UserName = 'Memo59'
+      ForceJustifyLastLine = True
+      Caption = '#SPBR#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 9
+      Font.Style = []
+      Lines.Strings = (
+        '#SPBR#')
+      TextAlignment = taFullJustified
+      Transparent = True
+      mmHeight = 4233
+      mmLeft = 133086
+      mmTop = 21696
+      mmWidth = 20108
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppLine78: TppLine
+      UserName = 'Line14'
+      Weight = 0.75
+      mmHeight = 1058
+      mmLeft = 127265
+      mmTop = 25929
+      mmWidth = 4763
+      BandType = 4
+    end
+    object ppLine79: TppLine
+      UserName = 'Line79'
+      Weight = 0.75
+      mmHeight = 1588
+      mmLeft = 127265
+      mmTop = 21167
+      mmWidth = 4763
+      BandType = 4
+    end
+  end
+  object ppFooterBand1: TppFooterBand
+    mmBottomOffset = 0
+    mmHeight = 10054
+    mmPrintPosition = 0
+  end
+end

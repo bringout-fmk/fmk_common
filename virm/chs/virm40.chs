@@ -1,0 +1,3 @@
+*PARTN
+C NAZ C 25 0 NAZ C 40 0
+

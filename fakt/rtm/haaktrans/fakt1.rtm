@@ -1,0 +1,556 @@
+object ppReport: TppReport
+  AutoStop = False
+  DataPipeline = ppReportPipeline
+  PassSetting = psTwoPass
+  PrinterSetup.BinName = 'Default'
+  PrinterSetup.DocumentName = 'ppReport1'
+  PrinterSetup.PaperName = 'A4'
+  PrinterSetup.PrinterName = 'Default'
+  PrinterSetup.mmMarginBottom = 0
+  PrinterSetup.mmMarginLeft = 0
+  PrinterSetup.mmMarginRight = 0
+  PrinterSetup.mmMarginTop = 0
+  PrinterSetup.mmPaperHeight = 297000
+  PrinterSetup.mmPaperWidth = 210000
+  PrinterSetup.PaperSize = 9
+  Template.FileName = 'H:\sigma\fakt1.rtm'
+  Template.Format = ftASCII
+  Units = utMillimeters
+  DeviceType = 'Screen'
+  OnCancel = ppReportPreviewFormClose
+  OnPreviewFormClose = ppReportPreviewFormClose
+  OnPrintDialogClose = ppReportPreviewFormClose
+  OutlineSettings.CreateNode = True
+  OutlineSettings.CreatePageNodes = True
+  OutlineSettings.Enabled = False
+  OutlineSettings.Visible = False
+  TextSearchSettings.DefaultString = '<FindText>'
+  TextSearchSettings.Enabled = False
+  Left = 12
+  Top = 5
+  Version = '7.02'
+  mmColumnWidth = 210000
+  DataPipelineName = 'ppReportPipeline'
+  object ppHeaderBand1: TppHeaderBand
+    mmBottomOffset = 0
+    mmHeight = 1323
+    mmPrintPosition = 0
+  end
+  object ppDetailBand1: TppDetailBand
+    PrintHeight = phDynamic
+    mmBottomOffset = 0
+    mmHeight = 5556
+    mmPrintPosition = 0
+    object ppDBText2: TppDBText
+      UserName = 'DBText2'
+      DataField = 'KOLICINA'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      TextAlignment = taRightJustified
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 3440
+      mmLeft = 98425
+      mmTop = 265
+      mmWidth = 11113
+      BandType = 4
+    end
+    object ppDBText5: TppDBText
+      UserName = 'DBText5'
+      AutoSize = True
+      DataField = 'RBR'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 2910
+      mmLeft = 9525
+      mmTop = 529
+      mmWidth = 1323
+      BandType = 4
+    end
+    object ppDBMemo1: TppDBMemo
+      UserName = 'DBMemo1'
+      KeepTogether = True
+      CharWrap = False
+      DataField = 'NAZIV'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Stretch = True
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 3969
+      mmLeft = 15346
+      mmTop = 529
+      mmWidth = 73554
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
+    end
+    object ppDBText7: TppDBText
+      UserName = 'DBText7'
+      DataField = 'CIJENA'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      TextAlignment = taRightJustified
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 3440
+      mmLeft = 119063
+      mmTop = 529
+      mmWidth = 15610
+      BandType = 4
+    end
+    object ppDBText9: TppDBText
+      UserName = 'DBText9'
+      DataField = 'UKUPNO'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = [fsBold]
+      TextAlignment = taRightJustified
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 3704
+      mmLeft = 135202
+      mmTop = 529
+      mmWidth = 16140
+      BandType = 4
+    end
+    object ppDBText3: TppDBText
+      UserName = 'DBText3'
+      DataField = 'JMJ'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 3440
+      mmLeft = 89165
+      mmTop = 265
+      mmWidth = 8467
+      BandType = 4
+    end
+    object ppDBText1: TppDBText
+      UserName = 'DBText1'
+      DataField = 'POR'
+      DataPipeline = ppReportPipeline
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'Tahoma'
+      Font.Size = 7
+      Font.Style = []
+      TextAlignment = taRightJustified
+      Transparent = True
+      DataPipelineName = 'ppReportPipeline'
+      mmHeight = 3440
+      mmLeft = 110596
+      mmTop = 529
+      mmWidth = 7673
+      BandType = 4
+    end
+  end
+  object ppFooterBand1: TppFooterBand
+    mmBottomOffset = 0
+    mmHeight = 20638
+    mmPrintPosition = 0
+  end
+  object ppGroup2: TppGroup
+    BreakName = 'BRISANO'
+    DataPipeline = ppReportPipeline
+    OutlineSettings.CreateNode = True
+    ReprintOnSubsequentPage = False
+    UserName = 'Group2'
+    mmNewColumnThreshold = 0
+    mmNewPageThreshold = 0
+    DataPipelineName = 'ppReportPipeline'
+    object ppGroupHeaderBand2: TppGroupHeaderBand
+      mmBottomOffset = 0
+      mmHeight = 105304
+      mmPrintPosition = 0
+      object ppShape2: TppShape
+        UserName = 'Shape2'
+        Brush.Color = clSilver
+        Pen.Color = clSilver
+        mmHeight = 32544
+        mmLeft = 18521
+        mmTop = 53711
+        mmWidth = 72496
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppShape3: TppShape
+        UserName = 'Shape3'
+        mmHeight = 32279
+        mmLeft = 17198
+        mmTop = 52123
+        mmWidth = 71967
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppRichText1: TppRichText
+        UserName = 'RichText1'
+        Caption = 'RichText1'
+        RichText = 
+          '{\rtf1\ansi\ansicpg1250\deff0\deflang1050{\fonttbl{\f0\fswiss SC' +
+          ' Tahoma;}{\f1\fswiss\fcharset0 SC Tahoma;}{\f2\fswiss\fcharset23' +
+          '8 SC Tahoma;}{\f3\fnil MS Sans Serif;}}'#13#10'\viewkind4\uc1\pard\qr\' +
+          'f0\fs18 #Dokument#\fs24  \b\fs20 #Broj\f1 D\f2 ok\f0 #\f3\fs24\p' +
+          'ar'#13#10'}'#13#10
+        mmHeight = 6085
+        mmLeft = 82021
+        mmTop = 97367
+        mmWidth = 68792
+        BandType = 3
+        GroupNo = 0
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+      object ppRichText2: TppRichText
+        UserName = 'RichText2'
+        Caption = 'RichText2'
+        RichText = 
+          '{\rtf1\ansi\ansicpg1250\deff0\deflang1050{\fonttbl{\f0\fnil Taho' +
+          'ma;}}'#13#10'\viewkind4\uc1\pard\f0\fs12 #Mjesto#\fs16\par'#13#10'}'#13#10
+        mmHeight = 3440
+        mmLeft = 169598
+        mmTop = 82021
+        mmWidth = 32015
+        BandType = 3
+        GroupNo = 0
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+      object ppRichText7: TppRichText
+        UserName = 'RichText5'
+        Caption = 'RichText5'
+        RichText = 
+          '{\rtf1\ansi\ansicpg1250\deff0\deflang1050{\fonttbl{\f0\fswiss\fc' +
+          'harset238 SC Tahoma;}{\f1\fnil Tahoma;}{\f2\fnil\fcharset0 Tahom' +
+          'a;}{\f3\fnil\fcharset238 Tahoma;}{\f4\fnil MS Sans Serif;}}'#13#10'\vi' +
+          'ewkind4\uc1\pard\qc\b\f0\fs20\par'#13#10'\f1\fs16 #Partner1#\par'#13#10'#Par' +
+          'tner2#\par'#13#10'#Partner3#\par'#13#10'#Partner4#\par'#13#10'#Partner5#\par'#13#10'\b0 ' +
+          '#regbr#\par'#13#10'#por\f2 d\f3 j\f1 br#\f4\par'#13#10'}'#13#10
+        mmHeight = 29898
+        mmLeft = 18256
+        mmTop = 53181
+        mmWidth = 69850
+        BandType = 3
+        GroupNo = 0
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+    end
+    object ppGroupFooterBand2: TppGroupFooterBand
+      PrintHeight = phDynamic
+      mmBottomOffset = 0
+      mmHeight = 3175
+      mmPrintPosition = 0
+    end
+  end
+  object ppGroup1: TppGroup
+    BreakName = 'BRISANO'
+    DataPipeline = ppReportPipeline
+    OutlineSettings.CreateNode = True
+    UserName = 'Group1'
+    mmNewColumnThreshold = 0
+    mmNewPageThreshold = 0
+    DataPipelineName = 'ppReportPipeline'
+    object ppGroupHeaderBand1: TppGroupHeaderBand
+      mmBottomOffset = 0
+      mmHeight = 8202
+      mmPrintPosition = 0
+      object ppShape1: TppShape
+        UserName = 'Shape1'
+        Brush.Color = clSilver
+        Pen.Color = clSilver
+        mmHeight = 5292
+        mmLeft = 7938
+        mmTop = 1588
+        mmWidth = 143669
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel1: TppLabel
+        UserName = 'Label1'
+        Caption = 'R.br'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taRightJustified
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 9260
+        mmTop = 2646
+        mmWidth = 5027
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel4: TppLabel
+        UserName = 'Label4'
+        Caption = 'Koli'#269'ina'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 98954
+        mmTop = 2646
+        mmWidth = 9525
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel5: TppLabel
+        UserName = 'Label5'
+        Caption = 'Naziv'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 20108
+        mmTop = 2646
+        mmWidth = 6615
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel6: TppLabel
+        UserName = 'Label6'
+        Caption = 'jmj'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 91546
+        mmTop = 2646
+        mmWidth = 3969
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel7: TppLabel
+        UserName = 'Label7'
+        Caption = 'Cijena'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 124619
+        mmTop = 2646
+        mmWidth = 7673
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel11: TppLabel
+        UserName = 'Label101'
+        Caption = 'Ukupno'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 141023
+        mmTop = 2646
+        mmWidth = 9260
+        BandType = 3
+        GroupNo = 0
+      end
+      object ppLabel10: TppLabel
+        UserName = 'Label10'
+        Caption = 'Porez'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Name = 'Tahoma'
+        Font.Size = 7
+        Font.Style = [fsBold]
+        TextAlignment = taCentered
+        Transparent = True
+        mmHeight = 2910
+        mmLeft = 110861
+        mmTop = 2646
+        mmWidth = 6879
+        BandType = 3
+        GroupNo = 1
+      end
+    end
+    object ppGroupFooterBand1: TppGroupFooterBand
+      PrintHeight = phDynamic
+      mmBottomOffset = 0
+      mmHeight = 52917
+      mmPrintPosition = 0
+      object ppRichText3: TppRichText
+        UserName = 'RichText3'
+        Caption = 'RichText3'
+        RichText = 
+          '{\rtf1\ansi\ansicpg1250\deff0\deflang1050{\fonttbl{\f0\fnil Taho' +
+          'ma;}{\f1\fnil\fcharset238 Tahoma;}{\f2\fnil MS Sans Serif;}}'#13#10'\v' +
+          'iewkind4\uc1\pard\f0\fs16 #KrajTxt1##KrajTxt\f1 2\f0 ##KrajTxt\f' +
+          '1 3\f0 ##KrajTxt\f1 4\f0 ##KrajTxt\f1 5\f0 #\par'#13#10'\f2\par'#13#10'}'#13#10
+        mmHeight = 25400
+        mmLeft = 11113
+        mmTop = 20373
+        mmWidth = 129646
+        BandType = 5
+        GroupNo = 1
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+      object ppRichText4: TppRichText
+        UserName = 'RichText4'
+        Caption = 'RichText4'
+        RichText = 
+          '{\rtf1\ansi\ansicpg1250\deff0\deflang1050{\fonttbl{\f0\fnil\fcha' +
+          'rset238 Tahoma;}{\f1\fnil Tahoma;}{\f2\fnil MS Sans Serif;}}'#13#10'\v' +
+          'iewkind4\uc1\pard\qc\f0\fs18 #potpis#\f1\fs16\par'#13#10'\pard\f2\par'#13 +
+          #10'}'#13#10
+        mmHeight = 3969
+        mmLeft = 12435
+        mmTop = 46567
+        mmWidth = 169863
+        BandType = 5
+        GroupNo = 1
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+      object ppRichText5: TppRichText
+        UserName = 'Ukupno1'
+        KeepTogether = True
+        Caption = 'Ukupno'
+        RichText = 
+          '{\rtf1\ansi\deff0\deflang1033{\fonttbl{\f0\fnil Tahoma;}{\f1\fsw' +
+          'iss SC Tahoma;}{\f2\fnil MS Sans Serif;}}'#13#10'\viewkind4\uc1\pard\f' +
+          'i-1740\li1740\qr\f0\fs16 Ukupno:\fs18\par'#13#10'\fs16 Ukupno porez:\f' +
+          's18\par'#13#10'\par'#13#10'\pard\fi-2980\li2980\qr\tab U K U P N O (#DinDem#' +
+          '):\b\f1\fs20\par'#13#10'\pard\qr\lang1050\f2\par'#13#10'}'#13#10
+        Stretch = True
+        Transparent = True
+        mmHeight = 15875
+        mmLeft = 77788
+        mmTop = 794
+        mmWidth = 41010
+        BandType = 5
+        GroupNo = 1
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+      object ppRichTextUkupno: TppRichText
+        UserName = 'Ukupno'
+        KeepTogether = True
+        Caption = 'Ukupno'
+        RichText = 
+          '{\rtf1\ansi\deff0\deflang1033{\fonttbl{\f0\fnil Tahoma;}{\f1\fsw' +
+          'iss SC Tahoma;}{\f2\fnil MS Sans Serif;}}'#13#10'\viewkind4\uc1\pard\f' +
+          'i-1740\li1740\qr\f0\fs16  #Ukupno#\fs18\par'#13#10'\fs16 #UkupnoPorez#' +
+          '\fs18\par'#13#10'\par'#13#10'\pard\fi-2980\li2980\qr #Ukupno2#\b\f1\fs20\par' +
+          #13#10'\pard\qr\lang1050\f2\par'#13#10'}'#13#10
+        Stretch = True
+        Transparent = True
+        mmHeight = 16140
+        mmLeft = 118798
+        mmTop = 794
+        mmWidth = 32279
+        BandType = 5
+        GroupNo = 1
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+      object ppLine2: TppLine
+        UserName = 'Line2'
+        Weight = 0.750000000000000000
+        mmHeight = 3969
+        mmLeft = 9525
+        mmTop = 794
+        mmWidth = 142082
+        BandType = 5
+        GroupNo = 1
+      end
+      object ppLine3: TppLine
+        UserName = 'Line3'
+        Weight = 0.750000000000000000
+        mmHeight = 1852
+        mmLeft = 71967
+        mmTop = 10319
+        mmWidth = 79640
+        BandType = 5
+        GroupNo = 1
+      end
+      object ppLine4: TppLine
+        UserName = 'Line4'
+        Weight = 0.750000000000000000
+        mmHeight = 2117
+        mmLeft = 71967
+        mmTop = 16669
+        mmWidth = 79640
+        BandType = 5
+        GroupNo = 1
+      end
+      object ppRichText6: TppRichText
+        UserName = 'RichText6'
+        Caption = 'RichText6'
+        RichText = 
+          '{\rtf1\ansi\ansicpg1250\deff0\deflang1050{\fonttbl{\f0\fnil Taho' +
+          'ma;}{\f1\fswiss SC Tahoma;}{\f2\fnil MS Sans Serif;}}'#13#10'\viewkind' +
+          '4\uc1\pard\f0\fs14 slovima: \f1 #Slovima#\f2\fs16\par'#13#10'}'#13#10
+        mmHeight = 3704
+        mmLeft = 11377
+        mmTop = 1058
+        mmWidth = 80433
+        BandType = 5
+        GroupNo = 1
+        mmBottomOffset = 0
+        mmOverFlowOffset = 0
+        mmStopPosition = 0
+      end
+    end
+  end
+  object ppParameterList1: TppParameterList
+  end
+end

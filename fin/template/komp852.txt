@@ -1,0 +1,47 @@
+
+
+
+     POVJERILAC : #01#  DU¦NIK     : #02#
+     MJESTO     : #03#  MJESTO     : #04#
+     ¦IRO RN.KM : #05#  ¦IRO RN.KM : #06#
+     ¦IRO RN.DEM: #07#  ¦IRO RN.DEM: #08#
+
+
+
+
+                         #B1#IZJAVA O KOMPENZACIJI BROJ: #09##B0#
+
+
+
+
+      Na osnovu va§e†ih odredbi Zakona o obligacionim odnosima, Zakona o fi-
+     nansijskom poslovanju te Zakona o unutraçnjem platnom prometu , izjav-
+     ljujemo da smo saglasni za prebijanje (kompenzaciju) dospjelih meĞuso-
+     bnih novŸanih potra§ivanja:
+
+     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+     ³PovjerioŸeve obaveze prema du§niku³Du§nikove obaveze prema povjeriocu³
+     ÃÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+     ³R.br.³Br.raŸuna ³      Iznos      ³R.br.³Br.raŸuna ³      Iznos      ³
+     ÃÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+     #T1#
+     ÀÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      Svega KM   = #10#³Svega KM   = #11#
+     ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+                                         SALDO: #12#
+                                         ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+     #LS#02#Saldo u iznosu od #13# uplatite na naç raŸun broj #14#
+     u roku od #15# dana.
+     #2S#01#Saldo u iznosu od #13# uplati†emo na vaç raŸun u roku od #15# dana.
+     Molimo ovjeren primjerak izjave da vratite poçiljaocu. Kompenzacija se
+     vrçi u valuti KM.
+
+
+
+
+            Povjerilac:                                   Du§nik:
+
+
+      Datum: #17#                     Datum: #18#
+

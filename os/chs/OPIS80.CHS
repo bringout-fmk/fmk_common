@@ -1,0 +1,3 @@
+*OS.DBF
+C OPIS C 25 0 OPIS C 80 0
+

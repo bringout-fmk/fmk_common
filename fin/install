@@ -1,0 +1,173 @@
+EXTERNAL DESCEND
+#include "ini0c52.ch"
+
+
+PUBLIC cVer:='04.00m'
+#ifdef CAX
+ PUBLIC cNaslov:="FIN:Install , 11.94-03.02 AX"
+#else
+ PUBLIC cNaslov:="FIN:Install , 11.94-03.02 CDX"
+#endif
+
+#ifdef CAX
+gExclusive:=.t.
+set exclusive on
+#endif
+
+public gModul:="FIN"
+
+#include "iini.ch"
+
+
+RETURN
+
+
+***********************************
+function UcitajParams()
+*
+*
+***********************************
+return
+
+
+****************************
+procedure Sregg()
+*
+* registracija modula
+****************************
+sreg("FIN.EXE","FIN")
+return
+
+#include "p:\clp52\include\RDDINIT.CH"
+
+
+#ifdef CAX
+function truename(cc)  // sklonjena iz CTP
+return cc
+#endif
+
+#ifdef EXT
+function truename(cc)  // sklonjena iz CTP
+return cc
+#endif
+
+
+
+
+
+FUNCTION OstaleF()
+RETURN
+
+
+
+#ifdef C52
+********************************
+function OKumul(nArea,cStaza,cIme,nIndexa,cDefault)
+*
+* F:\SIGMA\FIN -> C:\SIGMA\FIN
+* 5.2
+*********************************
+local cPath,cScreen
+
+if cDefault==NIL
+  cDefault:="0"
+endif
+
+select (nArea)
+if gKesiraj $ "CD"
+  cPath:=strtran(cStaza,LEFT(cStaza,3),gKesiraj+":\")
+
+  DirMak2(cPath)  // napravi odrediçni direktorij
+
+  if cDefault!="0"
+    if !file( cPath+cIme+".DBF") .or. Pitanje(,"Osvjeziti podatke za "+cIme, cDefault )=="D"
+     save screen to cScr
+     cls
+     ? "Molim sacekajte prenos podataka na vas racunar "
+     ? "radi brzeg pregleda podataka"
+     ?
+     ? "Ovaj racunar NE KORISTITE za unos novih podataka !"
+     ?
+     close all
+     Copysve(cIme+"*.DB?",cStaza,cPath)
+     Copysve(cIme+"*.CDX",cStaza,cPath)
+     ?
+     ? "pritisni nesto za nastavak ..."
+     inkey(10)
+     restore screen from cScr
+   endif
+  endif
+
+else
+  cPath:=cStaza
+endif
+cPath:=cPath+cIme
+use  (cPath)
+return NIL
+
+#else
+
+********************************
+
+function OKumul(nArea,cStaza,cIme,nIndexa,cDefault)
+*
+* F:\SIGMA\FIN -> C:\SIGMA\FIN
+* CAX !!!
+*********************************
+local cPath,cScreen
+
+if cDefault==NIL
+  cDefault:="0"
+endif
+
+select (nArea)
+
+if used(); return; endif
+// CAX - samo jednom otvori !!!!!!!!!!!!!!!!!
+
+if gKesiraj $ "CD"
+  cPath:=strtran(cStaza,LEFT(cStaza,3),gKesiraj+":\")
+
+  DirMak2(cPath)  // napravi odrediçni direktorij
+
+  if cDefault!="0"
+    if !file( cPath+cIme+".DBF") .or. Pitanje(,"Osvjeziti podatke za "+cIme, cDefault )=="D"
+     save screen to cScr
+     cls
+     ? "Molim sacekajte prenos podataka na vas racunar "
+     ? "radi brzeg pregleda podataka"
+     ?
+     ? "Ovaj racunar NE KORISTITE za unos novih podataka !"
+     ?
+     close all
+     Copysve(cIme+"*.DB?",cStaza,cPath)
+     Copysve(cIme+"*.CDX",cStaza,cPath)
+     ?
+     ? "pritisni nesto za nastavak ..."
+     inkey(10)
+     restore screen from cScr
+   endif
+  endif
+
+else
+  cPath:=cStaza
+endif
+cPath:=cPath+cIme
+use  (cPath)
+return NIL
+
+#endif
+
+
+PROC SkloniSezonu()
+RETURN
+
+function o_log()
+
+function reindex_all()
+
+function o_nar()
+
+proc help2()
+
+

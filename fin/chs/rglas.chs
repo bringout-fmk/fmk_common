@@ -1,0 +1,3 @@
+*KONTO.DBF
+A OZNAKA C 6 0
+

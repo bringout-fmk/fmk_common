@@ -1,0 +1,4 @@
+*KONCIJ
+A M1 C 3 0
+A FN14 C 2 0
+

@@ -1,0 +1,5 @@
+*DOKS.DBF
+A DATVAL D 8 0
+A K1 C 1 0
+A K2 C 2 0
+A K3 C 3 0

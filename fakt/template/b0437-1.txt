@@ -1,0 +1,26 @@
+Greska FAKT:                 Datum:  19.10.00
+============
+Izvjestaji / Stanje robe
+
+
+Verzija programa: 04.37e  verzija ELIB-a: 10.001
+
+Podsistem klipera: BASE
+GenKod:  14 OpSistKod:   0
+Opis: Variable does not exist
+ImeFajla: 
+*********************
+Operacija: CSINTETIKA
+**********************
+Argumenti: NIL
+Procedura: E          Linija:        133
+Procedura: IZVJ       Linija:         50
+Procedura: STANJEROBE Linija:       1342
+
+Trenutno radno podrucje: FAKT , na zapisu broj:      14
+
+
+Ispravka:
+FAKT ver 04.38e
+
+
