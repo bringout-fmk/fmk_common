@@ -46,7 +46,7 @@ if tippr->(found()) .and. tippr->aktivan=="D"
     ? m2
     do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn==_idradn
      select kred; hseek radkr->idkred; select radkr
-     aIznosi:=OKreditu(idradn,idkred,naosnovu)
+     aIznosi:=OKreditu(idradn, idkred, naosnovu, _mjesec, _godina)
      ? cLMSK,idkred,left(kred->naz,15),PADR(naosnovu,20)
      @ prow(),pcol()+1 SAY aIznosi[1] pict "999999.99" // ukupno
      @ prow(),pcol()+1 SAY aIznosi[1]-aIznosi[2] pict "999999.99"// ukupno-placeno

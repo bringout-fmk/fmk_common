@@ -63,11 +63,11 @@ if (PCount()<4)
 	cIdRadn:=SPACE(_LR_)
 	Box(,8,75)
 	@ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
-	@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
+	@ m_x+2,m_y+2 SAY "Mjesec: " GET cMjesec pict "99"
 	if lViseObr
-		@ m_x+2,col()+2 SAY "Obracun: "  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+		@ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
 	endif
-	@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+	@ m_x+3,m_y+2 SAY "Godina: " GET cGodina pict "9999"
 	@ m_x+4,m_y+2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
 	if !lSkrivena
 		@ m_x+5,m_y+2 SAY "Varijanta ( /5): "  GET  cVarijanta valid cVarijanta $ " 5"
@@ -392,9 +392,10 @@ for i:=1 to cLDPolja
 			elseif "SUMKREDITA" $ tippr->formula
 				//? m
 				//? "  ","Od toga pojedinacni krediti:"
+				altd()
 				select radkr
 				set order to 1
-				seek str(_godina,4)+str(_mjesec,2)+_idradn
+				seek str(_godina,4) + str(_mjesec,2) + _idradn
 				ukredita:=0
 				IF l2kolone
 					P_COND2
@@ -408,7 +409,7 @@ for i:=1 to cLDPolja
 					select kred
 					hseek radkr->idkred
 					select radkr
-					aIznosi:=OKreditu(idradn,idkred,naosnovu)
+					aIznosi:=OKreditu(idradn, idkred, naosnovu, _mjesec, _godina)
 					? cLMSK+" ",idkred,left(kred->naz,22),PADR(naosnovu,20)
 					@ prow(),pcol()+1 SAY aIznosi[1] pict "999999.99" // ukupno
 					@ prow(),pcol()+1 SAY aIznosi[1]-aIznosi[2] pict "999999.99"// ukupno-placeno
