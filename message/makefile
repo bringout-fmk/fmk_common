@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_mes
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\message\\
+SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\message\\
 
 PRGS=db.prg main.prg app_msg.prg mnu_msg.prg rpt_msg.prg
 

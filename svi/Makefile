@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_svi
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\svi\\
+SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\svi\\
 
 PRGS=adm_db.prg db.prg fmk_ut.prg gvars.prg konto.prg ops.prg partn.prg rj.prg sifre.prg ut.prg valute.prg vn_vd.prg specif.prg rpt_all.prg dokstxt.prg rnal.prg
 

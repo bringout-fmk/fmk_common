@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_roba
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\roba\\
+SRCDOSROOT=h:\\dev\\fmk\\\AF\\cl-AF\\roba\\
 
 
 PRGS=adm_db.prg db.prg gvars.prg id_j.prg koncij.prg roba.prg rpt_cjen.prg rpt_sast.prg sast.prg sifk.prg sifre.prg tarifa.prg trfp.prg barkod.prg rlabele.prg ut.prg

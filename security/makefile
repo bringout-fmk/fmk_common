@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_sec
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\security\\
+SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\security\\
 
 PRGS=db.prg main.prg mnu_sec.prg
 

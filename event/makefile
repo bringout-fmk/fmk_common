@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_evn
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\event\\
+SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\event\\
 
 PRGS=db.prg main.prg mnu_evn.prg rpt_evn.prg
 

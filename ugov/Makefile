@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_ugov
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\ugov\\
+SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\ugov\\
 
 
 PRGS=ugov.prg genug.prg
