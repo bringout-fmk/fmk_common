@@ -84,6 +84,7 @@ if nIznos1+nIznos2+nIznos3+nIznos4 < nSldMinIzn
 endif
 O_PrenHH(cPosId)
 AddFinIntervalsToOstav(cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4)
+
 return
 *}
 

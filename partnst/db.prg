@@ -67,16 +67,20 @@ altd()
 if cPosID <> nil
 	O_KONCIJ
 	altd()
-	cTKPath:=GetTopsKumPathFromKoncij(cPosId)
+
+	cTKPath:=addbs(GetTopsKumPathFromKoncij())
+
 	// OSTAV
 	SELECT (F_F_OSTAV)
 	USE (cTKPath+"OSTAV")
 	set order to tag "ID"
+
 	// PARTN
 	SELECT (F_F_PARTN)
-	USE (cTKPath+"PARTN")
-	set order to tag "ID"
-
+	if !used()
+		USE (cTKPath+"PARTN") ALIAS "T_PARTN"
+	endif
+	set order to tag "ID" 
 else
 	O_OSTAV
 	O_PARAMS
@@ -194,8 +198,9 @@ function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4)
 *{
 local nArr
 nArr:=SELECT()
+
 select (F_F_PARTN)
-set order to tag "oznaka"
+set order to tag "OZNAKA"
 go top
 hseek cIdPartn
 
@@ -216,7 +221,6 @@ if field->id == nId
 	replace iznosz3 with nIznos3
 	replace iznosz4 with nIznos4
 endif
-
 select (nArr)
 
 return
