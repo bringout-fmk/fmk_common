@@ -27,11 +27,14 @@ endif
 // daj podatke parametara obracuna i napuni ih u aParObr
 // aParObr {}
 // GODINA, MJESEC, VRBOD, PROSJ(70%)
+//  2002, parobr->id, parobr->vrbod, parobr->k2
 
-cGodine := GetGodine(dYOd, dYDo)
-aGodine := GetParObr(@aParObr, cGodine)
+aGodine := {}
+aGodine := GetGodine(dYOd, dYDo)
 
-if LEN(aGodine) == 0
+GetParObr(@aParObr, aGodine)
+
+if LEN(aParObr) == 0
 	MsgBeep("Greska pri sumiranju parametara obracuna!")
 	return
 endif
@@ -39,13 +42,18 @@ endif
 // prikazi razlike u obracunu plate
 StRazlike(dMOd, dYOd, dMDo, dYDo, aGodine, aParObr, lMjesec, cRadId)
 
-
 return
 *}
 
 
-/*! \fn GetVars()
+/*! \fn GetVars(dMOd, dYOd, dMDo, dYDo, cRadId, lMjesec)
  *  \brief Prikupi varijable izvjestaja
+ *  \param dMOd - mjesec od
+ *  \param dYOd - godina od
+ *  \param dMDo - mjesec do
+ *  \param dYDo - godina do
+ *  \param cRadId - id radnik
+ *  \param lMjesec - .t. kupi podatke na mjesecnom novou
  */
 static function GetVars(dMOd, dYOd, dMDo, dYDo, cRadId, lMjesec)
 *{
@@ -70,6 +78,10 @@ Box(,10, 70)
 	read
 BoxC()
 
+if LastKey()==K_ESC
+	return 0
+endif
+
 if (cMjNivo=="D")
 	lMjesec:=.t.
 endif
@@ -82,28 +94,17 @@ return 1
  *  \param aParObr - matrica 
  *  \param cGodine - godine: 2002;2004;2005;
  */
-static function GetParObr(aParObr, cGodine)
+static function GetParObr(aParObr, aGodine)
 *{
 O_PAROBR
 
-// napravi matricu iz cGodine:="2002;2003;2004;"
-// aPom {}
-// aPom[2002]
-// aPom[2003]
-// aPom[2004]
-
-altd()
-
-aPom:={}
-aPom:=TokToNiz(ALLTRIM(cGodine), ";")
 nErr:=0
-
-for i:=1 to LEN(aPom)
-	if EMPTY(aPom[i])
+for i:=1 to LEN(aGodine)
+	if EMPTY(aGodine[i])
 		loop
 	endif
-	if (aPom[i] <> "RADP")
-		cPath := SIFPATH + aPom[i] + SLASH + "PAROBR"
+	if (aGodine[i] <> ALLTRIM(STR(YEAR(Date()))))
+		cPath := SIFPATH + aGodine[i] + SLASH + "PAROBR"
 		if !File(cPath + ".DBF") 
 			loop
 		endif
@@ -121,33 +122,46 @@ for i:=1 to LEN(aPom)
 	do while !EOF()
 		// puni matricu aParObr {}
 		//   aParObr = 2002   , ID "1"     , vrbod, k2 
-		AADD(aParObr, {VAL(aPom[i]), VAL(&cAlias->id), &cAlias->vrbod, &cAlias->k2})
+		AADD(aParObr, {VAL(aGodine[i]), VAL(&cAlias->id), &cAlias->vrbod, &cAlias->k2})
 		skip
 	enddo
 
 next
 
-return aPom
+return
 *}
 
 
-
+/*! \fn GetGodine(dY1, dY2)
+ *  \brief Vraca matricu sa godinama na osnovu datuma po pricipu: {2002, 2003, 2004, ..., 2010}
+ *  \param dY1 - godina 1
+ *  \param dY2 - godina 2
+ */
 static function GetGodine(dY1, dY2)
 *{
-
 cGodine := ""
 for i:=dY1 to dY2
-
 	cGodine += STR(i, 4) + ";"
 next
 
-return cGodine
+aRet:={}
+aRet:=TokToNiz(ALLTRIM(cGodine), ";")
+
+return aRet
 *}
 
 
 
-/*! \fn StRazlike(dDat1, dDat2, aParObr, lMjesec, cRadId)
+/*! \fn StRazlike(dMOd, dYOd, dMDo, dYDo, aGodine, aParObr, lMjesec, cRadId)
  *  \brief Stampa reporta razlika LD-a
+ *  \param dMOd - mjesec od
+ *  \param dYOd - godina od
+ *  \param dMDo - mjesec do
+ *  \param dYDo - godina do
+ *  \param aGodine - matrica sa godinama
+ *  \param aParObr - matrica sa parametrima obracuna
+ *  \param lMjesec - .t. stampati stavke na mjes.nivou ..TODO..
+ *  \param cRadId - ID radnik
  */
 static function StRazlike(dMOd, dYOd, dMDo, dYDo, aGodine, aParObr, lMjesec, cRadId)
 *{
@@ -158,7 +172,7 @@ nBrojac:=1
 
 START PRINT CRET
 
-? "RPT: Prikaz razlika za uplatu"
+? "RPT: Spisak razlika za isplatu radnicima"
 ?
 
 P_COND
@@ -171,16 +185,24 @@ set filter to &cFilter
 go top
 
 // formula za obracun koeficijenta
-KOEF:="(PROSJ / (ld->brbod * VRBOD))"
+LKOEF:="(PROSJ / (ld->brbod * VRBOD))"
 
-? REPLICATE("-", 95)
-? "RBr  *  ID  * Ime i prezime      *"
+// setuj zaglavlje
+aLArgs:={}
+AADD(aLArgs, {5, " RBr"})
+AADD(aLArgs, {6, "  ID"})
+AADD(aLArgs, {20, "   Ime i prezime"})
 for i:=1 to LEN(aGodine)
-	?? SPACE(1)
-	?? "    " + aGodine[i] + "  *"
+	AADD(aLArgs, {10, "   " + aGodine[i]})
 next
-?? "  UKUPNO   *  UK.(10%)  *"
-? REPLICATE("-", 95)
+AADD(aLArgs, {10, "  UKUPNO"})
+AADD(aLArgs, {10, " UK(10%)"})
+cLine:=SetRptLineAndText(aLArgs, 0)
+cTxt:=SetRptLineAndText(aLArgs, 1)
+
+? cLine
+? cTxt
+? cLine
 
 aPom:={}
 aPomTot:={}
@@ -190,14 +212,17 @@ for i:=1 to LEN(aGodine)
 	AADD(aPomTot, {aGodine[i], 0})
 next
 
+altd()
 do while !EOF()
 	
 	cRdnk:=ld->idradn
+
 	// prazna polja preskaci
 	if Empty(cRdnk)
 		skip
 		loop
 	endif
+	
 	if !Empty(cRadId)
 		if cRdnk <> cRadId
 			skip
@@ -215,32 +240,30 @@ do while !EOF()
 				nScn := ASCAN(aParObr, {|aVal| aVal[1] == ld->godina .and. aVal[2] == ld->mjesec })
 
 				// ako je nasao parametre obracuna
+				
 				if (nScn > 0)
-					VRBOD:=aParObr[nScn, 3]
-					PROSJ:=aParObr[nScn, 4]
+					VRBOD := aParObr[nScn, 3]
+					PROSJ := aParObr[nScn, 4]
 				else
 					skip
 					loop
 				endif
+				
 				select radn
 				hseek ld->idradn
 				select ld
 	
-				nKoef := &KOEF
+				nKoef := &LKOEF
 		
 				// ako zadovoljava uslov za prikaz
 				if (nKoef > 1) 
-		
 					nUNeto := ld->uneto
 					nUNNeto := nKoef * nUNeto
-					nIznG += nUNNeto - nUNeto
-			
+					nIznG += nUNNeto - nUNeto		
 				endif
 				skip
 			enddo
-			
 			AADD(aPom, {aGodine[i], nIznG})
-		
 		next
 	enddo
 	
@@ -272,8 +295,7 @@ do while !EOF()
 	aPom := {}
 enddo
 
-? REPLICATE("-", 95)
-
+? cLine
 ? "UKUPNO:"
 ?? SPACE(26)
 for i:=1 to LEN(aPomTot)
@@ -281,8 +303,7 @@ for i:=1 to LEN(aPomTot)
 next
 PrintRow(nUUk)
 PrintRow(nUUk*0.1)
-
-? REPLICATE("-", 95)
+? cLine
 
 
 FF
@@ -292,6 +313,12 @@ return
 *}
 
 
+/*! \fn PrintRadnik(nCt, cId, cNaz)
+ *  \brief Printa rbr, ime i prezime radnika u novi red
+ *  \param nCt - counter
+ *  \param cId - id radnika
+ *  \param cNaz - naziv radnika
+ */
 static function PrintRadnik(nCt, cId, cNaz)
 *{
 
@@ -303,9 +330,13 @@ return
 *}
 
 
+/*! \fn PrintRow(nIznos)
+ *  \brief Ispisuje brojcanu vrijednost u postojecem redu
+ *  \param nIznos - iznos koji se ispisuje
+ */
 static function PrintRow(nIznos)
 *{
-?? SPACE(1), STR(nIznos, 10, 2)
+@ prow(), pcol()+1 SAY STR(nIznos, 10, 2)
 return
 *}
 
