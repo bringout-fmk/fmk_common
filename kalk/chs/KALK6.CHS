@@ -1,7 +1,0 @@
-*ROBA
-A MPC2   N 18 8
-A MPC3   N 18 8
-A MPC4   N 18 8
-A MPC5   N 18 8
-A MPC6   N 18 8
-

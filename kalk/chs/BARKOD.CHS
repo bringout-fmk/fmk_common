@@ -1,3 +1,0 @@
-*ROBA.DBF
-A BARKOD C 13 0
-
