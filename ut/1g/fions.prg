@@ -17,28 +17,33 @@ endif
 return cOznObracuna
 *}
 
-
-function  UkRadnik()
-local i,nArr
+/*! \fn UkRadnik()
+ *  \brief
+ */
+function UkRadnik()
+*{
+local i
+local nArr
 
 nArr:=select()
 
-private cpom:=""
+private cPom:=""
 
 for i:=1 to cLDPolja
- cPom:=padl(alltrim(str(i)),2,"0")
- select tippr; seek cPom
- if tippr->(found()) .and. tippr->aktivan=="D"
-   if tippr->ufs=="D"
-     _USati+=_s&cPom
-   endif
-   _UIznos+=_i&cPom
-   if tippr->uneto=="D"
-      _Uneto+=_i&cPom
-   else
-      _UOdbici+=_i&cPom
-   endif
- endif
+	cPom:=padl(alltrim(str(i)),2,"0")
+ 	select tippr
+	seek cPom
+ 	if tippr->(found()) .and. tippr->aktivan=="D"
+   		if tippr->ufs=="D"
+     			_USati+=_s&cPom
+   		endif
+   		_UIznos+=_i&cPom
+   		if tippr->uneto=="D"
+      			_Uneto+=_i&cPom
+   		else
+      			_UOdbici+=_i&cPom
+   		endif
+ 	endif
 next
 
 select(nArr)
@@ -47,10 +52,12 @@ return (nil)
 
 
 
-//***************************************************************
-//* parametri obracuna
-//***************************************************************
-
+/*! \fn ParObr(nMjesec, cObr, cIdRj)
+ *  \brief Parametri obracuna
+ *  \param nMjesec - mjesec
+ *  \param cObr - broj obracuna
+ *  \param cIdRj - id radna jedinica
+ */
 function ParOBr(nMjesec,cObr,cIDRJ)
 *{
 local nNaz
@@ -105,10 +112,11 @@ RETURN
 *}
 
 
-//****************************
-// fPrikaz = .t. prikazi
-// fPrikaz = .t.
-//****************************
+/*! \fn Izracunaj(ixx, fPrikaz)
+ *  \brief Izracunavanje formula
+ *  \param ixx - 
+ *  \param fPrikaz - prikazi .t.
+ */
 function Izracunaj(ixx,fPrikaz)
 *{
 private cFormula
@@ -133,20 +141,27 @@ return .t.
 
 
 
-***************************************************************************
-function Prosj3(cTip,cTip2)
-* if cTip== "1"  -> prosjek neta/ satu
-* if ctip== "2"  -> prosjek ukupnog primanja/satu
-* if cTip== "3"  -> prosjek neta
-* if cTip== "4"  -> prosjek ukupnog primanja
-* if cTip== "5"  -> prosjek ukupnog primanja/ukupno sati
-* if cTip== "6"  -> prosjek ukupnih "raznih" primanja/satu
-* if cTip== "7"  -> prosjek ukupnih "raznih" primanja/ukupno sati
-* if cTip== "8"  -> prosjek ukupnih "raznih" primanja
-*
-* if ctip2=="1" -> striktno predhodna 3 mjeseca
-* if ctip2=="2" -> vracam se mjesec unazad u kome nije bilo godisnjeg
-*************************************************************************
+/*! \fn Prosj3(cTip, cTip2)
+ *  \brief Prosjek 3 mjeseca
+ *  \param cTip
+ *  \param cTip2
+ */
+function Prosj3(cTip, cTip2)
+*{
+// cTip1
+// "1"  -> prosjek neta/ satu
+// "2"  -> prosjek ukupnog primanja/satu
+// "3"  -> prosjek neta
+// "4"  -> prosjek ukupnog primanja
+// "5"  -> prosjek ukupnog primanja/ukupno sati
+// "6"  -> prosjek ukupnih "raznih" primanja/satu
+// "7"  -> prosjek ukupnih "raznih" primanja/ukupno sati
+// "8"  -> prosjek ukupnih "raznih" primanja
+//
+// cTip2
+// "1"  -> striktno predhodna 3 mjeseca
+// "2"  -> vracam se mjesec unazad u kome nije bilo godisnjeg
+
 local nMj1:=nMj2:=nMj3:=0,nDijeli:=0, cmj1:=cmj2:=cmj3:="",npomak:=0,i:=0
 local nss1:=0,nss2:=0,nss3:=0,nSumsat:=0
 local nsp1:=0, nsp2:=0, nsp3:=0
@@ -159,137 +174,147 @@ set order to tag (TagVO("2","I"))
 
 i:=0
 if ctip2=="2"
- do while .t.
-  ++i
-  if _Mjesec-i<1
-   seek str(_Godina-1,4)+str(12+_Mjesec-i,2)+_idradn
-   cmj1:=str(12+_mjesec-i,2)+"."+str(_godina-1,4)
-  else
-   seek str(_Godina,4)+str(_mjesec-i,2)+_idradn
-   cmj1:=str(_mjesec-i,2)+"."+str(_godina,4)
-  endif
-  if &gFUGod<>0
-    nPomak++
-  else
-    exit
-  endif
-  if i>12  // nema podataka
-    exit
-  endif
- enddo
+	do while .t.
+  		++i
+  		if _Mjesec-i<1
+   			seek str(_Godina-1,4)+str(12+_Mjesec-i,2)+_idradn
+   			cMj1:=str(12+_mjesec-i,2)+"."+str(_godina-1,4)
+  		else
+   			seek str(_Godina,4)+str(_mjesec-i,2)+_idradn
+   			cMj1:=str(_mjesec-i,2)+"."+str(_godina,4)
+  		endif
+  		if &gFUGod<>0
+    			nPomak++
+  		else
+    			exit
+  		endif
+  		if i>12  // nema podataka
+    			exit
+  		endif
+ 	enddo
 endif
 
 if _mjesec-1-npomak<1
-  seek str(_Godina-1,4)+str(12+_Mjesec-1-npomak,2)+_idradn
-  cmj1:=str(12+_mjesec-1-npomak,2)+"."+str(_godina-1,4)
+	seek str(_Godina-1,4)+str(12+_Mjesec-1-npomak,2)+_idradn
+  	cMj1:=str(12+_mjesec-1-npomak,2)+"."+str(_godina-1,4)
 else
-  seek str(_Godina,4)+str(_Mjesec-1-npomak,2)+_idradn
-  cmj1:=str(_mjesec-1-npomak,2)+"."+str(_godina,4)
+  	seek str(_Godina,4)+str(_Mjesec-1-npomak,2)+_idradn
+  	cMj1:=str(_mjesec-1-npomak,2)+"."+str(_godina,4)
 endif
 if found()
-   if lViseObr
-     ScatterS(godina,mjesec,idrj,idradn,"w")
-   else
-     wuneto := uneto
-     wusati := usati
-   endif
-   if cTip $ "13"
-     nMj1:= wUNeto
-   elseif cTip $ "678"
-     nMj1:=URPrim()
-   else
-     nMj1:=UPrim()
-   endif
-   if cTip $ "126"
-    nss1:=wUSati
-    nsp1:=nMj1
-    if wusati<>0
-      nMj1:=nMj1/wUSati
-    else
-      nMj1:=0
-    endif
-   elseif ctip $ "5"
-      nss1:=USati()
-   elseif ctip $ "7"
-      nss1:=URSati()
-   endif
-   if nMj1<>0; ++ndijeli; endif
+	if lViseObr
+     		ScatterS(godina,mjesec,idrj,idradn,"w")
+   	else
+     		wuneto := uneto
+     		wusati := usati
+   	endif
+   	if cTip $ "13"
+     		nMj1:= wUNeto
+   	elseif cTip $ "678"
+     		nMj1:=URPrim()
+   	else
+     		nMj1:=UPrim()
+   	endif
+   	if cTip $ "126"
+    		nSS1:=wUSati
+    		nSP1:=nMj1
+    		if wusati<>0
+      			nMj1:=nMj1/wUSati
+    		else
+      			nMj1:=0
+    		endif
+   	elseif cTip $ "5"
+      		nSS1:=USati()
+   	elseif cTip $ "7"
+      		nSS1:=URSati()
+   	endif
+   	if nMj1<>0
+		++nDijeli
+	endif
 endif
 if _mjesec-2-npomak<1
-  seek str(_Godina-1,4)+str(12+_Mjesec-2-npomak,2)+_idradn
-  cmj2:=str(12+_mjesec-2-npomak,2)+"."+str(_godina-1,4)
+	seek str(_Godina-1,4)+str(12+_Mjesec-2-npomak,2)+_idradn
+  	cMj2:=str(12+_mjesec-2-npomak,2)+"."+str(_godina-1,4)
 else
-  seek str(_Godina,4)+str(_Mjesec-2-npomak,2)+_idradn
-  cmj2:=str(_mjesec-2-npomak,2)+"."+str(_godina,4)
+  	seek str(_Godina,4)+str(_Mjesec-2-npomak,2)+_idradn
+  	cMj2:=str(_mjesec-2-npomak,2)+"."+str(_godina,4)
 endif
 if found()
-   if lViseObr
-     ScatterS(godina,mjesec,idrj,idradn,"w")
-   else
-     wuneto := uneto
-     wusati := usati
-   endif
-   if cTip $ "13"
-     nMj2:= wUNeto
-   elseif cTip $ "678"
-     nMj2:=URPrim()
-   else
-     nMj2:=UPrim()
-   endif
-   if cTip $ "126"
-    nss2:=wUSati
-    nsp2:=nMj2
-    if wusati<>0
-      nMj2:=nMj2/wUSati
-    else
-      nMj2:=0
-    endif
-   elseif ctip $ "5"
-      nss2:=USati()
-   elseif ctip $ "7"
-      nss2:=URSati()
-   endif
-   if nMj2<>0; ++ndijeli; endif
-endif
-if _mjesec-3-npomak<1
-  seek str(_Godina-1,4)+str(12+_Mjesec-3-npomak,2)+_idradn
-  cmj3:=str(12+_mjesec-3-npomak,2)+"."+str(_godina-1,4)
-else
-  seek str(_Godina,4)+str(_Mjesec-3-npomak,2)+_idradn
-  cmj3:=str(_mjesec-3-npomak,2)+"."+str(_godina,4)
-endif
-if found()
-   if lViseObr
-     ScatterS(godina,mjesec,idrj,idradn,"w")
-   else
-     wuneto := uneto
-     wusati := usati
-   endif
-   if cTip $ "13"
-     nMj3:= wUNeto
-   elseif cTip $ "678"
-     nMj3:=URPrim()
-   else
-     nMj3:=UPrim()
-   endif
-   if cTip $ "126"
-    nss3:=wUSati
-    nsp3:=nMj3
-    if wusati<>0
-      nMj3:=nMj3/wUSati
-    else
-      nMj3:=0
-    endif
-   elseif ctip $ "5"
-      nss3:=USati()
-   elseif ctip $ "7"
-      nss3:=URSati()
-   endif
-   if nMj3<>0; ++ndijeli; endif
+	if lViseObr
+     		ScatterS(godina,mjesec,idrj,idradn,"w")
+   	else
+     		wuneto := uneto
+     		wusati := usati
+   	endif
+   	if cTip $ "13"
+     		nMj2:= wUNeto
+   	elseif cTip $ "678"
+     		nMj2:=URPrim()
+   	else
+     		nMj2:=UPrim()
+   	endif
+   	if cTip $ "126"
+    		nSS2:=wUSati
+    		nSP2:=nMj2
+    		if wusati<>0
+      			nMj2:=nMj2/wUSati
+    		else
+      			nMj2:=0
+    		endif
+   	elseif cTip $ "5"
+      		nSS2:=USati()
+   	elseif cTip $ "7"
+      		nSS2:=URSati()
+   	endif
+   	if nMj2<>0
+		++nDijeli
+	endif
 endif
 
-if nDijeli==0; nDijeli:=99999999; endif
-nSumsat:=IF(nss1+nss2+nss3<>0,nss1+nss2+nss3,99999999)
+if _mjesec-3-npomak<1
+	seek str(_Godina-1,4)+str(12+_Mjesec-3-npomak,2)+_idradn
+  	cMj3:=str(12+_mjesec-3-npomak,2)+"."+str(_godina-1,4)
+else
+  	seek str(_Godina,4)+str(_Mjesec-3-npomak,2)+_idradn
+  	cMj3:=str(_mjesec-3-npomak,2)+"."+str(_godina,4)
+endif
+if found()
+	if lViseObr
+     		ScatterS(godina,mjesec,idrj,idradn,"w")
+   	else
+     		wuneto := uneto
+     		wusati := usati
+   	endif
+   	if cTip $ "13"
+     		nMj3:= wUNeto
+   	elseif cTip $ "678"
+     		nMj3:=URPrim()
+   	else
+     		nMj3:=UPrim()
+   	endif
+   	if cTip $ "126"
+    		nSS3:=wUSati
+    		nSP3:=nMj3
+    		if wusati<>0
+      			nMj3:=nMj3/wUSati
+    		else
+      			nMj3:=0
+    		endif
+   	elseif cTip $ "5"
+      		nSS3:=USati()
+   	elseif cTip $ "7"
+      		nSS3:=URSati()
+   	endif
+   	if nMj3<>0
+		++nDijeli
+	endif
+endif
+
+if nDijeli==0
+	nDijeli:=99999999
+endif
+
+nSumsat:=IF(nSS1+nSS2+nSS3<>0,nSS1+nSS2+nSS3,99999999)
 
 Box("#"+IF(cTip$"57","UKUPNA PRIMANJA","Prosjek")+" ZA MJESECE UNAZAD:",6,60)
  @ m_x+2,m_y+2 SAY cmj1; @ row(),col()+2 SAY nMj1 pict "999999.999"
@@ -308,50 +333,62 @@ BoxC()
 PopWa()
 
 return  (nMj3+nMj2+nMj1)/IF(cTip$"57",nSumsat,ndijeli)
+*}
 
-********************
-*ukupna primanja
-********************
+
+/*! \fn UPrim()
+ *  \brief Racuna ukupna primanja
+ */
 function UPrim()
+*{
 IF lViseObr
-  c719:=UbaciPrefix(gFUPrim,"w")
+	c719:=UbaciPrefix(gFUPrim,"w")
 ELSE
-  c719:=gFUPrim
+  	c719:=gFUPrim
 ENDIF
 return &c719
+*}
 
-********************
-*ukupna primanja
-********************
+/*! \fn USati()
+ *  \brief Racuna ukupne sate
+ */
 function USati()
+*{
 IF lViseObr
-  c719:=UbaciPrefix(gFUSati,"w")
+	c719:=UbaciPrefix(gFUSati,"w")
 ELSE
-  c719:=gFUSati
+  	c719:=gFUSati
 ENDIF
 return &c719
+*}
 
-********************
-*ukupna razna primanja
-********************
+
+/*! \fn URPrim()
+ *  \brief Ukupna razna primanja
+ */
 function URPrim()
+*{
 IF lViseObr
-  c719:=UbaciPrefix(gFURaz,"w")
+	c719:=UbaciPrefix(gFURaz,"w")
 ELSE
-  c719:=gFURaz
+  	c719:=gFURaz
 ENDIF
 return &c719
+*}
 
-********************
-*ukupna razna primanja
-********************
+
+/*! \fn URSati()
+ *  \brief Ukupna razna primanja sati
+ */
 function URSati()
+*{
 IF lViseObr
-  c719:=UbaciPrefix(gFURSati,"w")
+	c719:=UbaciPrefix(gFURSati,"w")
 ELSE
-  c719:=gFURSati
+  	c719:=gFURSati
 ENDIF
 return &c719
+*}
 
 **********************************************
 function Prosj1(cTip,cTip2,cF0)
