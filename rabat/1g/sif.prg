@@ -8,7 +8,7 @@
  *  \param dx - ??
  *  \return dy - ??
  */
-function P_Rabat(cid,dx,dy)
+function P_Rabat(cId, dx, dy)
 *{
 private ImeKol,Kol
 
@@ -29,11 +29,11 @@ AADD(Imekol,{ "Iznos 4"    , {|| iznos4   } , "iznos4"   })
 AADD(Imekol,{ "Iznos 5"    , {|| iznos5   } , "iznos5"   })
 AADD(Imekol,{ "Skonto"     , {|| skonto   } , "skonto"   })
 
-FOR i:=1 TO LEN(ImeKol)
+for i:=1 to LEN(ImeKol)
 	AADD(Kol,i)
-NEXT
+next
 
-return PostojiSifra(F_RABAT,1,10,70,"Rabatne skale",@cId,dx,dy,{|Ch| RabatBlock(Ch)},,,,,{"ID"})
+return PostojiSifra(F_RABAT, 1, 10, 70, "Rabatne skale", @cId, dx, dy, {|Ch| RabatBlock(Ch)}, , , , , {"ID"})
 *}
 
 
@@ -85,8 +85,16 @@ do while !EOF()
 		skip
 		loop
 	endif
+	
 	// dodaj zapis u rabatne skale
 	select rabat
+	
+	if RabSExist(PADR(cIdRabat, 10), PADR(cTipRabat, 10), roba->id)
+		select roba
+		skip
+		loop
+	endif
+	
 	append blank
 	replace idrabat with cIdRabat
 	replace tiprabat with cTipRabat
@@ -109,13 +117,79 @@ return
 *}
 
 
+/*! \fn RabSExist(cRabId, cRabType, cArticle)
+ *  \brief provjerava da li rabatna skala postoji
+ */
+function RabSExist(cRabId, cRabType, cArticle)
+*{
+local nRec
+nRec := RecNo()
+bRet := .f.
+
+go top
+seek cRabId + cRabType + cArticle
+
+if Found()
+	bRet := .t.
+endif
+
+go nRec
+
+return bRet
+*}
+
+
 /*! \fn CopyRabat()
  *  \brief Kopiraj rabat 
  */
 function CopyRabat()
 *{
+private cFIdRab:=SPACE(10) // copy from
+private cFTipRab:=SPACE(10) // copy from
+private cTTipRab:=SPACE(10) // copy to
+private cTIdRab:=SPACE(10) // copy to
 
+if !GetCpRabat(@cFIdRab, @cFTipRab, @cTIdRab, @cTTipRab)
+	return
+endif
 
+cFIdRab := PADR(cFIdRab, 10)
+if Empty(cFTipRab)
+	cFTipRab := ""
+else 
+	cFTipRab := PADR(cFTipRab, 10)
+endif
+
+go top
+seek cFIdRab + cFTipRab
+
+nCnt:=0
+
+Box(, 5, 60)
+@ 1+m_x, 2+m_y SAY "Kopiram stake u:"
+@ 2+m_x, 2+m_y SAY "ID rabat  : " + cTIdRab
+@ 3+m_x, 2+m_y SAY "Tip rabata: " + cTTipRab
+do while !EOF() .and. idrabat = cFIdRab .and. IIF(!Empty(cFTipRab), tiprabat = cFTipRab, .t.)
+	skip
+	nRecNo := RecNo()
+	skip -1
+	
+	Scatter()
+	append blank
+	_idrabat := PADR(cTIdRab, 10)
+	// ako je popunjena vrijednost cTTipRab
+	if !Empty(cTTipRab)
+		_tiprabat := PADR(cTTipRab, 10)
+	endif
+	Gather()
+	++ nCnt
+	@ 4+m_x, 2+m_y SAY "Trenutno kopirano: " + ALLTRIM(STR(nCnt))
+	
+	go nRecNo
+enddo
+
+BoxC()
+MsgBeep("Kopirano " + ALLTRIM(STR(nCnt)) + " zapisa...")
 
 return
 *}
@@ -128,7 +202,7 @@ private GetList:={}
 
 Box(, 2, 40)
 	@ 1+m_x, 2+m_y SAY "ID Rabat :" GET cIdRabat VALID !Empty(cIdRabat)
-	@ 2+m_x, 2+m_y SAY "Tip rabat:" GET cTipRabat VALID !Empty(cTipRabat)
+	@ 2+m_x, 2+m_y SAY "Tip rabat:" GET cTipRabat
 	read
 BoxC()
 
@@ -138,6 +212,29 @@ endif
 
 return .t.
 *}
+
+
+function GetCpRabat(cFIdRab, cFTipRab, cTIdRab, cTTipRab)
+*{
+private GetList:={}
+
+Box("#Kopiranje rabatnih skala", 6, 60)
+	@ 1+m_x, 2+m_y SAY "Kopiraj rabat na osnovu:" COLOR "I"
+	@ 2+m_x, 2+m_y SAY "ID Rabat :" GET cFIdRab VALID !Empty(cFIdRab)
+	@ 3+m_x, 2+m_y SAY "Tip rabat:" GET cFTipRab
+	@ 4+m_x, 2+m_y SAY "u rabatnu skalu:" COLOR "I"
+	@ 5+m_x, 2+m_y SAY "ID Rabat :" GET cTIdRab VALID !Empty(cTIdRab)
+	@ 6+m_x, 2+m_y SAY "Tip rabat:" GET cTTipRab
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return .f.
+endif
+
+return .t.
+*}
+
 
 
 function GetTRabat(cTipRab)
