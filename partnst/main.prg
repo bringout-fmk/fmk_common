@@ -147,7 +147,17 @@ function Rpt_Ostav()
 O_PrenHH()
 START PRINT CRET
 
+select params
+go top
+cLastAzur := DToC(SToD(params->opis))
+skip
+cPartnCnt := ALLTRIM(params->opis)
+
 ? "Pregled generisanih podataka za HH"
+?
+? "Broj prenesenih partnera: " + cPartnCnt
+? "Datum zadnjeg azuriranja: " + cLastAzur
+?
 ? REPLICATE("-", 100)
 ? "Rbr. Partner                       Stanje      Stanje      Stanje      Stanje      Stanje      Stanje"
 ? "                                   POS        do 4 d.     do 8 d.     do 16 d.    do 20 d.     pr.20 d."
