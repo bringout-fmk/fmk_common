@@ -11,6 +11,7 @@ function GenPartnSt(lGenPartnSt, nSldMinIzn, cPosId)
 local GetList:={}
 local cModName:=""
 local cDN:="D"
+
 altd()
 if cPosId == nil
 	cPosId := ""
@@ -19,6 +20,10 @@ endif
 lGenPartnSt:=.f.
 nSldMinIzn:=5
 cModName:=goModul:oDataBase:cName
+
+if Pitanje(,"Generisati stanje partnera za HH", "N")=="N"
+	return
+endif
 
 Box(, 6, 60)
 	@ 1+m_x, 2+m_y SAY "Prenos stanja partnera: " + cModName + SPACE(10)
@@ -50,7 +55,8 @@ if nIznosG < nSldMinIzn
 	return
 endif
 O_PrenHH()
-AddToOstav(nId, cIdFmk, cNaziv, nIznosG)
+AddToPartn(nId, cIdFmk, cNaziv)
+AddToOstav(nId, nIznosG)
 return
 *}
 

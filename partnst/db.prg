@@ -20,11 +20,12 @@ ferase(KUMPATH+"ostav.cdx")
 // Izbrisi tabelu PARAMS
 ferase(KUMPATH+"params.dbf")
 ferase(KUMPATH+"params.cdx")
+// Izbrisi tabelu PARTN
+ferase(KUMPATH+"partn.dbf")
+ferase(KUMPATH+"partn.cdx")
 
 aDbf:={} 
 AADD(aDbf, { "ID",       "N",  6, 0})
-AADD(aDbf, { "OZNAKA",   "C",  8, 0})
-AADD(aDbf, { "NAZIV",    "C", 30, 0})
 AADD(aDbf, { "IZNOSG",   "N", 15, 2})
 AADD(aDbf, { "IZNOSZ1",  "N", 15, 2})
 AADD(aDbf, { "IZNOSZ2",  "N", 15, 2})
@@ -32,7 +33,15 @@ AADD(aDbf, { "IZNOSZ3",  "N", 15, 2})
 AADD(aDbf, { "IZNOSZ4",  "N", 15, 2})
 DBcreate2(KUMPATH+"OSTAV.DBF",aDbf)
 CREATE_INDEX("ID", "id", KUMPATH+"OSTAV")
-CREATE_INDEX("OZNAKA", "oznaka", KUMPATH+"OSTAV")
+
+aDbf:={} 
+AADD(aDbf, { "ID",       "N",  6, 0})
+AADD(aDbf, { "OZNAKA",   "C",  8, 0})
+AADD(aDbf, { "NAZIV",    "C", 30, 0})
+DBcreate2(KUMPATH+"PARTN.DBF",aDbf)
+CREATE_INDEX("ID", "id", KUMPATH+"PARTN")
+CREATE_INDEX("OZNAKA", "oznaka", KUMPATH+"PARTN")
+
 
 aDbf:={}
 AADD(aDbf, { "ID",   "C",  3, 0} )
@@ -66,9 +75,15 @@ if cPosID <> nil
 	SELECT (F_F_PARAMS)
 	USE (cTKPath+"PARAMS")
 	set order to tag "ID"
+	// PARTN
+	SELECT (F_F_PARTN)
+	USE (cTKPath+"PARTN")
+	set order to tag "ID"
+
 else
 	O_OSTAV
 	O_PARAMS
+	O_PARTN
 endif
 
 select (nArr)
@@ -98,13 +113,12 @@ return cTKPath
 *}
 
 
-/*! \fn AddToOstav(nIdN,dDatum,cBrojDok,cStatus,nIznos)
+/*! \fn AddToOstav(nId, nIznosG)
  *  \brief Dodaje gotovinski zapis u tabelu ostav - iz TOPS-a
  *  \param nId - polje IDN iz rngost (veza sa partn->id)
- *  \param cOznaka - oznaka idfmk iz RNGOST
  *  \param nIznosG - saldo partnera iz TOPS-a
  */
-function AddToOstav(nId, cOznaka, cNaziv, nIznosG)
+function AddToOstav(nId, nIznosG)
 *{
 local nArr
 nArr:=SELECT()
@@ -112,14 +126,34 @@ nArr:=SELECT()
 select ostav
 append blank
 replace id with nId
-replace oznaka with cOznaka
-replace naziv with cNaziv
 replace iznosg with nIznosG
 // ostala polja setuj na 0
 replace iznosz1 with 0
 replace iznosz2 with 0
 replace iznosz3 with 0
 replace iznosz4 with 0
+
+select (nArr)
+
+return
+*}
+
+/*! \fn AddToPartn(nId, cIdFmk, cNaziv)
+ *  \brief Dodaje zapis u tabelu partn - iz TOPS-a
+ *  \param nId - polje IDN iz rngost (veza sa partn->id)
+ *  \param cIdFmk - polje IDFMK iz tabele RNGOST
+ *  \param cNaziv - naziv partnera
+ */
+function AddToPartn(nId, cIdFmk, cNaziv)
+*{
+local nArr
+nArr:=SELECT()
+
+select partn
+append blank
+replace id with nId
+replace oznaka with cIdFmk
+replace naziv with cNaziv
 
 select (nArr)
 
@@ -162,14 +196,23 @@ function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4)
 *{
 local nArr
 nArr:=SELECT()
-
-select (F_F_OSTAV)
+select (F_F_PARTN)
 set order to tag "oznaka"
 go top
-
 hseek cIdPartn
 
-if ostav->oznaka == cIdPartn
+if field->oznaka == cIdPartn
+	nId := field->id
+else
+	return
+endif
+
+select (F_F_OSTAV)
+set order to tag "id"
+go top
+hseek nId
+
+if field->id == nId
 	replace iznosz1 with nIznos1
 	replace iznosz2 with nIznos2
 	replace iznosz3 with nIznos3
