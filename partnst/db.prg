@@ -97,16 +97,16 @@ return
  *  \param cTId - idpm TOPS
  *  \todo razraditi procedure ako nema podesenog PATH-a
  */
-function GetTopsKumPathFromKoncij(cIdPos)
+function GetTopsKumPathFromKoncij()
 *{
 altd()
 cTKPath:=""
 O_KONCIJ
 select koncij
 // setuj filter po cProdId
-set filter to idprodmjes=cIdPos
+set filter to idprodmjes = cPosId
 go top
-if (field->idprodmjes == cIdPos)
+if (field->idprodmjes == cPosId)
 	cTKPath:=ALLTRIM(koncij->kumtops)
 endif
 set filter to
