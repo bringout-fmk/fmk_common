@@ -91,17 +91,17 @@ return
 *}
 
 
-/*! \fn AddSCnToParams(nPartners, lSilent)
+/*! \fn AddSCnToParams(lSilent)
  *  \brief Poziva f-ju AddToParams() i dodjeljuje joj parametre SCN
- *  \param nPartners - broj partnera
  *  \param lSilent - .t. - tihi mod, .f. - prijavi MSG o prenesenim parametrima
  */
-function AddSCnToParams(nPartners, lSilent)
+function AddSCnToParams(lSilent)
 *{
 if lSilent == nil
 	lSilent := .t.
 endif
-AzurTopsParams("SCN", "Broj prenesenih partnera", STR(nPartners))
+nPartners:=GetOstavCnt()
+AzurTopsParams("SCN", "Broj prenesenih partnera", ALLTRIM(STR(nPartners)))
 if !lSilent
 	MsgBeep("Preneseno " + ALLTRIM(STR(nPartners)) + " partnera!")
 endif

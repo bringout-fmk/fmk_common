@@ -182,3 +182,16 @@ return
 *}
 
 
+/*! \fn GetOstavCnt()
+ *  \brief Vraca broj prenesenih partnera u OSTAV
+ */
+function GetOstavCnt()
+*{
+local nArr
+nArr:=SELECT()
+O_OSTAV
+nCnt:=RecCount()
+select (nArr)
+return nCnt
+*}
+
