@@ -79,12 +79,14 @@ return
  */
 function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
 *{
+local nArr
+nArr:=SELECT()
 if nIznos1+nIznos2+nIznos3+nIznos4 < nSldMinIzn
 	return
 endif
 O_PrenHH(cPosId)
 AddFinIntervalsToOstav(cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4)
-
+select (nArr)
 return
 *}
 
