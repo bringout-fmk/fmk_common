@@ -50,12 +50,12 @@ return
  *  \param dHiredFrom - angazovan od datum
  *  \param dHiredTo - angazovan do datum
  */
-function ShowHiredFromTo(dHiredFrom, dHiredTo)
+function ShowHiredFromTo(dHiredFrom, dHiredTo, cLM)
 *{
 cHiredFrom:=DToC(dHiredFrom)
 cHiredTo:=DToC(dHiredTo)
 
-? "Angazovan od: " + cHiredFrom
+? cLM + "Angazovan od: " + cHiredFrom
 ?? ",  Angazovan do: "
 
 if !EMPTY(DToS(dHiredTo))
