@@ -3,7 +3,7 @@ MODUL=fmk_svi
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\svi\\
+SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\svi\\
 
 PRGS=adm_db.prg db.prg fmk_ut.prg gvars.prg konto.prg ops.prg partn.prg rj.prg sifre.prg ut.prg valute.prg vn_vd.prg specif.prg rpt_all.prg dokstxt.prg rnal.prg
 
