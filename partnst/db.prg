@@ -199,36 +199,24 @@ return
 function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4)
 *{
 local nArr, nId
-
 nArr:=SELECT()
 
 select (F_F_PARTN)
 set order to tag "OZNAKA"
 go top
+seek PADR(cIdPartn, 8)
 
-//hseek cIdPartn
-nId:=-1
-do while !eof()
-	if alltrim(field->oznaka) == alltrim(cIdPartn)
-		nId:=field->id
-	endif
-	skip
-enddo
-/*
-if field->oznaka == cIdPartn
+if field->oznaka == PADR(cIdPartn, 8)
 	nId := field->id
 else
-	return
-endif
-*/
-if (nId==-1)
+	select (nArr)
 	return
 endif
 
 select (F_F_OSTAV)
 set order to tag "id"
 go top
-hseek nId
+seek nId
 
 if field->id == nId
 	replace iznosz1 with nIznos1

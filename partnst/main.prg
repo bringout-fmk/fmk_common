@@ -120,3 +120,44 @@ return
 *}
 
 
+/*! \fn Rpt_Ostav()
+ *  \brief Stampa kontrolnog izvjestaja
+ */
+function Rpt_Ostav()
+*{
+O_PrenHH()
+START PRINT CRET
+
+? "Pregled generisanih podataka za HH"
+? REPLICATE("-", 70)
+? "Partner          StanjeG     StanjeZ4    StanjeZ8    StanjeZ16    StanjeZ20"
+? REPLICATE("-", 70)
+
+select ostav
+set order to tag "ID"
+go top
+
+do while !EOF()
+	select partn
+	set order to tag "ID"
+	hseek ostav->id
+	select ostav
+	
+	? partn->oznaka + ": " +  ALLTRIM(partn->naziv)
+	?? STR(ostav->iznosg, 12, 2)
+	?? STR(ostav->iznosz1, 12, 2)
+	?? STR(ostav->iznosz2, 12, 2)
+	?? STR(ostav->iznosz3, 12, 2)
+	?? STR(ostav->iznosz4, 12, 2)
+	skip
+enddo
+
+FF
+END PRINT
+
+return
+*}
+
+
+
+
