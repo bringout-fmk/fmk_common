@@ -3,7 +3,7 @@ MODUL=ld_1kre
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\ld\\kredit\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\ld\\kredit\\1g\\
 
 PRGS=krediti.prg mnu_kred.prg
 
