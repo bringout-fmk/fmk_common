@@ -31,6 +31,7 @@ AADD(aDbf, { "IZNOSZ1",  "N", 15, 2})
 AADD(aDbf, { "IZNOSZ2",  "N", 15, 2})
 AADD(aDbf, { "IZNOSZ3",  "N", 15, 2})
 AADD(aDbf, { "IZNOSZ4",  "N", 15, 2})
+AADD(aDbf, { "IZNOSZ5",  "N", 15, 2})
 DBcreate2(KUMPATH+"OSTAV.DBF",aDbf)
 CREATE_INDEX("ID", "id", KUMPATH+"OSTAV")
 
@@ -136,6 +137,7 @@ replace iznosz1 with 0
 replace iznosz2 with 0
 replace iznosz3 with 0
 replace iznosz4 with 0
+replace iznosz5 with 0
 
 select (nArr)
 
@@ -196,7 +198,7 @@ return
  *  \param nIznos3 - saldo do 16 dana
  *  \param nIznos4 - saldo do 20 dana
  */
-function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4)
+function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5)
 *{
 local nArr, nId
 nArr:=SELECT()
@@ -223,6 +225,7 @@ if field->id == nId
 	replace iznosz2 with nIznos2
 	replace iznosz3 with nIznos3
 	replace iznosz4 with nIznos4
+	replace iznosz5 with nIznos5
 endif
 select (nArr)
 
@@ -238,6 +241,20 @@ function GetOstavCnt()
 local nArr
 nArr:=SELECT()
 O_OSTAV
+nCnt:=RecCount()
+select (nArr)
+return nCnt
+*}
+
+
+/*! \fn GetPartnCnt()
+ *  \brief Vraca broj prenesenih partnera u OSTAV
+ */
+function GetPartnCnt()
+*{
+local nArr
+nArr:=SELECT()
+O_PARTN
 nCnt:=RecCount()
 select (nArr)
 return nCnt

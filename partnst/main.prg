@@ -77,15 +77,15 @@ return
 /*! \fn AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
  *  \brief Poziva f-ju AddFinIntervalsToOstav() 
  */
-function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
+function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5, nSldMinIzn)
 *{
 local nArr
 nArr:=SELECT()
-if nIznos1+nIznos2+nIznos3+nIznos4 < nSldMinIzn
+if nIznos1+nIznos2+nIznos3+nIznos4+nIznos5 < nSldMinIzn
 	return
 endif
 O_PrenHH(cPosId)
-AddFinIntervalsToOstav(cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4)
+AddFinIntervalsToOstav(cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5)
 select (nArr)
 return
 *}
@@ -111,13 +111,32 @@ function AddSCnToParams(lSilent)
 if lSilent == nil
 	lSilent := .t.
 endif
-nPartners:=GetOstavCnt()
-AzurTopsParams("SCN", "Broj prenesenih partnera", ALLTRIM(STR(nPartners)))
+nOstav:=GetOstavCnt()
+AzurTopsParams("SCN", "Broj prenesenih otv.stavki", ALLTRIM(STR(nOstav)))
+if !lSilent
+	MsgBeep("Preneseno " + ALLTRIM(STR(nOstav)) + " otvorenih stavki!")
+endif
+return
+*}
+
+
+/*! \fn AddPCnToParams(lSilent)
+ *  \brief Poziva f-ju AddToParams() i dodjeljuje joj parametre PCN
+ *  \param lSilent - .t. - tihi mod, .f. - prijavi MSG o prenesenim parametrima
+ */
+function AddPCnToParams(lSilent)
+*{
+if lSilent == nil
+	lSilent := .t.
+endif
+nPartners:=GetPartnCnt()
+AzurTopsParams("PCN", "Broj prenesenih partnera", ALLTRIM(STR(nPartners)))
 if !lSilent
 	MsgBeep("Preneseno " + ALLTRIM(STR(nPartners)) + " partnera!")
 endif
 return
 *}
+
 
 
 /*! \fn Rpt_Ostav()
@@ -129,10 +148,10 @@ O_PrenHH()
 START PRINT CRET
 
 ? "Pregled generisanih podataka za HH"
-? REPLICATE("-", 90)
-? "Rbr. Partner                       Stanje      Stanje      Stanje      Stanje      Stanje"
-? "                                   POS        do 4 d.     do 8 d.     do 16 d.    do 20.d"
-? REPLICATE("-", 90)
+? REPLICATE("-", 100)
+? "Rbr. Partner                       Stanje      Stanje      Stanje      Stanje      Stanje      Stanje"
+? "                                   POS        do 4 d.     do 8 d.     do 16 d.    do 20 d.     pr.20 d."
+? REPLICATE("-", 100)
 
 select ostav
 set order to tag "ID"
@@ -144,6 +163,7 @@ nUkFin4:=0
 nUkFin8:=0
 nUkFin16:=0
 nUkFin20:=0
+nUkFin21:=0
 
 do while !EOF()
 	select partn
@@ -157,23 +177,26 @@ do while !EOF()
 	?? STR(ostav->iznosz2, 12, 2)
 	?? STR(ostav->iznosz3, 12, 2)
 	?? STR(ostav->iznosz4, 12, 2)
+	?? STR(ostav->iznosz5, 12, 2)
 	// calculate total
 	nUkPos += ostav->iznosg
 	nUkFin4 += ostav->iznosz1
 	nUkFin8 += ostav->iznosz2
 	nUkFin16 += ostav->iznosz3
 	nUkFin20 += ostav->iznosz4
+	nUkFin21 += ostav->iznosz5
 	skip
 enddo
 // write total
-? Replicate("-", 90)
+? Replicate("-", 100)
 ? PADR("UKUPNO", 29)
 ?? STR(nUkPos, 12, 2)
 ?? STR(nUkFin4, 12, 2)
 ?? STR(nUkFin8, 12, 2)
 ?? STR(nUkFin16, 12, 2)
 ?? STR(nUkFin20, 12, 2)
-? Replicate("-", 90)
+?? STR(nUkFin21, 12, 2)
+? Replicate("-", 100)
 
 FF
 END PRINT
