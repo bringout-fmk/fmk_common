@@ -4,7 +4,7 @@
  *  \brief Postavljanje upita za generisanje stanja partnera te setovanje varijabli
  *  \param lGenPartnSt - da li se koristi ovaj feature
  *  \param nMinIznos - minimalan iznos 
- *  \param cPosId
+ *  \param cPosId - id oznaka pos-a
  */
 function GenPartnSt(lGenPartnSt, nSldMinIzn, cPosId)
 *{
@@ -41,7 +41,9 @@ return
 *}
 
 
-
+/*! \fn AzurTopsOstav(nId, cIdFmk, cNaziv, nIznosG, nSldMinIzn)
+ *  \brief Poziva funkciju AddToOstav() i odredjuje da li je nIznosG manji od nSldMinIzn 
+ */
 function AzurTopsOstav(nId, cIdFmk, cNaziv, nIznosG, nSldMinIzn)
 *{
 if nIznosG < nSldMinIzn
@@ -52,6 +54,10 @@ AddToOstav(nId, cIdFmk, cNaziv, nIznosG)
 return
 *}
 
+
+/*! \fn AzurTopsParams(cId, cNaziv, cOpis)
+ *  \brief Poziva f-ju AddToParams()
+ */
 function AzurTopsParams(cId, cNaziv, cOpis)
 *{
 O_PrenHH()
@@ -60,6 +66,9 @@ return
 *}
 
 
+/*! \fn AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
+ *  \brief Poziva f-ju AddFinIntervalsToOstav() 
+ */
 function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
 *{
 if nIznos1+nIznos2+nIznos3+nIznos4 < nSldMinIzn
@@ -71,12 +80,22 @@ return
 *}
 
 
+/*! \fn AddPAzToParams(dDate)
+ *  \brief Poziva f-ju AddToParams() i dodjeljuje joj parametre PAZ
+ *  \param dDate - datum azuriranja
+ */
 function AddPAzToParams(dDate)
 *{
 AzurTopsParams("PAZ", "Posljednje azuriranje", DToS(dDate))
 return
 *}
 
+
+/*! \fn AddSCnToParams(nPartners, lSilent)
+ *  \brief Poziva f-ju AddToParams() i dodjeljuje joj parametre SCN
+ *  \param nPartners - broj partnera
+ *  \param lSilent - .t. - tihi mod, .f. - prijavi MSG o prenesenim parametrima
+ */
 function AddSCnToParams(nPartners, lSilent)
 *{
 if lSilent == nil

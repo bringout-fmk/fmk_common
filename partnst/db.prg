@@ -3,8 +3,9 @@
 
 
 
-/*! \fn CrePStDB()
+/*! \fn CrePStDB(cModulName)
  *  \brief Kreiranje tabela za prenos (OSTAV, PARAMS)
+ *  \param cModulName - ime modula - generisi tabele samo dok si u modulu POS
  */
 function CrePStDB(cModulName)
 *{
@@ -44,8 +45,9 @@ return
 *}
 
 
-/*! \fn O_PrenHH()
+/*! \fn O_PrenHH(cPosID)
  *  \brief Otvaranje tabele za prenos na HH
+ *  \param cPosID - id oznaka POS-a - bitan za modul FIN
  */
 function O_PrenHH(cPosID)
 *{
@@ -55,7 +57,7 @@ altd()
 
 if cPosID <> nil
 	O_KONCIJ
-	cTKPath:=GetTopsKumPath(cPosId)
+	cTKPath:=GetTopsKumPathFromKoncij(cPosId)
 	// OSTAV
 	SELECT (F_F_OSTAV)
 	USE (cTKPath+"OSTAV")
@@ -74,7 +76,12 @@ return
 *}
 
 
-function GetTopsKumPath(cTId)
+/*! \fn GetTopsKumPathFromKoncij(cTId)
+ *  \brief Vraca KUMPATH TOPS-a iz tabele koncij
+ *  \param cTId - idpm TOPS
+ *  \todo razraditi procedure ako nema podesenog PATH-a
+ */
+function GetTopsKumPathFromKoncij(cTId)
 *{
 cTKPath:=""
 O_KONCIJ
