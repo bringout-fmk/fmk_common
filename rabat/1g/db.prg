@@ -45,6 +45,9 @@ function GetRabForArticle(cIdRab, cTipRab, cIdRoba, nTekIznos)
 local nArr
 nArr:=SELECT()
 
+cIdRab := PADR(cIdRab, 10)
+cTipRab := PADR(cTipRab, 10)
+
 O_RABAT
 select rabat
 set order to tag "1"
@@ -71,33 +74,34 @@ function GetDaysForRabat(cIdRab, cTipRab)
 local nArr
 nArr:=SELECT()
 
+cIdRab := PADR(cIdRab, 10)
+cTipRab := PADR(cTipRab, 10)
+
 O_RABAT
 select rabat
 set order to tag "1"
 go top
 seek cIdRab + cTipRab
-
 nRet:=field->dana
-
 select (nArr)
 
 return nRet
 *}
 
 
-/*! \fn GetRabIznos(nTekIzn)
- *  \brief Vraca iznos rabata za zadati nTekIznos (vrijednost polja)
- *  \param nTekIzn - tekuce polje koje se uzima
+/*! \fn GetRabIznos(cTekIzn)
+ *  \brief Vraca iznos rabata za zadati cTekIznos (vrijednost polja)
+ *  \param cTekIzn - tekuce polje koje se uzima
  */
-function GetRabIznos(nTekIzn)
+function GetRabIznos(cTekIzn)
 *{
-if (nTekIzn == nil)
-	nTekIzn := 1
+if (cTekIzn == nil)
+	cTekIzn := "1"
 endif
 
-// primjer: "iznos" + nTekIzn
+// primjer: "iznos" + cTekIzn
 //           iznos1 ili iznos3
-cField := "iznos" + ALLTRIM(STR(nTekIzn))
+cField := "iznos" + ALLTRIM(cTekIzn)
 // izvrsi macro evaluaciju
 nRet := field->&cField
 return nRet
@@ -116,14 +120,14 @@ function GetSkontoArticle(cIdRab, cTipRab, cIdRoba)
 local nArr
 nArr:=SELECT()
 
+cIdRab := PADR(cIdRab, 10)
+cTipRab := PADR(cTipRab, 10)
 O_RABAT
 select rabat
 set order to tag "1"
 go top
 seek cIdRab + cTipRab + cIdRoba
-
 nRet:=field->skonto
-
 select (nArr)
 
 return nRet
