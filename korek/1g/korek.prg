@@ -17,6 +17,7 @@ private dYOd
 private dMDo
 private dYDo
 private aParObr:={}
+private aGodine:={}
 private lMjesec
 
 // daj formu uslova izvjestaja i setuj varijable
@@ -29,7 +30,6 @@ endif
 // GODINA, MJESEC, VRBOD, PROSJ(70%)
 //  2002, parobr->id, parobr->vrbod, parobr->k2
 
-aGodine := {}
 aGodine := GetGodine(dYOd, dYDo)
 
 GetParObr(@aParObr, aGodine)
@@ -120,7 +120,10 @@ for i:=1 to LEN(aGodine)
 	go top
 	do while !EOF()
 		// puni matricu aParObr {}
-		//   aParObr = 2002   , ID "1"     , vrbod, k2 
+		// aParObr[1] = aGodine[1] (npr. 2002)
+		// aParObr[2] = parobr->id (npr. 1)
+		// aParObr[3] = parobr->vrbod (npr. 82.00)
+		// aParObr[4] = parobr->k2 (npr. 338.00) 
 		AADD(aParObr, {VAL(aGodine[i]), VAL(&cAlias->id), &cAlias->vrbod, &cAlias->k2})
 		skip
 	enddo
