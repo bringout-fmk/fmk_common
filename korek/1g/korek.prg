@@ -259,7 +259,7 @@ do while !EOF()
 		
 				// ako zadovoljava uslov za prikaz
 				if (nKoef > 1) 
-					nFixno := (I13 + I15 + I16)
+					nFixno := (I13 + I16)
 					nUNeto := ld->uneto
 					nUNNeto := nKoef * (nUNeto - nFixno)
 					nIznG += nUNNeto - nUNeto + nFixno	
