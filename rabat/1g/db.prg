@@ -9,22 +9,18 @@ function CreRabDB()
 *{
 
 // RABAT.DBF
-
-ferase(SIFPATH + "rabat.dbf")
-ferase(SIFPATH + "rabat.cdx")
-
 aDbf:={}
 AADD(aDbf,{"IDRABAT"      , "C", 10, 0})
 AADD(aDbf,{"TIPRABAT"     , "C", 10, 0})
 AADD(aDbf,{"DATUM"        , "D",  8, 0})
-AADD(aDbf,{"DANA"         , "N",  3, 2})
+AADD(aDbf,{"DANA"         , "N",  5, 2})
 AADD(aDbf,{"IDROBA"       , "C", 10, 0})
-AADD(aDbf,{"IZNOS1"       , "N", 10, 5})
-AADD(aDbf,{"IZNOS2"       , "N", 10, 5})
-AADD(aDbf,{"IZNOS3"       , "N", 10, 5})
-AADD(aDbf,{"IZNOS4"       , "N", 10, 5})
-AADD(aDbf,{"IZNOS5"       , "N", 10, 5})
-AADD(aDbf,{"SKONTO"       , "N", 10, 5})
+AADD(aDbf,{"IZNOS1"       , "N",  5, 2})
+AADD(aDbf,{"IZNOS2"       , "N",  5, 2})
+AADD(aDbf,{"IZNOS3"       , "N",  5, 2})
+AADD(aDbf,{"IZNOS4"       , "N",  5, 2})
+AADD(aDbf,{"IZNOS5"       , "N",  5, 2})
+AADD(aDbf,{"SKONTO"       , "N",  5, 2})
 
 if !File((SIFPATH + "rabat.dbf"))
 	DBCREATE2(SIFPATH + "rabat.dbf", aDbf)
@@ -96,10 +92,8 @@ endif
 cField := "iznos" + ALLTRIM(STR(nTekIzn))
 // izvrsi macro evaluaciju
 nRet := field->&cField
-
 return nRet
 *}
-
 
 
 

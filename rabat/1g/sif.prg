@@ -1,6 +1,7 @@
 #include "sc.ch"
 #include "rabat.ch"
 
+
 /*! \fn P_Rabat(cid, dx, dy)
  *  \brief Vraca ID rabata ukoliko postoji, u suprotnom izvali prozor za odabir iz sif.
  *  \param cid - ??
@@ -10,14 +11,12 @@
 function P_Rabat(cid,dx,dy)
 *{
 
-PRIVATE ImeKol,Kol
+private ImeKol,Kol
+
 ImeKol:={}
 Kol:={}
 
-// morao sam ovako, nije se dalo drugacije ;'(
 O_RABAT
-select rabat
-// ---
 
 AADD(Imekol,{ "ID"         , {|| idRabat  } , "idRabat"  })
 AADD(Imekol,{ "Tip rabata" , {|| tipRabat } , "tipRabat" })
@@ -35,5 +34,34 @@ FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
 NEXT
 
-return PostojiSifra(F_RABAT,1,10,77,"Rabatne skale",@cId,dx,dy)
+return PostojiSifra(F_RABAT,1,10,70,"Rabatne skale",@cId,dx,dy,{|Ch| RabatBlock(Ch)},,,,,{"IDRABAT"})
 *}
+
+
+/*! \fn RabatBlock()
+ *  \brief Opcije sifrarnika rabata
+ */
+function RabatBlock(Ch)
+*{
+if (Ch==K_ALT_U)
+	return DE_REFRESH
+endif
+
+
+return DE_CONT
+*}
+
+
+/*! \fn FillRabats()
+ *  \brief Napuni rabate iz sifrarnika robe
+ */
+function FillRabats()
+*{
+
+
+
+
+
+return
+*}
+
