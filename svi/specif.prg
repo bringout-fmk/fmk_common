@@ -293,6 +293,15 @@ static lDomZdr
 *;
 
 
+/*! \var lRabati
+ *  \ingroup Koristenje rabatnih skala
+ *  \sa IsRabati
+ */
+*bool
+static lRabati
+*;
+
+
 /*! \var lTehnoprom
  *  \ingroup Specificnosti za tehnoprom
  *  \sa IsTehnoprom
@@ -432,6 +441,17 @@ function SetUgovori(lValue)
 *{
 lUgovori:=lValue
 *}
+
+function IsRabati()
+*{
+return lRabati
+*}
+
+function SetRabati(lValue)
+*{
+lRabati:=lValue
+*}
+
 
 function IsRamaGlas()
 *{
@@ -644,6 +664,12 @@ if IzFmkIni("FMK","Fakultet","N",KUMPATH)=="D"
 	SetFakultet(.t.)
 else
 	SetFakultet(.f.)
+endif
+
+if IzFmkIni("FMK","Rabati","N",KUMPATH)=="D"
+	SetRabati(.t.)
+else
+	SetRabati(.f.)
 endif
 
 
