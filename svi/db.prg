@@ -143,7 +143,7 @@ if !file(SIFPATH+"VALUTE.DBF")
 endif
 
 CREATE_INDEX("ID","id", SIFPATH+"VALUTE")
-CREATE_INDEX("NAZ","tip+id", SIFPATH+"VALUTE")
+CREATE_INDEX("NAZ","tip+id+dtos(datum)", SIFPATH+"VALUTE")
 CREATE_INDEX("ID2","id+dtos(datum)", SIFPATH+"VALUTE")
 
 if !file(SIFPATH+'TOKVAL.dbf')
