@@ -3,7 +3,7 @@ MODUL=fmk_evn
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\event\\
+SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\event\\
 
 PRGS=db.prg main.prg mnu_evn.prg rpt_evn.prg
 
