@@ -108,6 +108,8 @@ set filter to idprodmjes = cPosId
 go top
 if (field->idprodmjes == cPosId)
 	cTKPath:=ALLTRIM(koncij->kumtops)
+else
+	cTKPath:="C:\KASE\TOPS\KUM"+cPosId
 endif
 set filter to
 
@@ -196,17 +198,30 @@ return
  */
 function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4)
 *{
-local nArr
+local nArr, nId
+
 nArr:=SELECT()
 
 select (F_F_PARTN)
 set order to tag "OZNAKA"
 go top
-hseek cIdPartn
 
+//hseek cIdPartn
+nId:=-1
+do while !eof()
+	if alltrim(field->oznaka) == alltrim(cIdPartn)
+		nId:=field->id
+	endif
+	skip
+enddo
+/*
 if field->oznaka == cIdPartn
 	nId := field->id
 else
+	return
+endif
+*/
+if (nId==-1)
 	return
 endif
 
