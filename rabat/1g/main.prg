@@ -54,21 +54,28 @@ go top
 
 if (RecCount2() <> 0)
 	ImeKol:={}
-   	AADD(ImeKol,{ "TD",       {|| IdTipdok}               })
-   	AADD(ImeKol,{ "Broj",     {|| BrDok}                  })
-   	AADD(ImeKol,{ "Partner",  {|| left(idpartner,20)}       })
-   	AADD(ImeKol,{ "TipRabat", {|| tiprabat }, {|| .t.}, {|| .t.}              })
-   	AADD(ImeKol,{ "Skonto",   {|| m1 }                })
+   	AADD(ImeKol, {"TD", {|| IdTipdok}})
+   	AADD(ImeKol, {"Broj", {|| BrDok}})
+   	AADD(ImeKol, {"Partner", {|| LEFT(idpartner, 20)}})
+   	AADD(ImeKol, {"Tip Rabat", {|| tiprabat}})
+   	AADD(ImeKol, {"Skonto", {|| m1}})
    	Kol:={}
-   	for i:=1 to len(ImeKol)
+   	for i:=1 to LEN(ImeKol)
    		AADD(Kol, i)
  	next
 
    	Box(,20,75)
-	cFilter := "idfirma=" + Cm2Str(gFirma) + ".and. idtipdok=" + Cm2Str("10") + ".and. rbr = '  1'" 
-    	set filter to &cFilter 
+	
+	@ 1+m_x, 2+m_y SAY "Sredjivanje rabata na dokumentima...      "
+	@ 2+m_x, 2+m_y SAY "Opcije:" COLOR "I"
+	@ 2+m_x, 10+m_y SAY "<SPACE> - obracunavaj kasu skonto"
+	@ 3+m_x, 10+m_y SAY "<R> - postavi tip rabata za dokument"
+	
+	
+	private cFilt := "idfirma=" + Cm2Str(gFirma) + ".and. idtipdok=" + Cm2Str("10") + ".and. rbr = '  1'" 
+    	set filter to &cFilt
 	go top
-    	do while !eof() .and. IdFirma+IdTipdok = gFirma + "10"
+    	do while !eof() .and. IdFirma = gFirma .and. IdTipdok $ gcRabDok
       		if m1 <> "Z"
         		replace m1 with " "
       		endif
@@ -81,18 +88,24 @@ if (RecCount2() <> 0)
 	
 	if Pitanje(,"Azurirati rabate ?","N")=="D"
       		select pripr
-      		do while !eof() .and. IdFirma+IdTipdok = gFirma + "10"
-         		skip
-			nTrec0:=recno()
-			skip -1
-         		if m1="*"
-				_skonto := SKVrijednost(gcRabDef, _tiprabat, _idroba)
-			endif
-			_rabat := RabVrijednost(gcRabDef, _tiprabat, _idroba, gcRabIDef)
-          	       	go nTrec0
-      		enddo   
+      		//do while !eof() .and. IdFirma=gFirma .and. IdTipdok$gcRabDok
+		//	skip
+		//	nTrec0:=RecNo()
+		//	skip -1
+		//	_rabat := RabVrijednost(gcRabDef, _tiprabat, _idroba, gcRabIDef)
+         		// postavi skonto
+		//	if m1="*"
+		//		_skonto := SKVrijednost(gcRabDef, _tiprabat, _idroba)
+		//		_m1 := " " 
+		//	endif
+		//	go nTrec0
+      		//enddo   
 		set filter to
+		SetRabToAll()
       	endif
+else
+	// ne postoje dokumenti
+	MsgBeep("Nema dokumenata u pripremi")
 endif
      
 close all
@@ -116,8 +129,36 @@ do case
      			replace m1 with " "
    		endif
    		nRet:=DE_REFRESH
+	case chr(Ch) $ "rR" // postavi TipRabata
+		private cTipRab:=SPACE(10)
+		GetTRabat(@cTipRab)
+		replace tiprabat with cTipRab 
+		nRet:=DE_REFRESH
 endcase
 return nRet
 *}
+
+
+function SetRabToAll()
+*{
+go top
+hseek gFirma + "10"
+
+cTipRab := ""
+
+do while !EOF() .and. idfirma = gFirma .and. idtipdok $ gcRabDok
+	// provrti pripremu
+	if !Empty(field->tiprabat)
+		cTipRab := field->tiprabat
+	endif
+	replace tiprabat with PADR(cTipRab, 10)
+	replace rabat with RabVrijednost(gcRabDef, tiprabat, idroba, gcRabIDef)
+	replace skonto with SKVrijednost(gcRabDef, tiprabat, idroba)
+	skip
+enddo
+
+return
+*}
+
 
 
