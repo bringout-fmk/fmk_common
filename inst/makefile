@@ -1,11 +1,11 @@
 VERZIJA=CDX
 MODUL=INSTALL
 
-PRGS=/cl/sigma/fmk/inst/install.prg
+PRGS=/dev/fmk/af/cl-af/inst/install.prg
 CS=
 ASMS=
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
 FMK_LIBS=fmk_svi.lib fmk_roba.lib
 
