@@ -9,7 +9,7 @@
 function CrePStDB(cModulName)
 *{
 
-if cModulName<>"TOPS"
+if cModulName<>"POS"
 	return
 endif
 
@@ -49,12 +49,12 @@ return
  */
 function O_PrenHH(cPosID)
 *{
+local nArr
+nArr:=SELECT()
 altd()
-if cPosId == nil
-	cPosID:=""
-endif
 
-if LEN(cPosID)>0
+if cPosID <> nil
+	O_KONCIJ
 	cTKPath:=GetTopsKumPath(cPosId)
 	// OSTAV
 	SELECT (F_F_OSTAV)
@@ -69,7 +69,25 @@ else
 	O_PARAMS
 endif
 
+select (nArr)
 return
+*}
+
+
+function GetTopsKumPath(cTId)
+*{
+cTKPath:=""
+O_KONCIJ
+select koncij
+// setuj filter po cProdId
+set filter to idprodmjes=cTId
+go top
+if (field->idprodmjes == cTId)
+	cTKPath:=ALLTRIM(koncij->kumtops)
+endif
+set filter to
+
+return cTKPath
 *}
 
 

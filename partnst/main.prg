@@ -11,7 +11,7 @@ function GenPartnSt(lGenPartnSt, nSldMinIzn, cPosId)
 local GetList:={}
 local cModName:=""
 local cDN:="D"
-
+altd()
 if cPosId == nil
 	cPosId := ""
 endif
@@ -20,12 +20,12 @@ lGenPartnSt:=.f.
 nSldMinIzn:=5
 cModName:=goModul:oDataBase:cName
 
-Box(, 5, 60)
+Box(, 6, 60)
 	@ 1+m_x, 2+m_y SAY "Prenos stanja partnera: " + cModName + SPACE(10)
 	@ 2+m_x, 2+m_y SAY "--------------------------------"
 	@ 3+m_x, 2+m_y SAY "Ne prenosi partnere sa saldom < od:" GET nSldMinIzn PICT "999.99"
 	// ako je proslijedjen i ovaj parametar onda se radi o topsu
-	if cPosId <> nil
+	if cModName <> "POS"
 		@ 4+m_x, 2+m_y SAY "Prodajno mjesto TOPS: " GET cPosId
 	endif
 	
