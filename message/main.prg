@@ -180,7 +180,9 @@ else
 	endif
 endif
 
+set order to tag "6"
 set filter to &cFilter
+go top
 
 ImeKol:={}
 AADD(ImeKol,{"Poslao",{||fromuser}})
