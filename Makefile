@@ -15,6 +15,7 @@ all:
 	make -C security
 	make -C pi
 	make -C ugov
+	make -C partnst
 
 
 clean:
@@ -23,6 +24,7 @@ clean:
 	cd event; make clean
 	cd security; make clean
 	cd ugov; make clean
+	cd partnst; make clean
 	rm -f *.obj
 
 
