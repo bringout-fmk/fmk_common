@@ -1,7 +1,12 @@
+// INSTALL MODUL
+
+/*! \fn Main()
+ *  \brief Osnovna f-ja za instalaciju programa 
+ */
 function Main()
 *{
 local i,j,ii
-local cNprog[15],cMProg[15],cTProg[15]
+local cNprog[16],cMProg[16],cTProg[16]
 
 SetSCGvars()
 
@@ -55,12 +60,12 @@ cPosSif:="N"
 
 if file("install.mem")
     cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:="D"
-    cProg13:=cProg14:=cProg15:="N"
+    cProg13:=cProg14:=cProg15:=cProg16:="N"
     restore from install.mem additive
     fMem:=.t.
 endif
 
-@ 1,1 SAY "Instalacija FMK - SIGMA-COM software CDX 01.61  05.95-01.03"
+@ 1,1 SAY "Instalacija FMK - SIGMA-COM software 1.w.0.0.2, 05.95-27.02.05"
 
 
 cFMkInst:="D"
@@ -74,10 +79,10 @@ read
 
 ******************************
 ******************************
-nPrograma:=15
+nPrograma:=16
 
 if !fmem
- cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:="N"
+ cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:=cProg16:="N"
  cProg1:="D"
  cProg3:="D"
  cProg4:="D"
@@ -103,6 +108,7 @@ cNPROG[12]:="KAM"
 cNPROG[13]:="ADMIN"
 cNPROG[14]:="MANAG"
 cNPROG[15]:="SII"
+cNPROG[16]:="BLAG"
 
 // {to zna~i da ovo indicira da li program koristi podatke drugog programa
 // - master programa. Tako je master programa koji prenosi iz KALK u FIN -
@@ -122,6 +128,7 @@ cMProg[12]:="KAM"
 cMPROG[13]:="ADMIN"
 cMPROG[14]:="ADMIN"
 cMPROG[15]:="SII"
+cMPROG[16]:="BLAG"
 
 // cTProgi title koji se pojavljuje u BAT-u
 cTProg[1]:="FIN  - Finansijsko"
@@ -139,6 +146,7 @@ cTPROG[12]:="KAM - kamate"
 cTPROG[13]:="ADMIN - administracija"
 cTPROG[14]:="MANAG - manager"
 cTPROG[15]:="SII  - Sitan inventar"
+cTPROG[16]:="BLAG  - Blagajna"
 
 
 if cFmkInst=="N"
@@ -159,6 +167,7 @@ cNPROG[12]:="VV"
 cNPROG[13]:="ADMIN"
 cNPROG[14]:="VV"
 cNPROG[15]:="VV"
+cNPROG[16]:="VV"
 
 cMProg[1]:="TNAM"  // master program
 cMProg[2]:="INKAS"
@@ -175,6 +184,7 @@ cMProg[12]:="VV"
 cMProg[13]:="ADMIN"
 cMProg[14]:="VV"
 cMProg[15]:="VV"
+cMProg[16]:="VV"
 
 // cTProgi title koji se pojavljuje u BAT-u
 cTProg[1 ]:="TNAM  trgovine na malo"
@@ -192,104 +202,105 @@ cTPROG[12]:="VV"
 cTPROG[13]:="ADMIN"
 cTPROG[14]:="VV"
 cTPROG[15]:="VV"
+cTPROG[16]:="VV"
 
 endif
 
-
-
 for i:=1 to nPrograma
-  cPom:=alltrim(str(i))
-  @ i+3,1 SAY padr("Instalise se: "+cTprog[i],55,".") GET cPROG&cpom valid cprog&cpom $ "DN" pict "@!"
-  read
+	cPom:=alltrim(str(i))
+  	@ i+3,1 SAY padr("Instalise se: "+cTprog[i],55,".") GET cPROG&cpom valid cprog&cpom $ "DN" pict "@!"
+  	read
 next
 read
-
 
 cls
 
-
 cDN:="D"
 do while .t.
-@ 7,1 SAY "Za koliko se firmi program instalise"  GET nFirmi pict "99" valid nfirmi < 61 .and. nFirmi>0
-read
-for i:=1 to nFirmi
- cPom:=alltrim(str(i))
- IF EMPTY(cnf&cPom)
-   cnf&cPom := PADR( "Firma "+cPom , 20 )
- ENDIF
- @ 8,1 SAY "Sifra, naziv firme  "+str(i,2)+":" GET cSF&cPom
- @ 8,col()+2 GET cnf&cPom
- read
-next
-?
-@ 10,1 SAY "Sifre firmi su respektivno :"
-? " "
-for i:=1 to nFirmi
-   cPom:=alltrim(str(i))
-   ?? cSF&cPom+" "
-next
-@ 14,1 SAY "Ispravno (D/N) ?" GET cDN valid cDN $ "DN" pict "@!"
-read
-if cDN=="D"; exit; endif
-
+	@ 7,1 SAY "Za koliko se firmi program instalise"  GET nFirmi pict "99" valid nfirmi < 61 .and. nFirmi>0
+	read
+	for i:=1 to nFirmi
+ 		cPom:=alltrim(str(i))
+ 		IF EMPTY(cnf&cPom)
+   			cnf&cPom := PADR( "Firma "+cPom , 20 )
+ 		ENDIF
+ 		@ 8,1 SAY "Sifra, naziv firme  "+str(i,2)+":" GET cSF&cPom
+ 		@ 8,col()+2 GET cnf&cPom
+ 		read
+	next
+	?
+	@ 10,1 SAY "Sifre firmi su respektivno :"
+	? " "
+	for i:=1 to nFirmi
+   		cPom:=alltrim(str(i))
+   		?? cSF&cPom+" "
+	next
+	@ 14,1 SAY "Ispravno (D/N) ?" GET cDN valid cDN $ "DN" pict "@!"
+	read
+	if cDN=="D"
+		exit
+	endif
 enddo
 
 if !fmem
- cRS:="1"
+	cRS:="1"
 endif
-
 @ 15,1 SAY "Broj radne stanice na koju se vrsi instalacija: " GET cRS valid CRS $ "123456789A" pict "@!"
 read
 
 DO WHILE .T.
+	cls
+	if !fmem
+ 		cBDir1:=padr("C:\SIGMA",20)
+	else
+ 		cBDir1:=padr(cBdir1,20)
+	endif
+	nmk:=0
 
-cls
-if !fmem
- cBDir1:=padr("C:\SIGMA",20)
-else
- cBDir1:=padr(cBdir1,20)
-endif
+	if !fmem
+ 		cBDir2:=padr("C:\SIGMA",20)
+	else
+ 		cBDir2:=padr(cBDir2,20)
+	endif
+	cBDir9:=padr("",20)
 
-nmk:=0
-
-if !fmem
- cBDir2:=padr("C:\SIGMA",20)
-else
- cBDir2:=padr(cBDir2,20)
-endif
-cBDir9:=padr("",20)
-
-cExeDir:=space(20)
-@ 1,1 SAY "Bazni direktorij SERVERA:" get cBDir2
-@ 2,1 SAY "Bazni direktorij RS:     " get cBDir1
-@ 3,1 SAY "Sek.  direktorij SERVERA:" get cBDir9
-if cFullpath=="D"
-@ 4,1 SAY "Direktorij EXE fajlova  :" get cExeDir pict "@!" when {|| cExeDir:=cBDir2,.t.}
-endif
-@ 5,1 SAY "Svaka firma posebno sifrarnici:" get cPosSif pict "@!" valid cPosSif $"DN"
-read
+	cExeDir:=space(20)
+	@ 1,1 SAY "Bazni direktorij SERVERA:" get cBDir2
+	@ 2,1 SAY "Bazni direktorij RS:     " get cBDir1
+	@ 3,1 SAY "Sek.  direktorij SERVERA:" get cBDir9
+	if cFullpath=="D"
+		@ 4,1 SAY "Direktorij EXE fajlova  :" get cExeDir pict "@!" when {|| cExeDir:=cBDir2,.t.}
+	endif
+	@ 5,1 SAY "Svaka firma posebno sifrarnici:" get cPosSif pict "@!" valid cPosSif $"DN"
+	read
 
 
-cBDir2:=alltrim(cBDir2)
-cDrive2:=left(cBdir2,At(":",cBdir2))
-cBDir1:=alltrim(cBDir1)
-cDrive1:=left(cBdir1,At(":",cBdir1))
-cDrive9:=left(cBdir9,At(":",cBdir9))
+	cBDir2:=alltrim(cBDir2)
+	cDrive2:=left(cBdir2,At(":",cBdir2))
+	cBDir1:=alltrim(cBDir1)
+	cDrive1:=left(cBdir1,At(":",cBdir1))
+	cDrive9:=left(cBdir9,At(":",cBdir9))
 
-cBDir9:=alltrim(cBDir9)
+	cBDir9:=alltrim(cBDir9)
 
-cDN:="D"
-@ 6,1 SAY "Ispravno (D/N) ?" GET cDN valid cDN $ "DN" pict "@!"
+	cDN:="D"
+	@ 6,1 SAY "Ispravno (D/N) ?" GET cDN valid cDN $ "DN" pict "@!"
 read
 
 save to install.mem
 
 if cDN=="D"
- nmk:=mkdir(cBDir2)
- if nmk==3; ? "Ne mogu kreirati direktorij ",cbdir2; quit; endif
- nmk:=mkdir(cBDir1)
- if nmk==3; ? "Ne mogu kreirati direktorij ",cbdir1; quit; endif
- exit
+	nmk:=mkdir(cBDir2)
+ 	if nmk==3
+		? "Ne mogu kreirati direktorij ", cbdir2
+		quit
+	endif
+ 	nmk:=mkdir(cBDir1)
+ 	if nmk==3
+		? "Ne mogu kreirati direktorij ", cbdir1
+		quit
+	endif
+ 	exit
 endif
 
 ENDDO
@@ -344,7 +355,7 @@ cLine:=""
 fnoems:=.f.
 do while .t.
   cLine:=freadln(nH,1,200)
-  if upper(cLine)="FILES=100"
+  if upper(cLine)="FILES=250"
     // nista
   elseif ("EMM386.EXE" $ upper(cline))  .and.  ("NOEMS" $ upper(cLine)) .and. !("REM " $ upper(cline))
     cline:=upper(cLine)
@@ -358,7 +369,7 @@ do while .t.
     exit
   endif
 enddo
-fwrite(nHO,NL+"FILES=100")
+fwrite(nHO,NL+"FILES=250")
 fclose(nH)
 fclose(nHO)
 cls
