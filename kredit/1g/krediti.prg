@@ -301,16 +301,16 @@ seek _idradn + cIdkred + cNaOsnovu
 nUkupno:=0
 nPlaceno:=0
 
-do while !eof() .and. idradn=_idradn .and. idkred=cIdKred .and. naosnovu==cNaOsnovu 
+do while !eof() .and. ALLTRIM(idradn) == ALLTRIM(_idradn) .and. ALLTRIM(idkred) == ALLTRIM(cIdKred) .and. naosnovu==cNaOsnovu 
 	nUkupno+=iznos
   	
-	if (mjesec > _mjesec) .or. (godina > _godina)
+	if (mjesec > _mjesec .and. godina >= _godina) 
 		skip
 		loop
-	endif
+	else
+		nPlaceno+=placeno
+  	endif
 	
-	nPlaceno+=placeno
-  
   	skip
 enddo
 
