@@ -129,28 +129,51 @@ O_PrenHH()
 START PRINT CRET
 
 ? "Pregled generisanih podataka za HH"
-? REPLICATE("-", 70)
-? "Partner          StanjeG     StanjeZ4    StanjeZ8    StanjeZ16    StanjeZ20"
-? REPLICATE("-", 70)
+? REPLICATE("-", 90)
+? "Rbr. Partner                       Stanje      Stanje      Stanje      Stanje      Stanje"
+? "                                   POS        do 4 d.     do 8 d.     do 16 d.    do 20.d"
+? REPLICATE("-", 90)
 
 select ostav
 set order to tag "ID"
 go top
+
+i:=0
+nUkPos:=0
+nUkFin4:=0
+nUkFin8:=0
+nUkFin16:=0
+nUkFin20:=0
 
 do while !EOF()
 	select partn
 	set order to tag "ID"
 	hseek ostav->id
 	select ostav
-	
-	? partn->oznaka + ": " +  ALLTRIM(partn->naziv)
+	? STR(++i, 3) + ". "
+	?? PADR(partn->oznaka, 6) + "(" + PADR(partn->id, 3) + ")" +  PADR(ALLTRIM(partn->naziv), 10) + "..."
 	?? STR(ostav->iznosg, 12, 2)
 	?? STR(ostav->iznosz1, 12, 2)
 	?? STR(ostav->iznosz2, 12, 2)
 	?? STR(ostav->iznosz3, 12, 2)
 	?? STR(ostav->iznosz4, 12, 2)
+	// calculate total
+	nUkPos += ostav->iznosg
+	nUkFin4 += ostav->iznosz1
+	nUkFin8 += ostav->iznosz2
+	nUkFin16 += ostav->iznosz3
+	nUkFin20 += ostav->iznosz4
 	skip
 enddo
+// write total
+? Replicate("-", 90)
+? PADR("UKUPNO", 29)
+?? STR(nUkPos, 12, 2)
+?? STR(nUkFin4, 12, 2)
+?? STR(nUkFin8, 12, 2)
+?? STR(nUkFin16, 12, 2)
+?? STR(nUkFin20, 12, 2)
+? Replicate("-", 90)
 
 FF
 END PRINT
