@@ -1,2 +1,0 @@
-*ROBA.DBF
-A MINK N 12 2
