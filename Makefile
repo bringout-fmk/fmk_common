@@ -16,6 +16,7 @@ all:
 	make -C pi
 	make -C ugov
 	make -C partnst
+	make -C rabat/1g
 
 
 clean:
@@ -25,6 +26,7 @@ clean:
 	cd security; make clean
 	cd ugov; make clean
 	cd partnst; make clean
+	cd rabat/1g; make clean
 	rm -f *.obj
 
 
