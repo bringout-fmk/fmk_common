@@ -1,5 +1,5 @@
 VERZIJA=CDX
-MODUL=fmk_rabat
+MODUL=fmk_rab
 
 include /sclib/Makefile_clipper
 
