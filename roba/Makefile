@@ -3,7 +3,7 @@ MODUL=fmk_roba
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\\AF\\cl-AF\\roba\\
+SRCDOSROOT=c:\\dev\\fmk\\\AF\\cl-AF\\roba\\
 
 
 PRGS=adm_db.prg db.prg gvars.prg id_j.prg koncij.prg roba.prg rpt_cjen.prg rpt_sast.prg sast.prg sifk.prg sifre.prg tarifa.prg trfp.prg barkod.prg rlabele.prg ut.prg
