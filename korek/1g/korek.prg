@@ -118,7 +118,6 @@ for i:=1 to LEN(aGodine)
 		cAlias := "PAROBR"
 	endif
 	go top
-	altd()
 	do while !EOF()
 		// puni matricu aParObr {}
 		//   aParObr = 2002   , ID "1"     , vrbod, k2 
@@ -167,7 +166,6 @@ static function StRazlike(dMOd, dYOd, dMDo, dYDo, aGodine, aParObr, lMjesec, cRa
 *{
 O_LD
 O_RADN
-altd()
 nBrojac:=1
 
 START PRINT CRET
@@ -212,7 +210,6 @@ for i:=1 to LEN(aGodine)
 	AADD(aPomTot, {aGodine[i], 0})
 next
 
-altd()
 do while !EOF()
 	
 	cRdnk:=ld->idradn
@@ -252,14 +249,17 @@ do while !EOF()
 				select radn
 				hseek ld->idradn
 				select ld
-	
+				
+				altd()	
+				
 				nKoef := &LKOEF
 		
 				// ako zadovoljava uslov za prikaz
 				if (nKoef > 1) 
+					nFixno := (I13 + I15 + I16)
 					nUNeto := ld->uneto
-					nUNNeto := nKoef * nUNeto
-					nIznG += nUNNeto - nUNeto		
+					nUNNeto := nKoef * (nUNeto - nFixno)
+					nIznG += nUNNeto - nUNeto + nFixno	
 				endif
 				skip
 			enddo
