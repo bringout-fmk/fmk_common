@@ -49,6 +49,8 @@ local nOrder
 local cBrDok:=""
 local cIdTipDok:=""
 
+nObradjeno := 0
+
 select pripr
 go top
 
@@ -85,29 +87,20 @@ if (RecCount2() <> 0)
     	BrowseKey(m_x+5,m_y+1,m_x+19,m_y+73,ImeKol,{|Ch| EdRabat(Ch)},"IdFirma+idtipdok = gFirma + '10'", gFirma + "10", 2, , , {|| idfirma=gFirma} )
 
 	BoxC()
-	
 	if Pitanje(,"Azurirati rabate ?","N")=="D"
       		select pripr
-      		//do while !eof() .and. IdFirma=gFirma .and. IdTipdok$gcRabDok
-		//	skip
-		//	nTrec0:=RecNo()
-		//	skip -1
-		//	_rabat := RabVrijednost(gcRabDef, _tiprabat, _idroba, gcRabIDef)
-         		// postavi skonto
-		//	if m1="*"
-		//		_skonto := SKVrijednost(gcRabDef, _tiprabat, _idroba)
-		//		_m1 := " " 
-		//	endif
-		//	go nTrec0
-      		//enddo   
 		set filter to
-		SetRabToAll()
+		nObradjeno := SetRabToAll()
       	endif
 else
 	// ne postoje dokumenti
 	MsgBeep("Nema dokumenata u pripremi")
 endif
-     
+
+if (nObradjeno > 0)
+	MsgBeep("Obradjeno " + ALLTRIM(TRIM(nObradjeno)) + " racuna...")
+endif
+    
 close all
 O_Edit()
 
@@ -145,20 +138,58 @@ go top
 hseek gFirma + "10"
 
 cTipRab := ""
+nRet := 0
 
 do while !EOF() .and. idfirma = gFirma .and. idtipdok $ gcRabDok
 	// provrti pripremu
 	if !Empty(field->tiprabat)
 		cTipRab := field->tiprabat
+		++ nRet
 	endif
 	replace tiprabat with PADR(cTipRab, 10)
 	replace rabat with RabVrijednost(gcRabDef, tiprabat, idroba, gcRabIDef)
 	replace skonto with SKVrijednost(gcRabDef, tiprabat, idroba)
+	
+	if (rbr == "  1") 
+		nDays := GetDays(gcRabDef, tiprabat)
+		
+		cTxt:= Chr(16) + " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += " " + Chr(17) + Chr(16)
+		cTxt += DToC(datdok + nDays) + Chr(17) 
+		
+		replace txt with cTxt
+	endif
+	
 	skip
 enddo
 
-return
+return nRet
 *}
 
+
+/*! \fn CheckMemo(aMemo)
+ *  \brief Provjerava da li je memo prazan
+ */
+function CheckMemo(aMemo)
+*{
+// ako je prazan
+altd()
+if (LEN(aMemo) < 9)
+	aMemo := {}
+	for i=1 to 12
+		AADD(aMemo, " ")
+	next
+	aMemo[7] := CToD("")
+	aMemo[9] := CToD("")
+endif
+
+return
+*}
 
 
