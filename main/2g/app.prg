@@ -189,6 +189,12 @@ AADD(opc,   "4. izvjestaji")
 AADD(opcexe, {|| MnuIzvj()})
 AADD(opc,   "5. krediti")
 AADD(opcexe, {|| MnuKred()})
+
+if IzFmkIni("LD", "Korekcije", "N", KUMPATH)=="D"
+	AADD(opc,   "6. ostalo - korekcije obracuna ")
+	AADD(opcexe, {|| MnuOstOp()})
+endif
+
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 AADD(opc,   "7. sifrarnici")

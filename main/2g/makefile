@@ -5,7 +5,7 @@ include /sclib/Makefile_clipper
 
 SRCDOSROOT=c:\\dev\\fmk\\ld\\main\\2g\\
 
-PRGS=app.prg
+PRGS=app.prg mnu_oop.prg
 
 CS=
 ASMS=
