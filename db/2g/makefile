@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=ld_2db
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\ld\\db\\2g\\
+SRCDOSROOT=h:\\dev\\fmk\\ld\\db\\2g\\
 
 PRGS=db.prg mnu_adm.prg
 

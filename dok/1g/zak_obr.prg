@@ -1,4 +1,4 @@
-#include "\cl\sigma\fmk\ld\ld.ch"
+#include "\dev\fmk\ld\ld.ch"
 
 
 /*! \fn DlgZakljucenje()

@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=ld_1dok
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\ld\\dok\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\ld\\dok\\1g\\
 
 PRGS=mnu_obr.prg mnu_bris.prg mnu_rek.prg unos.prg brisi.prg rekalk.prg zak_obr.prg
 

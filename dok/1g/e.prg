@@ -1,5 +1,5 @@
 
-#include "\cl\sigma\fmk\ld\ld.ch"
+#include "\dev\fmk\ld\ld.ch"
 
 public gModul:="LD", gGlBaza:="LD.DBF"
 #ifdef  C52

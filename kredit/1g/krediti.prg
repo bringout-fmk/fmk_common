@@ -1,4 +1,4 @@
-#include "\cl\sigma\fmk\ld\ld.ch"
+#include "\dev\fmk\ld\ld.ch"
 
 
 //#define  RADNIK  radn->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,35))

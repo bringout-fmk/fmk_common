@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=ld_1ut
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\ld\\ut\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\ld\\ut\\1g\\
 
 PRGS=prijava.prg fions.prg ut.prg
 

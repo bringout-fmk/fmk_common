@@ -1,5 +1,5 @@
-#include "\cl\sigma\fmk\ld\ld.ch"
-#include "\cl\sigma\fmk\ld\cdx\rddinit.ch"
+#include "\dev\fmk\ld\ld.ch"
+#include "\dev\fmk\ld\cdx\rddinit.ch"
 
 function SetFirma()
 *{

@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=ld_1kre
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\ld\\kredit\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\ld\\kredit\\1g\\
 
 PRGS=krediti.prg mnu_kred.prg
 
