@@ -133,7 +133,7 @@
 #define FMK_DEFINED
 
 #ifndef SC_DEFINED
-  #include "\cl\sigma\sclib\sc.ch"
+  #include "\sclib\sc.ch"
 #endif
 
 #define FMK_VER  "1.w.0.8.3"
@@ -394,12 +394,12 @@
 #define F_POMGN 235
 
 #ifdef CLIP
-   #include "\cl\sigma\fmk\cdx\fmk.ch"
+   #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 #else
 	#ifdef CDX
-	   #include "\cl\sigma\fmk\cdx\fmk.ch"
+	   #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 	#else
-	   #include "\cl\sigma\fmk\ax\fmk.ch"
+	   #include "\dev\fmk\af\cl-AF\ax\fmk.ch"
 	#endif
 #endif
 
