@@ -86,7 +86,9 @@ return
 *}
 
 
-
+/*! \fn SaveMessage(aLinijeText, cFrom, cUserName, cPrioritet, cTo)
+ *  \brief Snimanje poruke u tabelu MESSAGE
+ */
 function SaveMessage(aLinijeText, cFrom, cUserName, cPrioritet, cTo)
 *{
 O_MESSAGE
@@ -103,7 +105,6 @@ for i=1 to LEN(aLinijeText)
 	SmReplace("priority",cPrioritet)
 	SmReplace("to",cTo)
 next
-
 
 return
 *}
@@ -148,21 +149,21 @@ if lNeprocitane
 	cFilter+=" .and. read=CTOD('')"
 endif
 
-if gSamoProdaja=="D"
+//if gSamoProdaja=="D"
 	// ako je rijec o prodavnici
 	// postavi filter po prioritetima korisnika
-	if KLevel=="0" //admin
-		cFilter+=" .and. !EMPTY(to)"
-	endif
+//	if KLevel=="0" //admin
+//		cFilter+=" .and. !EMPTY(to)"
+//	endif
 
-	if KLevel=="1" //upravn
-		cFilter+=" .and. (to='U' .or. to='ALL')"
-	endif
+//	if KLevel=="1" //upravn
+//		cFilter+=" .and. (to='U' .or. to='ALL')"
+//	endif
 	
-	if KLevel=="3" //prod
-		cFilter+=" .and. (to='P' .or. to='ALL')"
-	endif
-else
+//	if KLevel=="3" //prod
+//		cFilter+=" .and. (to='P' .or. to='ALL')"
+//	endif
+//else
 	// ako je rijec o knjgovodstvu
 	Box(,3,43)
 		cIzbor:="2"
@@ -178,7 +179,7 @@ else
 	else
 		cFilter+=""
 	endif
-endif
+//endif
 
 set order to tag "6"
 set filter to &cFilter
