@@ -198,10 +198,12 @@ return
  *  \param nIznos3 - saldo do 16 dana
  *  \param nIznos4 - saldo do 20 dana
  */
-function AddFinIntervalsToOstav(cIdPartn, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5)
+function AddFinIntervalsToOstav(cIdPartn, cParNaz, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5)
 *{
 local nArr, nId
 nArr:=SELECT()
+
+nId:=-999
 
 select (F_F_PARTN)
 set order to tag "OZNAKA"
@@ -211,22 +213,37 @@ seek PADR(cIdPartn, 8)
 if field->oznaka == PADR(cIdPartn, 8)
 	nId := field->id
 else
-	select (nArr)
-	return
+	nId := 10000 + GetFOstavCnt()
+	append blank
+	replace id with nId 
+	replace oznaka with cIdPartn
+	replace naziv with cParNaz
 endif
 
 select (F_F_OSTAV)
 set order to tag "id"
 go top
-seek nId
 
-if field->id == nId
+if (nId < 10000)
+	seek nId
+	if field->id == nId
+		replace iznosz1 with nIznos1
+		replace iznosz2 with nIznos2
+		replace iznosz3 with nIznos3
+		replace iznosz4 with nIznos4
+		replace iznosz5 with nIznos5
+	endif
+else
+	append blank
+	replace id with nId
+	replace iznosg with 0
 	replace iznosz1 with nIznos1
 	replace iznosz2 with nIznos2
 	replace iznosz3 with nIznos3
 	replace iznosz4 with nIznos4
 	replace iznosz5 with nIznos5
 endif
+
 select (nArr)
 
 return
@@ -241,6 +258,20 @@ function GetOstavCnt()
 local nArr
 nArr:=SELECT()
 O_OSTAV
+nCnt:=RecCount()
+select (nArr)
+return nCnt
+*}
+
+
+/*! \fn GetFOstavCnt()
+ *  \brief Vraca broj prenesenih partnera u OSTAV iz modula FIN
+ */
+function GetFOstavCnt()
+*{
+local nArr
+nArr:=SELECT()
+select (F_F_OSTAV)
 nCnt:=RecCount()
 select (nArr)
 return nCnt

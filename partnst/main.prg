@@ -77,7 +77,7 @@ return
 /*! \fn AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nSldMinIzn)
  *  \brief Poziva f-ju AddFinIntervalsToOstav() 
  */
-function AzurFinOstav(cPosId, cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5, nSldMinIzn)
+function AzurFinOstav(cPosId, cIdFmk, cParNaz, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5, nSldMinIzn)
 *{
 local nArr
 nArr:=SELECT()
@@ -85,7 +85,7 @@ if nIznos1+nIznos2+nIznos3+nIznos4+nIznos5 < nSldMinIzn
 	return
 endif
 O_PrenHH(cPosId)
-AddFinIntervalsToOstav(cIdFmk, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5)
+AddFinIntervalsToOstav(cIdFmk, cParNaz, nIznos1, nIznos2, nIznos3, nIznos4, nIznos5)
 select (nArr)
 return
 *}
