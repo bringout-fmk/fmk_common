@@ -3,7 +3,7 @@ MODUL=fmk_mes
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\message\\
+SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\message\\
 
 PRGS=db.prg main.prg app_msg.prg mnu_msg.prg rpt_msg.prg
 
