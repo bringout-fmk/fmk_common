@@ -709,6 +709,7 @@ ELSE
   CREATE_INDEX("2","str(godina)+str(mjesec)+idradn+idrj",KUMPATH+"LD")
   CREATE_INDEX("3","str(godina)+idrj+idradn",KUMPATH+"LD")
   CREATE_INDEX("4","str(godina)+idradn+str(mjesec)",KUMPATH+"LD")
+  CREATE_INDEX("5","idradn+str(godina)+str(mjesec)",KUMPATH+"LD")
 ENDIF
 
 CREATE_INDEX("RADN","idradn",KUMPATH+"LD")
