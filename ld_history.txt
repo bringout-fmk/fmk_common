@@ -1,0 +1,123 @@
+LD 
+======
+
+23.04.2004,  1.w.0.1.45, benjaminjahic@sigma-com.net
+----------------------------------------------------
+BugFix
+----------------------------
+Korekcija bug-a Variable does not exist NRRSATI, pri pozivu kartice plate u varijanti KUMPATH/LD/RadniSati=D (Fuel Boss)
+
+
+21.04.2004,  1.w.0.1.44, benjaminjahic@sigma-com.net
+----------------------------------------------------
+BugFix
+----------------------------
+Korekcija bug-a pri pozivu izvjestaja specifikacija primanja po mjesecima, kada program
+iskaèe (nemože obrisati MTEMP.DBF ali samo ako je Win89)
+
+
+17.04.2004,  1.w.0.1.43, sasa@sigma-com.net
+-------------------------------------------
+BugFix
+----------------------------
+Korekcija bug-a pri novoj instalaciji, problem sto je uvijek radio O_LD te je ispadao iz programa.
+
+
+08.04.2004,  1.w.0.1.42, benjaminjahic@sigma-com.net
+----------------------------------------------------
+BugFix
+----------------------------
+Ispravljen bug pri formiranju rekapitulacije za vise RJ (pogresni iznosi)
+Ispravljen bug pri formiranju izvjestaja "isplata jednog tipa primanja na tekuciracun" (pucanje programa)
+
+
+07.02.2004,  1.w.0.1.40, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+Konverzija tabela RADN, LD i RADKR, konverzija iz 7 u "B". Konvertuje samo polja ID i IDRADN u ovim tabelama.
+Konverzija:
+	È - CH
+	Æ - CC
+	Ð - DJ
+	Ž - ZZ
+	Š - SS
+
+
+23.01.2004,  1.w.0.1.38, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+Dorade za popunu obrasca DP, modifikacija struktura DP.CHS 
+
+
+12.01.2004,  1.w.0.1.37, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+Ubacena opcija APPSERVERA, za konvertovanje znakova u tabelama 
+
+
+07.01.2004,  1.w.0.1.36, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+MupZeDo - Spremanje izvjestaja za universal banku, topli obroci
+
+
+16.12.2003,  1.w.0.1.35, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+Fakultet - varijanta potpisa na izvjestaju za fakultet, FMK.INI/KUMPATH [FMK] Fakultet=D
+Uvedena nova polja u tabelu kredita (KRED.CHS) te se na pregledu kredita ispisuju dodatni podaci o kreditoru!
+
+
+22.11.2003,  1.w.0.1.34, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+Spremanje izvjestaja za universal banku, dorada radjena za MUP ZE-DO
+
+
+22.11.2003,  1.w.0.1.33, sasa@sigma-com.net
+---------------------------------------------
+BugFix
+----------------------------
+Ispravljen bug pri stampi rekapitulacije za sve radne jedinice.
+
+
+10.10.2003,  1.w.0.1.32, sasa@sigma-com.net
+---------------------------------------------
+Programske dorade
+----------------------------
+Na izvjestaju pregled odredjenog primanja dodati potpisi obracunskog radnika i sefa sluzbe.
+
+
+05.08.2003,  1.w.0.1.26, sasa@sigma-com.net
+---------------------------------------------
+BugFix
+----------------------------
+Ispravka ispisa naziva banke na izvjestaju "Platni spisak tek.racun".
+
+
+15.05.2003,  1.w.0.1.22, mirsad@sigma-com.net
+---------------------------------------------
+Promjena postojecih funkcija
+----------------------------
+Izvj."autorski honorari"(za Zips) moze se dobiti za sve opcine odjednom i daje rekapitulaciju poreza po opstinama.
+
+
+14.05.2003,  1.w.0.1.21, mirsad@sigma-com.net
+---------------------------------------------
+BugFix
+------
+Ispadao na izvj.plate po radnim nalozima ako nisu uneseni sati za proizvodnog radnika
+
+
+11.04.2003,  1.w.0.1.19, mirsad@sigma-com.net
+---------------------------------------------
+
+Radi kontiranja obracuna plata za pogonsko knjigovodstvo (za Rama glas, taènije Hano) uveo u izvjestaju "pregled plata po radnim nalozima" kreiranje i punjenje baze REKLDP.DBF koju koristi opcija "prenos LD->FIN" u FIN-u 
+
+

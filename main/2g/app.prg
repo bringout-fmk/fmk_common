@@ -1,0 +1,378 @@
+#include "\cl\sigma\fmk\ld\ld.ch"
+/*
+ * ----------------------------------------------------------------
+ *                                     Copyright Sigma-com software 
+ * ----------------------------------------------------------------
+ * $Source: c:/cvsroot/cl/sigma/fmk/ld/main/2g/app.prg,v $
+ * $Author: sasavranic $ 
+ * $Revision: 1.16 $
+ * $Log: app.prg,v $
+ * Revision 1.16  2004/01/24 08:01:23  sasavranic
+ * no message
+ *
+ * Revision 1.15  2004/01/13 19:07:59  sasavranic
+ * appsrv konverzija
+ *
+ * Revision 1.14  2003/01/24 21:33:36  mirsad
+ * dorada za pogon.knjig.
+ *
+ * Revision 1.13  2002/11/22 10:00:11  mirsad
+ * Login za security prebacen u SCLIB
+ *
+ * Revision 1.12  2002/11/18 22:42:47  sasa
+ * korekcije koda
+ *
+ * Revision 1.11  2002/11/18 12:12:58  mirsad
+ * dorade i korekcije-security
+ *
+ * Revision 1.10  2002/11/18 08:06:27  sasa
+ * finalne dorade na LD-u (security, eventloging)
+ *
+ * Revision 1.9  2002/11/15 18:47:05  sasa
+ * korekcija koda
+ *
+ * Revision 1.8  2002/11/14 22:23:05  sasa
+ * korekcije koda
+ *
+ * Revision 1.7  2002/11/12 13:36:10  sasa
+ * korekcija koda
+ *
+ * Revision 1.6  2002/11/11 23:38:11  sasa
+ * no message
+ *
+ * Revision 1.5  2002/11/11 16:20:11  sasa
+ * reduciranje koda
+ *
+ * Revision 1.4  2002/11/09 17:58:04  sasa
+ * razrada koda
+ *
+ * Revision 1.3  2002/11/09 12:36:02  sasa
+ * korekcija koda
+ *
+ * Revision 1.2  2002/11/08 13:52:08  mirsad
+ * ciscenje koda
+ *
+ * Revision 1.1  2002/11/05 13:23:47  sasa
+ * ubacivanje LD-a u cvs, novi kod
+ *
+ *
+ */
+
+
+/*! \file fmk/ld/main/2g/app.prg
+ *  \brief
+ */
+ 
+ 
+/*! \fn TLDModNew()
+ *  \brief
+ */
+
+function TLDModNew()
+*{
+local oObj
+
+#ifdef CLIP
+
+#else
+	oObj:=TLDMod():new()
+#endif
+
+oObj:self:=oObj
+return oObj
+*}
+
+
+#ifdef CPP
+/*! \class TLDMod
+ *  \brief LD aplikacijski modul
+ */
+
+class TLDMod: public TAppMod
+{
+	public:
+	*void dummy();
+	*void setGVars();
+	*void mMenu();
+	*void mMenuStandard();
+	*void sRegg();
+	*void initdb();
+	*void srv();	
+#endif
+
+#ifndef CPP
+#include "class(y).ch"
+CREATE CLASS TLDMod INHERIT TAppMod
+	EXPORTED:
+	method dummy 
+	method setGVars
+	method mMenu
+	method mMenuStandard
+	method sRegg
+	method initdb
+	method srv
+END CLASS
+#endif
+
+
+/*! \fn TLDMod::dummy()
+ *  \brief dummy
+ */
+
+*void TLDMod::dummy()
+*{
+method dummy()
+return
+*}
+
+
+*void TLDMod::initdb()
+*{
+method initdb()
+
+::oDatabase:=TDBLDNew()
+
+return nil
+*}
+
+
+/*! \fn *void TLDMod::mMenu()
+ *  \brief Osnovni meni LD modula
+ */
+*void TLDMod::mMenu()
+*{
+method mMenu()
+
+private Izbor
+private lPodBugom
+
+SETKEY(K_SH_F1,{|| Calc()})
+Izbor:=1
+
+O_LD
+
+select ld
+TrebaRegistrovati(10)
+use
+
+#ifdef PROBA
+	KEYBOARD "213"
+#endif
+
+@ 1,2 SAY padc(gTS+": "+gNFirma,50,"*")
+@ 4,5 SAY ""
+
+ParObracun()
+
+::mMenuStandard()
+
+::quit()
+
+return nil
+*}
+
+
+*void TLDMod::mMenuStandard()
+*{
+method mMenuStandard
+
+private opc:={}
+private opcexe:={}
+
+AADD(opc,   "1. obracun (unos, ispravka...)              ")
+AADD(opcexe, {|| MnuObracun()} )
+AADD(opc,   "2. brisanje")
+AADD(opcexe, {|| MnuBrisanje()})
+AADD(opc,   "3. rekalkulacija")
+AADD(opcexe, {|| MnuRekalk()})
+AADD(opc,   "4. izvjestaji")
+AADD(opcexe, {|| MnuIzvj()})
+AADD(opc,   "5. krediti")
+AADD(opcexe, {|| MnuKred()})
+AADD(opc,"------------------------------------")
+AADD(opcexe, nil)
+AADD(opc,   "7. sifrarnici")
+AADD(opcexe, {|| MnuSifre()})
+AADD(opc,   "9. administriranje baze podataka") 
+AADD(opcexe, {|| MnuAdmin()})
+AADD(opc,"------------------------------------")
+AADD(opcexe, nil)
+// najcesece koristenje opcije
+AADD(opc,   "A. rekapitulacija")
+AADD(opcexe, {|| Rekap(.t.)})
+AADD(opc,   "B. kartica plate") 
+AADD(opcexe, {|| KartPl()})
+AADD(opc,"------------------------------------")
+AADD(opcexe, nil)
+AADD(opc,   "X. parametri")
+AADD(opcexe, {|| MnuParams()})
+
+private Izbor:=1
+
+Menu_SC("gld",.t.,lPodBugom)
+
+return
+*}
+
+*void TLDMod::sRegg()
+*{
+method sRegg()
+sreg("LD.EXE","LD")
+return
+*}
+
+*void TLDMod::srv()
+*{
+method srv()
+? "Pokrecem LD aplikacijski server"
+if (MPar37("/KONVERT", goModul))
+	if LEFT(self:cP5,3)=="/S="
+		cKonvSez:=SUBSTR(self:cP5,4)
+		? "Radim sezonu: " + cKonvSez
+		if cKonvSez<>"RADP"
+			// prebaci se u sezonu cKonvSez
+			goModul:oDataBase:cSezonDir:=SLASH+cKonvSez
+ 			goModul:oDataBase:setDirKum(trim(goModul:oDataBase:cDirKum)+SLASH+cKonvSez)
+ 			goModul:oDataBase:setDirSif(trim(goModul:oDataBase:cDirSif)+SLASH+cKonvSez)
+ 			goModul:oDataBase:setDirPriv(trim(goModul:oDataBase:cDirPriv)+SLASH+cKonvSez)
+		endif
+	endif
+	goModul:oDataBase:KonvZN()
+	goModul:quit(.f.)
+endif
+return
+*}
+
+
+/*! \fn *void TLDMod::setGVars()
+ *  \brief opste funkcije LD modula
+ */
+*void TLDMod::setGVars()
+*{
+method setGVars()
+O_PARAMS
+
+//::super:setGVars()
+
+SetFmkSGVars()
+
+//SetLDSpecifVars()
+
+public cSection:="1"
+public cHistory:=" "
+public aHistory:={}
+public cFormula:=""
+public gRJ:="01"
+public gnHelpObr:=0
+public gMjesec:=1
+public gObracun:=" "
+public gGodina:=2002
+public gZaok:=2
+public gZaok2:=2
+public gValuta:="KM "
+public gPicI:="99999999.99"
+public gPicS:="999999"
+public gTipObr:="1"
+public gVarSpec:="1"
+public cVarPorOl:="1"
+public gSihtarica:="N"
+public gFUPrim:=PADR("UNETO+I24+I25",50)
+public gFURaz:=PADR("",60)
+public gFUSati:=PADR("USATI",50)
+public gFURSati:=PADR("",50)
+public gFUGod:=PADR("I06",40)
+public gNFirma:=SPACE(20)  // naziv firme
+public gListic:="N"
+public gTS:="Preduzece"
+public gUNMjesec:="N"
+public gMRM:=0
+public gMRZ:=0
+public gPDLimit:=0
+public gSetForm:="1"
+public gPrBruto:="N"
+public gMinR:="%"
+public gPotp:="D"
+public gBodK:="1"
+public gDaPorol:="N" // pri obracunu uzeti u obzir poreske olaksice
+public gFSpec:=PADR("SPEC.TXT",12)
+public gReKrOs:="X"
+public gReKrKP:="1"
+public gVarPP:="1"
+public _LR_:=6
+public _LK_:=6
+public lViseObr:=.f.
+public lVOBrisiCDX:=.f.
+public cLdPolja:=40
+//public nBo:=0
+public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
+public gZastitaObracuna:=IzFmkIni("LD","ZastitaObr","N",KUMPATH)
+
+O_PARAMS
+select (F_PARAMS)
+
+RPar("bk",@gBodK)      // opisno: 1-"bodovi" ili 2-"koeficijenti"
+Rpar("fn",@gNFirma)
+Rpar("ts",@gTS)
+RPar("fo",@gSetForm)   // set formula
+Rpar("gd",@gFUGod)
+Rpar("go",@gGodina)
+Rpar("kp",@gReKrKP)
+Rpar("pp",@gVarPP)
+Rpar("li",@gListic)
+RPar("m1",@gMRM)
+RPar("m2",@gMRZ)
+RPar("dl",@gPDLimit)
+Rpar("mj",@gMjesec)
+Rpar("ob",@gObracun)
+RPar("mr",@gMinR)      // min rad %, Bodovi
+RPar("os",@gFSpec)     // fajl-obrazac specifikacije
+RPar("p9",@gDaPorOl)   // praviti poresku olaksicu D/N
+RPar("pb",@gPrBruto)   // set formula
+RPar("pi",@gPicI)
+RPar("po",@gPotp)      // potpis na listicu
+RPar("ps",@gPicS)
+RPar("rj",@gRj)
+RPar("rk",@gReKrOs)
+Rpar("to",@gTipObr)
+Rpar("vo",@cVarPorOl)
+Rpar("uH",@gFURSati)
+Rpar("uS",@gFUSati)
+RPar("um",@gUNMjesec)
+Rpar("up",@gFUPrim)
+Rpar("ur",@gFURaz)
+Rpar("va",@gValuta)
+Rpar("vs",@gVarSpec)
+Rpar("Si",@gSihtarica)
+Rpar("z2",@gZaok2)
+Rpar("zo",@gZaok)
+//Rpar("tB",@gTabela)
+
+select (F_PARAMS)
+use
+
+LDPoljaINI()
+
+//definisano u SC_CLIB-u
+gGlBaza:="LD.DBF"
+
+public lPodBugom:=.f.
+IF IzFMKINI("ZASTITA","PodBugom","N",KUMPATH)=="D"
+  lPodBugom:=.t.
+  gaKeys := { { K_ALT_O , {|| OtkljucajBug()} } }
+ELSE
+  lPodBugom:=.f.
+ENDIF
+
+return
+*}
+
+
+
+function RadnikJeProizvodni()
+*{
+private cPom
+cPom:=IzFmkIni("ProizvodniRadnik","Formula",'"P"$RADN->K4',KUMPATH)
+return (&cPom)
+*}
+
+
