@@ -53,11 +53,11 @@ public glProvNazRobe
 public gRobaBlock
 public gPicCDem
 public PicDem
-
-public gPicCDEM
 public gPicProc
 public gPicDEM
 public gPickol
+public gFPicCDem
+public gFPicDem
 
 public glAutoFillBK
 public gDuzSifIni
@@ -90,9 +90,12 @@ gRobaBlock:=nil
 
 gPicCDEM:="999999.999"
 gPicProc:="999999.99%"
-gPicDEM:= "9999999.99"
-gPickol:= "999999.999"
+gPicDEM:="9999999.99"
+gPickol:="999999.999"
+gFPicCDem:="0"
+gFPicDem:="0"
 
 gDuzSifINI:=IzFmkIni('Sifroba','DuzSifra','10',SIFPATH)
 return
 *}
+

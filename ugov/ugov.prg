@@ -1,4 +1,4 @@
-#include "..\FMK.CH"
+#include "\dev\fmk\AF\cl-AF\fmk.ch"
 
 PROCEDURE SifUgovori
 private Opc:={}

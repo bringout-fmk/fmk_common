@@ -1,5 +1,5 @@
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
 PREF2=/clip/
 SVI1A=$(addprefix $(PREF2), $(FMKLIBS) )

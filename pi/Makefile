@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=fmk_pi
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pi\\
+SRCDOSROOT=h:\\dev\\fmk\\af\\cl-af\\pi\\
 
 PRGS=db_cre.prg
 
