@@ -3,7 +3,7 @@ MODUL=fmk_sec
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\security\\
+SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\security\\
 
 PRGS=db.prg main.prg mnu_sec.prg
 
