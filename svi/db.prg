@@ -300,6 +300,9 @@ if (!("U"$TYPE("gSecurity")) .and. gSecurity=="D")
 	CreSecurity(nArea)
 endif
 
+if IsRabati()
+	CreRabDB()
+endif
 
 return
 *}
@@ -319,3 +322,4 @@ endif
 
 return
 *}
+
