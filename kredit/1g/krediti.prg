@@ -274,40 +274,59 @@ return nIznos
 *}
 
 
-function Okreditu(_idradn,cidkred,cnaosnovu)
+function Okreditu(_idradn, cIdkred, cNaOsnovu, _mjesec, _godina)
 *{
 // izbaci matricu vezano za kredit
 local nUkupno, nPlaceno, nNTXORd
 local fused:=.t.
+
 PushWa()
+
 select (F_RADKR)
+
+altd()
+
 if !used()
- fused:=.f.
- O_RADKR
- set order to 2
- //"RADKRi2","idradn+idkred+naosnovu itd..."
+	fUsed:=.f.
+ 	O_RADKR
+ 	set order to 2
+ 	//"RADKRi2","idradn+idkred+naosnovu itd..."
 else
- nNTXORD:=indexord()
- set order to 2
+ 	nNTXORD:=indexord()
+ 	set order to 2
 endif
-seek _idradn+cidkred+cnaosnovu
+
+seek _idradn + cIdkred + cNaOsnovu
+
 nUkupno:=0
 nPlaceno:=0
-do while !eof() .and. idradn=_idradn .and. idkred=cidkred .and. naosnovu==cnaosnovu
-  nUkupno+=iznos
-  nPlaceno+=placeno
-  skip
+
+do while !eof() .and. idradn=_idradn .and. idkred=cIdKred .and. naosnovu==cNaOsnovu 
+	nUkupno+=iznos
+  	
+	if (mjesec > _mjesec) .or. (godina > _godina)
+		skip
+		loop
+	endif
+	
+	nPlaceno+=placeno
+  
+  	skip
 enddo
-if !fused
-select radkr; use
+
+if !fUsed
+	select radkr
+	use
 else
-#ifdef C52
- ordsetfocus(nNTXOrd)
-#else
- set order to nNTXORd
-#endif
+	#ifdef C52
+ 		ordsetfocus(nNTXOrd)
+	#else
+ 		set order to nNTXORd
+	#endif
 endif
+
 PopWa()
+
 return {nUkupno,nPlaceno}
 *}
 
