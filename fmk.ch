@@ -391,6 +391,9 @@
 #define F_TMPMSG 234
 // FAKT
 #define F_POMGN 235
+// RamaGlas SDIM
+#define F_SDIM	236
+#define F__SDIM	237
 
 #ifdef CLIP
    #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
