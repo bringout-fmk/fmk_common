@@ -98,7 +98,7 @@ else
 endif
 
 if (nObradjeno > 0)
-	MsgBeep("Obradjeno " + ALLTRIM(TRIM(nObradjeno)) + " racuna...")
+	MsgBeep("Obradjeno " + ALLTRIM(STR(nObradjeno)) + " racuna...")
 endif
     
 close all
