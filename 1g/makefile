@@ -1,5 +1,6 @@
 VERZIJA=CDX
 MODUL=LD
+MODVER=1.w.0.1.51
 
 PRGS=/dev/fmk/ld/main/1g/e.prg
 CS=
@@ -34,17 +35,15 @@ mod: $(OBJS)
 	cp e.exe $(EXEDEST)/$(MODUL).EXE
 
 zip:
-	rm -f /z/fmk/$(MODUL).zip
-	/sclib/zip.sh z:\\fmk\\$(MODUL).zip ..\\chs\\1g\\\*.chs \\dev\\fmk\\ld\\rpt\\rtm\\\*.rtm \\dev\\fmk\\AF\\cl-AF\\svi\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
+	/sclib/zip.sh h:\\cs\\fmk\\binary\\$(MODUL).zip ..\\chs\\1g\\\*.chs \\dev\\fmk\\ld\\rpt\\rtm\\\*.rtm \\dev\\fmk\\AF\\cl-AF\\svi\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
 
-
+commit:
+	/sclib/commit.sh $(MODVER) h:\\cs\\fmk\\binary\\$(MODUL).zip
 
 clean:
 	rm -f *.obj *.OBJ
 	rm -f $(OBJS) I$(MODULH).OBJ *.bak *.BAK
 
-
-
-
 sfx:
 	/cygdrive/p/bat/SFXMA.BAT ld
+
