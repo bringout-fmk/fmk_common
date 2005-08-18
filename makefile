@@ -26,7 +26,7 @@ clean:
 	make -C 1g  clean
 
 zip:
-	cd 1g; make zip
+	cd 1g; make zip; make 7exe
 
 commit:
 	cd 1g; make commit
