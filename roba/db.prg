@@ -118,6 +118,14 @@ if IzFMKINI("ROBA","Planika","N",SIFPATH)=="D"
                SIFPATH+"ROBA") // roba, artikli
 endif
 
+if IsVindija()
+  select (F_ROBA); use
+  CREATE_INDEX("ID_V4","SUBSTR(RTRIM(ID), -4)",SIFPATH+"ROBA") // roba, artikli
+  CREATE_INDEX("ID_V5","SUBSTR(RTRIM(ID), -5)",SIFPATH+"ROBA") // roba, artikli
+endif
+
+
+
 if !file(SIFPATH+"TARIFA.dbf")
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
