@@ -112,19 +112,18 @@ if fieldpos("BARKOD")<>0
 endif
 
 if IzFMKINI("ROBA","Planika","N",SIFPATH)=="D"
-  select (F_ROBA); use
-  CREATE_INDEX("BROBA",;
-               IzFMKINI("ROBA","Sort","K1+SUBSTR(id,7,3)",SIFPATH),;
-               SIFPATH+"ROBA") // roba, artikli
+	select (F_ROBA)
+	use
+  	CREATE_INDEX("BROBA", IzFMKINI("ROBA","Sort","K1+SUBSTR(id,7,3)",SIFPATH), SIFPATH+"ROBA") // roba, artikli
 endif
 
 if IsVindija()
-  select (F_ROBA); use
-  CREATE_INDEX("ID_V4","SUBSTR(RTRIM(ID), -4)",SIFPATH+"ROBA") // roba, artikli
-  CREATE_INDEX("ID_V5","SUBSTR(RTRIM(ID), -5)",SIFPATH+"ROBA") // roba, artikli
+	select (F_ROBA)
+  	use
+	//CREATE_INDEX("ID_V4","SUBSTR(RTRIM(ID), -4)",SIFPATH+"ROBA") // roba, artikli
+  	//CREATE_INDEX("ID_V5","SUBSTR(RTRIM(ID), -5)",SIFPATH+"ROBA") // roba, artikli
+  	CREATE_INDEX("ID_VSD","SIFRADOB",SIFPATH+"ROBA") // sifra dobavljaca
 endif
-
-
 
 if !file(SIFPATH+"TARIFA.dbf")
         aDbf:={}
