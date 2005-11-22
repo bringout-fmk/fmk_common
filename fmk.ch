@@ -394,6 +394,8 @@
 // RamaGlas SDIM
 #define F_SDIM	236
 #define F__SDIM	237
+#define F_TEMP	248
+#define F_PRIPT	249
 
 #ifdef CLIP
    #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
