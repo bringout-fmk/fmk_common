@@ -26,11 +26,8 @@
 
 function OFmkRoba()
 *{
-// sasa, 02.02.04, sada se ovo koristi kao obavezna oblast
-//if IzFMKIni("Svi","Sifk")=="D"
 O_SIFK
 O_SIFV
-//endif
 O_KONTO
 O_KONCIJ
 O_TRFP
