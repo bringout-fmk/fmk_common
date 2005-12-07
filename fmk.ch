@@ -391,11 +391,16 @@
 #define F_TMPMSG 234
 // FAKT
 #define F_POMGN 235
-// RamaGlas SDIM
-#define F_SDIM	236
-#define F__SDIM	237
-#define F_TEMP	248
-#define F_PRIPT	249
+// vindija - auto import
+#define F_TEMP	236
+#define F_PRIPT	237
+// tops integritet
+#define F_DINTEG1 238
+#define F_DINTEG2 239
+#define F_INTEG1 240
+#define F_INTEG2 241
+#define F_ERRORS 242
+
 
 #ifdef CLIP
    #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
