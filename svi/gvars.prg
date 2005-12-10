@@ -96,11 +96,18 @@ endif
 // u sekciji 1 je pdv parametar
 cSection := "1"
 
-altd()
-
 RPar("PD",@gPDV)
 ParPDV()
+// odjavi gSql
+lSql:=.f.
+if gModul=="TOPS" .and. gSql=="D"
+	lSql:=.t.
+	gSql:="N"
+endif
 WPar("PD",gPDV)
+if lSql
+	gSql:="D"
+endif
 
 select (F_PARAMS)
 use
@@ -155,7 +162,7 @@ return
  */
 function ParPDV()
 *{
-if (gPDV == "") .or. (gPDV == "N" .and. gModul=="TOPS")
+if (gPDV == "") .or. (gPDV $ "ND" .and. gModul=="TOPS")
 	// ako je tekuci datum >= 01.01.2006
 	if DATE() >= CToD("01.01.2006")
 		gPDV := "D"
