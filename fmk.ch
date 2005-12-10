@@ -402,6 +402,7 @@
 #define F_INTEG2 241
 #define F_ERRORS 242
 
+#define F_KALKSEZ 243
 
 #ifdef CLIP
    #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
