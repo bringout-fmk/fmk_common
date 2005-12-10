@@ -155,7 +155,7 @@ return
  */
 function ParPDV()
 *{
-if (gPDV == "")
+if (gPDV == "") .or. (gPDV == "N" .and. gModul=="TOPS")
 	// ako je tekuci datum >= 01.01.2006
 	if DATE() >= CToD("01.01.2006")
 		gPDV := "D"
