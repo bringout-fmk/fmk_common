@@ -52,7 +52,6 @@ function SetFmkSGVars()
 *{
 
 SetSpecifVars()
-
 SetValuta()
 
 public gFirma:="10"
@@ -61,6 +60,7 @@ private cSection:="K",cHistory:=" "; aHistory:={}
 public gNFirma:=space(20)  // naziv firme
 public gZaokr:=2
 public gTabela:=0
+public gPDV:=""
 
 if gModul=="FAKT" .or. gModul=="FIN"
 	cSection:="1"
@@ -93,6 +93,15 @@ if (gModul<>"POS" .and. gModul<>"TOPS" .and. gModul<>"HOPS")
 	endif
 endif
 
+// u sekciji 1 je pdv parametar
+cSection := "1"
+
+altd()
+
+RPar("PD",@gPDV)
+ParPDV()
+WPar("PD",gPDV)
+
 select (F_PARAMS)
 use
 
@@ -122,6 +131,7 @@ public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
 public gNovine
 gNovine:=IzFmkIni("STAMPA","Opresa","N",KUMPATH)
 
+
 return
 *}
 
@@ -137,5 +147,35 @@ else
 endif
 
 return
+*}
+
+
+/*! \fn ParPDV()
+ *  \brief Provjeri parametar pdv
+ */
+function ParPDV()
+*{
+if (gPDV == "")
+	// ako je tekuci datum >= 01.01.2006
+	if DATE() >= CToD("01.01.2006")
+		gPDV := "D"
+	else
+		gPDV := "N"
+	endif
+endif
+return
+*}
+
+
+/*! \fn IsPDV()
+ *  \brief Da li je pdv rezim rada ili ne
+ *  \ret .t. or .f.
+ */
+function IsPDV()
+*{
+if gPDV=="D"
+	return .t.
+endif
+return .f.
 *}
 
