@@ -102,6 +102,7 @@
 #xcommand O_FINMAT  => select(F_FINMAT); usex (PRIVPATH+"FINMAT")    ; set order to 1
 
 #xcommand O_KALK   => select(F_KALK);  use  (KUMPATH+"KALK")  ; set order to 1
+#xcommand O_KALKSEZ   => select(F_KALKSEZ);  use  (KUMPATH+"2005"+SLASH+"KALK") alias kalksez ; set order to 1
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH+"KALK")  ; set order to 1
 
 #xcommand O_KALKS  => select(F_KALKS);  use  (KUMPATH+"KALKS")  ; set order to 1
