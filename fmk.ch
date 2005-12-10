@@ -132,7 +132,8 @@
 #define FMK_DEFINED
 
 #ifndef SC_DEFINED
-  #include "\sclib\sc.ch"
+//  #include "\sclib\sc.ch"
+  #include "sc.ch"
 #endif
 
 #define FMK_VER  "1.w.0.8.3"
