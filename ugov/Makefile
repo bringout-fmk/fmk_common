@@ -3,7 +3,7 @@ MODUL=fmk_ugov
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\AF\\cl-AF\\ugov\\
+SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\ugov\\
 
 
 PRGS=ugov.prg genug.prg
