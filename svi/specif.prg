@@ -528,17 +528,6 @@ lFakultet:=lValue
 *}
 
 
-function IsTigra()
-*{
-return lTigra
-*}
-
-function SetTigra(lValue)
-*{
-lTigra:=lValue
-*}
-
-
 function IsDomZdr()
 *{
 return lDomZdr
@@ -656,13 +645,6 @@ if IzFmkIni("FMK","Jerry","N",KUMPATH)=="D"
 	SetJerry(.t.)
 else
 	SetJerry(.f.)
-endif
-
-
-if IzFmkIni("FMK","Tigra","N",KUMPATH)=="D"
-	SetTigra(.t.)
-else
-	SetTigra(.f.)
 endif
 
 
