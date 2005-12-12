@@ -88,7 +88,7 @@ return
  *  \return .t. or .f.
  */
 
-function Logirati(cModul,cKomponenta,cFunkcija)
+function Logirati(cModul, cKomponenta, cFunkcija)
 *{
 local nArr
 local lLogirati
@@ -101,9 +101,9 @@ endif
 
 O_EVENTS
 
-cModul:=PADR(cModul,10,SPACE(1))
-cKomponenta:=PADR(cKomponenta,15,SPACE(1))
-cFunkcija:=PADR(cFunkcija,30,SPACE(1))
+cModul:=PADR(cModul, 10, SPACE(1))
+cKomponenta:=PADR(cKomponenta, 15, SPACE(1))
+cFunkcija:=PADR(cFunkcija, 30, SPACE(1))
 
 select events
 set order to tag "1"
