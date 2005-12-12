@@ -138,7 +138,22 @@ public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
 public gNovine
 gNovine:=IzFmkIni("STAMPA","Opresa","N",KUMPATH)
 
+SetPDVBoje()
 
+return
+*}
+
+function SetPDVBoje()
+*{
+if IsPDV()
+	PDVBoje()
+	goModul:oDesktop:showMainScreen()
+	StandardBoje()
+else
+	StandardBoje()
+	goModul:oDesktop:showMainScreen()
+	StandardBoje()
+endif
 return
 *}
 
