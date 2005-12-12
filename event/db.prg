@@ -9,6 +9,13 @@ function CreEvents(nArea)
 *{
 close all
 
+if VALTYPE(goModul:oDatabase:cSigmaBD) <> "C"
+	MsgBeep("Nije podesen parametar ## EXEPATH / fmk.ini #" +;
+	        "[Svi]#"+;
+		"SigmaBD=c:\sigma")
+	goModul:oDatabase:cSigmaBD = "c:\sigma"
+endif
+		
 cPath:=goModul:oDataBase:cSigmaBD+SLASH+"security"+SLASH
 
 if !DirExists(cPath)
