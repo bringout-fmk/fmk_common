@@ -184,6 +184,13 @@ if cIdTar==nil
 	seek cTarifa
 	cIdTarifa:=tarifa->id
 else
+	cTarifa:=cIdTar
+	SELECT(F_TARIFA)
+	if (!USED())
+		lUsedTarifa:=.f.
+		O_TARIFA
+	endif
+	seek cTarifa
 	cIdTarifa:=cIdTar
 endif
 
