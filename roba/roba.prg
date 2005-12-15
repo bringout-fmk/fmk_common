@@ -148,6 +148,11 @@ if roba->(fieldpos("K7"))<>0
 	AADD (ImeKol,{ padc("K9",3 ), {|| k9 }, "k9"   })
 endif
 
+if roba->(fieldpos("ZANIVEL"))<>0
+	AADD (ImeKol,{ padc("zanivel",10 ), {|| transform(zanivel,"999999.999")}, "zanivel", NIL, NIL,NIL, gPicCDEM  })
+endif
+
+
 if roba->(fieldpos("IDTARIFA2"))<>0
 	AADD (ImeKol,{ "Tarifa R2",{|| IdTarifa2}, "IdTarifa2", {|| .t. }, {|| P_Tarifa(@wIdTarifa2) }   })
 	AADD (ImeKol,{ "Tarifa R3",{|| IdTarifa3}, "IdTarifa3", {|| .t. }, {|| P_Tarifa(@wIdTarifa3) }   })
