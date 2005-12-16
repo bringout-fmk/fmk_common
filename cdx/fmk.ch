@@ -3,65 +3,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/cdx/fmk.ch,v $
- * $Author: ernadhusremovic $ 
- * $Revision: 1.16 $
- * $Log: fmk.ch,v $
- * Revision 1.16  2003/11/04 02:13:24  ernadhusremovic
- * Planika Kranj - Robno poslovanje
- *
- * Revision 1.15  2003/07/24 16:00:39  sasa
- * stampa podataka o bankama na narudzbenici
- *
- * Revision 1.14  2003/04/12 23:01:05  ernad
- * O_Edit (O_S_PRIREMA)
- *
- * Revision 1.13  2003/01/08 03:09:20  mirsad
- * dodani makroi za RNAL.DBF
- *
- * Revision 1.12  2003/01/03 15:53:21  sasa
- * ispravka pocetnog stanja
- *
- * Revision 1.11  2003/01/03 15:21:41  sasa
- * ispravka pocetnog stanja
- *
- * Revision 1.10  2002/11/18 12:12:58  mirsad
- * dorade i korekcije-security
- *
- * Revision 1.9  2002/11/12 13:42:53  sasa
- * dodane xcommand za security
- *
- * Revision 1.8  2002/11/11 23:40:24  sasa
- * no message
- *
- * Revision 1.7  2002/08/19 10:04:24  ernad
- *
- *
- * podesenja CLIP
- *
- * Revision 1.6  2002/07/25 11:03:16  sasa
- * dodato O_DOKSTXT
- *
- * Revision 1.5  2002/07/01 17:49:28  ernad
- *
- *
- * formiranje finalnih build-ova (fin, kalk, fakt, pos) pred teren planika
- *
- * Revision 1.4  2002/07/01 14:30:47  ernad
- *
- *
- *
- * RJ: SIFPATH->KUMPATH
- *
- * Revision 1.3  2002/06/20 16:52:05  ernad
- *
- *
- * ciscenje planika, uvedeno fmk/svi/specif.prg
- *
- * Revision 1.2  2002/06/17 09:45:30  ernad
- * header, podesenja glavnog ch fajla
- *
- *
  */
  
 #xcommand O_ROBA   => select(F_ROBA);  use  (SIFPATH+"ROBA")  ; set order to tag "ID"
@@ -173,4 +114,9 @@
 
 //KALK RVrsta
 #xcommand O_RVRSTA   => select(F_RVRSTA);  use  (SIFPATH+"RVRSTA")  ; set order to tag "ID"
+
+// stampa PDV racuna
+#xcommand O_DRN => select(F_DRN); use (PRIVPATH+"DRN"); set order to tag "1"
+#xcommand O_RN => select(F_RN); use (PRIVPATH+"RN"); set order to tag "1"
+
 
