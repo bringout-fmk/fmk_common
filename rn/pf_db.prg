@@ -78,10 +78,10 @@ return
 function drn_empty()
 *{
 O_DRN
-O_RN
-
 select drn
 zap
+
+O_RN
 select rn
 zap
 
