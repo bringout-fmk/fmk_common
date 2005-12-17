@@ -290,7 +290,7 @@ go top
 
 select dokspf
 append blank
-SqlAppend(.t.)
+Sql_Append(.t.)
 
 SmReplace("idpos", cIdPos)
 SmReplace("idvd", VD_RN)
