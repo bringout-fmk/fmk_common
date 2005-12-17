@@ -38,9 +38,11 @@ endif
 
 // stampaj racun
 st_rb_traka()
+//PaperFeed()
 
 if lPrintPfTraka
 	st_pf_traka()
+	//PaperFeed()
 endif
 
 // skloni iznos racuna
@@ -75,14 +77,14 @@ return nUkupno
 
 function get_rn_mjesto()
 *{
-local cMjesto := "Zenica"
+local cMjesto := get_dtxt_opis("R01")
 return cMjesto
 *}
 
 
 function rb_traka_line(cLine)
 *{
-cLine := REPLICATE("-",3) + " " + REPLICATE("-",23) + " " + REPLICATE("-",15)
+cLine := " " + REPLICATE("-",3) + " " + REPLICATE("-",16) + " " + REPLICATE("-",15)
 return
 *}
 
@@ -93,6 +95,7 @@ local cBrDok
 local dDatDok
 local aRNaz
 local cArtikal
+local cRazmak := SPACE(1)
 local cLine
 local lViseRacuna := .f.
 
@@ -114,40 +117,47 @@ set order to tag "1"
 go top
 
 // mjesto i datum racuna
-? PADR("", 10) + get_rn_mjesto() + ", " + DToC(drn->datdok)
+? cRazmak + drn->vrijeme + PADL(get_rn_mjesto() + ", " + DToC(drn->datdok), 32)
+
 ? cLine
+
 // broj racuna
 ? SPACE(10) + "BLAGAJNA RACUN br." + ALLTRIM(drn->brdok) 
+
 ? cLine
+
 // opis kolona
-? "R.br  Sifra, Naziv"
+? " R.br  Sifra, Naziv"
 ? cLine
-? " kol/jmj  Cijena sa PDV   Ukupno"
+? "     kol/jmj  Cijena sa PDV   Ukupno"
+
 ? cLine
+
+select rn
 
 // data
 do while !EOF()
 
 	// rbr
-	? rn->rbr
+	? cRazmak + rn->rbr
 
 	// artikal
 	cArtikal := ALLTRIM(field->idroba) + "-" + ALLTRIM(field->robanaz)
 	aRNaz := SjeciStr(cArtikal, 38)
 	for i:=1 to LEN(aRNaz)
 		if i == 1
-			?? SPACE(1) + aRNaz[i]
+			?? cRazmak + aRNaz[i]
 		else
-			? SPACE(4) + aRNaz[i]
+			? SPACE(5) + aRNaz[i]
 		endif
 	next
 
 	// kolicina, jmj, cjena sa pdv
-	? STR(rn->kolicina, 9, gKolDec), rn->jmj, STR(rn->cjenpdv, 12, 2)
+	? cRazmak + STR(rn->kolicina, 9, gKolDec), rn->jmj, STR(rn->cjenpdv, 12, 2)
 	// da li postoji popust
 	if Round(rn->cjen2pdv, 4) <> 0
 		?? " popust:", STR(rn->popust, 5) + "%"
-		? "Cij-popust:", STR(rn->cjen2pdv, 12, 2)
+		? cRazmak + "Cij-popust:", STR(rn->cjen2pdv, 12, 2)
 	endif
 
 	?? STR(rn->ukupno, 12, 2)	
@@ -157,15 +167,15 @@ enddo
 
 ? cLine
 ?
-? PADL("Ukupno bez PDV (KM):", 25), ROUND(drn->ukbezpdv, 2)
+? cRazmak + PADL("Ukupno bez PDV (KM):", 25), ROUND(drn->ukbezpdv, 2)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0
-	? PADL("Popust (KM):", 25), ROUND(drn->ukpopust, 2)
-	? PADL("Uk.bez.PDV-popust (KM):", 25), ROUND(drn->ukbpdvpop, 2)
+	? cRazmak + PADL("Popust (KM):", 25), ROUND(drn->ukpopust, 2)
+	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", 25), ROUND(drn->ukbpdvpop, 2)
 endif
-? PADL("PDV 17% :", 25), ROUND(drn->ukpdv, 2)
+? cRazmak + PADL("PDV 17% :", 25), ROUND(drn->ukpdv, 2)
 ? cLine
-? PADL("UKUPNO ZA NAPLATU (KM):", 25), ROUND(drn->ukupno, 2)
+? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), ROUND(drn->ukupno, 2)
 ? cLine
 ?
 
@@ -179,14 +189,56 @@ return
 
 function hd_rb_traka()
 *{
-local cLine
+local cDuplaLin
+local cINaziv
+local cIAdresa
+local cIIdBroj
+local cIPM
+local cRazmak := SPACE(1)
+local cRazmak2 := SPACE(2)
+
+cDuplaLin := REPLICATE("=", 38)
+cINaziv := get_dtxt_opis("I01")
+cIAdresa := get_dtxt_opis("I02")
+cIIdBroj := get_dtxt_opis("I03")
+cIPM := get_dtxt_opis("I04")
+
+// stampaj header
+
+? cRazmak + cDuplaLin
+
+? cRazmak2 + cINaziv
+? cRazmak2 + REPLICATE("-", LEN(cINaziv))
+
+? cRazmak2 + "Adresa : " + cIAdresa
+? cRazmak2 + "ID broj: " + cIIdBroj
+
+? cRazmak2 + REPLICATE("-", 30)
+
+? cRazmak2 + "Prodajno mjesto:"
+? cRazmak2 + cIPM
+
+? cRazmak + cDuplaLin
+?
+?
+
 return
 *}
 
 
-function ft_rb_traka()
+function ft_rb_traka(cIdRadnik)
 *{
+local cRazmak := SPACE(1)
+local cRadnik
+local cSmjena
 
+cRadnik := get_dtxt_opis("R02")
+cSmjena := get_dtxt_opis("R03")
+
+? cRazmak + cRadnik, "Smjena: " + cSmjena
+?
+?
+? cRazmak + "Placanje izvrseno: gotovina" 
 
 return
 *}

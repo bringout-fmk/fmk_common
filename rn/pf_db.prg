@@ -54,6 +54,7 @@ AADD(aArr, {"BRDOK",   "C",  6, 0})
 AADD(aArr, {"DATDOK",  "D",  8, 0})
 AADD(aArr, {"DATVAL",  "D",  8, 0})
 AADD(aArr, {"DATISP",  "D",  8, 0})
+AADD(aArr, {"VRIJEME", "C",  5, 0})
 AADD(aArr, {"UKBEZPDV","N", 15, 5})
 AADD(aArr, {"UKPOPUST","N", 15, 5})
 AADD(aArr, {"UKBPDVPOP","N", 15, 5})
@@ -115,7 +116,7 @@ return
 *}
 
 
-function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum)
+function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum)
 *{
 if !USED(F_DRN)
 	O_DRN
@@ -130,6 +131,7 @@ endif
 if (dDatIsp <> nil)
 	replace datisp with dDatIsp
 endif
+replace vrijeme with cTime
 replace ukbezpdv with nUBPDV
 replace ukpopust with nUPopust
 replace ukbpdvpop with nUBPDVPopust
@@ -215,6 +217,27 @@ if nRNSum == nCSum
 endif
 
 return .f.
+*}
+
+
+function get_dtxt_opis(cTip)
+*{
+local cRet
+
+if !USED(F_DRNTEXT)
+	O_DRNTEXT
+endif
+select drntext
+set order to tag "1"
+hseek cTip
+
+if !Found()
+	MsgBeep("Ne mogu procitati opis za tip " + cTip + " !")
+	return "XXX"
+endif
+cRet := ALLTRIM(field->opis)
+
+return cRet
 *}
 
 
