@@ -272,6 +272,7 @@
 // PDV stampa racuna
 #define F_DRN 244
 #define F_RN 245
+#define F_DRNTEXT 246
 
 #ifdef CLIP
    #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
