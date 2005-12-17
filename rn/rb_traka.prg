@@ -67,7 +67,7 @@ go top
 do while !EOF()
 	nUkupno += field->ukupno
 	skip
-endif
+enddo
 
 return nUkupno
 *}
@@ -75,7 +75,8 @@ return nUkupno
 
 function get_rn_mjesto()
 *{
-return
+local cMjesto := "Zenica"
+return cMjesto
 *}
 
 
@@ -109,7 +110,7 @@ if RecCount() > 1
 endif
 
 select rn
-set order to tag "RBR"
+set order to tag "1"
 go top
 
 // mjesto i datum racuna
@@ -157,8 +158,11 @@ enddo
 ? cLine
 ?
 ? PADL("Ukupno bez PDV (KM):", 25), ROUND(drn->ukbezpdv, 2)
-? PADL("Popust (KM):", 25), ROUND(drn->ukpopust, 2)
-? PADL("Uk.bez.PDV-popust (KM):", 25), ROUND(drn->ukbpdvpop, 2)
+// dodaj i popust
+if Round(drn->ukpopust, 2) <> 0
+	? PADL("Popust (KM):", 25), ROUND(drn->ukpopust, 2)
+	? PADL("Uk.bez.PDV-popust (KM):", 25), ROUND(drn->ukbpdvpop, 2)
+endif
 ? PADL("PDV 17% :", 25), ROUND(drn->ukpdv, 2)
 ? cLine
 ? PADL("UKUPNO ZA NAPLATU (KM):", 25), ROUND(drn->ukupno, 2)

@@ -5,9 +5,9 @@
  */
 function drn_create()
 *{
-local cDRnName := "DRN" + DBFEXT
-local cRnName := "RN" + DBFEXT
-local cDRTxtName := "DRNTEXT" + DBFEXT
+local cDRnName := "DRN.DBF"
+local cRnName := "RN.DBF"
+local cDRTxtName := "DRNTEXT.DBF"
 local aDRnField:={}
 local aRnField:={}
 local aDRTxtField:={}
@@ -31,14 +31,14 @@ endif
 // provjeri da li postoji fajl DRNTEXT.DBF
 if !FILE(PRIVPATH + cDRTxtName)
 	// rn specifikacija polja
-	get_rn_fields(@aDRTxtField)
+	get_dtxt_fields(@aDRTxtField)
         // kreiraj tabelu
 	dbcreate2(PRIVPATH + cDRTxtName, aDRTxtField)
 endif
 
 // kreiraj indexe
-CREATE_INDEX("1", "brdok", PRIVPATH + "DRN")
-CREATE_INDEX("1", "rbr", PRIVPATH + "RN")
+CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "DRN")
+CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "RN")
 CREATE_INDEX("1", "tip", PRIVPATH + "DRNTEXT")
 
 return
@@ -50,16 +50,16 @@ return
  */
 function get_drn_fields(aArr)
 *{
-AADD(aArr, {"BRDOK",   "C",  "6", "0"})
-AADD(aArr, {"DATDOK",  "D",  "8", "0"})
-AADD(aArr, {"DATVAL",  "D",  "8", "0"})
-AADD(aArr, {"DATISP",  "D",  "8", "0"})
-AADD(aArr, {"UKBEZPDV","N", "15", "5"})
-AADD(aArr, {"UKPOPUST","N", "15", "5"})
-AADD(aArr, {"UKBPDVPOP","N", "15", "5"})
-AADD(aArr, {"UKPDV",   "N", "15", "5"})
-AADD(aArr, {"UKUPNO",  "N", "15", "5"})
-AADD(aArr, {"CSUMRN",  "N",  "6", "0"})
+AADD(aArr, {"BRDOK",   "C",  6, 0})
+AADD(aArr, {"DATDOK",  "D",  8, 0})
+AADD(aArr, {"DATVAL",  "D",  8, 0})
+AADD(aArr, {"DATISP",  "D",  8, 0})
+AADD(aArr, {"UKBEZPDV","N", 15, 5})
+AADD(aArr, {"UKPOPUST","N", 15, 5})
+AADD(aArr, {"UKBPDVPOP","N", 15, 5})
+AADD(aArr, {"UKPDV",   "N", 15, 5})
+AADD(aArr, {"UKUPNO",  "N", 15, 5})
+AADD(aArr, {"CSUMRN",  "N",  6, 0})
 return
 *}
 
@@ -70,21 +70,21 @@ return
  */
 function get_rn_fields(aArr)
 *{
-AADD(aArr, {"BRDOK",   "C",  "6", "0"})
-AADD(aArr, {"RBR",     "C",  "3", "0"})
-AADD(aArr, {"PODBR",   "C",  "2", "0"})
-AADD(aArr, {"IDROBA",  "C", "10", "0"})
-AADD(aArr, {"ROBANAZ", "C", "20", "0"})
-AADD(aArr, {"JMJ",     "C",  "3", "0"})
-AADD(aArr, {"KOLICINA","N", "15", "5"})
-AADD(aArr, {"CJENPDV", "N", "15", "5"})
-AADD(aArr, {"CJENBPDV", "N", "15", "5"})
-AADD(aArr, {"CJEN2PDV", "N", "15", "5"})
-AADD(aArr, {"CJEN2BPDV", "N", "15", "5"})
-AADD(aArr, {"POPUST",   "N", "8", "3"})
-AADD(aArr, {"PPDV",     "N", "8", "3"})
-AADD(aArr, {"VPDV",     "N", "15", "5"})
-AADD(aArr, {"UKUPNO",    "N", "15", "5"})
+AADD(aArr, {"BRDOK",   "C",  6, 0})
+AADD(aArr, {"RBR",     "C",  3, 0})
+AADD(aArr, {"PODBR",   "C",  2, 0})
+AADD(aArr, {"IDROBA",  "C", 10, 0})
+AADD(aArr, {"ROBANAZ", "C", 40, 0})
+AADD(aArr, {"JMJ",     "C",  3, 0})
+AADD(aArr, {"KOLICINA","N", 15, 5})
+AADD(aArr, {"CJENPDV", "N", 15, 5})
+AADD(aArr, {"CJENBPDV", "N", 15, 5})
+AADD(aArr, {"CJEN2PDV", "N", 15, 5})
+AADD(aArr, {"CJEN2BPDV", "N", 15, 5})
+AADD(aArr, {"POPUST",   "N", 8, 3})
+AADD(aArr, {"PPDV",     "N", 8, 3})
+AADD(aArr, {"VPDV",     "N", 15, 5})
+AADD(aArr, {"UKUPNO",    "N", 15, 5})
 return
 *}
 
@@ -94,8 +94,8 @@ return
  */
 function get_dtxt_fields(aArr)
 *{
-AADD(aArr, {"TIP",   "C",  "3", "0"})
-AADD(aArr, {"OPIS",  "C","200", "0"})
+AADD(aArr, {"TIP",   "C",   3, 0})
+AADD(aArr, {"OPIS",  "C", 200, 0})
 return
 *}
 
@@ -132,7 +132,7 @@ if (dDatIsp <> nil)
 endif
 replace ukbezpdv with nUBPDV
 replace ukpopust with nUPopust
-replace ukbpdvpop with nUkBPDVPopust
+replace ukbpdvpop with nUBPDVPopust
 replace ukpdv with nUPDV
 replace ukupno with nUkupno
 replace csumrn with nCSum
