@@ -2,8 +2,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_LD_VERZIJA "1.w.0.1.51"
-#define D_LD_PERIOD '06.96-29.03.05'
+#define D_LD_VERZIJA "1.w.0.1.52"
+#define D_LD_PERIOD '06.96-17.12.05'
 #ifndef FMK_DEFINED
 	#include "\dev\fmk\AF\cl-AF\fmk.ch"
 #endif
