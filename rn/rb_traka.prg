@@ -194,7 +194,8 @@ do while !EOF()
 	endif
 
 	?? STR(rn->ukupno, 12, 2)	
-	
+	?
+
 	skip
 enddo
 
@@ -271,7 +272,8 @@ cSmjena := get_dtxt_opis("R03")
 ?
 ?
 ? cRazmak + "Placanje izvrseno: gotovina" 
-
+?
+?
 return
 *}
 

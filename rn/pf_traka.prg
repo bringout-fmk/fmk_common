@@ -81,7 +81,7 @@ go top
 ? cLine
 
 // broj racuna
-? SPACE(10) + "FAKTURA br." + ALLTRIM(drn->brdok) 
+? SPACE(12) + "FAKTURA br." + ALLTRIM(drn->brdok) 
 
 ? cLine
 
@@ -113,17 +113,17 @@ do while !EOF()
 	next
 
 	// kolicina, jmj, cjena sa pdv
-	? cRazmak + STR(rn->kolicina, 9, 2), rn->jmj + PADL(STR(rn->cjenpdv, 12, 2), 25)
+	? cRazmak + STR(rn->kolicina, 9, 2), rn->jmj + PADL(STR(rn->cjenbpdv, 12, 2), 25)
 	// da li postoji popust
 	if Round(rn->cjen2pdv, 4) <> 0
 		? cRazmak + "popust:" + STR(rn->popust, 3) + "%"
-		?? cRazmak + "cij.2.b.PDV", STR(rn->cjen2bpdv, 12, 2)
+		?? cRazmak + "  cij.2.b.PDV", STR(rn->cjen2bpdv, 12, 2)
 	endif
 	// pdv
-	? cRazmak + "PDV:" + STR(rn->ppdv, 3) + "%"
-	?? cRazmak + "poj.izn.PDV" + STR(rn->vpdv, 12, 2)
+	? cRazmak + "  PDV:", STR(rn->ppdv, 3) + "%"
+	?? cRazmak + "  poj.izn.PDV", STR(rn->vpdv, 12, 2)
 	
-	? cRazmak + STR(rn->cjen2pdv) + cRazmak + STR(rn->ukupno, 12, 2)	
+	? cRazmak + STR( if(Round(rn->cjen2pdv,4)<>0, rn->cjen2pdv, rn->cjenpdv), 12,2), PADL(STR(rn->ukupno, 12, 2), 25)	
 	?
 	
 	skip
@@ -146,7 +146,8 @@ ft_rb_traka()
 
 ?
 ? SPACE(3) + "Fakturisao: ______________________"
-
+?
+?
 
 END PRN2 13
 
