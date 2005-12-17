@@ -210,7 +210,7 @@ nCSum := field->csumrn
 
 // uzmi broj zapisa iz RN
 select rn
-nRNSum := RecCount()
+nRNSum := RecCount2()
 
 if nRNSum == nCSum
 	return .t.

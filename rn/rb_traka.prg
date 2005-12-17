@@ -84,7 +84,7 @@ return cMjesto
 
 function rb_traka_line(cLine)
 *{
-cLine := " " + REPLICATE("-",3) + " " + REPLICATE("-",16) + " " + REPLICATE("-",15)
+cLine := " " + REPLICATE("-",3) + " " + REPLICATE("-",22) + " " + REPLICATE("-",11)
 return
 *}
 
@@ -108,7 +108,7 @@ hd_rb_traka()
 select drn
 go top
 // ako postoji vise zapisa onda ima vise racuna
-if RecCount() > 1
+if RecCount2() > 1
 	lViseRacuna := .t.
 endif
 
@@ -129,7 +129,7 @@ go top
 // opis kolona
 ? " R.br  Sifra, Naziv"
 ? cLine
-? "     kol/jmj  Cijena sa PDV   Ukupno"
+? "     kol/jmj  Cijena sa PDV     Ukupno"
 
 ? cLine
 
@@ -142,8 +142,8 @@ do while !EOF()
 	? cRazmak + rn->rbr
 
 	// artikal
-	cArtikal := ALLTRIM(field->idroba) + "-" + ALLTRIM(field->robanaz)
-	aRNaz := SjeciStr(cArtikal, 38)
+	cArtikal := ALLTRIM(field->idroba) + " - " + ALLTRIM(field->robanaz)
+	aRNaz := SjeciStr(cArtikal, 34)
 	for i:=1 to LEN(aRNaz)
 		if i == 1
 			?? cRazmak + aRNaz[i]
@@ -153,11 +153,11 @@ do while !EOF()
 	next
 
 	// kolicina, jmj, cjena sa pdv
-	? cRazmak + STR(rn->kolicina, 9, gKolDec), rn->jmj, STR(rn->cjenpdv, 12, 2)
+	? cRazmak + STR(rn->kolicina, 9, 2), rn->jmj + cRazmak + STR(rn->cjenpdv, 12, 2)
 	// da li postoji popust
 	if Round(rn->cjen2pdv, 4) <> 0
-		?? " popust:", STR(rn->popust, 5) + "%"
-		? cRazmak + "Cij-popust:", STR(rn->cjen2pdv, 12, 2)
+		?? " popust:" + STR(rn->popust, 3) + "%"
+		? cRazmak + "  Cij-popust:", STR(rn->cjen2pdv, 12, 2)
 	endif
 
 	?? STR(rn->ukupno, 12, 2)	
@@ -167,17 +167,16 @@ enddo
 
 ? cLine
 ?
-? cRazmak + PADL("Ukupno bez PDV (KM):", 25), ROUND(drn->ukbezpdv, 2)
+? cRazmak + PADL("Ukupno bez PDV (KM):", 25), STR(drn->ukbezpdv, 12, 2)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0
-	? cRazmak + PADL("Popust (KM):", 25), ROUND(drn->ukpopust, 2)
-	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", 25), ROUND(drn->ukbpdvpop, 2)
+	? cRazmak + PADL("Popust (KM):", 25), STR(drn->ukpopust, 12, 2)
+	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", 25), STR(drn->ukbpdvpop, 12, 2)
 endif
-? cRazmak + PADL("PDV 17% :", 25), ROUND(drn->ukpdv, 2)
+? cRazmak + PADL("PDV 17% :", 25), STR(drn->ukpdv, 12, 2)
 ? cLine
-? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), ROUND(drn->ukupno, 2)
+? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), STR(drn->ukupno, 12, 2)
 ? cLine
-?
 
 ft_rb_traka()
 
@@ -195,7 +194,7 @@ local cIAdresa
 local cIIdBroj
 local cIPM
 local cRazmak := SPACE(1)
-local cRazmak2 := SPACE(2)
+local cRaz2 := SPACE(2)
 
 cDuplaLin := REPLICATE("=", 38)
 cINaziv := get_dtxt_opis("I01")
@@ -207,16 +206,16 @@ cIPM := get_dtxt_opis("I04")
 
 ? cRazmak + cDuplaLin
 
-? cRazmak2 + cINaziv
-? cRazmak2 + REPLICATE("-", LEN(cINaziv))
+? cRaz2 + cINaziv
+? cRaz2 + REPLICATE("-", LEN(cINaziv))
 
-? cRazmak2 + "Adresa : " + cIAdresa
-? cRazmak2 + "ID broj: " + cIIdBroj
+? cRaz2 + "Adresa : " + cIAdresa
+? cRaz2 + "ID broj: " + cIIdBroj
 
-? cRazmak2 + REPLICATE("-", 30)
+? cRaz2 + REPLICATE("-", 30)
 
-? cRazmak2 + "Prodajno mjesto:"
-? cRazmak2 + cIPM
+? cRaz2 + "Prodajno mjesto:"
+? cRaz2 + cIPM
 
 ? cRazmak + cDuplaLin
 ?
@@ -235,7 +234,7 @@ local cSmjena
 cRadnik := get_dtxt_opis("R02")
 cSmjena := get_dtxt_opis("R03")
 
-? cRazmak + cRadnik, "Smjena: " + cSmjena
+? cRazmak + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
 ?
 ?
 ? cRazmak + "Placanje izvrseno: gotovina" 
