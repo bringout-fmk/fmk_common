@@ -256,8 +256,7 @@ set order to tag "1"
 hseek cTip
 
 if !Found()
-	MsgBeep("Ne mogu procitati opis za tip " + cTip + " !")
-	return "XXX"
+	return "???"
 endif
 cRet := ALLTRIM(field->opis)
 
@@ -285,6 +284,11 @@ cKNaziv := get_dtxt_opis("K01")
 cKAdres := get_dtxt_opis("K02")
 cKIdBroj := get_dtxt_opis("K03")
 
+// nema poreske fakture
+if cKNaziv == "???"
+	return
+endif
+
 select drn
 go top
 
@@ -293,7 +297,7 @@ append blank
 Sql_Append(.t.)
 
 SmReplace("idpos", cIdPos)
-SmReplace("idvd", VD_RN)
+SmReplace("idvd", "42")
 SmReplace("brdok", drn->brdok)
 SmReplace("datum", drn->datdok)
 SmReplace("knaz", cKNaziv)

@@ -16,10 +16,10 @@ function get_kup_data()
 *{
 local cKNaziv := SPACE(35)
 local cKAdres := SPACE(35)
-local cKIdBroj := SPACE(16)
+local cKIdBroj := SPACE(13)
 local cUnosOk := "N"
 
-Box(,10, 65)
+Box(,6, 65)
 	do while .t.
 		 @ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
 		 @ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) PICT "@S20"
@@ -169,7 +169,7 @@ cKIdBroj := get_dtxt_opis("K03")
 ? cRazmak + "Kupac:"
 ? cRazmak + cKNaziv
 ? cRazmak + cKAdres 
-? cRazmak + cKIdBroj
+? cRazmak + "Ident.br:" + cRazmak + cKIdBroj
 ?
 
 return

@@ -5,6 +5,7 @@ function rb_print()
 local nIznUkupno
 local lPrintPfTraka := .f.
 local lGetKupData := .f.
+local lAzurDok := .f.
 
 drn_open()
 
@@ -15,7 +16,10 @@ endif
 
 nIznUkupno := get_rb_ukupno()
 
+// da li uopste stampati fakture - parametri
 isPfTraka(@lPrintPfTraka)
+// da li je ovo prepis dokumenta
+isAzurDok(@lAzurDok)
 
 // podaci o kupcu
 if nIznUkupno <= 100
@@ -32,7 +36,7 @@ if nIznUkupno > 100
 	endif
 endif
 
-if lGetKupData
+if lGetKupData .and. !lAzurDok
 	// daj nam podatke o kupcu
 	get_kup_data()
 endif
@@ -60,6 +64,19 @@ endif
 // skloni iznos racuna
 SkloniIznRac()
 
+return
+*}
+
+
+function isAzurDok(lRet)
+*{
+local cTemp 
+cTemp := get_dtxt_opis("D01")
+if cTemp == "A"
+	lRet := .t.
+else
+	lRet := .f.
+endif
 return
 *}
 
