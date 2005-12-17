@@ -44,6 +44,30 @@ CREATE_INDEX("1", "tip", PRIVPATH + "DRNTEXT")
 return
 *}
 
+
+function dokspf_create()
+*{
+local aDbf:={}
+
+if !FILE(KUMPATH + "\DOKSPF.DBF")
+	AADD(aDbf, {"IDPOS", "C", 2, 0})
+	AADD(aDbf, {"IDVD",  "C", 2, 0})
+	AADD(aDbf, {"DATUM", "D", 8, 0})
+	AADD(aDbf, {"BRDOK", "C", 6, 0})
+	AADD(aDbf, {"KNAZ",  "C", 35, 0})
+	AADD(aDbf, {"KADR",  "C", 35, 0})
+	AADD(aDbf, {"KIDBR", "C", 13, 0})
+	if gSql == "D"
+		AddOidFields(@aDbf)
+	endif
+	DbCreate2(KUMPATH + "\DOKSPF.DBF", aDbf)
+endif
+
+CREATE_INDEX("1", "idpos+idvd+DToS(datum)+brdok", KUMPATH + "DOKSPF")
+
+return
+*}
+
 /*! \fn get_drn_fields(aArr)
  *  \brief napuni matricu aArr sa specifikacijom polja tabele
  *  \param aArr - matrica
@@ -240,5 +264,43 @@ cRet := ALLTRIM(field->opis)
 return cRet
 *}
 
+
+function AzurKupData(cIdPos)
+*{
+local cKNaziv
+local cKAdres
+local cKIdBroj
+
+if !USED(F_DRN)
+	O_DRN
+endif
+if !USED(F_DOKSPF)
+	O_DOKSPF
+endif
+if !USED(F_DRNTEXT)
+	O_DRNTEXT
+endif
+
+cKNaziv := get_dtxt_opis("K01")
+cKAdres := get_dtxt_opis("K02")
+cKIdBroj := get_dtxt_opis("K03")
+
+select drn
+go top
+
+select dokspf
+append blank
+SqlAppend(.t.)
+
+SmReplace("idpos", cIdPos)
+SmReplace("idvd", VD_RN)
+SmReplace("brdok", drn->brdok)
+SmReplace("datum", drn->datdok)
+SmReplace("knaz", cKNaziv)
+SmReplace("kadr", cKAdres)
+SmReplace("kidbr", cKIdBroj)
+
+return
+*}
 
 

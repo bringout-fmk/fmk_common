@@ -4,6 +4,7 @@ function rb_print()
 *{
 local nIznUkupno
 local lPrintPfTraka := .f.
+local lGetKupData := .f.
 
 drn_open()
 
@@ -17,10 +18,23 @@ nIznUkupno := get_rb_ukupno()
 isPfTraka(@lPrintPfTraka)
 
 // podaci o kupcu
+if nIznUkupno <= 100
+	if lPrintPfTraka
+		if Pitanje(,"Stampati poresku fakturu (D/N)?", "N") == "D"
+			lGetKupData := .t.
+		endif
+	endif
+endif
+// ako je racun veci od 100 - nudi po defaultu poresku fakturu
 if nIznUkupno > 100
 	if lPrintPfTraka
-		//get_part_data()
+		lGetKupData := .t.
 	endif
+endif
+
+if lGetKupData
+	// daj nam podatke o kupcu
+	get_kup_data()
 endif
 
 // Ispisi iznos racuna velikim slovima
@@ -38,11 +52,9 @@ endif
 
 // stampaj racun
 st_rb_traka()
-//PaperFeed()
 
-if lPrintPfTraka
+if lGetKupData
 	st_pf_traka()
-	//PaperFeed()
 endif
 
 // skloni iznos racuna
@@ -55,7 +67,11 @@ return
 function isPfTraka(lRet)
 *{
 // inace iscitati parametar
-lRet := .f.
+if gPorFakt == "D"
+	lRet := .t.
+else
+	lRet := .f.
+endif
 return
 *}
 
