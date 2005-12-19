@@ -180,7 +180,7 @@ if Round(drn->ukpopust, 2) <> 0
 endif
 ? cRazmak + PADL("PDV 17% :", 25), STR(drn->ukpdv, 12, 2)
 ? cLine
-? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), STR(drn->ukupno, 12, 2)
+? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), PADL(TRANSFORM(drn->ukupno,"******9.99"), 12)
 ? cLine
 
 ft_rb_traka()
