@@ -270,11 +270,9 @@ local cKNaziv
 local cKAdres
 local cKIdBroj
 
+O_DOKSPF
 if !USED(F_DRN)
 	O_DRN
-endif
-if !USED(F_DOKSPF)
-	O_DOKSPF
 endif
 if !USED(F_DRNTEXT)
 	O_DRNTEXT

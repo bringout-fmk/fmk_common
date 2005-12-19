@@ -12,12 +12,53 @@ return
 *}
 
 
+function f7_pf_traka()
+*{
+local lPfTraka
+local lPartNemaPodataka:=.f.
+
+isPfTraka(@lPfTraka)
+
+if Pitanje(,"Stampati poresku fakturu za zadnji racun (D/N)?", "D") == "N"
+	return
+endif
+
+drn_open()
+
+if !lPfTraka
+	if !read_kup_data()
+		lPartNemaPodataka := .t.
+		get_kup_data()
+	endif
+endif
+
+st_pf_traka()
+
+if !lPfTraka .and. lPartNemaPodataka
+	AzurKupData(gIdPos)
+endif
+
+return
+*}
+
+
+function read_kup_data()
+*{
+local cKNaziv
+cKNaziv := get_dtxt_opis("K01")
+if cKNaziv == "???"
+	return .f.
+endif
+return .t.
+*}
+
 function get_kup_data()
 *{
 local cKNaziv := SPACE(35)
 local cKAdres := SPACE(35)
 local cKIdBroj := SPACE(13)
 local cUnosOk := "N"
+local GetList:={}
 
 Box(,6, 65)
 	do while .t.
