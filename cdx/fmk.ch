@@ -119,5 +119,5 @@
 #xcommand O_DRN => select(F_DRN); use (PRIVPATH+"DRN"); set order to tag "1"
 #xcommand O_RN => select(F_RN); use (PRIVPATH+"RN"); set order to tag "1"
 #xcommand O_DRNTEXT => select(F_DRNTEXT); use (PRIVPATH+"DRNTEXT"); set order to tag "1"
-
+#xcommand O_DOKSPF => select(F_DOKSPF); use (KUMPATH+"DOKSPF"); set order to tag "1"
 
