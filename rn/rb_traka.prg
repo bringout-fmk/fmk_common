@@ -42,7 +42,7 @@ if lGetKupData .and. !lAzurDok
 endif
 
 // Ispisi iznos racuna velikim slovima
-PisiIznRac(nIznUkupno)
+ShowIznRac(nIznUkupno)
 
 // vidjeti sta sa ovim
 if gDisplay=="D"
@@ -62,7 +62,7 @@ if lGetKupData
 endif
 
 // skloni iznos racuna
-SkloniIznRac()
+BoxC()
 
 return
 *}

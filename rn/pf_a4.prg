@@ -20,7 +20,12 @@ local cRazmak := SPACE(1)
 local cLine
 local lViseRacuna := .f.
 
-START PRINT2 CRET gLocPort,SPACE(5)
+if !lSSIP99 .and. !StartPrint()
+	close all
+	return
+endif
+
+P_10CPI
 
 rb_traka_line(@cLine)
 
@@ -113,7 +118,11 @@ ft_rb_traka()
 ?
 ?
 
-END PRN2 13
+FF
+
+if !lSSIP99
+	EndPrint()
+endif
 
 return
 *}
