@@ -111,15 +111,42 @@ return
 
 function pf_a4_footer()
 *{
+local cTxt1
+local cTxt2
+local cTxt3
+local cTxt
 
-? SPACE(5) + get_dtxt_opis("F04")
+cTxt1 := get_dtxt_opis("F04")
+cTxt2 := get_dtxt_opis("F05")
+cTxt3 := get_dtxt_opis("F06")
+
+cTxt := ""
+if cTxt1 <> "???"
+	cTxt += cTxt1
+endif
+if cTxt2 <> "???"
+	cTxt += cTxt2
+endif
+if cTxt3 <> "???"
+	cTxt += cTxt3
+endif
+
+cTxt := STRTRAN(cTxt, "ç" + Chr(10), "")
+cTxt := STRTRAN(cTxt, Chr(13) + Chr(10), Chr(13) +Chr(10) + space(5))
+
+? space(5)
+?? cTxt
+?
 ?
 
 P_12CPI
-? SPACE(5) + get_dtxt_opis("F05")
+
+?
+? SPACE(5) + get_dtxt_opis("F10")
 
 return
 *}
+
 
 function pf_a4_header()
 *{
@@ -153,8 +180,8 @@ gPB_ON()
 ? cRazmak + cINaziv
 ? cRazmak + REPLICATE("-", LEN(cINaziv))
 ? cRazmak + "Adresa: " + cIAdresa
-? cRazmak + PADR("ID broj: " + cIIdBroj, 30) + PADR("Poreski broj: " + cIPorBr, 30)
-? cRazmak + PADR("Broj sudskog rjesenja: " + cIBrRjes, 30) + PADR("Broj upisa: " + cIBrUpis, 30)
+? cRazmak + PADR("ID broj: " + cIIdBroj, 30) + PADR("Poreski broj: " + cIPorBr, 50)
+? cRazmak + PADR("Broj sudskog rjesenja: " + cIBrRjes, 40) + PADR("Broj upisa: " + cIBrUpis, 30)
 ? cRazmak + "Ustanova: " + cIUstanova
 
 ? cRazmak + cSLHead
@@ -272,17 +299,17 @@ gPB_OFF()
 P_COND
 ? space(5)
 ?? padc("Ident.broj: " + cKIdBroj, 30)
-? space(5)
+//? space(5)
 ?? padc("Por.broj: " + cKPorBroj, 30)
 ? space(5)
 ?? padc("Br.sud.Rj: " + cKBrRjes, 30)
-? space(5)
+//? space(5)
 ?? padc("Br.upisa: " + cKBrUpisa, 30)
 P_10CPI
 
 gPB_ON()
 // broj dokumenta
-?? padl("#%FS012#" + cTipDok + cBrDok, 45)
+? padl("#%FS012#" + cTipDok + cBrDok, 83)
 gPB_OFF()
 
 ?
