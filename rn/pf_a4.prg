@@ -16,7 +16,7 @@ local cBrDok
 local dDatDok
 local aRNaz
 local cArtikal
-local cRazmak := SPACE(1)
+local cRazmak := SPACE(5)
 local cLine
 local cSlovima
 
@@ -24,7 +24,6 @@ if !lSSIP99 .and. !StartPrint()
 	close all
 	return
 endif
-
 
 // definisi liniju 
 pf_a4_line(@cLine)
@@ -39,37 +38,42 @@ select rn
 set order to tag "1"
 go top
 
-? cLine
+P_COND
 
-// opis kolona
-? " R.br  Sifra     Naziv                        Kolicina  jmj   C.bez PDV  C.bez PDV  Pojed.PDV   Sveukupno"
-? "                                                              Popust(%)  C.sa PDV      PDV(%)     sa PDV"
-
-? cLine
+st_zagl_data(cLine)
 
 select rn
 
+nStr:=1
+
 // data
 do while !EOF()
-	// rbr
-	? cRazmak + PADL(rn->rbr + ")", 6), padr(rn->idroba, 10), padr(rn->robanaz, 40), STR(rn->kolicina, 10, 2), rn->jmj, STR(rn->cjenbpdv,12,2), STR(rn->cjen2bpdv,12,2), STR(rn->vpdv,12,2), STR(ukupno, 12,2)
 	
-	? SPACE(70) + TRANSFORM(rn->popust,"99.9%"), STR(rn->cjen2pdv), TRANSFORM(rn->ppdv, "999.9%")
+	if prow() > gERedova + 43
+      		if prow() > 50  
+         		NStr(cLine, nStr)
+			++nStr
+      		endif
+    	endif	
+	
+	? cRazmak + PADL(rn->rbr + ")", 6), padr(rn->idroba, 10), padr(rn->robanaz, 40), STR(rn->kolicina, 11, 2), rn->jmj, STR(rn->cjenbpdv,11,2), STR(rn->cjen2bpdv,11,2), STR(rn->vpdv,11,2), STR(ukupno, 11,2)
+	
+	? SPACE(85) + TRANSFORM(rn->popust,"99.99%"), STR(rn->cjen2pdv,11,2), PADL(TRANSFORM(rn->ppdv, "999.99%"),11)
 	
 	skip
 enddo
 
 ? cLine
 ?
-? cRazmak + PADL("Ukupno bez PDV (KM):", 70), STR(drn->ukbezpdv, 12, 2)
+? cRazmak + PADL("Ukupno bez PDV (KM) :", 95), PADL(STR(drn->ukbezpdv, 12, 2),26)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0
-	? cRazmak + PADL("Popust (KM):", 70), STR(drn->ukpopust, 12, 2)
-	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", 70), STR(drn->ukbpdvpop, 12, 2)
+	? cRazmak + PADL("Popust (KM) :", 95), PADL(STR(drn->ukpopust, 12, 2),26)
+	? cRazmak + PADL("Uk.bez.PDV-popust (KM) :", 95), PADL(STR(drn->ukbpdvpop, 12, 2), 26)
 endif
-? cRazmak + PADL("PDV 17% :", 70), STR(drn->ukpdv, 12, 2)
+? cRazmak + PADL("PDV 17% :", 95), PADL(STR(drn->ukpdv, 12, 2),26)
 ? cLine
-? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 70), STR(drn->ukupno,12,2)
+? cRazmak + PADL("S V E U K U P N O   S A   P D V (KM) :", 95), PADL(STR(drn->ukupno,12,2), 26)
 
 cSlovima := get_dtxt_opis("D04")
 
@@ -80,8 +84,6 @@ cSlovima := get_dtxt_opis("D04")
 // dodaj text na kraju fakture
 pf_a4_footer()
 
-?
-?
 ?
 
 FF
@@ -94,12 +96,27 @@ return
 *}
 
 
+function st_zagl_data(cLine)
+*{
+? cLine
+
+// opis kolona
+? SPACE(6) + "R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV   Pojed.PDV   Sveukupno"
+? SPACE(81) + "Popust(%)   C.sa PDV    PDV(%)       sa PDV"
+
+? cLine
+return
+*}
+
+
 function pf_a4_footer()
 *{
 
-? get_dtxt_opis("F04")
+? SPACE(5) + get_dtxt_opis("F04")
 ?
-? get_dtxt_opis("F05")
+
+P_12CPI
+? SPACE(5) + get_dtxt_opis("F05")
 
 return
 *}
@@ -107,8 +124,8 @@ return
 function pf_a4_header()
 *{
 local cRazmak := SPACE(1)
-local cDLHead := REPLICATE("=", 60) // double line header
-local cSLHead := REPLICATE("-", 60) // single line header
+local cDLHead := REPLICATE("=", 80) // double line header
+local cSLHead := REPLICATE("-", 80) // single line header
 local cINaziv
 local cIAdresa
 local cIIdBroj
@@ -127,9 +144,10 @@ cIBrRjes := get_dtxt_opis("I06") // broj rjesenja
 cIBrUpis := get_dtxt_opis("I07") // broj upisa
 cIUstanova:= get_dtxt_opis("I08") // ustanova
 cIBanke := get_dtxt_opis("I09")
-aIBanke := SjeciStr(cIBanke, 60)
+aIBanke := SjeciStr(cIBanke, 73)
 
 P_10CPI
+gPB_ON()
 
 ? cRazmak + cDLHead
 ? cRazmak + cINaziv
@@ -143,16 +161,21 @@ P_10CPI
 
 ? cRazmak + "Banke: "
 
+P_12CPI
 // ispisi banke
-for i:=1 to LEN(aBanke)
+for i:=1 to LEN(aIBanke)
 	if i == 1
-		?? aBanke[i]
+		?? aIBanke[i]
 	else
-		? cRazmak + aBanke[i]
+		? cRazmak + aIBanke[i]
 	endif
 next
 
+P_10CPI
+
 ? cRazmak + cDLHead
+
+gPB_OFF()
 
 ?
 ?
@@ -230,40 +253,57 @@ aKupac:=Sjecistr(cKNaziv,30)
 gPB_ON()
 ?? padc(alltrim(aKupac[1]),30)
 gPB_OFF()
-?? padl(cMjesto + ", " + cDatDok, 39)
+?? padl(cMjesto + ", " + cDatDok, 45)
 
 // adresa
 ? space(5)
 gPB_ON()
 ?? padc(cKAdresa,30)
 gPB_OFF()
-?? padl("Datum isporuke: " + cDatIsp, 39)
+?? padl("Datum isporuke: " + cDatIsp, 45)
 
 // mjesto
 ? space(5)
 gPB_ON()
 ?? padc(cKMjesto,30)
 gPB_OFF()
-?? padl("Datum valute: " + cDatVal, 39)
+?? padl("Datum valute: " + cDatVal, 45)
 
+P_COND
 ? space(5)
-?? padc("Ident.broj: " + cIIdBroj)
+?? padc("Ident.broj: " + cKIdBroj, 30)
 ? space(5)
-?? padc("Por.broj: " + cIPorBroj)
+?? padc("Por.broj: " + cKPorBroj, 30)
 ? space(5)
-?? padc("Br.sud.Rj: " + cIBrRjes)
+?? padc("Br.sud.Rj: " + cKBrRjes, 30)
 ? space(5)
-?? padc("Br.upisa: " + cIBrUpis)
+?? padc("Br.upisa: " + cKBrUpisa, 30)
+P_10CPI
 
 gPB_ON()
 // broj dokumenta
-?? padl("#%FS012#" + cTipDok + cBrDok, 39)
+?? padl("#%FS012#" + cTipDok + cBrDok, 45)
 gPB_OFF()
 
-?
 ?
 
 return
 *}
 
+
+static function NStr(cLine, nStr)
+*{
+
+? cLine
+? space(5) + "Prenos na sljedecu stranicu"
+? cLine
+
+FF
+
+? cLine
+? space(5), "       Strana:", str(nStr, 3)
+st_zagl_data(cLine)
+
+return
+*}
 
