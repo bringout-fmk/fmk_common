@@ -64,7 +64,7 @@ do while !EOF()
 enddo
 
 ? cLine
-?
+
 ? cRazmak + PADL("Ukupno bez PDV (KM) :", 95), PADL(STR(drn->ukbezpdv, 12, 2),26)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0
@@ -194,7 +194,7 @@ for i:=1 to LEN(aIBanke)
 	if i == 1
 		?? aIBanke[i]
 	else
-		? cRazmak + aIBanke[i]
+		? cRazmak + aIBanke[i] + " "
 	endif
 next
 
