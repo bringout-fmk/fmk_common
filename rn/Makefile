@@ -6,7 +6,7 @@ include /sclib/Makefile_clipper
 SRCDOSROOT=c:\\dev\\fmk\\\AF\\cl-AF\\rn\\
 
 
-PRGS=rb_traka.prg pf_a4.prg pf_traka.prg pf_db.prg
+PRGS=rb_traka.prg pf_a4.prg pf_traka.prg pf_db.prg rn_ut.prg
 CS=
 ASMS=
 
