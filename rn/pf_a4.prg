@@ -20,7 +20,7 @@ local cRazmak := SPACE(5)
 local cLine
 local cSlovima
 
-if !lSSIP99 .and. !StartPrint()
+if !StartPrint()
 	close all
 	return
 endif
@@ -88,9 +88,7 @@ pf_a4_footer()
 
 FF
 
-if !lSSIP99
-	EndPrint()
-endif
+EndPrint()
 
 return
 *}
@@ -271,7 +269,7 @@ cKIdBroj:=get_dtxt_opis("K03")
 cKPorBroj:=get_dtxt_opis("K05")
 cKBrRjes:=get_dtxt_opis("K06")
 cKBrUpisa:=get_dtxt_opis("K07")
-cKMjesto:=get_dtxt_opis("K08")+", " + get_dtxt_opis("K09")
+cKMjesto:=get_dtxt_opis("K10")+", " + get_dtxt_opis("K11")
 
 aKupac:=Sjecistr(cKNaziv,30)
 
