@@ -66,36 +66,52 @@ nStr:=1
 
 // data
 do while !EOF()
-	
+	// provjeri za novu stranicu
 	if prow() > nDodRedova + 48 - nSlTxtRow
 		++nStr
 		NStr(cLine, nStr, cRazmak, .t.)
     	endif	
 	
-	? cRazmak + PADL(rn->rbr + ")", 6), padr(rn->idroba, 10), padr(rn->robanaz, 40), STR(rn->kolicina, 11, 2), rn->jmj, STR(rn->cjenbpdv,11,2), STR(rn->cjen2bpdv,11,2), STR(rn->vpdv,11,2), STR(ukupno, 11,2)
+	// PRVI RED
+	? cRazmak + PADL(rn->rbr + ")", 6) + SPACE(1)
+	?? padr(rn->idroba, 10) + SPACE(1)
+	?? padr(rn->robanaz, 40) + SPACE(1)
+	?? STR(rn->kolicina, 11, 2) + SPACE(1)
+	?? rn->jmj + SPACE(1)
+	if !lSamoKol
+		?? STR(rn->cjenbpdv,11,2) + SPACE(1)
+		?? STR(rn->cjen2bpdv,11,2) + SPACE(1)
+		?? STR(rn->vpdv,11,2) + SPACE(1)
+		?? STR(ukupno, 11,2)
+	endif
 	
-	? cRazmak + SPACE(80) + TRANSFORM(rn->popust,"99.99%"), STR(rn->cjen2pdv,11,2), PADL(TRANSFORM(rn->ppdv, "999.99%"),11)
+	// DRUGI RED
+	if !lSamoKol
+		? cRazmak + SPACE(80) + TRANSFORM(rn->popust,"99.99%") + SPACE(1)
+		?? STR(rn->cjen2pdv,11,2) + SPACE(1)
+		?? PADL(TRANSFORM(rn->ppdv, "999.99%"),11)
+	endif
 	
 	skip
 enddo
 
 ? cLine
 
-? cRazmak + PADL("Ukupno bez PDV ("+cValuta+") :", 95), PADL(STR(drn->ukbezpdv, 12, 2),26)
-// dodaj i popust
-if Round(drn->ukpopust, 2) <> 0
-	? cRazmak + PADL("Popust ("+cValuta+") :", 95), PADL(STR(drn->ukpopust, 12, 2),26)
-	? cRazmak + PADL("Uk.bez.PDV-popust ("+cValuta+") :", 95), PADL(STR(drn->ukbpdvpop, 12, 2), 26)
+if !lSamoKol
+	? cRazmak + PADL("Ukupno bez PDV ("+cValuta+") :", 95), PADL(STR(drn->ukbezpdv, 12, 2),26)
+	// provjeri i dodaj stavke vezane za popust
+	if Round(drn->ukpopust, 2) <> 0
+		? cRazmak + PADL("Popust ("+cValuta+") :", 95), PADL(STR(drn->ukpopust, 12, 2),26)
+		? cRazmak + PADL("Uk.bez.PDV-popust ("+cValuta+") :", 95), PADL(STR(drn->ukbpdvpop, 12, 2), 26)
+	endif
+	? cRazmak + PADL("PDV 17% :", 95), PADL(STR(drn->ukpdv, 12, 2),26)
+	? cLine
+	? cRazmak + PADL("S V E U K U P N O   S A   P D V ("+cValuta+") :", 95), PADL(STR(drn->ukupno,12,2), 26)
+	cSlovima := get_dtxt_opis("D04")
+	? cRazmak + "slovima: " + cSlovima
+	? cLine
 endif
-? cRazmak + PADL("PDV 17% :", 95), PADL(STR(drn->ukpdv, 12, 2),26)
-? cLine
-? cRazmak + PADL("S V E U K U P N O   S A   P D V ("+cValuta+") :", 95), PADL(STR(drn->ukupno,12,2), 26)
 
-cSlovima := get_dtxt_opis("D04")
-
-? cRazmak + "slovima: " + cSlovima
-
-? cLine
 ?
 // dodaj text na kraju fakture
 pf_a4_footer(cRazmak, cLine)
