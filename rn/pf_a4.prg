@@ -30,6 +30,8 @@ private lSamoKol // prikaz samo kolicina
 private lZaglStr // zaglavlje na svakoj stranici
 private lDatOtp // prikaz datuma otpremnice i narudzbenice
 private cValuta // prikaz valute KM ili ???
+private lStZagl // automatski formirati zaglavlje
+private nGMargina // gornja margina
 
 if !StartPrint()
 	close all
@@ -38,13 +40,20 @@ endif
 
 // uzmi glavne varijable za stampu fakture
 // razmak, broj redova sl.teksta, 
-get_pfa4_vars(@nLMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lDatOtp, @cValuta)
+get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta)
 
 // razmak ce biti
 cRazmak := SPACE(nLMargina)
 
-// zaglavlje por.fakt
-pf_a4_header()
+if lStZagl
+	// zaglavlje por.fakt
+	pf_a4_header()
+else
+	// ostavi prostor umjesto automatskog zaglavlja
+	for i:=1 to nGMargina
+		?
+	next
+endif
 
 // podaci kupac i broj dokumenta itd....
 pf_a4_kupac(cRazmak)
@@ -126,11 +135,14 @@ return
 *}
 
 // uzmi osnovne parametre za stampu dokumenta
-function get_pfa4_vars(nLMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lDatOtp, cValuta)
+function get_pfa4_vars(nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta)
 *{
 
 // uzmi podatak za lijevu marginu
 nLMargina := VAL(get_dtxt_opis("P01"))
+
+// uzmi podatak za gornju marginu
+nGMargina := VAL(get_dtxt_opis("P07"))
 
 // broj dodatnih redova po listu
 nDodRedova := VAL(get_dtxt_opis("P06"))
@@ -148,6 +160,12 @@ endif
 lZaglStr := .f.
 if get_dtxt_opis("P04") == "D"
 	lZaglStr := .t.
+endif
+
+// da li se kreira zaglavlje na svakoj stranici
+lStZagl := .f.
+if get_dtxt_opis("P10") == "D"
+	lStZagl := .t.
 endif
 
 // da li se ispisuji podaci otpremnica itd....
