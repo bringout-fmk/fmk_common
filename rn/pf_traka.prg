@@ -96,10 +96,13 @@ local cArtikal
 local cRazmak := SPACE(1)
 local cLine
 local lViseRacuna := .f.
+local nPFeed
 
 START PRINT2 CRET gLocPort,SPACE(5)
 
 rb_traka_line(@cLine)
+
+get_rb_vars(@nPFeed)
 
 hd_rb_traka()
 
@@ -188,7 +191,10 @@ ft_rb_traka()
 ?
 ? SPACE(3) + "Fakturisao: ______________________"
 ?
-?
+
+for i:=1 to nPFeed
+	?
+next
 
 END PRN2 13
 

@@ -68,6 +68,14 @@ return
 *}
 
 
+function get_rb_vars(nFeedLines)
+*{
+// broj linija za odcjepanje trake
+nFeedLines := VAL(get_dtxt_opis("P12"))
+
+return
+*}
+
 function isAzurDok(lRet)
 *{
 local cTemp 
@@ -131,10 +139,14 @@ local cArtikal
 local cRazmak := SPACE(1)
 local cLine
 local lViseRacuna := .f.
+local nPFeed
 
 START PRINT2 CRET gLocPort,SPACE(5)
 
 rb_traka_line(@cLine)
+
+// uzmi glavne varijable
+get_rb_vars(@nPFeed)
 
 hd_rb_traka()
 
@@ -213,6 +225,10 @@ endif
 ? cLine
 
 ft_rb_traka()
+
+for i:=1 to nPFeed
+	?
+next
 
 END PRN2 13
 
