@@ -149,7 +149,10 @@ if roba->(fieldpos("K7"))<>0
 endif
 
 if roba->(fieldpos("ZANIVEL"))<>0
-	AADD (ImeKol,{ padc("zanivel",10 ), {|| transform(zanivel,"999999.999")}, "zanivel", NIL, NIL,NIL, gPicCDEM  })
+	AADD (ImeKol,{ padc("Nova cijena", 20 ), {|| transform(zanivel,"999999.999")}, "zanivel", NIL, NIL,NIL, gPicCDEM  })
+endif
+if roba->(fieldpos("ZANIV2"))<>0
+	AADD (ImeKol,{ padc("Nova cijena/2", 20 ), {|| transform(zaniv2,"999999.999")}, "zaniv2", NIL, NIL,NIL, gPicCDEM  })
 endif
 
 
