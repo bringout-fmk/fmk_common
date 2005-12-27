@@ -96,17 +96,19 @@ endif
 // u sekciji 1 je pdv parametar
 cSection := "1"
 
-RPar("PD",@gPDV)
-ParPDV()
-// odjavi gSql
-lSql:=.f.
-if gModul=="TOPS" .and. gSql=="D"
-	lSql:=.t.
-	gSql:="N"
-endif
-WPar("PD",gPDV)
-if lSql
-	gSql:="D"
+if gModul <> "TOPS" 
+	RPar("PD",@gPDV)
+	ParPDV()
+	// odjavi gSql
+	//lSql:=.f.
+	//if gModul=="TOPS" .and. gSql=="D"
+	//	lSql:=.t.
+	//	gSql:="N"
+	//endif
+	WPar("PD",gPDV)
+	//if lSql
+	//	gSql:="D"
+	//endif
 endif
 
 select (F_PARAMS)
@@ -138,7 +140,9 @@ public cZabrana:="Opcija nedostupna za ovaj nivo !!!"
 public gNovine
 gNovine:=IzFmkIni("STAMPA","Opresa","N",KUMPATH)
 
-SetPDVBoje()
+if gModul<>"TOPS"
+	SetPDVBoje()
+endif
 
 return
 *}
@@ -200,4 +204,6 @@ if gPDV=="D"
 endif
 return .f.
 *}
+
+
 
