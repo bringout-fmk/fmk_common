@@ -352,7 +352,6 @@ return nPom
 function Izn_P_PPP(nMPCBp, aPorezi, aPoreziIzn, nMpcSaP)
 *{
 local nPom
-altd()
 if !glPoreziLegacy 
 	if glUgost 
 		if gUgostVarijanta=="MPCSAPOR"
@@ -426,7 +425,6 @@ function Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
 local nPom
 local nDLRUC
 local nMPP
-altd()
 nDLRUC:=aPorezi[POR_DLRUC]/100
 nMPP:=aPorezi[POR_PRUCMP]/100
 
@@ -456,7 +454,6 @@ local nMarza
 local nDLRUC
 //preracunata stopa poreza na ruc
 local nPStopaMPP
-altd()
 //donji limit stope RUC-a
 nDLRUC:=aPorezi[POR_DLRUC]/100
 
