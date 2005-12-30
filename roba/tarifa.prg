@@ -4,73 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/tarifa.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.18 $
- * $Log: tarifa.prg,v $
- * Revision 1.18  2004/05/14 14:58:42  sasavranic
- * no message
- *
- * Revision 1.17  2004/05/13 10:20:05  sasavranic
- * Uvedena varijanta gUVarPP="I", u sl.n.objavljeno da se iz vrijednosti PRUCMP ne izbija PPP
- *
- * Revision 1.16  2004/01/13 19:07:59  sasavranic
- * appsrv konverzija
- *
- * Revision 1.15  2003/09/29 13:26:32  mirsadsubasic
- * sredjivanje koda za poreze u ugostiteljstvu
- *
- * Revision 1.14  2003/09/20 07:37:27  mirsad
- * sredj.koda za poreze u MP
- *
- * Revision 1.13  2003/09/08 08:41:43  ernad
- * porezi u ugostiteljstvu
- *
- * Revision 1.12  2003/09/04 16:51:17  ernad
- * komentiranje koda da bih skontao algoritam za poreze u ugostiteljstvu
- * (Kumpath/PPUgostKaoPPU=T)
- *
- * Revision 1.11  2003/02/10 02:17:49  mirsad
- * no message
- *
- * Revision 1.10  2002/10/17 14:28:35  mirsad
- * uveden novi parametar f-je MpcBezPor: (,,nRabat)
- *
- * Revision 1.9  2002/10/17 14:25:32  mirsad
- * uveden novi parametar f-je MpcBezPor: (,,nRabat)
- *
- * Revision 1.8  2002/07/18 13:49:00  mirsad
- * ubaèene varijante "M" i "J" za poreze u ugostiteljstvu
- *
- * Revision 1.7  2002/07/04 19:04:08  ernad
- *
- *
- * ciscenje sifrarnik fakt
- *
- * Revision 1.6  2002/07/01 08:05:25  ernad
- *
- *
- * debug kada nema polja tarifa->mpp
- *
- * Revision 1.5  2002/06/30 11:08:53  ernad
- *
- *
- * razrada: kalk/specif/planika/rpt_ppp.prg; pos/prikaz privatnog direktorija na vrhu; doxy
- *
- * Revision 1.4  2002/06/29 17:32:02  ernad
- *
- *
- * planika - pregled prometa prodavnice
- *
- * Revision 1.3  2002/06/20 16:52:06  ernad
- *
- *
- * ciscenje planika, uvedeno fmk/svi/specif.prg
- *
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
- *
  */
 
 
@@ -692,7 +625,6 @@ function RacPorezeMP(aPorezi, nMpc, nMpcSaPP, nNc)
 *{
 local nIznPRuc
 local nP1, nP2, nP3
-altd()
 nP1:=Izn_P_PPP(nMpc, aPorezi, , nMpcSaPP)
 if glUgost
 	nIznPRuc:=Izn_P_PRugost( nMpcSaPP, nMpc, nNc, aPorezi)

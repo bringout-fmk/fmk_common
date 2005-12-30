@@ -17,6 +17,7 @@ all:
 	make -C ugov
 	make -C partnst
 	make -C rabat/1g
+	make -C rn
 
 
 clean:
@@ -27,6 +28,7 @@ clean:
 	cd ugov; make clean
 	cd partnst; make clean
 	cd rabat/1g; make clean
+	cd rn; make clean
 	rm -f *.obj
 
 
