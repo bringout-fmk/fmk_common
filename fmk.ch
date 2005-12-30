@@ -268,6 +268,7 @@
 #define F_ERRORS 242
 
 #define F_KALKSEZ 243
+#define F_ROBASEZ 244
 
 // PDV stampa racuna
 #define F_DRN 244
