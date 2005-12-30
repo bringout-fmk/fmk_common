@@ -244,8 +244,8 @@ return
 function pf_a4_header()
 *{
 local cRazmak := SPACE(1)
-local cDLHead := REPLICATE("=", 76) // double line header
-local cSLHead := REPLICATE("-", 76) // single line header
+local cDLHead := REPLICATE("=", 74) // double line header
+local cSLHead := REPLICATE("-", 74) // single line header
 local cINaziv
 local cIAdresa
 local cIIdBroj
@@ -264,7 +264,7 @@ cIBrRjes := get_dtxt_opis("I06") // broj rjesenja
 cIBrUpis := get_dtxt_opis("I07") // broj upisa
 cIUstanova:= get_dtxt_opis("I08") // ustanova
 cIBanke := get_dtxt_opis("I09")
-aIBanke := SjeciStr(cIBanke, 69)
+aIBanke := SjeciStr(cIBanke, 67)
 
 P_10CPI
 B_ON
