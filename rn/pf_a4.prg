@@ -234,7 +234,7 @@ pf_a4_sltxt(cRazmak, cLine)
 P_12CPI
 ?
 // ispisi potpis na kraju dokumenta
-? cRazmak + SPACE(20) + get_dtxt_opis("F10")
+? cRazmak + SPACE(10) + get_dtxt_opis("F10")
 
 return
 *}
@@ -244,8 +244,8 @@ return
 function pf_a4_header()
 *{
 local cRazmak := SPACE(1)
-local cDLHead := REPLICATE("=", 80) // double line header
-local cSLHead := REPLICATE("-", 80) // single line header
+local cDLHead := REPLICATE("=", 76) // double line header
+local cSLHead := REPLICATE("-", 76) // single line header
 local cINaziv
 local cIAdresa
 local cIIdBroj
@@ -264,21 +264,22 @@ cIBrRjes := get_dtxt_opis("I06") // broj rjesenja
 cIBrUpis := get_dtxt_opis("I07") // broj upisa
 cIUstanova:= get_dtxt_opis("I08") // ustanova
 cIBanke := get_dtxt_opis("I09")
-aIBanke := SjeciStr(cIBanke, 73)
+aIBanke := SjeciStr(cIBanke, 69)
 
 P_10CPI
-gPB_ON()
+B_ON
 
 ? cRazmak + cDLHead
 ? cRazmak + cINaziv
 ? cRazmak + REPLICATE("-", LEN(cINaziv))
+P_12CPI
 ? cRazmak + "Adresa: " + cIAdresa
 ? cRazmak + PADR("ID broj: " + cIIdBroj, 30) + PADR("Poreski broj: " + cIPorBr, 50)
 ? cRazmak + PADR("Broj sudskog rjesenja: " + cIBrRjes, 40) + PADR("Broj upisa: " + cIBrUpis, 30)
 ? cRazmak + "Ustanova: " + cIUstanova
-
+P_10CPI
 ? cRazmak + cSLHead
-
+P_12CPI
 ? cRazmak + "Banke: "
 
 P_12CPI
@@ -295,7 +296,7 @@ P_10CPI
 
 ? cRazmak + cDLHead
 
-gPB_OFF()
+B_OFF
 
 ?
 ?
@@ -377,24 +378,24 @@ aKupac:=Sjecistr(cKNaziv,30)
 
 // naziv, mjesto i datdok
 ? cRazmak
-gPB_ON()
+B_ON
 ?? padc(alltrim(aKupac[1]),30)
-gPB_OFF()
-?? padl(cMjesto + ", " + cDatDok, 45)
+B_OFF
+?? padl(cMjesto + ", " + cDatDok, 37)
 
 // adresa
 ? cRazmak
-gPB_ON()
+B_ON
 ?? padc(cKAdresa,30)
-gPB_OFF()
-?? padl("Datum isporuke: " + cDatIsp, 45)
+B_OFF
+?? padl("Datum isporuke: " + cDatIsp, 37)
 
 // mjesto
 ? cRazmak
-gPB_ON()
+B_ON
 ?? padc(cKMjesto,30)
-gPB_OFF()
-?? padl("Datum valute: " + cDatVal, 45)
+B_OFF
+?? padl("Datum valute: " + cDatVal, 37)
 
 P_COND
 ? cRazmak
@@ -405,10 +406,12 @@ P_COND
 ?? padc("Br.upisa: " + cKBrUpisa, 30)
 P_10CPI
 
-gPB_ON()
 // broj dokumenta
-? padl("#%FS012#" + cTipDok + cBrDok, 83)
-gPB_OFF()
+? space(35)
+B_ON
+?? padl(cTipDok + cBrDok, 39)
+?
+B_OFF
 
 // ako je prikaz broja otpremnice itd...
 if lDatOtp
