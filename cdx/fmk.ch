@@ -44,6 +44,7 @@
 
 #xcommand O_KALK   => select(F_KALK);  use  (KUMPATH+"KALK")  ; set order to 1
 #xcommand O_KALKSEZ   => select(F_KALKSEZ);  use  (KUMPATH+"2005"+SLASH+"KALK") alias kalksez ; set order to 1
+#xcommand O_ROBASEZ   => select(F_ROBASEZ);  use  (SIFPATH+"2005"+SLASH+"ROBA") alias robasez ; set order to tag "ID"
 #xcommand O_KALKX  => select(F_KALK);  usex  (KUMPATH+"KALK")  ; set order to 1
 
 #xcommand O_KALKS  => select(F_KALKS);  use  (KUMPATH+"KALKS")  ; set order to 1
