@@ -141,7 +141,9 @@ public gNovine
 gNovine:=IzFmkIni("STAMPA","Opresa","N",KUMPATH)
 
 if gModul<>"TOPS"
-	SetPDVBoje()
+	if goModul:oDataBase:cRadimUSezona == "RADP"
+		SetPDVBoje()
+	endif
 endif
 
 return
