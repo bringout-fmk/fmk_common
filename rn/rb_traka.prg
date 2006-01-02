@@ -280,14 +280,16 @@ function ft_rb_traka(cIdRadnik)
 local cRazmak := SPACE(1)
 local cRadnik
 local cSmjena
+local cVrstaP
 
 cRadnik := get_dtxt_opis("R02")
 cSmjena := get_dtxt_opis("R03")
+cVrstaP := get_dtxt_opis("R05")
 
 ? cRazmak + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
 ?
 ?
-? cRazmak + "Placanje izvrseno: gotovina" 
+? cRazmak + "Placanje izvrseno: " + cVrstaP 
 ?
 ?
 return
