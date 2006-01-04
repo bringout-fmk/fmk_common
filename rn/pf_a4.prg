@@ -1,19 +1,25 @@
 #include "sc.ch"
 
 // glavna funkcija za poziv stampe fakture a4
-function pf_a4_print()
+// lStartPrint - pozovi funkcije stampe START PRINT
+function pf_a4_print(lStartPrint)
 *{
+// ako je nil onda je uvijek .t.
+if lStartPrint == nil
+	lStartPrint := .t.
+endif
+
 drn_open()
 
 // stampaj racun
-st_pf_a4()
+st_pf_a4(lStartPrint)
 
 return
 *}
 
 
 // stampa fakture a4
-function st_pf_a4()
+function st_pf_a4(lStartPrint)
 *{
 local cBrDok
 local dDatDok
@@ -33,9 +39,13 @@ private cValuta // prikaz valute KM ili ???
 private lStZagl // automatski formirati zaglavlje
 private nGMargina // gornja margina
 
-if !StartPrint()
-	close all
-	return
+if lStartPrint
+
+	if !StartPrint()
+		close all
+		return
+	endif
+
 endif
 
 // uzmi glavne varijable za stampu fakture
@@ -72,6 +82,7 @@ st_zagl_data(cLine, cRazmak)
 select rn
 
 nStr:=1
+aArtNaz := {}
 
 // data
 do while !EOF()
@@ -81,10 +92,13 @@ do while !EOF()
 		NStr(cLine, nStr, cRazmak, .t.)
     	endif	
 	
+	// uzmi naziv u matricu
+	aArtNaz := SjeciStr(rn->robanaz, 40)
+	
 	// PRVI RED
 	? cRazmak + PADL(rn->rbr + ")", 6) + SPACE(1)
 	?? padr(rn->idroba, 10) + SPACE(1)
-	?? padr(rn->robanaz, 40) + SPACE(1)
+	?? padr(aArtNaz[1], 40) + SPACE(1)
 	?? TRANSFORM(rn->kolicina, PicKol) + SPACE(1)
 	?? rn->jmj + SPACE(1)
 	if !lSamoKol
@@ -94,9 +108,18 @@ do while !EOF()
 		?? TRANSFORM(ukupno,  PicDem)
 	endif
 	
+	cArtNaz2Red := SPACE(40)
+	
+	if LEN(aArtNaz) > 1
+		cArtNaz2Red := aArtNaz[2]
+	endif
+	
 	// DRUGI RED
+	? cRazmak + SPACE(18) + PADR(cArtNaz2Red,40)
+	
+	// ako nisu samo kolicine dodaj i ostale podatke
 	if !lSamoKol
-		? cRazmak + SPACE(80) + TRANSFORM(rn->popust,"99.99%") + SPACE(1)
+		?? SPACE(22) + TRANSFORM(rn->popust,"99.99%") + SPACE(1)
 		?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
 		?? PADL(TRANSFORM(rn->ppdv, "999.99%"),11)
 	endif
@@ -127,9 +150,10 @@ pf_a4_footer(cRazmak, cLine)
 
 ?
 
-FF
-
-EndPrint()
+if lStartPrint
+	FF
+	EndPrint()
+endif
 
 return
 *}
@@ -407,7 +431,7 @@ P_COND
 P_10CPI
 
 // broj dokumenta
-? space(35)
+? space(30)
 B_ON
 ?? padl(cTipDok + cBrDok, 39)
 ?

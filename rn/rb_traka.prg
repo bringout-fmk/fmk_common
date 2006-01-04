@@ -1,48 +1,60 @@
 #include "sc.ch"
 
-function rb_print()
+
+// glavna funkcija za stampu PDV blag.racuna na traci
+// lStartPrint - .t. - pozivaju se funkcije za stampu START PRINT itd...
+function rb_print(lStartPrint)
 *{
 local nIznUkupno
 local lPrintPfTraka := .f.
 local lGetKupData := .f.
 local lAzurDok := .f.
+local lJedanRacun
+
+if lStartPrint == nil
+	lStartPrint := .t.
+endif
+
+lJedanRacun := lStartPrint
 
 drn_open()
 
 if !drn_csum()
 	MsgBeep("Stampanje onemoguceno! checksum error!!!")
-	return
+	return .f.
 endif
 
 nIznUkupno := get_rb_ukupno()
-
 // da li uopste stampati fakture - parametri
 isPfTraka(@lPrintPfTraka)
 // da li je ovo prepis dokumenta
 isAzurDok(@lAzurDok)
 
 // podaci o kupcu
-if nIznUkupno <= 100
+if (lJedanRacun .and. nIznUkupno <= 100)
 	if lPrintPfTraka
 		if Pitanje(,"Stampati poresku fakturu (D/N)?", "N") == "D"
 			lGetKupData := .t.
 		endif
 	endif
 endif
+
 // ako je racun veci od 100 - nudi po defaultu poresku fakturu
-if nIznUkupno > 100
+if (lJedanRacun .and. nIznUkupno > 100)
 	if lPrintPfTraka
 		lGetKupData := .t.
 	endif
 endif
 
-if lGetKupData .and. !lAzurDok
+if lJedanRacun .and. (lGetKupData .and. !lAzurDok)
 	// daj nam podatke o kupcu
 	get_kup_data()
 endif
 
-// Ispisi iznos racuna velikim slovima
-ShowIznRac(nIznUkupno)
+if lJedanRacun
+	// Ispisi iznos racuna velikim slovima
+	ShowIznRac(nIznUkupno)
+endif
 
 // vidjeti sta sa ovim
 if gDisplay=="D"
@@ -51,18 +63,20 @@ if gDisplay=="D"
 	Send2ComPort(CHR(30) + "UKUPAN IZNOS RN:")
 	Send2ComPort(CHR(22))
 	Send2ComPort(CHR(13))
-	Send2ComPort(ALLTRIM(STR(nIznos-nNeplaca, 10, 2)))
+	Send2ComPort(ALLTRIM(STR(nIznUkupno, 10, 2)))
 endif
 
 // stampaj racun
-st_rb_traka()
+st_rb_traka(lStartPrint)
 
-if lGetKupData
+if lJedanRacun .and. lGetKupData
 	st_pf_traka()
 endif
 
-// skloni iznos racuna
-BoxC()
+if lJedanRacun
+	// skloni iznos racuna
+	BoxC()
+endif
 
 return
 *}
@@ -130,7 +144,9 @@ return
 *}
 
 
-function st_rb_traka()
+// st_rb_traka() - funkcija za stampu stavki trake
+// lStartPrint - ako je .t. pozivaju se funkcije stampe
+function st_rb_traka(lStartPrint)
 *{
 local cBrDok
 local dDatDok
@@ -141,14 +157,18 @@ local cLine
 local lViseRacuna := .f.
 local nPFeed
 
-START PRINT2 CRET gLocPort,SPACE(5)
+if lStartPrint
+	START PRINT2 CRET gLocPort, SPACE(5)
+endif
 
 rb_traka_line(@cLine)
 
 // uzmi glavne varijable
 get_rb_vars(@nPFeed)
 
-hd_rb_traka()
+if lStartPrint
+	hd_rb_traka()
+endif
 
 select drn
 go top
@@ -212,7 +232,7 @@ do while !EOF()
 enddo
 
 ? cLine
-?
+
 ? cRazmak + PADL("Ukupno bez PDV (KM):", 25), STR(drn->ukbezpdv, 12, 2)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0
@@ -230,7 +250,9 @@ for i:=1 to nPFeed
 	?
 next
 
-END PRN2 13
+if lStartPrint
+	END PRN2 13
+endif
 
 return
 *}

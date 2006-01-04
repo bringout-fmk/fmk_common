@@ -174,7 +174,7 @@ do while !EOF()
 enddo
 
 ? cLine
-?
+
 ? cRazmak + PADL("Ukupno bez PDV (KM):", 25), STR(drn->ukbezpdv, 12, 2)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0

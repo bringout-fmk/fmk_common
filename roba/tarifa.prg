@@ -352,6 +352,7 @@ return nPom
 function Izn_P_PPP(nMPCBp, aPorezi, aPoreziIzn, nMpcSaP)
 *{
 local nPom
+altd()
 if !glPoreziLegacy 
 	if glUgost 
 		if gUgostVarijanta=="MPCSAPOR"
