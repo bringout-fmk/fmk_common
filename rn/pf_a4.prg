@@ -119,7 +119,15 @@ do while !EOF()
 	
 	// ako nisu samo kolicine dodaj i ostale podatke
 	if !lSamoKol
-		?? SPACE(22) + TRANSFORM(rn->popust,"99.99%") + SPACE(1)
+		nPopust := rn->popust 
+		if rn->(fieldpos("poptp")) <> 0 
+			if rn->poptp <> 0
+				nPopust := rn->poptp
+			endif
+		endif
+				
+			
+		?? SPACE(22) + TRANSFORM(nPopust, "99.99%") + SPACE(1)
 		?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
 		?? PADL(TRANSFORM(rn->ppdv, "999.99%"),11)
 	endif
@@ -139,6 +147,15 @@ if !lSamoKol
 	? cRazmak + PADL("PDV 17% :", 95), PADL(TRANSFORM(drn->ukpdv, PicDem),26)
 	? cLine
 	? cRazmak + PADL("S V E U K U P N O   S A   P D V ("+cValuta+") :", 95), PADL(TRANSFORM(drn->ukupno, PicDem), 26)
+
+	if drn->(fieldpos("ukpoptp")) <> 0
+             if Round(drn->ukpoptp, 2) <> 0
+	        // popust na teret prodavca
+		? cRazmak + PADL("Popust na teret prodavca ("+cValuta+") :", 95), PADL(TRANSFORM(drn->ukpoptp, PicDem), 26)
+	        ? cRazmak + PADL("S V E U K U P N O   S A   P D V -  P O P U S T  N A   T. P. ("+cValuta+") :", 95), PADL(TRANSFORM(drn->ukupno - drn->ukpoptp, PicDem), 26)
+	     endif
+	endif
+	
 	cSlovima := get_dtxt_opis("D04")
 	? cRazmak + "slovima: " + cSlovima
 	? cLine

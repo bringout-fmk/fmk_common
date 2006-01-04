@@ -81,6 +81,7 @@ AADD(aArr, {"DATISP",  "D",  8, 0})
 AADD(aArr, {"VRIJEME", "C",  5, 0})
 AADD(aArr, {"UKBEZPDV","N", 15, 5})
 AADD(aArr, {"UKPOPUST","N", 15, 5})
+AADD(aArr, {"UKPOPTP",  "N",  15, 5})
 AADD(aArr, {"UKBPDVPOP","N", 15, 5})
 AADD(aArr, {"UKPDV",   "N", 15, 5})
 AADD(aArr, {"UKUPNO",  "N", 15, 5})
@@ -110,6 +111,8 @@ AADD(aArr, {"POPUST",   "N", 8, 3})
 AADD(aArr, {"PPDV",     "N", 8, 3})
 AADD(aArr, {"VPDV",     "N", 15, 5})
 AADD(aArr, {"UKUPNO",    "N", 15, 5})
+AADD(aArr, {"POPTP",   "N", 8, 3})
+AADD(aArr, {"VPOPTP",   "N", 15, 5})
 return
 *}
 
@@ -140,7 +143,7 @@ return
 *}
 
 
-function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum)
+function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp)
 *{
 if !USED(F_DRN)
 	O_DRN
@@ -163,10 +166,15 @@ replace ukpdv with nUPDV
 replace ukupno with nUkupno
 replace csumrn with nCSum
 
+if fieldpos("UKPOPTP") <> 0
+	// popust na teret prodavca
+	replace ukpoptp with nUPopTp
+endif
+
 return
 *}
 
-function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno)
+function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca)
 *{
 if !USED(F_RN)
 	O_RN
@@ -189,6 +197,18 @@ replace popust with nPopust
 replace ppdv with nPPdv
 replace vpdv with nVPdv
 replace ukupno with nUkupno 
+
+if (nPopNaTeretProdavca <> 0)
+
+// popust na teret prodavca
+if FIELDPOS("poptp") <> 0
+  replace poptp with nPopNaTeretProdavca
+  replace vpoptp with nVPopNaTeretProdavca
+else
+  MsgBeep("Tabela RN ne sadrzi POPTP - popust na teret prodavca")
+endif
+
+endif
 
 return
 *}
