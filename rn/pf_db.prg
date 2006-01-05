@@ -198,7 +198,7 @@ replace ppdv with nPPdv
 replace vpdv with nVPdv
 replace ukupno with nUkupno 
 
-if (nPopNaTeretProdavca <> 0)
+if ( ROUND(nPopNaTeretProdavca, 4) <> 0 )
 
 // popust na teret prodavca
 if FIELDPOS("poptp") <> 0
