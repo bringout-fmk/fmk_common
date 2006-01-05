@@ -166,9 +166,7 @@ rb_traka_line(@cLine)
 // uzmi glavne varijable
 get_rb_vars(@nPFeed)
 
-if lStartPrint
-	hd_rb_traka()
-endif
+hd_rb_traka()
 
 select drn
 go top
