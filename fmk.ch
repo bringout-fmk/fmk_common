@@ -10,7 +10,7 @@
   #include "sc.ch"
 #endif
 
-#define FMK_VER  "1.w.0.8.3"
+#define FMK_VER  "02.20"
 
 #define F_GPARAMS   1
 #define F_GPARAMSP  2
@@ -276,6 +276,7 @@
 #define F_DRNTEXT 246
 #define F_DOKSPF 247
 #define F_R_UIO 249
+#define F_R_EXP 250
 
 #ifdef CLIP
    #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"

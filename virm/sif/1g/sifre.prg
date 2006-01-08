@@ -21,7 +21,6 @@ AADD(ImeKol, { PADC("Telefon",12),{|| TELEFON}, "telefon"  } )
 
 for i:=1 to len(ImeKol); AADD(Kol,i) ; next
 
-//if IzFmkIni("Svi","Sifk")="D"
 PushWa()
 select sifk; set order to tag "ID"; seek "PARTN"
 do while !eof() .and. ID="PARTN"
@@ -54,7 +53,6 @@ do while !eof() .and. ID="PARTN"
  skip
 enddo
 PopWa()
-//endif
 
 // PushHT("2-1")
 vrati:=PostojiSifra(F_PARTN,1,10,77,"Lista partnera:",@cId,dx,dy)

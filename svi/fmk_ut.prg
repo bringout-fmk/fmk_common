@@ -6,30 +6,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/svi/fmk_ut.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.6 $
- * $Log: fmk_ut.prg,v $
- * Revision 1.6  2004/05/21 13:06:52  sasavranic
- * Na kalulatoru omoguceno kucanje "," umjesto "."
- *
- * Revision 1.5  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.4  2002/07/01 17:49:28  ernad
- *
- *
- * formiranje finalnih build-ova (fin, kalk, fakt, pos) pred teren planika
- *
- * Revision 1.3  2002/06/17 14:48:41  ernad
- *
- *
- * ciscenje
- *
- * Revision 1.2  2002/06/16 11:44:53  ernad
- * unos header-a
- *
- *
  */
  
 /*! \fn UBrojDok(nBroj,nNumDio,cOstatak)
@@ -366,8 +342,6 @@ endif
 
 FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
 
-if IzFmkIni("Svi","Sifk")="D"
-
 
 PushWa()
 
@@ -407,7 +381,6 @@ do while !eof() .and. ID="ADRES   "
  skip
 enddo
 PopWa()
-endif
 
 return PostojiSifra(F_ADRES,1,15,77,"Adresar:",@cId,dx,dy, {|Ch| AdresBlok(Ch)} )
 *}
@@ -446,7 +419,6 @@ MsgO("Priprema koverte.dbf")
 
 cIniName:=EXEPATH+'ProIzvj.ini'
 
-//UzmiIzIni(cIniName,'Varijable','Linija1',IzFmkIni("Zaglavlje","Linija1",gNFirma,KUMPATH),'WRITE')
 
 cWinKonv:=IzFmkIni("DelphiRb","Konverzija","3")
 DO WHILE !EOF()

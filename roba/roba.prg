@@ -4,48 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/roba.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.13 $
- * $Log: roba.prg,v $
- * Revision 1.13  2004/03/02 18:37:28  sasavranic
- * no message
- *
- * Revision 1.12  2004/02/12 15:38:02  sasavranic
- * no message
- *
- * Revision 1.11  2003/11/28 12:14:15  sasavranic
- * Ubacen dio koda koji je potreban za opresu stampa, nije ga bilo
- *
- * Revision 1.10  2003/11/22 15:25:27  sasavranic
- * no message
- *
- * Revision 1.9  2003/11/04 02:13:30  ernadhusremovic
- * Planika Kranj - Robno poslovanje
- *
- * Revision 1.8  2003/05/10 15:12:12  mirsad
- * uvedeno i parametrizirano automatsko preuzimanje sifre robe u barkod kada nije definisan
- *
- * Revision 1.7  2003/02/28 07:25:32  mirsad
- * ispravke
- *
- * Revision 1.6  2003/02/13 10:41:46  ernad
- * zaostali commit-i
- *
- * Revision 1.5  2002/09/25 11:34:59  sasa
- * Uveden poziv f-je VpNaziv u f-ji P_Roba()
- *
- * Revision 1.4  2002/07/04 19:04:08  ernad
- *
- *
- * ciscenje sifrarnik fakt
- *
- * Revision 1.3  2002/06/17 13:05:16  ernad
- * barkod.prg
- *
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
  *
  */
  
@@ -176,7 +134,6 @@ FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
 NEXT
 
-//if IzFmkIni("Svi","Sifk")="D"
 PushWa()
 select sifk
 set order to tag "ID"
@@ -248,12 +205,6 @@ else
 		return PostojiSifra(F_ROBA,iif(IzFmkIni("SifRoba","ID_J","N",SIFPATH)="D","ID_J","ID"),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
 	endif
 endif
-// END ubaceno radi oprese stampe
-//
-
-// dio koda koji je bio
-//bRoba:= gRobaBlock
-//return PostojiSifra(F_ROBA, 1, 15, 77, "Lista artikala - robe", @cId, dx, dy, bRoba ,,,,,{"ID"})
 return
 *}
 
