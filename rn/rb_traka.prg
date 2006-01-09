@@ -67,7 +67,7 @@ if gDisplay=="D"
 endif
 
 // stampaj racun
-st_rb_traka(lStartPrint)
+st_rb_traka(lStartPrint, lAzurDok)
 
 if lJedanRacun .and. lGetKupData
 	st_pf_traka()
@@ -82,11 +82,12 @@ return
 *}
 
 
-function get_rb_vars(nFeedLines)
+function get_rb_vars(nFeedLines, cOLadSkv, cSTrakSkv)
 *{
 // broj linija za odcjepanje trake
 nFeedLines := VAL(get_dtxt_opis("P12"))
-
+cOLadSkv := get_dtxt_opis("P13") // sekv.za otv.ladice
+cSTrakSkv := get_dtxt_opis("P14") // sekv.za sjec.trake
 return
 *}
 
@@ -146,7 +147,7 @@ return
 
 // st_rb_traka() - funkcija za stampu stavki trake
 // lStartPrint - ako je .t. pozivaju se funkcije stampe
-function st_rb_traka(lStartPrint)
+function st_rb_traka(lStartPrint, lAzurDok)
 *{
 local cBrDok
 local dDatDok
@@ -156,6 +157,8 @@ local cRazmak := SPACE(1)
 local cLine
 local lViseRacuna := .f.
 local nPFeed
+local cOtvLadSkv // sekv.otvaranja ladice
+local cSjeTraSkv // sekv.sjecenja trake
 
 if lStartPrint
 	START PRINT2 CRET gLocPort, SPACE(5)
@@ -164,7 +167,7 @@ endif
 rb_traka_line(@cLine)
 
 // uzmi glavne varijable
-get_rb_vars(@nPFeed)
+get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
 
 hd_rb_traka()
 
@@ -186,6 +189,11 @@ go top
 
 // broj racuna
 ? SPACE(10) + "BLAGAJNA RACUN br." + ALLTRIM(drn->brdok) 
+if lAzurDok
+	if lStartPrint
+		? SPACE(15) + "PREPIS"
+	endif
+endif
 
 ? cLine
 
@@ -224,7 +232,6 @@ do while !EOF()
 	endif
 
 	?? STR(rn->ukupno, 12, 2)	
-	?
 
 	skip
 enddo
@@ -248,6 +255,13 @@ for i:=1 to nPFeed
 	?
 next
 
+if lStartPrint 
+	// odsjeci traku
+	sjeci_traku(cSjeTraSkv)
+	// otvori ladicu
+	otvori_ladicu(cOtvLadSkv)
+endif
+
 if lStartPrint
 	END PRN2 13
 endif
@@ -263,6 +277,7 @@ local cINaziv
 local cIAdresa
 local cIIdBroj
 local cIPM
+local cITelef
 local cRazmak := SPACE(1)
 local cRaz2 := SPACE(2)
 
@@ -271,6 +286,7 @@ cINaziv := get_dtxt_opis("I01")
 cIAdresa := get_dtxt_opis("I02")
 cIIdBroj := get_dtxt_opis("I03")
 cIPM := get_dtxt_opis("I04")
+cITelef := get_dtxt_opis("I05")
 
 // stampaj header
 
@@ -280,6 +296,9 @@ cIPM := get_dtxt_opis("I04")
 ? cRaz2 + REPLICATE("-", LEN(cINaziv))
 
 ? cRaz2 + "Adresa : " + cIAdresa
+if !EMPTY(cITelef)
+	? cRaz2 + "Telefon: " + cITelef
+endif
 ? cRaz2 + "ID broj: " + cIIdBroj
 
 ? cRaz2 + REPLICATE("-", 30)
@@ -288,7 +307,7 @@ cIPM := get_dtxt_opis("I04")
 ? cRaz2 + cIPM
 
 ? cRazmak + cDuplaLin
-?
+
 ?
 
 return
@@ -301,17 +320,33 @@ local cRazmak := SPACE(1)
 local cRadnik
 local cSmjena
 local cVrstaP
+local cPomTxt1
+local cPomTxt2
+local cPomTxt3
 
 cRadnik := get_dtxt_opis("R02")
 cSmjena := get_dtxt_opis("R03")
 cVrstaP := get_dtxt_opis("R05")
+cPomTxt1 := get_dtxt_opis("R06")
+cPomTxt2 := get_dtxt_opis("R07")
+cPomTxt3 := get_dtxt_opis("R08")
 
 ? cRazmak + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
 ?
-?
 ? cRazmak + "Placanje izvrseno: " + cVrstaP 
-?
-?
+
+// pomocni text na racunu
+if !EMPTY(cPomTXT1)
+	?
+	? cRazmak + cPomTxt1
+endif
+if !EMPTY(cPomTxt2)
+	? cRazmak + cPomTxt2
+endif
+if !EMPTY(cPomTxt3)
+	? cRazmak + cPomTxt3
+endif
+
 return
 *}
 

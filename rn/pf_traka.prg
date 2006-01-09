@@ -97,12 +97,14 @@ local cRazmak := SPACE(1)
 local cLine
 local lViseRacuna := .f.
 local nPFeed
+local cSjeTraSkv
+local cOtvLadSkv
 
 START PRINT2 CRET gLocPort,SPACE(5)
 
 rb_traka_line(@cLine)
 
-get_rb_vars(@nPFeed)
+get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
 
 hd_rb_traka()
 
@@ -168,7 +170,6 @@ do while !EOF()
 	?? cRazmak + "  poj.izn.PDV", STR(rn->vpdv, 12, 2)
 	
 	? cRazmak + STR( if(Round(rn->cjen2pdv,4)<>0, rn->cjen2pdv, rn->cjenpdv), 12,2), PADL(STR(rn->ukupno, 12, 2), 25)	
-	?
 	
 	skip
 enddo
@@ -195,6 +196,8 @@ ft_rb_traka()
 for i:=1 to nPFeed
 	?
 next
+
+sjeci_traku(cSjeTraSkv)
 
 END PRN2 13
 

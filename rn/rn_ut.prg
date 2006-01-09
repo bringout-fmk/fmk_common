@@ -130,3 +130,35 @@ return
 *}
 
 
+// sekvenca za cjepanje trake
+function sjeci_traku(cSekv)
+*{
+if EMPTY(cSekv)
+	return
+endif
+Setpxlat()
+if gPrinter <> "R"
+	qqout(cSekv)
+endif
+konvtable()
+return
+*}
+
+
+// otvaranje ladice
+function otvori_ladicu(cSekv)
+*{
+if EMPTY(cSekv)
+	return
+endif
+Setpxlat()
+if gPrinter <> "R"
+	qqout(cSekv)
+endif
+konvtable()
+return
+*}
+
+
+
+

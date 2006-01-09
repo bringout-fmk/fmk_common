@@ -96,7 +96,11 @@ do while !EOF()
 	aArtNaz := SjeciStr(rn->robanaz, 40)
 	
 	// PRVI RED
-	? cRazmak + PADL(rn->rbr + ")", 6) + SPACE(1)
+	if EMPTY(rn->podbr)
+		? cRazmak + PADL(rn->rbr + ")", 6) + SPACE(1)
+	else
+		? cRazmak + PADL(rn->rbr + "." + ALLTRIM(rn->podbr), 6) + SPACE(1)
+	endif
 	?? padr(rn->idroba, 10) + SPACE(1)
 	?? padr(aArtNaz[1], 40) + SPACE(1)
 	?? TRANSFORM(rn->kolicina, PicKol) + SPACE(1)
@@ -296,6 +300,7 @@ local cIBrUpis
 local cIUstanova
 local cIBanke
 local aBanke
+local cITelef
 
 cINaziv  := get_dtxt_opis("I01") // naziv
 cIAdresa := get_dtxt_opis("I02") // adresa
@@ -306,6 +311,7 @@ cIBrUpis := get_dtxt_opis("I07") // broj upisa
 cIUstanova:= get_dtxt_opis("I08") // ustanova
 cIBanke := get_dtxt_opis("I09")
 aIBanke := SjeciStr(cIBanke, 67)
+cITelef:= get_dtxt_opis("I10") // telefoni
 
 P_10CPI
 B_ON
@@ -314,7 +320,7 @@ B_ON
 ? cRazmak + cINaziv
 ? cRazmak + REPLICATE("-", LEN(cINaziv))
 P_12CPI
-? cRazmak + "Adresa: " + cIAdresa
+? cRazmak + "Adresa: " + cIAdresa + ", " + cITelef
 ? cRazmak + PADR("ID broj: " + cIIdBroj, 30) + PADR("Poreski broj: " + cIPorBr, 50)
 ? cRazmak + PADR("Broj sudskog rjesenja: " + cIBrRjes, 40) + PADR("Broj upisa: " + cIBrUpis, 30)
 ? cRazmak + "Ustanova: " + cIUstanova
