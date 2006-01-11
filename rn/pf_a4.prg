@@ -156,7 +156,7 @@ if !lSamoKol
              if Round(drn->ukpoptp, 2) <> 0
 	        // popust na teret prodavca
 		? cRazmak + PADL("Popust na teret prodavca ("+cValuta+") :", 95), PADL(TRANSFORM(drn->ukpoptp, PicDem), 26)
-	        ? cRazmak + PADL("S V E U K U P N O   S A   P D V -  P O P U S T  N A   T. P. ("+cValuta+") :", 95), PADL(TRANSFORM(drn->ukupno - drn->ukpoptp, PicDem), 26)
+	        ? cRazmak + PADL("S V E U K U P N O   S A   P D V -  P O P U S T  N A   T. P. ("+cValuta+") : ZA PLATITI :", 95), PADL(TRANSFORM(drn->ukupno - drn->ukpoptp, PicDem), 26)
 	     endif
 	endif
 	
