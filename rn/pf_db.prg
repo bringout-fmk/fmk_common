@@ -1,5 +1,26 @@
 #include "sc.ch"
 
+
+// delete rn dbf's
+function del_rndbf()
+*{
+close all
+// drn.dbf
+FErase(PRIVPATH + "DRN.DBF")
+FErase(PRIVPATH + "DRN.CDX")
+
+// rn.dbf
+FErase(PRIVPATH + "RN.DBF")
+FErase(PRIVPATH + "RN.CDX")
+
+// drntext.dbf
+FErase(PRIVPATH + "DRNTEXT.DBF")
+FErase(PRIVPATH + "DRNTEXT.CDX")
+
+return 1
+*}
+
+
 /*! \fn drn_create()
  *  \brief kreiranje tabela RN i DRN
  */
@@ -11,6 +32,11 @@ local cDRTxtName := "DRNTEXT.DBF"
 local aDRnField:={}
 local aRnField:={}
 local aDRTxtField:={}
+
+if del_rndbf() == 0
+	MsgBeep("Greska: brisanje pomocnih tabela !!!")
+	return
+endif
 
 // provjeri da li postoji fajl DRN.DBF
 if !FILE(PRIVPATH + cDRnName)
@@ -45,6 +71,7 @@ return
 *}
 
 
+// kreiranje tabele DOKSPF (POS tabela za podatke o kupcu)
 function dokspf_create()
 *{
 local aDbf:={}
@@ -68,6 +95,7 @@ CREATE_INDEX("1", "idpos+idvd+DToS(datum)+brdok", KUMPATH + "DOKSPF")
 return
 *}
 
+
 /*! \fn get_drn_fields(aArr)
  *  \brief napuni matricu aArr sa specifikacijom polja tabele
  *  \param aArr - matrica
@@ -79,10 +107,11 @@ AADD(aArr, {"DATDOK",  "D",  8, 0})
 AADD(aArr, {"DATVAL",  "D",  8, 0})
 AADD(aArr, {"DATISP",  "D",  8, 0})
 AADD(aArr, {"VRIJEME", "C",  5, 0})
+AADD(aArr, {"ZAOKR",   "N", 10, 5})
 AADD(aArr, {"UKBEZPDV","N", 15, 5})
 AADD(aArr, {"UKPOPUST","N", 15, 5})
-AADD(aArr, {"UKPOPTP",  "N",  15, 5})
-AADD(aArr, {"UKBPDVPOP","N", 15, 5})
+AADD(aArr, {"UKPOPTP", "N", 15, 5})
+AADD(aArr, {"UKBPDVPOP","N",15, 5})
 AADD(aArr, {"UKPDV",   "N", 15, 5})
 AADD(aArr, {"UKUPNO",  "N", 15, 5})
 AADD(aArr, {"CSUMRN",  "N",  6, 0})
@@ -143,13 +172,16 @@ return
 *}
 
 
-function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp)
+// dodaj u drn.dbf
+function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr)
 *{
 if !USED(F_DRN)
 	O_DRN
 endif
+
 select drn
 append blank
+
 replace brdok with cBrDok
 replace datdok with dDatDok
 if (dDatVal <> nil)
@@ -165,6 +197,7 @@ replace ukbpdvpop with nUBPDVPopust
 replace ukpdv with nUPDV
 replace ukupno with nUkupno
 replace csumrn with nCSum
+replace zaokr with nZaokr
 
 if fieldpos("UKPOPTP") <> 0
 	// popust na teret prodavca
@@ -174,6 +207,7 @@ endif
 return
 *}
 
+// dodaj u rn.dbf
 function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca)
 *{
 if !USED(F_RN)
@@ -182,6 +216,7 @@ endif
 
 select rn
 append blank
+
 replace brdok with cBrDok
 replace rbr with cRbr
 replace podbr with cPodBr
@@ -199,22 +234,20 @@ replace vpdv with nVPdv
 replace ukupno with nUkupno 
 
 if ( ROUND(nPopNaTeretProdavca, 4) <> 0 )
-
-// popust na teret prodavca
-if FIELDPOS("poptp") <> 0
-  replace poptp with nPopNaTeretProdavca
-  replace vpoptp with nVPopNaTeretProdavca
-else
-  MsgBeep("Tabela RN ne sadrzi POPTP - popust na teret prodavca")
-endif
-
+	// popust na teret prodavca
+	if FIELDPOS("poptp") <> 0
+		replace poptp with nPopNaTeretProdavca
+  		replace vpoptp with nVPopNaTeretProdavca
+	else
+  		MsgBeep("Tabela RN ne sadrzi POPTP - popust na teret prodavca")
+	endif
 endif
 
 return
 *}
 
 
-
+// isprazni drn tabele
 function drn_empty()
 *{
 O_DRN
@@ -233,6 +266,7 @@ return
 *}
 
 
+// otvori rn tabele
 function drn_open()
 *{
 O_DRN
@@ -242,6 +276,7 @@ return
 *}
 
 
+// provjera checksum-a
 function drn_csum()
 *{
 local nCSum
@@ -264,6 +299,7 @@ return .f.
 *}
 
 
+// vrati vrijednost polja opis iz tabele drntext.dbf po id kljucu
 function get_dtxt_opis(cTip)
 *{
 local cRet
@@ -284,6 +320,7 @@ return cRet
 *}
 
 
+// azuriranje podataka o kupcu
 function AzurKupData(cIdPos)
 *{
 local cKNaziv
