@@ -4,34 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/gvars.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.8 $
- * $Log: gvars.prg,v $
- * Revision 1.8  2004/01/13 19:07:59  sasavranic
- * appsrv konverzija
- *
- * Revision 1.7  2003/10/06 15:00:04  sasavranic
- * no message
- *
- * Revision 1.6  2003/09/08 08:41:43  ernad
- * porezi u ugostiteljstvu
- *
- * Revision 1.5  2003/05/10 15:12:12  mirsad
- * uvedeno i parametrizirano automatsko preuzimanje sifre robe u barkod kada nije definisan
- *
- * Revision 1.4  2003/02/28 07:25:45  mirsad
- * ispravke
- *
- * Revision 1.3  2002/07/04 19:04:08  ernad
- *
- *
- * ciscenje sifrarnik fakt
- *
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
- *
  */
 
 

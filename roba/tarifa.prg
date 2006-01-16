@@ -21,11 +21,17 @@ function P_Tarifa(cid,dx,dy)
 private ImeKol,Kol:={}
 
 ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",10), {|| left(naz,10)},      "naz"   } ;
+          { PADC("Naziv",10), {|| left(naz,10)},   "naz"   } ;
 	}
 
 if (gPDV=="D")
+  
   AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
+  
+  if glUgost
+     AADD(ImeKol,  { "Por.potr", {|| zpp},  "zpp"  } ) 
+  endif
+  
 endif
 
 if (gPDV=="N")
@@ -198,6 +204,28 @@ return nPom
  *  \param aPoreziIzn Matrica sa izracunatim porezima
  */
 function MpcSaPor(nMPCBp, aPorezi, aPoreziIzn)
+local nPom
+local nMPP
+local nPP
+local nPPP
+
+nPDV:=aPorezi[POR_PPP]/100
+
+if glUgost
+  nPP := aPorezi[POR_PP]/100
+else
+  nPP := 0
+endif
+
+if IsPdv()
+    //  bez poreza * ( 0.17 + 0 + 1)
+    nPom:= nMpcBp * ( nPDV + nPP + 1)
+    return nPom
+else
+    return MpcSaPorO(nMPCBp, aPorezi, aPoreziIzn)
+endif 
+
+function MpcSaPorO(nMPCBp, aPorezi, aPoreziIzn)
 *{
 local nPom
 local nDLRUC
@@ -235,7 +263,6 @@ return nPom
 *}
 
 
-
 /*! \fn MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
  *  \brief Racuna maloprodajnu cijenu bez poreza
  *  \param nMpcSaPP maloprodajna cijena sa porezom
@@ -244,6 +271,48 @@ return nPom
  *  \param nNC Nabavna cijena
  */
 function MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
+
+local nStopa
+local nPor1
+local nPor2
+local nPom
+local nMPP
+local nPP
+local nPDV
+local nBrutoMarza
+local nMpcBezPor
+
+
+if IsPdv()
+
+if nRabat==nil
+	nRabat:=0
+endif
+
+nPDV:=aPorezi[POR_PPP]
+if glUgost
+  nPP := aPorezi[POR_PP]
+else
+  nPP := 0
+endif
+
+return nMpcSaPP / ( (nPDV + nPP)/100 + 1 )
+
+else
+ // stari PPP obracun 
+ // suma nepregledna ...
+ return MpcBezPorO(nMpcSaPP, aPorezi, nRabat, nNc)
+endif
+
+
+/*! \fn MpcBezPor(nMpcSaPP, aPorezi, nRabat, nNC)
+ *  \brief Racuna maloprodajnu cijenu bez poreza
+ *  \param nMpcSaPP maloprodajna cijena sa porezom
+ *  \param aPorezi Matrica poreza
+ *  \param nRabat Rabat
+ *  \param nNC Nabavna cijena
+ */
+function MpcBezPorO(nMpcSaPP, aPorezi, nRabat, nNC)
 *{
 local nPor1
 local nPor2
@@ -266,7 +335,7 @@ nPP:=aPorezi[POR_PP]/100
 nPPP:=aPorezi[POR_PPP]/100
 nPPU:=aPorezi[POR_PPU]/100
 
-if (!IsVindija()).and.nMpcSaPP<>nil
+if (!IsVindija()) .and. nMpcSaPP<>nil
 	nMpcSaPP:=nMpcSaPP-nRabat
 endif
 
@@ -349,10 +418,27 @@ return nPom
  *  \param aPoreziIzn Matrica izracunatih poreza
  *  \param nMpcSaP Maloprodajna cijena sa porezom
  */
-function Izn_P_PPP(nMPCBp, aPorezi, aPoreziIzn, nMpcSaP)
+function Izn_P_PPP(nMpcBp, aPorezi, aPoreziIzn, nMpcSaP)
 *{
 local nPom
-altd()
+local nUkPor
+
+if IsPdv()
+
+
+// zadate je cijena sa porezom, utvrdi cijenu bez poreza
+if nMpcBp == nil
+    // PPP - PDV, 
+    // PP -  porez na potrosnju 
+    nUkPor := aPorezi[POR_PPP] + aPorezi[POR_PP]
+    nMpcBp:=nMpcSaP/(nUkPor/100+1)
+endif
+
+nPom := nMpcBP * aPorezi[POR_PPP]/100
+
+else
+// ovo dole je obracun PPP
+// ostavimo ovu sumu za sada po strani
 if !glPoreziLegacy 
 	if glUgost 
 		if gUgostVarijanta=="MPCSAPOR"
@@ -374,6 +460,8 @@ else
 		nPom:=nMpcBp*(aPorezi[POR_PPP]/100) 
 	endif
 endif
+endif
+
 return nPom
 *}
 
@@ -398,12 +486,24 @@ return nPom
  *  \param aPorezi Matrica poreza
  *  \param aPoreziIzn Matrica izracunatih poreza
  */
-function Izn_P_PP(nMPCBp, aPorezi, aPoreziIzn)
+function Izn_P_PP(nMpcBp, aPorezi, aPoreziIzn)
 *{
 local nOsnovica
 local nMpcSaPor
 local nPom
+local nUkPor
 
+if IsPdv()
+
+   if glUgost 
+        nPom := nMpcBp * aPorezi[POR_PP]/100
+   else
+   	nPom:=0
+   endif
+
+else
+// stari PPP obracun
+// ostavljeno do daljnjeg
 if (gUVarPP=="R" .and. !IsPlanika())
 	nPom:= nMpcBp * aPorezi[POR_PP]/100  
 elseif (gUVarPP=="D" .and. !IsPlanika())
@@ -411,6 +511,7 @@ elseif (gUVarPP=="D" .and. !IsPlanika())
 else
  	// obicno robno poslovanje
  	nPom:= nMpcBp * aPorezi[POR_PP]/100  
+endif
 endif
 return nPom
 *}
@@ -426,6 +527,9 @@ function Izn_P_PPUgost(nMpcSaPP, nIznPRuc, aPorezi)
 local nPom
 local nDLRUC
 local nMPP
+
+// ova se funkcija u PDV-u ne koristi
+
 nDLRUC:=aPorezi[POR_DLRUC]/100
 nMPP:=aPorezi[POR_PRUCMP]/100
 
@@ -450,6 +554,9 @@ return nPom
  */
 function Izn_P_PRugost(nMpcSaPP, nMPCBp, nNc, aPorezi, aPoreziIzn)
 *{
+
+// ovo se ne koristi u rezimu PDV-a
+
 local nPom
 local nMarza
 local nDLRUC
@@ -623,6 +730,20 @@ function RacPorezeMP(aPorezi, nMpc, nMpcSaPP, nNc)
 *{
 local nIznPRuc
 local nP1, nP2, nP3
+
+if IsPdV()
+
+ // PDV
+ nP1:=Izn_P_PPP(nMpc, aPorezi, , nMpcSaPP)
+ if glUgost
+        // posebni porez
+	nP2:=0
+	nP3:=Izn_P_PP(nMpc, aPorezi)
+ endif
+
+else
+// stari PPP obracun
+// ne dirati do daljnjeg
 nP1:=Izn_P_PPP(nMpc, aPorezi, , nMpcSaPP)
 if glUgost
 	nIznPRuc:=Izn_P_PRugost( nMpcSaPP, nMpc, nNc, aPorezi)
@@ -632,7 +753,8 @@ else
 	nP2:=Izn_P_PPU( nMpc, aPorezi )
 	nP3:=Izn_P_PP( nMpc, aPorezi )
 endif
-return {nP1,nP2,nP3}
+endif
+return {nP1, nP2, nP3}
 *}			
 
 

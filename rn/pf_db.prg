@@ -115,6 +115,22 @@ AADD(aArr, {"UKBPDVPOP","N",15, 5})
 AADD(aArr, {"UKPDV",   "N", 15, 5})
 AADD(aArr, {"UKUPNO",  "N", 15, 5})
 AADD(aArr, {"CSUMRN",  "N",  6, 0})
+if glUgost
+  // stopa poreza na potrosnju 1
+  AADD(aArr, {"STPP1",  "N",  6, 1})
+  // ukupno porez na potrosnju 1
+  AADD(aArr, {"UKPP1",  "N", 14, 2})
+  // moguce 4 stope poreza na potrosnju
+  AADD(aArr, {"STPP2",  "N",  6, 1})
+  AADD(aArr, {"UKPP2",  "N", 14, 2})
+  AADD(aArr, {"STPP3",  "N",  6, 1})
+  AADD(aArr, {"UKPP3",  "N", 14, 2})
+  AADD(aArr, {"STPP4",  "N",  6, 1})
+  AADD(aArr, {"UKPP4",  "N", 14, 2})
+  AADD(aArr, {"STPP5",  "N",  6, 1})
+  AADD(aArr, {"UKPP5",  "N", 14, 2})
+endif
+
 return
 *}
 
@@ -173,8 +189,10 @@ return
 
 
 // dodaj u drn.dbf
-function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr)
+function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, aPP)
 *{
+local cnt1
+
 if !USED(F_DRN)
 	O_DRN
 endif
@@ -202,6 +220,42 @@ replace zaokr with nZaokr
 if fieldpos("UKPOPTP") <> 0
 	// popust na teret prodavca
 	replace ukpoptp with nUPopTp
+endif
+
+if glUgost
+
+ // poseban porez na potrosnju
+ if (aPP <> nil) 
+     // primjer matrice za 3 stope poreza 5%, 7%, 10%
+     //
+     // aPP := { { 5, 7, 10}  , { 333.22, 15.19, 200.3 } }
+    for cnt1 := 1 to LEN(aPP[1])
+        
+        if cnt1 == 1 
+           replace stpp1 with aPP[1,1] ,;
+               ukpp1 with aPP[2,1]
+	endif
+	if cnt1 == 2
+           replace stpp2 with aPP[1,2] ,;
+               ukpp2 with aPP[2,2]
+	endif
+        if cnt1 == 3 
+            replace stpp3 with aPP[1,3] ,;
+               ukpp3 with aPP[2,3]
+	endif
+        if cnt1 == 4
+           replace stpp4 with aPP[1,4] ,;
+               ukpp4 with aPP[2,4]
+	endif
+	if cnt1 == 5
+           replace stpp5 with aPP[1,5] ,;
+               ukpp5 with aPP[2,5]
+	endif
+
+    next
+
+ endif
+
 endif
 
 return

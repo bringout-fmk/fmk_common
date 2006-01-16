@@ -245,6 +245,24 @@ if Round(drn->ukpopust, 2) <> 0
 	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", 25), STR(drn->ukbpdvpop, 12, 2)
 endif
 ? cRazmak + PADL("PDV 17% :", 25), STR(drn->ukpdv, 12, 2)
+
+if glUgost
+     // porez na potrosnju
+     if ROUND( drn->ukpp1, 3) <> 0
+        ? cRazmak + PADL("P.P" +  STR(drn->stpp1) +"% :", 25), STR(drn->ukpp1, 12, 2)
+     endif
+     if ROUND(drn->ukpp2, 3) <> 0
+        ? cRazmak + PADL("P.P" +  STR(drn->stpp2) +"% :", 25), STR(drn->ukpp2, 12, 2)
+     endif
+     if ROUND(drn->ukpp3, 3) <> 0
+        ? cRazmak + PADL("P.P" +  STR(drn->stpp3) +"% :", 25), STR(drn->ukpp3, 12, 2)
+     endif
+     if ROUND(drn->ukpp4, 3) <> 0
+        ? cRazmak + PADL("P.P" +  STR(drn->stpp4) +"% :", 25), STR(drn->ukpp4, 12, 2)
+     endif
+   
+endif
+
 ? cLine
 ? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), PADL(TRANSFORM(drn->ukupno,"******9.99"), 12)
 ? cLine
