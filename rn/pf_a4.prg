@@ -78,11 +78,11 @@ go top
 
 P_COND
 
-if cPDVSvStavka == "D"
-	st_zagl_data(cLine, cRazmak, "1" )
-else
-	st_zagl_data(cLine, cRazmak, "2" )
-endif
+//if cPDVSvStavka == "D"
+//	st_zagl_data(cLine, cRazmak, "1" )
+//else
+st_zagl_data(cLine, cRazmak, "2" )
+//endif
 
 select rn
 
@@ -127,8 +127,9 @@ do while !EOF()
 		else
 			?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
 		endif
-		
-		?? TRANSFORM(ukupno,  PicDem)
+
+		// ukupno bez pdv
+		?? TRANSFORM( rn->cjen2bpdv * rn->kolicina,  PicDem)
 	endif
 	
 	cArtNaz2Red := SPACE(40)
@@ -138,7 +139,7 @@ do while !EOF()
 	endif
 	
 	// DRUGI RED
-	? cRazmak + SPACE(18) + PADR(cArtNaz2Red,40)
+	? cRazmak + SPACE(18) + PADR(cArtNaz2Red, 40)
 	
 	// ako nisu samo kolicine dodaj i ostale podatke
 	if !lSamoKol
@@ -155,7 +156,13 @@ do while !EOF()
 			?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
 		endif
 		
-		?? PADL(TRANSFORM(rn->ppdv, "999.99%"),11)
+		?? PADL(TRANSFORM(rn->ppdv, "999.99%"), 11)
+
+		?? SPACE(LEN(PicDem) + 2)
+		
+		// ukupno sa pdv
+		?? TRANSFORM(rn->ukupno , PicDem)
+
 	endif
 	
 	skip
@@ -274,10 +281,9 @@ do case
 	case cVarijanta == "1"
 		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV   Pojed.PDV   Sveukupno"
 		cRed2 := SPACE(75) + " Popust(%)   C.sa PDV    PDV(%)       sa PDV"
-	// varijanta 2
 	case cVarijanta == "2"
-		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV    C.sa PDV   Sveukupno"
-		cRed2 := SPACE(75) + " Popust(%)     PDV(%)                 sa PDV"
+		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV    C.sa PDV   Uk.bez PDV"
+		cRed2 := SPACE(75) + " Popust(%)     PDV(%)                Uk.sa PDV"
 endcase
 
 if !EMPTY(cRed1)
@@ -470,7 +476,7 @@ local cMjesto
 local cDatDok
 local cDatIsp
 local cDatVal
-local cTipDok := "FAKTURA/OTPREMNICA br. "
+local cTipDok := "FAKTURA br. "
 local cBrDok
 local cBrNar
 local cBrOtp
