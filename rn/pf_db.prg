@@ -102,7 +102,11 @@ return
  */
 function get_drn_fields(aArr)
 *{
-AADD(aArr, {"BRDOK",   "C",  8, 0})
+if gModul == "TOPS"
+	AADD(aArr, {"BRDOK",   "C",  6, 0})
+else
+	AADD(aArr, {"BRDOK",   "C",  8, 0})
+endif
 AADD(aArr, {"DATDOK",  "D",  8, 0})
 AADD(aArr, {"DATVAL",  "D",  8, 0})
 AADD(aArr, {"DATISP",  "D",  8, 0})
@@ -141,7 +145,11 @@ return
  */
 function get_rn_fields(aArr)
 *{
-AADD(aArr, {"BRDOK",   "C",  8, 0})
+if gModul == "TOPS"
+	AADD(aArr, {"BRDOK",   "C",  6, 0})
+else
+	AADD(aArr, {"BRDOK",   "C",  8, 0})
+endif
 AADD(aArr, {"RBR",     "C",  3, 0})
 AADD(aArr, {"PODBR",   "C",  2, 0})
 AADD(aArr, {"IDROBA",  "C", 10, 0})
