@@ -31,18 +31,23 @@ IF TRFP->(FIELDPOS("PORJ")<>0)
   AADD( Kol , LEN(Kol)+1 )
 ENDIF
 
-private cShema:=" ", ckavd:="  ", cFiltTRFP:=""
+private cShema:=" "
+private cKavd:="  "
+private cFiltTRFP:=""
 
 if Pitanje(,"Zelite li postaviti filter za odredjenu shemu","N")=="D"
+  
   Box(,1,60)
      @ m_x+1,m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
      @ m_x+1,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cKavd pict "@!"
      read
   Boxc()
-  select trfp
-  cFiltTRFP := "SHEMA="+cm2str(cShema)+IF(EMPTY(cKaVD),"",".and.IDVD=="+cm2str(cKaVD))
+  
+  select TRFP
+  cFiltTRFP := "SHEMA='"+ cShema + "'" +IIF(EMPTY(cKaVD),"",".and.IDVD=='"+cKaVD+"'")
   set filter to &cFiltTRFP
   go top
+  
 else
   select trfp
   set filter to
@@ -55,22 +60,29 @@ set filter to
 
 function TrfpB(Ch)
 *{
-local cShema:="1",cTekShema,cIdvd:="",nRec:=0, cDirSa:=PADR("A:\",20)
+local cShema2:="1"
+local cTekShema
+local cIdvd:=""
+local nRec:=0
+local cDirSa:=PADR("C:\SIGMA\SIF0\", 20)
 local cPobSt:="D"
+
 if Ch==K_CTRL_F4
+
   cidvd:=idvd
   cTekShema:=shema
   Box(,1,60)
    @ m_x+1,m_y+1 SAY "Napraviti novu shemu kontiranja za dokumente "+cidvd GET cShema valid cShema<>shema
    read
-//   ESC_RETURN DE_CONT
    IF LASTKEY()==K_ESC; BoxC(); RETURN DE_CONT; ENDIF
   BoxC()
   go top
   do while !eof()
     if idvd==cidvd  .and. shema==cTekShema
       Scatter()
-      skip; nRec:=recno(); skip -1
+      skip
+      nRec:=recno()
+      skip -1
       _Shema:=cShema
       appblank2(.f.,.t.)
       Gather()
@@ -81,18 +93,26 @@ if Ch==K_CTRL_F4
   enddo
   return DE_REFRESH
 elseif Ch==K_CTRL_F5
-  cidvd:="  "
-  cShema:=" "
 
+  cidvd:="  "
+  cShema2:=" "
+  if IsPdv()
+  	cShema2:="E"
+  endif
+  
   if Pitanje(,"Preuzeti sheme kontiranja?","D")=="D"
 
+    
     Box(,3,70)
      @ m_x+1,  m_y+2 SAY "Preuzeti podatke sa:" GET cDirSa VALID PostTRFP(cDirSa)
-     @ m_x+2,  m_y+2 SAY "Odabir sheme:" GET cShema  pict "@!"
+     @ m_x+2,  m_y+2 SAY "Odabir sheme:" GET cShema2  pict "@!"
      @ m_x+2,col()+2 SAY "vrsta kalkulacije (prazno sve)" GET cIdVd pict "@!"
-     @ m_x+3,  m_y+2 SAY "Pobrisati postojecu shemu za izabrane kalkulacije? (D/N)" GET cPobSt VALID cPobSt$"DN" PICT "@!"
+     @ m_x+3,  m_y+2 SAY "Pobrisati postojecu shemu za izabrane kalkulacije? (D/N)" GET cPobSt VALID cPobSt $ "DN" PICT "@!"
      read
-     IF LASTKEY()==K_ESC; BoxC(); RETURN DE_CONT; ENDIF
+     IF LASTKEY()==K_ESC
+     BoxC()
+     RETURN DE_CONT
+     ENDIF
     BoxC()
 
   else
@@ -106,11 +126,16 @@ elseif Ch==K_CTRL_F5
 
   UndoSheme(.t.)
 
+  SELECT TRFP
+  SET FILTER TO
+  
   if cPobSt=="D"
     go top
     do while !eof()
-      if idvd==cidvd  .and. shema==cShema
-        skip; nRec:=recno(); skip -1
+      if (Idvd==cIdVD .or. EMPTY(cIdVd))  .and. shema==cShema2
+        skip
+	nRec:=recno()
+	skip -1
         delete
         go nRec
       else
@@ -119,17 +144,16 @@ elseif Ch==K_CTRL_F5
     enddo
   endif
 
-#ifdef C52
-  use (TRIM(cDirSa)+"TRFP.DBF") alias TRFPN new; set order to "ID"
-#else
-  use (TRIM(cDirSa)+"TRFP.DBF") index (TRIM(cDirSa)+"TRFPI1") alias TRFPN new
-#endif
+  use (TRIM(cDirSa)+"TRFP.DBF") alias TRFPN new
+  set order to tag "ID"
 
   go top
+  nCnt:=0
   do while !eof()
-    if (TRFPN->idvd==cIdVd .or. EMPTY(cIdVd)) .and. TRFPN->shema==cShema
+    if (TRFPN->idvd==cIdVd .or. EMPTY(cIdVd)) .and. TRFPN->shema==cShema2
       Scatter()
       select TRFP
+       nCnt++
        appblank2(.f.,.t.)
        Gather()
       select TRFPN
@@ -138,6 +162,9 @@ elseif Ch==K_CTRL_F5
   enddo
   use
   select TRFP
+  MsgBeep("Dodano u TRFP " + STR(nCnt) + " stavki##" +;
+          "Ne zaboravite na odgovarajuca konta u sifrarnik#"+;
+	  "konta-tipovi cijena dodati Shema='" + cShema2 + "'" )
   return DE_REFRESH
 endif
 return DE_CONT
@@ -146,11 +173,7 @@ return DE_CONT
 FUNCTION UndoSheme(lKopi)
 *{
 LOCAL cPom:="170771.POM", cStari:=SIFPATH+"TRFP.ST", cTekuci:=SIFPATH+"TRFP.DBF"
- #ifdef C52
   LOCAL cStari2:=SIFPATH+"TRFPI1.ST", cTekuci2:=SIFPATH+"TRFP.CDX"
- #else
-  LOCAL cStari2:=SIFPATH+"TRFPI1.ST", cTekuci2:=SIFPATH+"TRFPI1.NTX"
- #endif
   IF lKopi==NIL; lKopi:=.f.; ENDIF
   IF lKopi
     SELECT TRFP
@@ -178,19 +201,11 @@ FUNCTION PostTRFP(cDirSa)
 *{
 LOCAL lVrati:=.f.
  IF FILE(TRIM(cDirSa)+"TRFP.DBF")
-  #ifdef C52
    IF FILE(TRIM(cDirSa)+"TRFP.CDX")
      lVrati:=.t.
    ELSE
      Msg("Na zadanoj poziciji ne postoji fajl TRFP.CDX !")
    ENDIF
-  #else
-   IF FILE(TRIM(cDirSa)+"TRFPI1.NTX")
-     lVrati:=.t.
-   ELSE
-     Msg("Na zadanoj poziciji ne postoji fajl TRFPI1.NTX !")
-   ENDIF
-  #endif
  ELSE
    Msg("Na zadanoj poziciji ne postoji fajl TRFP.DBF !")
  ENDIF
