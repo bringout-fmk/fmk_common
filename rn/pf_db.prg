@@ -153,7 +153,7 @@ endif
 AADD(aArr, {"RBR",     "C",  3, 0})
 AADD(aArr, {"PODBR",   "C",  2, 0})
 AADD(aArr, {"IDROBA",  "C", 10, 0})
-AADD(aArr, {"ROBANAZ", "C", 80, 0})
+AADD(aArr, {"ROBANAZ", "C", 160, 0})
 AADD(aArr, {"JMJ",     "C",  3, 0})
 AADD(aArr, {"KOLICINA","N", 15, 5})
 AADD(aArr, {"CJENPDV", "N", 15, 5})
@@ -423,5 +423,6 @@ SmReplace("kidbr", cKIdBroj)
 
 return
 *}
+
 
 

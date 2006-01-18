@@ -4,13 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/trfp.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.2 $
- * $Log: trfp.prg,v $
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
  *
  */
  
