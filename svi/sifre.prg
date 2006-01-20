@@ -4,43 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/svi/sifre.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.11 $
- * $Log: sifre.prg,v $
- * Revision 1.11  2004/03/11 16:44:38  sasavranic
- * no message
- *
- * Revision 1.10  2004/03/02 18:37:28  sasavranic
- * no message
- *
- * Revision 1.9  2003/10/13 12:36:59  sasavranic
- * no message
- *
- * Revision 1.8  2003/10/04 12:35:02  sasavranic
- * uveden security sistem
- *
- * Revision 1.7  2003/09/08 11:32:59  mirsad
- * omogucen sifrarnik rad.naloga i za FAKT po radnim nalozima
- *
- * Revision 1.6  2003/07/24 16:00:30  sasa
- * stampa podataka o bankama na narudzbenici
- *
- * Revision 1.5  2003/01/08 03:16:54  mirsad
- * ubacen RNAL.DBF za rama glas i varijanta rama glas
- *
- * Revision 1.4  2002/07/04 19:04:08  ernad
- *
- *
- * ciscenje sifrarnik fakt
- *
- * Revision 1.3  2002/07/04 08:14:38  sasa
- * dodat sifrarnik opcina
- *
- * Revision 1.2  2002/06/16 11:44:53  ernad
- * unos header-a
- *
- *
  */
  
 function SifFmkSvi()
@@ -132,3 +95,60 @@ gMeniSif:=.f.
 CLOSERET
 return
 *}
+
+function IsPdvObveznik(cIdPartner)
+local cIdBroj
+
+cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f.)
+
+if !EMPTY(cIdBroj)
+  if LEN(ALLTRIM(cIdBroj)) == 12
+     
+     return .t.
+  else
+     return .f.
+  endif
+else
+  return .f.
+endif
+
+
+function IsInoDob(cIdPartner, lShow)
+local cIdBroj
+
+cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f.)
+
+if !EMPTY(cIdBroj)
+  if LEN(ALLTRIM(cIdBroj)) < 12
+     MsgBeep("Partner " + cIdPartner + " ima iden broj " + cIdBroj + "##" +;
+           "< 12, znaci ovo je ino partner")
+     return .t.
+  else
+     return .f.
+  endif
+else
+  return .f.
+endif
+
+// primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
+//         ako je partner pdv obvezinik return 1.17
+//         ako je no pdv return 1
+//         ako je ino return 0
+function PdvParIIIF(cIdPartner, nPdvObv, nNoPdv, nIno, nUndefined)
+local cIdBroj
+
+cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f.)
+cIdBroj := ALLTRIM(cIdBroj)
+
+if !EMPTY(cIdBroj)
+  if (LEN(cIdBroj) == 12)
+  	return nPdvObv
+  elseif (LEN(cIdBroj) == 13)
+  	return nNoPdv
+  else
+  	return nIno
+  endif
+else
+  return nUndefined
+endif
+
