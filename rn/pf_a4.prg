@@ -38,7 +38,6 @@ private lDatOtp // prikaz datuma otpremnice i narudzbenice
 private cValuta // prikaz valute KM ili ???
 private lStZagl // automatski formirati zaglavlje
 private nGMargina // gornja margina
-private cPDVSvStavka // varijanta fakture 
 
 if lStartPrint
 
@@ -51,7 +50,7 @@ endif
 
 // uzmi glavne varijable za stampu fakture
 // razmak, broj redova sl.teksta, 
-get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta, @cPDVSvStavka)
+get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta)
 
 // razmak ce biti
 cRazmak := SPACE(nLMargina)
@@ -78,11 +77,7 @@ go top
 
 P_COND
 
-//if cPDVSvStavka == "D"
-//	st_zagl_data(cLine, cRazmak, "1" )
-//else
 st_zagl_data(cLine, cRazmak, "2" )
-//endif
 
 select rn
 
@@ -121,12 +116,7 @@ do while !EOF()
 		?? TRANSFORM(rn->cjenbpdv, PicCDem) + SPACE(1)
 		?? TRANSFORM(rn->cjen2bpdv, PicCDem) + SPACE(1)
 		
-		// ako je pdv na svaku stavku ispisi PDV
-		if cPDVSvStavka == "D"
-			?? TRANSFORM(rn->vpdv, PicCDem) + SPACE(1)
-		else
-			?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
-		endif
+		?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
 
 		// ukupno bez pdv
 		?? TRANSFORM( rn->cjen2bpdv * rn->kolicina,  PicDem)
@@ -277,10 +267,6 @@ endif
 ? cLine
 
 do case
-	// varijanta 1
-	case cVarijanta == "1"
-		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV   Pojed.PDV   Sveukupno"
-		cRed2 := SPACE(75) + " Popust(%)   C.sa PDV    PDV(%)       sa PDV"
 	case cVarijanta == "2"
 		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV    C.sa PDV   Uk.bez PDV"
 		cRed2 := SPACE(75) + " Popust(%)     PDV(%)                Uk.sa PDV"
@@ -497,9 +483,6 @@ cTipDok:=get_dtxt_opis("D02")
 cKNaziv:=get_dtxt_opis("K01")
 cKAdresa:=get_dtxt_opis("K02")
 cKIdBroj:=get_dtxt_opis("K03")
-//cKPorBroj:=get_dtxt_opis("K05")
-//cKBrRjes:=get_dtxt_opis("K06")
-//cKBrUpisa:=get_dtxt_opis("K07")
 cKMjesto:=get_dtxt_opis("K10")+", " + get_dtxt_opis("K11")
 
 aKupac:=Sjecistr(cKNaziv,30)
@@ -582,11 +565,7 @@ if nStr <> nil
 	? cRazmak, "       Strana:", str(nStr, 3)
 endif
 if lShZagl
-	if cPDVSvStavka == "D"
-		st_zagl_data(cLine, cRazmak, "1" )
-	else
-		st_zagl_data(cLine, cRazmak, "2" )
-	endif
+	st_zagl_data(cLine, cRazmak, "2" )
 else
 	? cLine
 endif

@@ -84,6 +84,7 @@ if !FILE(KUMPATH + "\DOKSPF.DBF")
 	AADD(aDbf, {"KNAZ",  "C", 35, 0})
 	AADD(aDbf, {"KADR",  "C", 35, 0})
 	AADD(aDbf, {"KIDBR", "C", 13, 0})
+	AADD(aDbf, {"DATISP", "D", 8, 0})
 	if gSql == "D"
 		AddOidFields(@aDbf)
 	endif
@@ -183,12 +184,22 @@ return
 
 function add_drntext(cTip, cOpis)
 *{
+local lFound
 if !USED(F_DRNTEXT)
 	O_DRNTEXT
+	SET ORDER TO TAG "ID"
 endif
 
 select drntext
-append blank
+GO TOP
+
+
+SEEK cTip
+
+if !FOUND()
+  append blank
+endif
+
 replace tip with cTip
 replace opis with cOpis
 
@@ -268,6 +279,56 @@ endif
 
 return
 *}
+
+function add_drn_di(dDatIsp)
+
+if !USED(F_DRN)
+	O_DRN
+endif
+
+
+SELECT DRN
+if EMPTY(brdok)
+	APPEND BLANK
+endif
+
+if FIELDPOS("datisp")<>0
+	replace datisp with dDatIsp
+else
+	MsgBeep("DATISP ne postoji u drn.dbf (add_drn_di) #Izvrsiti modstru "+gModul+".CHS !")
+endif
+
+return
+
+
+// get datum isporuka
+function get_drn_di()
+local xRet
+
+PushWa()
+
+if !USED(F_DRN)
+	O_DRN
+endif
+
+SELECT drn
+if EMPTY(drn->BrDok)
+	xRet:=nil
+else
+
+	if FIELDPOS("datisp")<>0
+		xRet := datisp
+	else
+		MsgBeep("DATISP ne postoji u drn.dbf (get_drn_di)#Izvrsiti modstru "+gModul+".CHS !")
+		xRet := nil
+	endif
+endif
+
+PopWa()
+return xRet
+
+
+
 
 // dodaj u rn.dbf
 function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca)
@@ -390,6 +451,9 @@ local cKAdres
 local cKIdBroj
 
 O_DOKSPF
+// idpos+idvd+DToS(datum)+brdok
+SET ORDER TO TAG "1"
+
 if !USED(F_DRN)
 	O_DRN
 endif
@@ -397,9 +461,12 @@ if !USED(F_DRNTEXT)
 	O_DRNTEXT
 endif
 
+
 cKNaziv := get_dtxt_opis("K01")
 cKAdres := get_dtxt_opis("K02")
 cKIdBroj := get_dtxt_opis("K03")
+dDatIsp := get_drn_di()
+
 
 // nema poreske fakture
 if cKNaziv == "???"
@@ -410,19 +477,27 @@ select drn
 go top
 
 select dokspf
-append blank
-Sql_Append(.t.)
+
+SEEK cIdPos + "42" + DTOS(drn->datdok) + drn->brdok
+if !FOUND()
+ append blank
+ Sql_Append(.t.)
+endif
 
 SmReplace("idpos", cIdPos)
 SmReplace("idvd", "42")
 SmReplace("brdok", drn->brdok)
 SmReplace("datum", drn->datdok)
+if FIELDPOS("datisp")<>0
+	if dDatIsp <> nil
+		SmReplace("datisp", dDatIsp)
+	endif
+endif
 SmReplace("knaz", cKNaziv)
 SmReplace("kadr", cKAdres)
 SmReplace("kidbr", cKIdBroj)
 
 return
 *}
-
 
 

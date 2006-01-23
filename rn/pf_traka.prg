@@ -1,5 +1,13 @@
 #include "sc.ch"
 
+static LEN_KOLICINA := 9
+static LEN_CIJENA := 12
+static LEN_VRIJEDNOST := 14
+
+static DEC_KOLICINA := 2
+static DEC_CIJENA := 2 
+static DEC_VRIJEDNOST := 2
+
 
 function pf_traka_print()
 *{
@@ -15,7 +23,6 @@ return
 function f7_pf_traka()
 *{
 local lPfTraka
-local lPartNemaPodataka:=.f.
 
 isPfTraka(@lPfTraka)
 
@@ -26,15 +33,12 @@ endif
 drn_open()
 
 if !lPfTraka
-	if !read_kup_data()
-		lPartNemaPodataka := .t.
-		get_kup_data()
-	endif
+	get_kup_data()
 endif
 
 st_pf_traka()
 
-if !lPfTraka .and. lPartNemaPodataka
+if !lPfTraka 
 	AzurKupData(gIdPos)
 endif
 
@@ -54,20 +58,34 @@ return .t.
 
 function get_kup_data()
 *{
+
 local cKNaziv := SPACE(35)
 local cKAdres := SPACE(35)
 local cKIdBroj := SPACE(13)
-local cUnosOk := "N"
+local cUnosOk := "D"
+local dDatIsp := DATE()
 local GetList:={}
 
-Box(,6, 65)
+SET CURSOR ON
+if read_kup_data()
+	cKNaziv:=PADR(get_dtxt_opis("K01"), 35)
+	cKAdres:=PADR(get_dtxt_opis("K02"), 35)
+	cKIdBroj:=PADR(get_dtxt_opis("K03"), 13)
+	dDatIsp:= get_drn_di()
+	if dDatIsp == nil
+		dDatIsp := CTOD("")
+	endif
+endif
+
+Box(,7, 65)
 	do while .t.
 		 @ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
 		 @ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) PICT "@S20"
 		 @ 3+m_x, 2+m_y SAY "Adresa:" GET cKAdres VALID !Empty(cKAdres)
 		 @ 4+m_x, 2+m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty(cKIdBroj)
-		 @ 6+m_x, 2+m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
-		
+		 @ 5+m_x, 2+m_y SAY "Datum isporuke " GET dDatIsp
+
+		 @ 7+m_x, 2+m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
 		read
 		// potvrdi unos
 		if cUnosOk == "D"
@@ -77,15 +95,24 @@ Box(,6, 65)
 	enddo
 BoxC()
 
-//dodaj parmetre u drntext
+
+
+//dodaj parametre u drntext
 add_drntext("K01", cKNaziv)
 add_drntext("K02", cKAdres)
 add_drntext("K03", cKIdBroj)
+add_drn_di(dDatIsp)
 
 return
 *}
 
-
+function pf_traka_line(nRazmak)
+local cPom
+cPom := SPACE(nRazmak)
+cPom += REPLICATE("-", LEN_KOLICINA) + " " 
+cPom += REPLICATE("-", LEN_CIJENA) + " " 
+cPom += REPLICATE("-", LEN_VRIJEDNOST)
+return cPom
 
 function st_pf_traka()
 *{
@@ -99,10 +126,11 @@ local lViseRacuna := .f.
 local nPFeed
 local cSjeTraSkv
 local cOtvLadSkv
+local nLeft1 := 22
 
-START PRINT2 CRET gLocPort,SPACE(5)
+START PRINT2 CRET gLocPort, SPACE(5)
 
-rb_traka_line(@cLine)
+cLine := pf_traka_line(1)
 
 get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
 
@@ -122,7 +150,8 @@ set order to tag "1"
 go top
 
 // mjesto i datum racuna
-? cRazmak + drn->vrijeme + PADL(get_rn_mjesto() + ", " + DToC(drn->datdok), 32)
+? cRazmak + drn->vrijeme + PADL(get_rn_mjesto() +  "D.ispor: " + DTOC(drn->datisp)+ ", " + DToC(drn->datdok), 32)
+
 
 ? cLine
 
@@ -132,11 +161,12 @@ go top
 ? cLine
 
 // opis kolona
-? " R.br  Sifra, Naziv"
+? " R.br   Roba (sif - naziv, jmj)"
 ? cLine
-? " kolicina/jmj            Cij.bez PDV"
-? "  Cij.sa PDV   Cij*kolicina sa PDV (KM)"
-
+? cRazmak + PADC("kolicina", LEN_KOLICINA)  + " " + PADC("C.bez PDV", LEN_CIJENA) + PADC("Vrij b.PDV ", LEN_VRIJEDNOST)
+if ROUND(drn->ukpopust,3) <> 0
+? cRazmak + PADC("-popust", LEN_KOLICINA) + PADC("C.2.bez PDV", LEN_CIJENA)
+endif
 ? cLine
 
 select rn
@@ -148,7 +178,7 @@ do while !EOF()
 	? cRazmak + rn->rbr
 
 	// artikal
-	cArtikal := ALLTRIM(field->idroba) + " - " + ALLTRIM(field->robanaz)
+	cArtikal := ALLTRIM(field->idroba) + " - " + ALLTRIM(field->robanaz) +  " (" + ALLTRIM(rn->jmj) + ")"
 	aRNaz := SjeciStr(cArtikal, 34)
 	for i:=1 to LEN(aRNaz)
 		if i == 1
@@ -159,32 +189,41 @@ do while !EOF()
 	next
 
 	// kolicina, jmj, cjena sa pdv
-	? cRazmak + STR(rn->kolicina, 9, 2), rn->jmj + PADL(STR(rn->cjenbpdv, 12, 2), 25)
-	// da li postoji popust
-	if Round(rn->cjen2pdv, 4) <> 0
-		? cRazmak + "popust:" + STR(rn->popust, 3) + "%"
-		?? cRazmak + "  cij.2.b.PDV", STR(rn->cjen2bpdv, 12, 2)
-	endif
-	// pdv
-	? cRazmak + "  PDV:", STR(rn->ppdv, 3) + "%"
-	?? cRazmak + "  poj.izn.PDV", STR(rn->vpdv, 12, 2)
+	? cRazmak + STR(rn->kolicina, LEN_KOLICINA, DEC_KOLICINA), STR(rn->cjenbpdv, LEN_CIJENA, DEC_CIJENA)
 	
-	? cRazmak + STR( if(Round(rn->cjen2pdv,4)<>0, rn->cjen2pdv, rn->cjenpdv), 12,2), PADL(STR(rn->ukupno, 12, 2), 25)	
+	// da li postoji popust
+	if Round(rn->cjen2pdv, 3) <> 0
+		? cRazmak 
+		?? PADL("-" + STR(rn->popust, 3) + "%", LEN_KOLICINA)
+		?? " "
+		?? STR(rn->cjen2bpdv, LEN_CIJENA, DEC_CIJENA)
+		?? " "
+ 		nPom:= rn->cjen2bpdv * rn->kolicina
+	        ?? STR( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+
+	else
+		?? " "
+		nPom:= rn->cjenbpdv * rn->kolicina
+	        ?? STR( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+
+	endif
+	
 	
 	skip
 enddo
 
+
 ? cLine
 
-? cRazmak + PADL("Ukupno bez PDV (KM):", 25), STR(drn->ukbezpdv, 12, 2)
+? cRazmak + PADL("Ukupno bez PDV (KM):", nLeft1), STR(drn->ukbezpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
 // dodaj i popust
 if Round(drn->ukpopust, 2) <> 0
-	? cRazmak + PADL("Popust (KM):", 25), STR(drn->ukpopust, 12, 2)
-	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", 25), STR(drn->ukbpdvpop, 12, 2)
+	? cRazmak + PADL("Popust (KM):", nLeft1), STR(drn->ukpopust, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", nLeft1), STR(drn->ukbpdvpop, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
 endif
-? cRazmak + PADL("PDV 17% :", 25), STR(drn->ukpdv, 12, 2)
+? cRazmak + PADL("PDV 17% :", nLeft1), STR(drn->ukpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
 ? cLine
-? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", 25), PADL(TRANSFORM(drn->ukupno,"******9.99"), 12)
+? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", nLeft1), PADL(TRANSFORM(drn->ukupno,"******9."+REPLICATE("9", DEC_VRIJEDNOST)), LEN_VRIJEDNOST)
 ? cLine
 
 ft_rb_traka()
