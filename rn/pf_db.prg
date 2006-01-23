@@ -119,6 +119,7 @@ AADD(aArr, {"UKPOPTP", "N", 15, 5})
 AADD(aArr, {"UKBPDVPOP","N",15, 5})
 AADD(aArr, {"UKPDV",   "N", 15, 5})
 AADD(aArr, {"UKUPNO",  "N", 15, 5})
+AADD(aArr, {"UKKOL",   "N", 14, 2})
 AADD(aArr, {"CSUMRN",  "N",  6, 0})
 if glUgost
   // stopa poreza na potrosnju 1
