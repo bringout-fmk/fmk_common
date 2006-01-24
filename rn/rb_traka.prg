@@ -314,15 +314,16 @@ cITelef := get_dtxt_opis("I05")
 ? cRaz2 + REPLICATE("-", LEN(cINaziv))
 
 ? cRaz2 + "Adresa : " + cIAdresa
-if !EMPTY(cITelef)
-	? cRaz2 + "Telefon: " + cITelef
-endif
 ? cRaz2 + "ID broj: " + cIIdBroj
 
 ? cRaz2 + REPLICATE("-", 30)
 
 ? cRaz2 + "Prodajno mjesto:"
 ? cRaz2 + cIPM
+
+if !EMPTY(cITelef)
+	? cRaz2 + "Telefon: " + cITelef
+endif
 
 ? cRazmak + cDuplaLin
 

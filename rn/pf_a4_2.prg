@@ -195,56 +195,6 @@ endif
 return
 *}
 
-// uzmi osnovne parametre za stampu dokumenta
-function get_pfa4_vars(nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka)
-*{
-
-// uzmi podatak za lijevu marginu
-nLMargina := VAL(get_dtxt_opis("P01"))
-
-// uzmi podatak za gornju marginu
-nGMargina := VAL(get_dtxt_opis("P07"))
-
-// broj dodatnih redova po listu
-nDodRedova := VAL(get_dtxt_opis("P06"))
-
-// uzmi podatak za duzinu slobodnog teksta
-nSlTxtRow := VAL(get_dtxt_opis("P02"))
-
-// varijanta fakture (porez na svaku stavku D/N)
-cPDVStavka := get_dtxt_opis("P11")
-
-// da li se prikazuju samo kolicine
-lSamoKol := .f.
-if get_dtxt_opis("P03") == "D"
-	lSamoKol := .t.
-endif
-
-// da li se kreira zaglavlje na svakoj stranici
-lZaglStr := .f.
-if get_dtxt_opis("P04") == "D"
-	lZaglStr := .t.
-endif
-
-// da li se kreira zaglavlje na svakoj stranici
-lStZagl := .f.
-if get_dtxt_opis("P10") == "D"
-	lStZagl := .t.
-endif
-
-// da li se ispisuji podaci otpremnica itd....
-lDatOtp := .t.
-if get_dtxt_opis("P05") == "N"
-	lZaglStr := .f.
-endif
-
-// valuta dokuemnta
-cValuta := get_dtxt_opis("D07")
-
-return
-*}
-
-
 // zaglavlje glavne tabele sa stavkama
 static function st_zagl_data(cLine, cRazmak, cVarijanta)
 *{

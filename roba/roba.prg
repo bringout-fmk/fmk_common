@@ -183,28 +183,6 @@ PopWa()
 private gTbDir:="N"
 bRoba:=gRobaBlock
 
-if cId!=NIL .and. gNovine=="D"
-	nTekObl:=SELECT()
-	SELECT (F_ROBA)
-	SEEK PADR(LEFT(cId, gnDS),LEN(ROBA->id))
-	if Found() .and. roba->tip=="S"
-		select (nTekObl)
-		if dx<>NIL .and. dy<>NIL
-			@ m_x+dx, m_y+dy SAY roba->naz
-		endif
-		return .t.
-	else
-		select (nTekObl)
-		return PostojiSifra(F_ROBA,iif(IzFmkIni("SifRoba","ID_J","N",SIFPATH)="D","ID_J","ID"),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
-	endif
-else
-	cPomTag:=IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
-	if ProcName(1)=="SIFRE" .and. cPomTag!="ID"
-		return PostojiSifra(F_ROBA,(cPomTag),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
-	else
-		return PostojiSifra(F_ROBA,iif(IzFmkIni("SifRoba","ID_J","N",SIFPATH)="D","ID_J","ID"),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
-	endif
-endif
 return
 *}
 
@@ -221,7 +199,7 @@ function EditOpis()
 local cOp:="N"
 private GetList:={}
 if IzFMkIni('SifRoba',"PitanjeOpis",'N',SIFPATH)=="D"
- @ m_x+7,m_y+43 SAY "Unijeti opis D/N ?" get cOp pict "@!" valid cop $ "DN"
+ @ m_x+7, m_y+43 SAY "Unijeti opis D/N ?" get cOp pict "@!" valid cop $ "DN"
  read
 endif
 UsTipke()
