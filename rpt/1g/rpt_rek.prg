@@ -163,6 +163,7 @@ next
 nT1:=nT2:=nT3:=nT4:=0
 nUNeto:=0
 nUNetoOsnova:=0
+nUBNOsnova:=0
 nUIznos:=nUSati:=nUOdbici:=nUOdbiciP:=nUOdbiciM:=0
 nLjudi:=0
 
@@ -256,6 +257,7 @@ if cMjesec==cMjesecDo
   		?
 	endif
 	PrikKBO()
+	PrikKBOBenef()
 	select por
 	go top
 	nPom:=nPor:=nPor2:=nPorOps:=nPorOps2:=0
@@ -449,7 +451,16 @@ if cUmPD=="D"
 endif
 
 do while !eof()
-  if prow()>55+gpStranica; FF; endif
+
+  if prow()>55+gpStranica
+     FF
+  endif
+
+  // ako je BENEF i ako je osnova 0 preskoci ovaj doprinos
+  if ("BENEF" $ naz) .and. nUBNOsnova == 0
+      skip
+      loop 
+  endif
 
   if right(id,1)=="X"
    ? cLinija
@@ -542,7 +553,11 @@ do while !eof()
     else
       // doprinosi nisu po opstinama
       altd()
-      nBo:=round2(parobr->k3/100*nUNetoOsnova,gZaok2)
+      if "BENEF" $ dopr->naz
+           nBo:=round2(parobr->k3/100*nUBNOsnova,gZaok2)
+      else
+           nBo:=round2(parobr->k3/100*nUNetoOsnova,gZaok2)
+      endif
       @ prow(),nC1 SAY nBO pict gpici
       nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)
       if cUmPD=="D"
@@ -1072,7 +1087,12 @@ do while !eof() .and. eval(bUSlov)
 	++nLjudi
 	nUSati+=_USati   // ukupno sati
 	nUNeto+=_UNeto  // ukupno neto iznos
+	
 	nUNetoOsnova+=_oUNeto  // ukupno neto osnova za obracun por.i dopr.
+	
+	if UBenefOsnovu()
+		nUBNOsnova+=_oUNeto
+	endif
 
 	cTR := IF( RADN->isplata$"TR#SK", RADN->idbanka,;
                                  SPACE(LEN(RADN->idbanka)) )
@@ -1467,25 +1487,41 @@ enddo
 return
 *}
 
-
-
 function PrikKBO()
 *{
+nBO:=0
+? "Koef. Bruto osnove (KBO):",transform(parobr->k3,"999.99999%")
+?? space(1),"BRUTO OSNOVA = NETO OSNOVA*KBO ="
+@ prow(),pcol()+1 SAY nBo:=round2(parobr->k3/100*nUNetoOsnova,gZaok2) pict gpici
+?
+return
+*}
 
+
+function PrikKBOBenef()
+*{
+if nUBNOsnova == 0
+	return
+endif
 
 nBO:=0
-
-? "Koef. Bruto osnove (KBO):",transform(parobr->k3,"999.99999%")
-
-?? space(3),"BRUTO OSNOVA = NETO OSNOVA*KBO ="
-
-@ prow(),pcol()+1 SAY nBo:=round2(parobr->k3/100*nUNetoOsnova,gZaok2) pict gpici
-
+? "Koef. Bruto osnove benef.(KBO):",transform(parobr->k3,"999.99999%")
+? space(3),"BRUTO OSNOVA = NETO OSNOVA.BENEF * KBO ="
+@ prow(),pcol()+1 SAY nBo:=round2(parobr->k3/100*nUBNOsnova,gZaok2) pict gpici
 ?
-
-
-
 return
+*}
+
+
+function UBenefOsnovu()
+*{
+if radn->k4 == "BF"
+	if ROUND(&gBFForm,4) == 0
+		return .t.
+	endif
+endif
+
+return .f.
 *}
 
 

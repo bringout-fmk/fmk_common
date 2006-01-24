@@ -146,6 +146,8 @@ method mMenu()
 private Izbor
 private lPodBugom
 
+CheckROnly(KUMPATH + "\LD.DBF")
+
 SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
 
@@ -283,6 +285,7 @@ public gVarSpec:="1"
 public cVarPorOl:="1"
 public gSihtarica:="N"
 public gFUPrim:=PADR("UNETO+I24+I25",50)
+public gBFForm:=PADR("",100)
 public gFURaz:=PADR("",60)
 public gFUSati:=PADR("USATI",50)
 public gFURSati:=PADR("",50)
@@ -343,6 +346,7 @@ Rpar("to",@gTipObr)
 Rpar("vo",@cVarPorOl)
 Rpar("uH",@gFURSati)
 Rpar("uS",@gFUSati)
+Rpar("uB",@gBFForm)
 RPar("um",@gUNMjesec)
 Rpar("up",@gFUPrim)
 Rpar("ur",@gFURaz)

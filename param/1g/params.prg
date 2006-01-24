@@ -58,15 +58,17 @@ endif
 return
 *}
 
+
 function SetFormule()
 *{
 private GetList:={}
 
-Box(,14,77)
+Box(,16,77)
 	gFURaz:=PADR(gFURaz,100)
       	gFUPrim:=PADR(gFUPrim,100)
       	gFUSati:=PADR(gFUSati,100)
       	gFURSati:=PADR(gFURSati,100)
+	gBFForm:=PADR(gBFForm,100)
       	@ m_x+1,m_y+2 SAY "Formula za ukupna primanja:" GET gFUPrim  pict "@!S30"
       	@ m_x+3,m_y+2 SAY "Formula za ukupno sati    :" GET gFUSati  pict "@!S30"
       	@ m_x+5,m_y+2 SAY "Formula za godisnji       :" GET gFUGod pict "@!S30"
@@ -75,6 +77,7 @@ Box(,14,77)
       	@ m_x+11,m_y+2 SAY "God. promjena koef.min.rada - ZENE:" GET gMRZ   pict "9999.99"
       	@ m_x+12,m_y+2 SAY "God. promjena koef.min.rada - MUSK:" GET gMRM   pict "9999.99"
       	@ m_x+14,m_y+2 SAY "% prosjecne plate kao donji limit neta za obracun poreza i doprinosa" GET gPDLimit pict "999.99"
+      	@ m_x+16,m_y+2 SAY "Kod benef.gledaj formulu:" GET gBFForm pict "@!S30"
       	read
 BoxC()
 
@@ -85,6 +88,7 @@ if (LastKey()<>K_ESC)
       	WPar("dl", @gPDLimit)
       	Wpar("uH",@gFURSati)
       	Wpar("uS",@gFUSati)
+	Wpar("uB",@gBFForm)
       	Wpar("up",gFUPrim)
       	Wpar("ur",gFURaz)
 endif
