@@ -1516,7 +1516,7 @@ return
 function UBenefOsnovu()
 *{
 if radn->k4 == "BF"
-	if ROUND(&gBFForm,4) == 0
+	if !EMPTY(gBFForm) .and. ROUND(&gBFForm,4) == 0
 		return .t.
 	endif
 endif
