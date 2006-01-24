@@ -355,7 +355,7 @@ return
 
 
 // funkcija za ispis slobodnog teksta na kraju fakture
-function pf_a4_sltxt()
+static function pf_a4_sltxt()
 *{
 local cLine
 local cTxt
@@ -392,7 +392,7 @@ return
 
 
 // generalna funkcija footer
-function pf_a4_footer()
+static function pf_a4_footer()
 *{
 local cLine 
 
@@ -411,7 +411,7 @@ return
 
 
 // funkcija za ispis headera
-function pf_a4_header()
+static function pf_a4_header()
 *{
 
 local cDLHead := REPLICATE("=", 72) // double line header
@@ -493,7 +493,7 @@ return cLine
 
 
 // funkcija za ispis podataka o kupcu, dokument, datum fakture, otpremnica itd..
-function pf_a4_kupac()
+static function pf_a4_kupac()
 *{
 local cPartMjesto
 local cPartPTT
@@ -632,7 +632,7 @@ return
 
 
 // funkcija za novu stranu
-function NStr_pf_a4(nStr, lShZagl)
+static function NStr_pf_a4(nStr, lShZagl)
 *{
 local cLine
 

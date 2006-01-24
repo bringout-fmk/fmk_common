@@ -163,7 +163,7 @@ go top
 // opis kolona
 ? " R.br   Roba (sif - naziv, jmj)"
 ? cLine
-? cRazmak + PADC("kolicina", LEN_KOLICINA)  + " " + PADC("C.bez PDV", LEN_CIJENA) + PADC("Vrij b.PDV ", LEN_VRIJEDNOST)
+? cRazmak + PADC("kolicina", LEN_KOLICINA)  + " " + PADC("C.bez PDV", LEN_CIJENA) + PADC(" Uk b.PDV  ", LEN_VRIJEDNOST)
 if ROUND(drn->ukpopust,3) <> 0
 ? cRazmak + PADC("-popust", LEN_KOLICINA) + PADC("C.2.bez PDV", LEN_CIJENA)
 endif
@@ -191,27 +191,25 @@ do while !EOF()
 	// kolicina, jmj, cjena sa pdv
 	? cRazmak + STR(rn->kolicina, LEN_KOLICINA, DEC_KOLICINA), STR(rn->cjenbpdv, LEN_CIJENA, DEC_CIJENA)
 	
+	
+	// ukupna vrijednost bez pdv-a je uvijek bez popusta iskazana
+	// jer se popust na dnu iskazuje
+	?? " "
+	nPom:= rn->cjenbpdv * rn->kolicina
+	?? STR( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+
 	// da li postoji popust
 	if Round(rn->cjen2pdv, 3) <> 0
 		? cRazmak 
 		?? PADL("-" + STR(rn->popust, 3) + "%", LEN_KOLICINA)
 		?? " "
 		?? STR(rn->cjen2bpdv, LEN_CIJENA, DEC_CIJENA)
-		?? " "
- 		nPom:= rn->cjen2bpdv * rn->kolicina
-	        ?? STR( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST)
-
-	else
-		?? " "
-		nPom:= rn->cjenbpdv * rn->kolicina
-	        ?? STR( nPom,  LEN_VRIJEDNOST, DEC_VRIJEDNOST)
 
 	endif
 	
 	
 	skip
 enddo
-
 
 ? cLine
 

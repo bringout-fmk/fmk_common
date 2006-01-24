@@ -20,6 +20,7 @@ private lDatOtp // prikaz datuma otpremnice i narudzbenice
 private cValuta // prikaz valute KM ili ???
 private lStZagl // automatski formirati zaglavlje
 private nGMargina // gornja margina
+private cPDVSvStavka // varijanta fakture 
 
 if lStartPrint
 
@@ -32,7 +33,7 @@ endif
 
 // uzmi glavne varijable za stampu fakture
 // razmak, broj redova sl.teksta, 
-get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta)
+get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta, @cPDVSvStavka)
 
 // razmak ce biti
 cRazmak := SPACE(nLMargina)
@@ -59,7 +60,11 @@ go top
 
 P_COND
 
+//if cPDVSvStavka == "D"
+//	st_zagl_data(cLine, cRazmak, "1" )
+//else
 st_zagl_data(cLine, cRazmak, "2" )
+//endif
 
 select rn
 
@@ -72,7 +77,7 @@ do while !EOF()
 	// provjeri za novu stranicu
 	if prow() > nDodRedova + 48 - nSlTxtRow
 		++nStr
-		Nstr_pf_a4(cLine, nStr, cRazmak, .t.)
+		NStr(cLine, nStr, cRazmak, .t.)
     	endif	
 	
 	// uzmi naziv u matricu
@@ -98,7 +103,12 @@ do while !EOF()
 		?? TRANSFORM(rn->cjenbpdv, PicCDem) + SPACE(1)
 		?? TRANSFORM(rn->cjen2bpdv, PicCDem) + SPACE(1)
 		
-		?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
+		// ako je pdv na svaku stavku ispisi PDV
+		if cPDVSvStavka == "D"
+			?? TRANSFORM(rn->vpdv, PicCDem) + SPACE(1)
+		else
+			?? TRANSFORM(rn->cjen2pdv, PicCDem) + SPACE(1)
+		endif
 
 		// ukupno bez pdv
 		?? TRANSFORM( rn->cjen2bpdv * rn->kolicina,  PicDem)
@@ -185,6 +195,55 @@ endif
 return
 *}
 
+// uzmi osnovne parametre za stampu dokumenta
+function get_pfa4_vars(nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka)
+*{
+
+// uzmi podatak za lijevu marginu
+nLMargina := VAL(get_dtxt_opis("P01"))
+
+// uzmi podatak za gornju marginu
+nGMargina := VAL(get_dtxt_opis("P07"))
+
+// broj dodatnih redova po listu
+nDodRedova := VAL(get_dtxt_opis("P06"))
+
+// uzmi podatak za duzinu slobodnog teksta
+nSlTxtRow := VAL(get_dtxt_opis("P02"))
+
+// varijanta fakture (porez na svaku stavku D/N)
+cPDVStavka := get_dtxt_opis("P11")
+
+// da li se prikazuju samo kolicine
+lSamoKol := .f.
+if get_dtxt_opis("P03") == "D"
+	lSamoKol := .t.
+endif
+
+// da li se kreira zaglavlje na svakoj stranici
+lZaglStr := .f.
+if get_dtxt_opis("P04") == "D"
+	lZaglStr := .t.
+endif
+
+// da li se kreira zaglavlje na svakoj stranici
+lStZagl := .f.
+if get_dtxt_opis("P10") == "D"
+	lStZagl := .t.
+endif
+
+// da li se ispisuji podaci otpremnica itd....
+lDatOtp := .t.
+if get_dtxt_opis("P05") == "N"
+	lZaglStr := .f.
+endif
+
+// valuta dokuemnta
+cValuta := get_dtxt_opis("D07")
+
+return
+*}
+
 
 // zaglavlje glavne tabele sa stavkama
 static function st_zagl_data(cLine, cRazmak, cVarijanta)
@@ -193,11 +252,21 @@ local cRed1:=""
 local cRed2:=""
 local cRed3:=""
 
+if cVarijanta == nil
+	cVarijanta := "2"
+endif
 
 ? cLine
 
-cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV    C.sa PDV   Uk.bez PDV"
-cRed2 := SPACE(75) + " Popust(%)     PDV(%)                Uk.sa PDV"
+do case
+	// varijanta 1
+	case cVarijanta == "1"
+		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV   Pojed.PDV   Sveukupno"
+		cRed2 := SPACE(75) + " Popust(%)   C.sa PDV    PDV(%)       sa PDV"
+	case cVarijanta == "2"
+		cRed1 := " R.br  Sifra      Naziv                                      Kolicina  jmj  C.bez PDV   C.bez PDV    C.sa PDV   Uk.bez PDV"
+		cRed2 := SPACE(75) + " Popust(%)     PDV(%)                Uk.sa PDV"
+endcase
 
 if !EMPTY(cRed1)
 	? cRazmak + cRed1
@@ -210,6 +279,137 @@ if !EMPTY(cRed3)
 endif
 
 ? cLine
+
+return
+*}
+
+
+// funkcija za ispis slobodnog teksta na kraju fakture
+function pf_a4_sltxt(cRazmak, cLine)
+*{
+local cTxt
+local nFTip
+
+if prow() > nDodRedova + 48 - nSlTxtRow
+         NStr(cLine, nil, cRazmak, .f.)
+endif
+
+
+select drntext
+set order to tag "1"
+hseek "F20"
+
+do while !EOF() .and. field->tip = "F"
+	nFTip := VAL(RIGHT(field->tip, 2))
+	if nFTip < 51
+		cTxt := ALLTRIM(field->opis)
+			if !Empty(cTxt)
+				? cRazmak + cTxt
+			endif
+	endif
+	skip
+enddo
+
+return
+*}
+
+
+// generalna funkcija footer
+static function pf_a4_footer(cRazmak, cLine)
+*{
+// ispisi slobodni text
+pf_a4_sltxt(cRazmak, cLine)
+?
+P_12CPI
+?
+// ispisi potpis na kraju dokumenta
+? cRazmak + SPACE(10) + get_dtxt_opis("F10")
+
+return
+*}
+
+
+// funkcija za ispis headera
+static function pf_a4_header()
+*{
+local cRazmak := SPACE(3)
+local cDLHead := REPLICATE("=", 72) // double line header
+local cSLHead := REPLICATE("-", 72) // single line header
+local cINaziv
+local cIAdresa
+local cIIdBroj
+local cIBanke
+local aBanke
+local cITelef
+local cIWeb
+local cIText1
+local cIText2
+local cIText3
+
+cINaziv  := get_dtxt_opis("I01") // naziv
+cIAdresa := get_dtxt_opis("I02") // adresa
+cIIdBroj := get_dtxt_opis("I03") // idbroj
+cIBanke  := get_dtxt_opis("I09")
+aIBanke  := SjeciStr(cIBanke, 68)
+cITelef  := get_dtxt_opis("I10") // telefoni
+cIWeb    := get_dtxt_opis("I11") // email-web
+cIText1  := get_dtxt_opis("I12") // sl.text 1
+cIText2  := get_dtxt_opis("I13") // sl.text 2
+cIText3  := get_dtxt_opis("I14") // sl.text 3
+
+P_10CPI
+? cRazmak + cDLHead
+B_ON
+? cRazmak + cINaziv
+? cRazmak + REPLICATE("-", LEN(cINaziv))
+B_OFF
+
+P_12CPI
+? cRazmak + " Adresa: " + cIAdresa + ",     ID broj: " + cIIdBroj
+// ako nije prazno telefon ispisi
+if !EMPTY(cITelef)
+	? " " + cRazmak + cITelef
+endif
+// ako nije prazno web ispisi
+if !EMPTY(cIWeb)
+	? " " + cRazmak + cIWeb
+endif
+
+P_10CPI
+? cRazmak + cSLHead
+
+P_12CPI
+//B_ON
+? cRazmak + " Banke: "
+// ispisi banke
+for i:=1 to LEN(aIBanke)
+	if i == 1
+		?? aIBanke[i]
+	else
+		? " " + cRazmak + aIBanke[i] + " "
+	endif
+next
+//B_OFF
+
+P_10CPI
+// ako nije prazan slobodni tekst ispisi ga liniju po liniju
+if !EMPTY(cIText1 + cIText2 + cIText3)
+	? cRazmak + cSLHead
+	if !EMPTY(cIText1)
+		? cRazmak + cIText1
+	endif
+	if !EMPTY(cIText2)
+		? cRazmak + cIText2
+	endif
+	if !EMPTY(cIText3)
+		? cRazmak + cIText3
+	endif
+endif
+
+? cRazmak + cDLHead
+
+?
+?
 
 return
 *}
@@ -243,4 +443,136 @@ return
 *}
 
 
+// funkcija za ispis podataka o kupcu, dokument, datum fakture, otpremnica itd..
+static function pf_a4_kupac(cRazmak)
+*{
+local cKNaziv
+local cKAdresa
+local cKIdBroj
+local cKPorBroj
+local cKBrRjes
+local cKBrUpisa
+local cKMjesto
+local aKupac
+local cMjesto
+local cDatDok
+local cDatIsp
+local cDatVal
+local cTipDok := "FAKTURA br. "
+local cBrDok
+local cBrNar
+local cBrOtp
+
+drn_open()
+select drn
+go top
+
+cDatDok := DToC(field->datdok)
+cDatIsp := DToC(field->datisp)
+cDatVal := DToC(field->datval)
+cBrDok := field->brdok
+
+cBrNar :=get_dtxt_opis("D06") 
+cBrOtp :=get_dtxt_opis("D05") 
+cMjesto:=get_dtxt_opis("D01")
+cTipDok:=get_dtxt_opis("D02")
+cKNaziv:=get_dtxt_opis("K01")
+cKAdresa:=get_dtxt_opis("K02")
+cKIdBroj:=get_dtxt_opis("K03")
+//cKPorBroj:=get_dtxt_opis("K05")
+//cKBrRjes:=get_dtxt_opis("K06")
+//cKBrUpisa:=get_dtxt_opis("K07")
+cKMjesto:=get_dtxt_opis("K10")+", " + get_dtxt_opis("K11")
+
+aKupac:=Sjecistr(cKNaziv,30)
+
+// naziv, mjesto i datdok
+? cRazmak
+B_ON
+?? padc(alltrim(aKupac[1]),30)
+B_OFF
+?? padl(cMjesto + ", " + cDatDok, 37)
+
+// adresa
+? cRazmak
+B_ON
+?? padc(cKAdresa,30)
+B_OFF
+if cDatIsp <> DToC(CToD(""))
+	?? padl("Datum isporuke: " + cDatIsp, 37)
+endif
+
+// mjesto
+? cRazmak
+B_ON
+?? padc(cKMjesto,30)
+B_OFF
+if cDatVal <> DToC(CTOD(""))
+	?? padl("Datum valute: " + cDatVal, 37)
+endif
+
+P_COND
+? cRazmak
+?? SPACE(12) + padc("Ident.broj: " + cKIdBroj, 30)
+
+//?? padc("Por.broj: " + cKPorBroj, 30)
+//? cRazmak
+//?? padc("Br.sud.Rj: " + cKBrRjes, 30)
+//?? padc("Br.upisa: " + cKBrUpisa, 30)
+
+P_10CPI
+
+// broj dokumenta
+? space(30)
+B_ON
+?? padl(cTipDok + cBrDok, 39)
+?
+B_OFF
+
+// ako je prikaz broja otpremnice itd...
+if lDatOtp
+	P_10CPI
+	P_COND
+	if !EMPTY(cBrOtp)
+		? cRazmak + "Broj otpremnice: " + cBrOtp 
+	endif
+	if !EMPTY(cBrNar)
+		?? " ,  Broj narudzbenice: " + cBrNar
+	endif
+	P_10CPI
+else
+	?
+endif
+
+return
+*}
+
+
+
+// funkcija za novu stranu
+static function NStr(cLine, nStr, cRazmak, lShZagl)
+*{
+
+? cLine
+? cRazmak + "Prenos na sljedecu stranicu"
+? cLine
+
+FF
+
+? cLine
+if nStr <> nil
+	? cRazmak, "       Strana:", str(nStr, 3)
+endif
+if lShZagl
+	if cPDVSvStavka == "D"
+		st_zagl_data(cLine, cRazmak, "1" )
+	else
+		st_zagl_data(cLine, cRazmak, "2" )
+	endif
+else
+	? cLine
+endif
+
+return
+*}
 
