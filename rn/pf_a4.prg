@@ -596,6 +596,7 @@ cDestinacija:=get_dtxt_opis("D08")
 cPartMjesto := get_dtxt_opis("K10") 
 //K11 - partner PTT
 cPartPTT := get_dtxt_opis("K11")
+cInoDomaci:=get_dtxt_opis("P11")
 
 
 cKMjesto:= ALLTRIM(cPartMjesto)
@@ -605,8 +606,15 @@ endif
 
 aKupac:=Sjecistr(cKNaziv, 30)
 
+cPom:=""
+if ALLTRIM(cInoDomaci) == "INO"
+	cPom:= "Ino-Kupac:"
+else
+	cPom:= "Kupac"
+endif
+	
 I_ON
-p_line( "Kupac:" , 10, .t.)
+p_line( cPom , 10, .t.)
 p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
 I_OFF
 
@@ -888,6 +896,8 @@ return PIC_KOLICINA
 function pic_cijena(xPom)
 if xPom <> NIL
 	PIC_CIJENA := xPom
+elseif EMPTY(PIC_CIJENA)
+    PIC_CIJENA := PADL(ALLTRIM(RIGHT(PicCDem, LEN_CIJENA)), LEN_CIJENA, "9")
 endif
 return PIC_CIJENA
 

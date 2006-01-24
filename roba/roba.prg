@@ -19,9 +19,9 @@ if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.  (IzFmkIni("SifRoba","ID",
 	AADD (ImeKol,{ padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
 endif
 
-if (IzFmkIni("SifRoba","ID_J","N", SIFPATH)=="D")
-	AADD (ImeKol,{ padc("ID_J",10 ), {|| id_j}, ""   })
-endif
+//if (IzFmkIni("SifRoba","ID_J","N", SIFPATH)=="D")
+//	AADD (ImeKol,{ padc("ID_J",10 ), {|| id_j}, ""   })
+//endif
 
 if roba->(fieldpos("KATBR"))<>0
 	AADD (ImeKol,{ padc("KATBR",14 ), {|| katBr}, "katBr"   })
@@ -178,12 +178,13 @@ if IsPlanika()
 endif
 PopWa()
 
-//
-// START ubaceno radi oprese stampe...
 private gTbDir:="N"
 bRoba:=gRobaBlock
 
-return
+cPomTag:=IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
+
+return PostojiSifra(F_ROBA,(cPomTag),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
+
 *}
 
 

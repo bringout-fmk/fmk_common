@@ -33,7 +33,9 @@ endif
 drn_open()
 
 if !lPfTraka
-	get_kup_data()
+	if !get_kup_data()
+		return
+	endif
 endif
 
 st_pf_traka()
@@ -78,22 +80,22 @@ if read_kup_data()
 endif
 
 Box(,7, 65)
-	do while .t.
-		 @ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
-		 @ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) PICT "@S20"
-		 @ 3+m_x, 2+m_y SAY "Adresa:" GET cKAdres VALID !Empty(cKAdres)
-		 @ 4+m_x, 2+m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty(cKIdBroj)
-		 @ 5+m_x, 2+m_y SAY "Datum isporuke " GET dDatIsp
 
-		 @ 7+m_x, 2+m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
-		read
-		// potvrdi unos
-		if cUnosOk == "D"
-			exit
-		endif
-		
-	enddo
+	@ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
+	@ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) PICT "@S20"
+	@ 3+m_x, 2+m_y SAY "Adresa:" GET cKAdres VALID !Empty(cKAdres)
+	@ 4+m_x, 2+m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty(cKIdBroj)
+	@ 5+m_x, 2+m_y SAY "Datum isporuke " GET dDatIsp
+
+	 @ 7+m_x, 2+m_y SAY "Unos podataka ispravan (D/N)?" GET cUnosOk VALID cUnosOk $ "DN" PICT "@!"
+	read
+	
 BoxC()
+
+if (cUnosOk <> "D") .or. (LASTKEY()==K_ESC)
+	return .f.
+endif
+	
 
 
 
@@ -103,7 +105,7 @@ add_drntext("K02", cKAdres)
 add_drntext("K03", cKIdBroj)
 add_drn_di(dDatIsp)
 
-return
+return .t.
 *}
 
 function pf_traka_line(nRazmak)
@@ -150,8 +152,8 @@ set order to tag "1"
 go top
 
 // mjesto i datum racuna
-? cRazmak + drn->vrijeme + PADL(get_rn_mjesto() +  "D.ispor: " + DTOC(drn->datisp)+ ", " + DToC(drn->datdok), 32)
-
+? cRazmak + drn->vrijeme + PADL(get_rn_mjesto() + "," + DToC(drn->datdok), 32)
+? cRazmak + "Datum isporuke: " + DTOC(drn->datisp)
 
 ? cLine
 

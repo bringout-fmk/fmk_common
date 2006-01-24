@@ -4,25 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/svi/valute.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.8 $
- * $Log: valute.prg,v $
- * Revision 1.8  2004/05/27 09:27:50  sasavranic
- * Default order sifranika valuta po "ID2" --- id+DToS(datum)
- *
- * Revision 1.7  2003/12/29 12:11:21  sasavranic
- * Ispravljen MSG "Nepostojeci kurs valute...."  postavljeno lomljenje reda
- *
- * Revision 1.6  2003/01/27 00:46:55  mirsad
- * ispravke BUG-ova
- *
- * Revision 1.5  2002/06/20 16:52:06  ernad
- *
- *
- * ciscenje planika, uvedeno fmk/svi/specif.prg
- *
- *
  */
  
 
@@ -38,7 +19,7 @@
  *  \return f-ja vraca protuvrijednost jedinice valute cValIz u valuti cValU
  */
  
-function Kurs(dDat,cValIz,cValU)
+function Kurs(dDat, cValIz, cValU)
 *{
 local nNaz
 local nArr
@@ -49,6 +30,7 @@ local cPom:=""
 IF cValIz==NIL
 	cValIz:="P"
 ENDIF
+
 IF cValU==NIL 
 	cValU:=IF(cValIz=="P","D","P") 
 ENDIF
@@ -103,7 +85,9 @@ function ValDomaca()     // vraca skraceni naziv domace valute
 local xRez
 PushWa()
 SELECT F_VALUTE
-IF !USED(); O_VALUTE; ENDIF
+IF !USED()
+O_VALUTE
+ENDIF
 SET ORDER TO TAG "NAZ"
 xRez:=Ocitaj(F_VALUTE,"D","naz2")
 PopWa()
@@ -154,28 +138,37 @@ endif
 *}
 
 
-function OmjerVal(ckU,ckIz,dD)
+function OmjerVal(ckU, ckIz, dD)
 *{
-local nU:=0, nIz:=0
+local nU:=0
+local nIz:=0
 local nArr:=SELECT()
    SELECT (F_VALUTE)
-   IF !USED(); O_VALUTE; ENDIF
-   PRIVATE cFiltV := "( naz2=="+cm2str(PADR(ckU,4))+" .or. naz2=="+cm2str(PADR(ckIz,4))+" ) .and. DTOS(datum)<="+cm2str(DTOS(dD))
+   IF !USED()
+   O_VALUTE
+   ENDIF
+
+   PRIVATE cFiltV := "( naz2=="+cm2str( PADR(ckU,4) )+" .or. naz2=="+cm2str(PADR(ckIz,4))+" ) .and. DTOS(datum)<="+cm2str(DTOS(dD))
    SET FILTER TO &cFiltV
    SET ORDER TO TAG "ID2"
    GO TOP
    DO WHILE !EOF()
      IF naz2==PADR(ckU,4)
-       nU  := IF(kurslis=="1",kurs1,IF(kurslis=="2",kurs2,kurs3))
+       nU  := IF(kurslis=="1", kurs1, IF(kurslis=="2", kurs2, kurs3))
      ELSEIF naz2==PADR(ckIz,4)
-       nIz := IF(kurslis=="1",kurs1,IF(kurslis=="2",kurs2,kurs3))
+       nIz := IF(kurslis=="1",kurs1, IF(kurslis=="2", kurs2, kurs3))
      ENDIF
      SKIP 1
    ENDDO
    SET FILTER TO
+   
+   //if ALLTRIM(gnFirma) == "TEST"
+   //  MsgBeep("nIz =" + STR(nIz, 10,3) + "nU = " + STR(nU, 10,3) )
+   //endif
+   
    SELECT (nArr)
    IF nIz==0
-     MsgBeep("Greska! Za valutu "+ckIz+" na dan "+DTOC(dD)+" nemoguce utvrditi kurs!")
+     MsgBeep("Greska! Za valutu "+ ckIz + " na dan "+DTOC(dD)+" nemoguce utvrditi kurs!")
    ENDIF
    IF nU==0
      MsgBeep("Greska! Za valutu "+ckU+" na dan "+DTOC(dD)+" nemoguce utvrditi kurs!")
@@ -188,7 +181,9 @@ function ImaUSifVal(cKratica)
 *{
 LOCAL lIma:=.f., nArr:=SELECT()
    SELECT (F_VALUTE)
-   IF !USED(); O_VALUTE; ENDIF
+   IF !USED()
+   	O_VALUTE
+   ENDIF
    GO TOP
    DO WHILE !EOF()
      IF naz2==PADR(cKratica,4)
@@ -229,7 +224,8 @@ endif
 function OmjerVal2(v1,v2)
 *{
  LOCAL nArr:=SELECT(), n1:=1, n2:=1, lv1:=.f., lv2:=.f.
-  SELECT VALUTE; SET ORDER TO TAG "ID2"
+  SELECT VALUTE
+  SET ORDER TO TAG "ID2"
   GO BOTTOM
   DO WHILE !BOF() .and. (!lv1.or.!lv2)
     IF !lv1 .and. naz2==v1; n1:=kurs1; lv1:=.t.; ENDIF

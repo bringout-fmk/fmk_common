@@ -10,7 +10,7 @@
   #include "sc.ch"
 #endif
 
-#define FMK_VER  "02.35"
+#define FMK_VER  "02.36"
 
 #define F_GPARAMS   1
 #define F_GPARAMSP  2

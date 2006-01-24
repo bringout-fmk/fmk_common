@@ -112,6 +112,11 @@ else
   return .f.
 endif
 
+function IsIno(cIdPartner, lShow)
+// isti je algoritam za utvrdjivanje
+// ino partnera bio dobavljac ili kupac
+return IsInoDob(cIdPartner, lShow)
+
 
 function IsInoDob(cIdPartner, lShow)
 local cIdBroj

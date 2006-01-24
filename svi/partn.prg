@@ -4,21 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/svi/partn.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.5 $
- * $Log: partn.prg,v $
- * Revision 1.5  2004/02/12 15:37:55  sasavranic
- * no message
- *
- * Revision 1.4  2002/07/04 19:04:08  ernad
- *
- *
- * ciscenje sifrarnik fakt
- *
- * Revision 1.3  2002/06/16 11:44:53  ernad
- * unos header-a
- *
  *
  */
 function P_Firma(cId, dx, dy)
