@@ -283,8 +283,6 @@ endif
 // dodaj text na kraju fakture
 a4_footer()
 
-?
-
 if lStartPrint
 	FF
 	EndPrint()
@@ -425,8 +423,18 @@ pf_a4_sltxt(cLine)
 ?
 P_12CPI
 ?
-// ispisi potpis na kraju dokumenta
-? RAZMAK + SPACE(10) + get_dtxt_opis("F10")
+
+cPotpis:= get_dtxt_opis("F10")
+
+cPotpis:=STRTRAN(cPotpis, "?S_5?", SPACE(5) )
+cPotpis:=STRTRAN(cPotpis, "?S_10?", SPACE(10) )
+
+aPotpis:= lomi_tarabe(cPotpis)
+
+for i :=1 to LEN(aPotpis)
+   p_line( aPotpis[i], 10, .f.)
+next
+
 
 return
 *}
@@ -925,3 +933,24 @@ if xPom <> NIL
 endif
 return RAZMAK
 
+function lomi_tarabe(cLomi)
+local nPos1
+local aLomi
+
+// rucno lomi
+aLomi:={}
+
+do while .t.
+	  nPos1 := AT("##", cLomi)
+	  if nPos1 == 0
+	  	// nema vise sta lomiti
+	  	AADD(aLomi, cLomi)
+		exit
+	  endif
+ 	  AADD(aLomi, LEFT( cLomi, nPos1 - 1))
+          // ostatak	
+	  cLomi:=SUBSTR( cLomi, nPos1 + 2)
+enddo
+	
+
+return aLomi
