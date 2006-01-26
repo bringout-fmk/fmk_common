@@ -125,8 +125,8 @@ cIdBroj := IzSifK("PARTN", "REGB", cIdPartner, .f.)
 
 if !EMPTY(cIdBroj)
   if LEN(ALLTRIM(cIdBroj)) < 12
-     MsgBeep("Partner " + cIdPartner + " ima iden broj " + cIdBroj + "##" +;
-           "< 12, znaci ovo je ino partner")
+     //MsgBeep("Partner " + cIdPartner + " ima iden broj " + cIdBroj + "##" +;
+     //    "< 12, znaci ovo je ino partner")
      return .t.
   else
      return .f.
