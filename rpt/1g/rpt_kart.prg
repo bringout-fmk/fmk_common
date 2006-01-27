@@ -485,9 +485,19 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	if !used()
 		O_KBENEF
 	endif
+	
 	m:=cLMSK+"----------------------- -------- ------------- -------------"
+	
 	nBO:=0
+	nBFO:=0
+	
 	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
+	
+	altd()
+	if UBenefOsnovu()
+		nBFo:=round2(parobr->k3/100*MAX(_UNeto-(&gBFForm),PAROBR->prosld*gPDLimit/100),gZaok2)
+	endif
+	
 	IF lSkrivena
 		? m
 	ELSE
@@ -560,12 +570,24 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		if right(id,1)=="X"
 			? m
 		endif
+		
+		if ("BENEF" $ dopr->naz .and. nBFO == 0)
+			skip
+			loop
+		endif
+		
 		? cLMSK+id,"-",naz
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
 		if empty(idkbenef) // doprinos udara na neto
-			@ prow(),pcol()+1 SAY nBO pict gpici
-			nC1:=pcol()+1
-			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
+			if ("BENEF" $ dopr->naz .and. nBFO <> 0)
+				@ prow(),pcol()+1 SAY nBFO pict gpici
+				nC1:=pcol()+1
+				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
+			else
+				@ prow(),pcol()+1 SAY nBO pict gpici
+				nC1:=pcol()+1
+				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
+			endif
 		else
 			nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
 			if nPom0<>0

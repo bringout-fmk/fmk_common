@@ -1091,7 +1091,7 @@ do while !eof() .and. eval(bUSlov)
 	nUNetoOsnova+=_oUNeto  // ukupno neto osnova za obracun por.i dopr.
 	
 	if UBenefOsnovu()
-		nUBNOsnova+=_oUNeto
+		nUBNOsnova+=_oUNeto - if(!Empty(gBFForm), &gBFForm, 0)
 	endif
 
 	cTR := IF( RADN->isplata$"TR#SK", RADN->idbanka,;
@@ -1516,9 +1516,7 @@ return
 function UBenefOsnovu()
 *{
 if radn->k4 == "BF"
-	if !EMPTY(gBFForm) .and. ROUND(&gBFForm,4) == 0
-		return .t.
-	endif
+	return .t.
 endif
 
 return .f.
