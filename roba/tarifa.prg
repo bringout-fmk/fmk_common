@@ -21,7 +21,7 @@ function P_Tarifa(cid,dx,dy)
 private ImeKol,Kol:={}
 
 ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv",10), {|| left(naz,10)},   "naz"   } ;
+          { PADC("Naziv", 15), {|| left(naz,10)},   "naz"   } ;
 	}
 
 if (gPDV=="D")
@@ -51,7 +51,12 @@ endif
 FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
 NEXT
-return PostojiSifra(F_TARIFA,1,10,75,"Tarifne grupe",@cid,dx,dy)
+
+select F_TARIFA
+if !USED()
+	O_TARIFA
+endif
+return PostojiSifra(F_TARIFA, 1, 10, 50,"Tarifne grupe",@cid,dx,dy)
 *}
 
 
