@@ -10,7 +10,7 @@
   #include "sc.ch"
 #endif
 
-#define FMK_VER  "02.36"
+#define FMK_VER  "02.37"
 
 #define F_GPARAMS   1
 #define F_GPARAMSP  2
@@ -69,8 +69,8 @@
 #define F_FIDOKS2  47
 #define F_UGOV     50
 #define F_RUGOV    51
-#define F_KUF      53
-#define F_KIF      54
+//#define F_KUF      53
+//#define F_KIF      54
 #define F_VPRIH    55
 
 //FMK ROBA
@@ -278,15 +278,31 @@
 #define F_R_UIO 249
 #define F_R_EXP 250
 
-#ifdef CLIP
-   #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
-#else
-	#ifdef CDX
-	   #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
-	#else
-	   #include "\dev\fmk\af\cl-AF\ax\fmk.ch"
-	#endif
-#endif
+// pdv kumulativ - podaci za PDV prijavu
+#define F_PDV 204
+// kuf promet
+#define F_KUF 205
+// kif promet
+#define F_KIF 206
+// priprema kuf
+#define F_P_KUF 248
+// priprema kif
+#define F_P_KIF 249
+
+// KIF shema za generaciju 
+// kif_s_gen
+#define F_SG_KUF 240
+// KUF shema za generaciju
+#define F_SG_KIF 241
+
+
+// reporti
+#define F_R_KUF 171
+#define F_R_KIF 172
+#define F_R_PDV 173
+
+
+#include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 
 #define POR_PPP		1 
 #define POR_PPU		2

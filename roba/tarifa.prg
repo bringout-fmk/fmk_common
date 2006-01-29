@@ -761,4 +761,19 @@ return {nP1, nP2, nP3}
 *}			
 
 
+// formatiraj stopa pdv kao string 
+//  " 17 %"
+//  "15.5%"
+function stopa_pdv( nPdv )
+
+if nPdv == nil
+	nPdv := tarifa->opp
+endif
+
+if round(nPdv, 1) == round(nPdv,0)
+   return STR(nPdv, 3, 0) + " %"
+else
+   return STR(nPdv, 3, 1) + "%"
+endif
+
 
