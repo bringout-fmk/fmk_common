@@ -10,9 +10,7 @@ local cNprog[16],cMProg[16],cTProg[16]
 
 SetSCGvars()
 
-//////////////////////////////////////
 // globalne varijable i podesavanja
-//////////////////////////////////////
 
 // Definisanje boja
 PUBLIC StaraBoja:=SETCOLOR()
@@ -65,7 +63,7 @@ if file("install.mem")
     fMem:=.t.
 endif
 
-@ 1,1 SAY "Instalacija FMK - SIGMA-COM software 1.w.0.0.2, 05.95-27.02.05"
+@ 1,1 SAY "Instalacija FMK - SIGMA-COM software 02.00, 05.95-29.01.06"
 
 
 cFMkInst:="D"
@@ -79,7 +77,7 @@ read
 
 ******************************
 ******************************
-nPrograma:=16
+nPrograma:=10
 
 if !fmem
  cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:=cProg16:="N"
@@ -94,62 +92,45 @@ endif
 
 // imena programa
 cnProg[1]:="FIN"
-cNProg[2]:="MAT"
-cNPROG[3]:="KALK"
-cNPROG[4]:="FAKT"
-cNPROG[5]:="CJEN"
-cNPROG[6]:="POR"
-cNPROG[7]:="LD"
-cNPROG[8]:="OS"
-cNPROG[9]:="CKALK"
-cNPROG[10]:="CFAKT"
-cNPROG[11]:="VIRM"
-cNPROG[12]:="KAM"
-cNPROG[13]:="ADMIN"
-cNPROG[14]:="MANAG"
-cNPROG[15]:="SII"
-cNPROG[16]:="BLAG"
+cNPROG[2]:="KALK"
+cNPROG[3]:="FAKT"
+cNPROG[4]:="LD"
+cNPROG[5]:="OS"
+cNPROG[6]:="VIRM"
+cNPROG[7]:="KAM"
+cNPROG[8]:="SII"
+cNPROG[9]:="EPDV"
+cNPROG[10]:="ADMIN"
 
 // {to zna~i da ovo indicira da li program koristi podatke drugog programa
 // - master programa. Tako je master programa koji prenosi iz KALK u FIN -
 // (program KALFAK) program KALK
 cMProg[1]:="FIN"   // master program
-cMProg[2]:="MAT"
-cMPROG[3]:="KALK"
-cMPROG[4]:="FAKT"
-cMPROG[5]:="FAKT"
-cMPROG[6]:="KALK"
-cMPROG[7]:="LD"
-cMPROG[8]:="OS"
-cMProg[9]:="CKALK"
-cMProg[10]:="CFAKT"
-cMProg[11]:="VIRM"
-cMProg[12]:="KAM"
-cMPROG[13]:="ADMIN"
-cMPROG[14]:="ADMIN"
-cMPROG[15]:="SII"
-cMPROG[16]:="BLAG"
+cMPROG[2]:="KALK"
+cMPROG[3]:="FAKT"
+cMPROG[4]:="LD"
+cMPROG[5]:="OS"
+cMProg[6]:="VIRM"
+cMProg[7]:="KAM"
+cMPROG[8]:="SII"
+cMPROG[9]:="EPDV"
+cMPROG[10]:="ADMIN"
 
 // cTProgi title koji se pojavljuje u BAT-u
 cTProg[1]:="FIN  - Finansijsko"
-cTProg[2]:="MAT  - Materijalno"
-cTPROG[3]:="KALK - robno/materijalno"
-cTPROG[4]:="FAKT - Fakturisanje"
-cTPROG[5]:="CJEN - Cjenovnik robe"
-cTPROG[6]:="POR  - Obracun poreza u MP"
-cTPROG[7]:="LD   - Obracun plata"
-cTPROG[8]:="OS   - Osnovna sredstva"
-cTPROG[9]:="CKALK - kalk konsignacija"
-cTPROG[10]:="CFAKT - kalk fakture    "
-cTPROG[11]:="VIRM - virmani"
-cTPROG[12]:="KAM - kamate"
-cTPROG[13]:="ADMIN - administracija"
-cTPROG[14]:="MANAG - manager"
-cTPROG[15]:="SII  - Sitan inventar"
-cTPROG[16]:="BLAG  - Blagajna"
-
+cTPROG[2]:="KALK - robno/materijalno"
+cTPROG[3]:="FAKT - Fakturisanje"
+cTPROG[4]:="LD   - Obracun plata"
+cTPROG[5]:="OS   - Osnovna sredstva"
+cTPROG[6]:="VIRM - virmani"
+cTPROG[7]:="KAM - kamate"
+cTPROG[8]:="SII  - Sitan inventar"
+cTPROG[9]:="EPDV - KUF/KIF, P-PDV"
+cTPROG[10]:="ADMIN - administracija"
 
 if cFmkInst=="N"
+
+nPrograma:=16
 
 // imena programa
 cnProg[1]:="TNAM"
