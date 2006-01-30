@@ -284,6 +284,7 @@
 #define F_KUF 205
 // kif promet
 #define F_KIF 206
+
 // priprema kuf
 #define F_P_KUF 248
 // priprema kif
