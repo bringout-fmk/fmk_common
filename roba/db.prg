@@ -4,23 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/db.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.5 $
- * $Log: db.prg,v $
- * Revision 1.5  2004/02/02 13:07:17  sasavranic
- * SifK oblast se sada otvara bezuslovno
- *
- * Revision 1.4  2002/07/05 14:35:08  sasa
- * no message
- *
- * Revision 1.3  2002/07/04 08:15:18  sasa
- * dodato O_FTXT
- *
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
- *
  */
  
 
@@ -135,6 +118,7 @@ if !file(SIFPATH+"TARIFA.dbf")
         dbcreate2(SIFPATH+'TARIFA.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id", SIFPATH+"TARIFA")
+CREATE_INDEX("naz","naz", SIFPATH+"TARIFA")
 
 
 if !file(SIFPATH+"KONCIJ.dbf")
