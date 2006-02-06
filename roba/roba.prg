@@ -9,9 +9,12 @@
  
 function P_Roba(CId,dx,dy)
 *{
+local cRet
 local bRoba
 private ImeKol:={}
 private Kol:={}
+
+PushWa()
 
 ImeKol:={ }
 
@@ -134,7 +137,6 @@ FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
 NEXT
 
-PushWa()
 select sifk
 set order to tag "ID"
 seek "ROBA"
@@ -176,17 +178,16 @@ if IsPlanika()
 		O_RVRSTA
 	endif
 endif
-PopWa()
 
 private gTbDir:="N"
 bRoba:=gRobaBlock
 
 cPomTag:=IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
 
-return PostojiSifra(F_ROBA,(cPomTag),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
+cRet:=PostojiSifra(F_ROBA,(cPomTag),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
 
-*}
-
+PopWa()
+return cRet
 
 /*! \fn EditOpis()
  *  \brief Unos opisa u sifrarnik robe

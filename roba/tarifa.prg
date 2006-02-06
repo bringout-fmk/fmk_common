@@ -50,12 +50,16 @@ FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
 NEXT
 
+PushWa()
 select F_TARIFA
 if !USED()
 	O_TARIFA
 endif
-return PostojiSifra(F_TARIFA, 1, 10, 65, "Tarifne grupe", @cid, dx, dy)
-*}
+
+cRet := PostojiSifra(F_TARIFA, 1, 10, 65, "Tarifne grupe", @cid, dx, dy)
+
+PopWa()
+return cRet
 
 
 
