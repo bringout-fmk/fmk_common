@@ -113,6 +113,8 @@ AADD(aArr, {"DATVAL",  "D",  8, 0})
 AADD(aArr, {"DATISP",  "D",  8, 0})
 AADD(aArr, {"VRIJEME", "C",  5, 0})
 AADD(aArr, {"ZAOKR",   "N", 10, 5})
+
+// ukupno za stavku
 AADD(aArr, {"UKBEZPDV","N", 15, 5})
 AADD(aArr, {"UKPOPUST","N", 15, 5})
 AADD(aArr, {"UKPOPTP", "N", 15, 5})
@@ -120,6 +122,8 @@ AADD(aArr, {"UKBPDVPOP","N",15, 5})
 AADD(aArr, {"UKPDV",   "N", 15, 5})
 AADD(aArr, {"UKUPNO",  "N", 15, 5})
 AADD(aArr, {"UKKOL",   "N", 14, 2})
+
+
 AADD(aArr, {"CSUMRN",  "N",  6, 0})
 if glUgost
   // stopa poreza na potrosnju 1
