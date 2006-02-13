@@ -617,7 +617,7 @@ aKupac:=Sjecistr(cKNaziv, 30)
 cPom:=""
 if ALLTRIM(cInoDomaci) == "INO"
 	cPom:= "Ino-Kupac:"
-elseif ALLTRIM(cInoDomaci) == "DOMACI"
+elseif ALLTRIM(cInoDomaci) == "DOMACA"
 	cPom:= "Kupac"
 else
 	// kupac oslobodjen PDV-a po nekom clanu ZPDV
@@ -626,7 +626,7 @@ endif
 	
 I_ON
 p_line( cPom , 10, .t.)
-p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
+p_line( REPLICATE("-", LEN_KUPAC - 6) , 10, .f.)
 I_OFF
 
 // prvi red kupca, 10cpi, bold
