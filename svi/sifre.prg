@@ -157,3 +157,11 @@ else
   return nUndefined
 endif
 
+// u ovo polje se stavlja clan zakona o pdv-u ako postoji 
+// osnova za oslobadjanje
+//
+function PdvOslobadjanje(cIdPartner)
+local cIdBroj
+return cIdBroj := IzSifK("PARTN", "PDVO", cIdPartner, .f.)
+
+

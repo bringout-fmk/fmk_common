@@ -617,8 +617,11 @@ aKupac:=Sjecistr(cKNaziv, 30)
 cPom:=""
 if ALLTRIM(cInoDomaci) == "INO"
 	cPom:= "Ino-Kupac:"
-else
+elseif ALLTRIM(cInoDomaci) == "DOMACI"
 	cPom:= "Kupac"
+else
+	// kupac oslobodjen PDV-a po nekom clanu ZPDV
+	cPom:= "Kupac, oslobodjen PDV, cl. " + ALLTRIM(cInoDomaci)
 endif
 	
 I_ON
