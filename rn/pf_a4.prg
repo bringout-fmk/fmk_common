@@ -572,6 +572,7 @@ local cTipDok := "FAKTURA br. "
 local cBrDok
 local cBrNar
 local cBrOtp
+local cIdVd
 
 drn_open()
 select drn
@@ -599,6 +600,7 @@ cKNaziv:=get_dtxt_opis("K01")
 cKAdresa:=get_dtxt_opis("K02")
 cKIdBroj:=get_dtxt_opis("K03")
 cDestinacija:=get_dtxt_opis("D08")
+cIdVd:=get_dtxt_opis("D09")
 
 //K10 - partner mjesto
 cPartMjesto := get_dtxt_opis("K10") 
@@ -615,15 +617,19 @@ endif
 aKupac:=Sjecistr(cKNaziv, 30)
 
 cPom:=""
-if ALLTRIM(cInoDomaci) == "INO"
-	cPom:= "Ino-Kupac:"
-elseif ALLTRIM(cInoDomaci) == "DOMACA"
-	cPom:= "Kupac"
-else
-	// kupac oslobodjen PDV-a po nekom clanu ZPDV
-	cPom:= "Kupac, oslobodjen PDV, cl. " + ALLTRIM(cInoDomaci)
-endif
-	
+
+// ako je KO onda ne ispisuj "Kupac"
+if cIdVd <> "25"
+	if ALLTRIM(cInoDomaci) == "INO"
+		cPom:= "Ino-Kupac:"
+	elseif ALLTRIM(cInoDomaci) == "DOMACA"
+		cPom:= "Kupac"
+	else
+		// kupac oslobodjen PDV-a po nekom clanu ZPDV
+		cPom:= "Kupac, oslobodjen PDV, cl. " + ALLTRIM(cInoDomaci)
+	endif
+endif	
+
 I_ON
 p_line( cPom , 10, .t.)
 p_line( REPLICATE("-", LEN_KUPAC - 6) , 10, .f.)
