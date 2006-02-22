@@ -550,6 +550,7 @@ cLine += " " + REPLICATE("-", LEN_VRIJEDNOST)
 return cLine
 
 
+// ---------------------------------------------------------------------------
 // funkcija za ispis podataka o kupcu, dokument, datum fakture, otpremnica itd..
 static function pf_a4_kupac()
 *{
@@ -573,10 +574,41 @@ local cBrDok
 local cBrNar
 local cBrOtp
 local cIdVd
+local i
+local cLinijaNarOtp 
+
+// nRowsIznad - Redova iznad kupca
+// nRowsIspod - Redova ispod kupca - izmedju dna kupac - tabela
+// nRowsOdTabele - Redova izmedju broja ugovora i tabele
+// ---------------------------------------------------------------------------
+local nRowsIznad
+local nRowsIspod
+local nRowsOdTabele
+
+
+nRowsIznad := VAL(get_dtxt_opis("X01"))
+nRowsIspod := VAL(get_dtxt_opis("X02"))
+nRowsOdTabele := VAL(get_dtxt_opis("X03"))
+
+// redova iznad
+if nRowsIznad == nil
+	nRowsIznad := 0
+endif
+
+// redova ispod
+if nRowsIspod == nil
+	nRowsIspod := 0
+endif
+
+// redova ispod linije broj narudzbe/otpremnice i tabele
+if nRowsOdTabele == nil
+	nRowsOdTabele := 0
+endif
 
 drn_open()
 select drn
 go top
+
 
 cDatDok := DToC(datdok)
 
@@ -617,6 +649,11 @@ endif
 aKupac:=Sjecistr(cKNaziv, 30)
 
 cPom:=""
+
+// redova iznad
+for i:=1 to nRowsIznad
+	?
+next
 
 // ako je KO onda ne ispisuj "Kupac"
 if cIdVd <> "25"
@@ -693,25 +730,46 @@ P_10CPI
 p_line( PADL(cTipDok + cBrDok, LEN_KUPAC + LEN_DATUM), 10, .t.)
 B_OFF
 
+// redova ispod
+for i:=1 to nRowsIspod
+	? 
+next
+
 // ako je prikaz broja otpremnice itd...
 
+cLinijaNarOtp := ""
 cPom := cBrOtp
 lBrOtpr := .f.
 if !empty(cPom)
-	cPom := "Broj otpremnice: " + cPom
+	cLinijaNarOtp := "Broj otpremnice: " + cPom
 	lBrOtpr := .t.
 endif
-p_line(cPom, 12, .f.)
 
 cPom := cBrNar
 if !empty(cPom)
-	cPom := "Broj narudzbenice: " + cPom
+	if lBrOtpr
+		cLinijaNarOtp += " , "
+	endif
+	cLinijaNarOtp += "Broj narudzbenice: " + cPom
 endif
-if lBrOtpr
-	// odstampaj u istom redu br.nar sa br.otp
-	?? " , " + cPom
+
+if !EMPTY(cLinijaNarOtp)
+    p_line(cLinijaNarOtp, 12, .f.)
+
+    for i:=1 to nRowsOdTabele
+		?
+    next
+
 else
-    p_line(cPom, 12, .f.)
+
+    // samo ako maloprije nije bilo odvajanja
+    // da ne pravimo nepotrebni prazan prostor
+    if nRowsIspod == 0
+	    for i:=1 to nRowsOdTabele
+		?
+	    next
+    endif
+    
 endif
 
 
