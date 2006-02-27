@@ -122,3 +122,4 @@
 #xcommand O_DRNTEXT => select(F_DRNTEXT); use (PRIVPATH+"DRNTEXT"); set order to tag "1"
 #xcommand O_DOKSPF => select(F_DOKSPF); use (KUMPATH+"DOKSPF"); set order to tag "1"
 
+#xcommand O_R_EXP => select (F_R_EXP); usex (PRIVPATH+"r_export")
