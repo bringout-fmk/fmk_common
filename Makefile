@@ -18,6 +18,7 @@ all:
 	make -C partnst
 	make -C rabat/1g
 	make -C rn
+	make -C exp_dbf
 
 
 clean:
@@ -29,6 +30,7 @@ clean:
 	cd partnst; make clean
 	cd rabat/1g; make clean
 	cd rn; make clean
+	cd exp_dbf; make clean
 	rm -f *.obj
 
 

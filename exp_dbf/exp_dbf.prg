@@ -92,6 +92,9 @@ if (cVersion == "XP")
 elseif (cVersion == "2000")
   // office 2000
   return STRTRAN(cPom, "#", "9")
+elseif (EMPTY(cVersion))
+  // instalacija office u /office/ direktoriju
+  return STRTRAN(cPom, "#", "")
 elseif (cVersion == "2003")
   // office 2003
   return STRTRAN(cPom, "#", "11")
