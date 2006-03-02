@@ -70,6 +70,7 @@ AADD(aDBf,{ 'BARKOD'                , 'C' ,  13 ,  0 })
 if !file(SIFPATH+"ROBA.dbf")
         dbcreate2(SIFPATH+'ROBA.DBF',aDbf)
 endif
+
 if !file(PRIVPATH+"_ROBA.dbf")
         dbcreate2(PRIVPATH+'_ROBA.DBF',aDbf)
 endif
@@ -81,6 +82,7 @@ CREATE_INDEX("ID","id",SIFPATH+"ROBA") // roba, artikli
 CREATE_INDEX("NAZ","Naz",SIFPATH+"ROBA")
 CREATE_INDEX("ID","id",PRIVPATH+"_ROBA") // roba, artikli
 O_ROBA
+
 if fieldpos("KATBR")<>0
   select (F_ROBA); use
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"ROBA") // roba, artikli
