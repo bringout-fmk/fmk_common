@@ -655,21 +655,45 @@ for i:=1 to nRowsIznad
 	?
 next
 
-// ako je KO onda ne ispisuj "Kupac"
-if cIdVd <> "25"
-	if ALLTRIM(cInoDomaci) == "INO"
+
+if ALLTRIM(cInoDomaci) == "INO"
+	do case
+	  case cIdVd $ "10#11#20#29"
+		// ino partner
 		cPom:= "Ino-Kupac:"
-	elseif ALLTRIM(cInoDomaci) == "DOMACA"
-		cPom:= "Kupac"
-	else
+	  otherwise
+	  	cPom:= "Partner"
+	endcase
+		
+elseif ALLTRIM(cInoDomaci) == "DOMACA"
+
+	do case
+	  case cIdVd == "12"
+		// otpremnica - subjekat koji zaduzuje
+		cPom:= "Zaduzuje:"
+		
+	  case cIdVd $ "10#11#20#29"
+		cPom:= "Kupac:"
+	  otherwise
+	  	cPom := "Partner:"
+	endcase
+		
+else
+	// obracun PDV-a po nekom osnovu = 0
+	do case
+	  case cIdVd == "12"
+		cPom := "Zaduzuje:"
+	  case cIdVd $ "10#11#20#29"
 		// kupac oslobodjen PDV-a po nekom clanu ZPDV
 		cPom:= "Kupac, oslobodjen PDV, cl. " + ALLTRIM(cInoDomaci)
-	endif
+	  otherwise
+	  	cPom:="Partner"
+	endcase
 endif	
 
 I_ON
 p_line( cPom , 10, .t.)
-p_line( REPLICATE("-", LEN_KUPAC - 6) , 10, .f.)
+p_line( REPLICATE("-", LEN_KUPAC - 4) , 10, .f.)
 I_OFF
 
 // prvi red kupca, 10cpi, bold
@@ -692,7 +716,9 @@ p_line( SPACE(2) + PADR(cPom, LEN_KUPAC), 10, .t.)
 B_OFF
 // u istom redu datum isporuke
 if cDatIsp <> DToC(CToD(""))
-	?? padl("Datum isporuke: " + cDatIsp, LEN_DATUM)
+	if !(cIdVd $ "12#00#01")
+		?? padl("Datum isporuke: " + cDatIsp, LEN_DATUM)
+	endif
 endif
 
 // mjesto
@@ -700,11 +726,13 @@ cPom := ALLTRIM(cKMjesto)
 if EMPTY(cPom)
   cPom := "-"
 endif
-p_line(SPACE(2) + PADR(cKMjesto, LEN_KUPAC), 10, .t.)
+p_line(SPACE(2) + PADR(cPom, LEN_KUPAC), 10, .t.)
 B_OFF
 // u istom redu datum valute
 if cDatVal <> DToC(CTOD(""))
-	?? padl("Datum valute: " + cDatVal, LEN_DATUM)
+	if !(cIdVd $ "12#00#01#20")
+		?? padl("Datum valute: " + cDatVal, LEN_DATUM)
+	endif
 endif
 
 // identifikacijski broj
@@ -727,7 +755,7 @@ endif
 
 P_10CPI
 // broj dokumenta
-p_line( PADL(cTipDok + cBrDok, LEN_KUPAC + LEN_DATUM), 10, .t.)
+p_line( PADL(ALLTRIM(cTipDok + " " + cBrDok), LEN_KUPAC + LEN_DATUM), 10, .t.)
 B_OFF
 
 // redova ispod
@@ -750,7 +778,7 @@ if !empty(cPom)
 	if lBrOtpr
 		cLinijaNarOtp += " , "
 	endif
-	cLinijaNarOtp += "Broj narudzbenice: " + cPom
+	cLinijaNarOtp += "Broj ugov./narudzb: " + cPom
 endif
 
 if !EMPTY(cLinijaNarOtp)

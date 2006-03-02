@@ -443,7 +443,7 @@ hseek cTip
 if !Found()
 	return "???"
 endif
-cRet := ALLTRIM(field->opis)
+cRet := RTRIM(opis)
 
 return cRet
 *}
