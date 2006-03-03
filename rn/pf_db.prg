@@ -335,8 +335,9 @@ return xRet
 
 
 
-
+// ---------------------------------
 // dodaj u rn.dbf
+// ---------------------------------
 function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca)
 *{
 if !USED(F_RN)

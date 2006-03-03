@@ -164,4 +164,38 @@ function PdvOslobadjanje(cIdPartner)
 local cIdBroj
 return cIdBroj := IzSifK("PARTN", "PDVO", cIdPartner, .f.)
 
+// -------------------------------------------------------------------------
+// profili 
+// primjer: Profil partnera = "KUP,KMS"
+//          KUP - kupac
+//          DOB - dobavljac
+//          KMS - komisionar
+//          KMT - komintent u konsignacionoj prodaji
+//          INO - ino partner
+//          UIO - radi se o specificnom partneru - uprava za indirektno
+//                oporezivanje
+//          SPE - partner koji obavlja poslove spediciji kod uvoza robe
+//          TRA - obavlja transport
+//    
+//  Napomena: partner moze biti i kupac i dobavljac - stavlja se KUP,DOB
+//            znaci moze imati vise funkcija
+//
+//  profil partnera = SVI atributi koji odgovaraju ovom partneru
+//  ------------------------------------------------------------------------
+function IsProfil(cIdPartner, cProfId)
+local cProfili
+cProfili := IzSifK("PARTN", "PROF", cIdPartner, .f.)
+
+if cProfId $ UPPER(cProfili)
+	return .t.
+else
+	return .f.
+endif
+
+// -----------------------------------
+// partner je komisionar
+// -----------------------------------
+function IsKomision(cIdPartner)
+
+return IsProfil(cIdPartner, "KMS")
 

@@ -32,7 +32,7 @@ static LEN_REKAP_PDV := 9
 static RAZMAK := ""
 
 static lShowPopust := .t.
-
+static lKomision := .f.
 
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
@@ -638,7 +638,7 @@ cIdVd:=get_dtxt_opis("D09")
 cPartMjesto := get_dtxt_opis("K10") 
 //K11 - partner PTT
 cPartPTT := get_dtxt_opis("K11")
-cInoDomaci:=get_dtxt_opis("P11")
+cInoDomaci:=ALLTRIM(get_dtxt_opis("P11"))
 
 
 cKMjesto:= ALLTRIM(cPartMjesto)
@@ -655,8 +655,16 @@ for i:=1 to nRowsIznad
 	?
 next
 
+lKomision := .f.
 
-if ALLTRIM(cInoDomaci) == "INO"
+do case
+  case cIdVd == "12" .and. cInoDomaci == "KOMISION"
+  	// komisiona otpremnica
+	cPom := "Komisionar:"
+	lKomision:=.t.
+	
+  case ALLTRIM(cInoDomaci) == "INO"
+  
 	do case
 	  case cIdVd $ "10#11#20#29"
 		// ino partner
@@ -665,12 +673,12 @@ if ALLTRIM(cInoDomaci) == "INO"
 	  	cPom:= "Partner"
 	endcase
 		
-elseif ALLTRIM(cInoDomaci) == "DOMACA"
+   case ALLTRIM(cInoDomaci) == "DOMACA"
 
 	do case
 	  case cIdVd == "12"
 		// otpremnica - subjekat koji zaduzuje
-		cPom:= "Zaduzuje:"
+		cPom:= "Prima:"
 		
 	  case cIdVd $ "10#11#20#29"
 		cPom:= "Kupac:"
@@ -678,7 +686,7 @@ elseif ALLTRIM(cInoDomaci) == "DOMACA"
 	  	cPom := "Partner:"
 	endcase
 		
-else
+   otherwise
 	// obracun PDV-a po nekom osnovu = 0
 	do case
 	  case cIdVd == "12"
@@ -689,7 +697,8 @@ else
 	  otherwise
 	  	cPom:="Partner"
 	endcase
-endif	
+	
+endcase	
 
 I_ON
 p_line( cPom , 10, .t.)
@@ -755,7 +764,14 @@ endif
 
 P_10CPI
 // broj dokumenta
-p_line( PADL(ALLTRIM(cTipDok + " " + cBrDok), LEN_KUPAC + LEN_DATUM), 10, .t.)
+
+cPom := ALLTRIM(cTipDok)
+if lKomision
+	cPom := "KOMISIONA DOSTAVNICA br. "
+endif
+cPom += " " + cBrDok
+cPom := ALLTRIM(cPom)
+p_line( PADL( cPom, LEN_KUPAC + LEN_DATUM), 10, .t.)
 B_OFF
 
 // redova ispod
