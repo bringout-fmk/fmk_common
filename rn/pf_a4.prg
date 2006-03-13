@@ -901,8 +901,9 @@ endif
 
 
 // odstapaj razmak u COND rezimu
+?
 P_COND
-? RAZMAK
+?? RAZMAK
 // nakon toga idi na rezim ispisa linije
 do case
  case (nCpi == 12)
