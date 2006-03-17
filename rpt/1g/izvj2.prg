@@ -1140,7 +1140,8 @@ FUNC IzracDopr(cDopr)
    // endif
    nPom:=max(dlimit,round(iznos/100*nBO,gZaok2))
    if round(iznos,4)=0 .and. dlimit>0  // fuell boss
-     nPom:=1*dlimit   // kartica plate
+     // kartica plate
+     nPom:=1*dlimit   
    endif
    nDopr+=nPom
    SKIP 1

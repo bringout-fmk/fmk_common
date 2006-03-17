@@ -1705,23 +1705,26 @@ EOF CRET
 nStrana:=0
 IF cRazdvoji=="N"
   bZagl:={|| ;
-             qqout("OBRACUN"+IF(lViseObr,IF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+" PLATE ZA PERIOD"+str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
+             qqout("OBRACUN"+IF(lViseObr,IF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+ Lokal(" PLATE ZA PERIOD") + str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
              qout("RJ:",idrj,rj->naz),;
              qout(idradn,"-",RADNIK,"Mat.br:",radn->matbr," STR.SPR:",IDSTRSPR),;
-             qout("Broj knjizice:",RADN->brknjiz),;
-             qout("Vrsta posla:",idvposla,vposla->naz,"        U radnom odnosu od ",radn->datod);
+             qout( Lokal("Broj knjizice:"), RADN->brknjiz),;
+             qout("Vrsta posla:",idvposla,vposla->naz, Lokal("        U radnom odnosu od "), radn->datod);
          }
 Else
   bZagl:={|| ;
-             qqout("OBRACUN"+IF(lViseObr,IF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+" PLATE ZA PERIOD"+str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
+             qqout( Lokal("OBRACUN") + IIF(lViseObr, IIF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+ Lokal(" PLATE ZA PERIOD") + str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
              qout(idradn,"-",RADNIK,"Mat.br:",radn->matbr," STR.SPR:",IDSTRSPR),;
              qout("Broj knjizice:",RADN->brknjiz),;
-             qout("Vrsta posla:",idvposla,vposla->naz,"        U radnom odnosu od ",radn->datod);
+             qout("Vrsta posla:", idvposla, vposla->naz, Lokal("        U radnom odnosu od "), radn->datod);
          }
 EndIF
 
-select vposla; hseek ld->idvposla
-select rj; hseek ld->idrj; select ld
+select vposla
+hseek ld->idvposla
+select rj
+hseek ld->idrj
+select ld
 
 if pcount()==4
   START PRINT RET
@@ -1809,7 +1812,7 @@ enddo
 
  IF cRazdvoji=="N"
    ? m
-   ? " Vrsta                  Opis         sati/iznos             ukupno"
+   ? Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
    ? m
    cUneto:="D"
    for i:=1 to cLDPolja
@@ -1818,7 +1821,9 @@ enddo
      if tippr->uneto=="N" .and. cUneto=="D"
        cUneto:="N"
        ? m
-       ? "UKUPNO NETO:"; @ prow(),nC1+8  SAY  wUSati  pict gpics; ?? " sati"
+       ? Lokal("UKUPNO NETO:")
+       @ prow(),nC1+8  SAY  wUSati  pict gpics
+       ?? Lokal(" sati")
        @ prow(),60 SAY wUNeto pict gpici; ?? "",gValuta
        ? m
      endif
@@ -1843,7 +1848,8 @@ enddo
      endif
    next
    ? m
-   ?  "UKUPNO ZA ISPLATU";  @ prow(),60 SAY wUIznos pict gpici; ?? "",gValuta
+   ?  Lokal("UKUPNO ZA ISPLATU")  
+   @ prow(),60 SAY wUIznos pict gpici; ?? "",gValuta
    ? m
    if prow()>31
        FF
@@ -1865,7 +1871,7 @@ enddo
      select rj; hseek _ld->idrj; select _ld
      qout("RJ:",idrj,rj->naz)
      ? m
-     ? " Vrsta                  Opis         sati/iznos             ukupno"
+     ? Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
      ? m
      *
      Scatter("w")
@@ -1876,7 +1882,8 @@ enddo
        if tippr->uneto=="N" .and. cUneto=="D"
          cUneto:="N"
          ? m
-         ? "UKUPNO NETO:"; @ prow(),nC1+8  SAY  wUSati  pict gpics; ?? " sati"
+         ? Lokal("UKUPNO NETO:")
+	 @ prow(),nC1+8  SAY  wUSati  pict gpics; ?? " sati"
          @ prow(),60 SAY wUNeto pict gpici; ?? "",gValuta
          ? m
        endif
@@ -1902,7 +1909,8 @@ enddo
      next
      ? m
      ?  "UKUPNO ZA ISPLATU U RJ", _LD->IdRj
-     @ prow(),60 SAY wUIznos pict gpici; ?? "",gValuta
+     @ prow(),60 SAY wUIznos pict gpici
+     ?? "",gValuta
      ? m
      if prow()>60+gPstranica
          FF
@@ -1931,7 +1939,9 @@ function RekapRad()
 local nC1:=20,i
 
  cIdRadn:=space(_LR_)
- cIdRj:=gRj; cmjesec:=gMjesec; cmjesec2:=gmjesec
+ cIdRj:=gRj
+ cMjesec:=gMjesec
+ cMjesec2:=gmjesec
  cGodina:=gGodina
  cObracun:=gObracun
 
@@ -1982,14 +1992,17 @@ EOF CRET
 
 nStrana:=0
 bZagl:={|| ;
-           qqout("PREGLED PRIMANJA ZA PERIOD "+str(cmjesec,2)+"-"+str(cmjesec2,2)+IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
+           qqout( Lokal("PREGLED PRIMANJA ZA PERIOD ") + str(cmjesec,2) + "-" + str(cmjesec2,2) + IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
            qout("RJ:",idrj,rj->naz),;
            qout(idradn,"-",RADNIK,"Mat.br:",radn->matbr," STR.SPR:",IDSTRSPR),;
            qout("Vrsta posla:",idvposla,vposla->naz,"        U radnom odnosu od ",radn->datod);
        }
 
-select vposla; hseek ld->idvposla
-select rj; hseek ld->idrj; select ld
+select vposla
+hseek ld->idvposla
+select rj
+hseek ld->idrj
+select ld
 
 if pcount()==4
   START PRINT RET
@@ -2021,8 +2034,10 @@ Eval(bZagl)
 //nNeto:=0
 //nBruto:=bruto
 //nBolovanje:=0
-? " Mjesec      Sati    NETO          BRUTO         Doprinosi         Stopa               Iznos            "
-? "                                                                  dopr.PIO         naknade bolovanje     "
+? Lokal(" Mjesec      Sati    NETO          BRUTO         Doprinosi         Stopa               Iznos            ")
+
+? Lokal("                                                                  dopr.PIO         naknade bolovanje     ")
+
 do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. idradn==xIdRadn
 
  m:="----------------------- --------  ----------------   ------------------"
@@ -2063,10 +2078,9 @@ END PRINT
 CLOSERET
 
 
-***********************
+// ------------------------------
+// ------------------------------
 function SpecifRasp()
-*
-***********************
 
 gnLMarg:=0; gTabela:=1; gOstr:="D"
 
@@ -2252,11 +2266,12 @@ START PRINT CRET
 
 PRIVATE cIdPartner:="", cNPartnera:="", nUkRoba:=0, nUkIznos:=0
 
-?? space(gnLMarg); ?? "LD: Izvjestaj na dan",date()
+?? space(gnLMarg)
+?? Lokal("LD: Izvjestaj na dan"), date()
 ? space(gnLMarg); IspisFirme("")
 ? space(gnLMarg)
 if empty(cidrj)
- ?? "Pregled za sve RJ ukupno:"
+ ?? Lokal("Pregled za sve RJ ukupno:")
 else
  ?? "RJ:", cidrj+" - "+Ocitaj(F_RJ,cIdRj,"naz")
 endif
@@ -2293,15 +2308,8 @@ PROCEDURE FSvaki2()
 RETURN
 
 
-// FUNCTION TekRec()
-//  nSlog++
-//  @ m_x+1, m_y+2 SAY PADC(ALLTRIM(STR(nSlog))+"/"+ALLTRIM(STR(nUkupno)),20)
-//  @ m_x+2, m_y+2 SAY "Obuhvaceno: "+STR(cmxKeysIncluded())
-// RETURN (NIL)
-
-
-**********************
-**********************
+// -------------------------------
+// -------------------------------
 function IspisFirme(cidrj)
 local nOArr:=select()
 
@@ -2314,7 +2322,8 @@ endif
 return
 
 
-
+// ---------------------------------
+// ---------------------------------
 FUNCTION SortPrez(cId)
  LOCAL cVrati:="", nArr:=SELECT()
  SELECT RADN
@@ -2324,7 +2333,8 @@ FUNCTION SortPrez(cId)
 RETURN cVrati
 
 
-
+// --------------------------------
+// --------------------------------
 FUNCTION SortVar(cId)
  LOCAL cVrati:="", nArr:=SELECT()
  SELECT RADKR
@@ -2380,7 +2390,9 @@ FUNC ImaUOp(cPD,cSif)
 RETURN lVrati
 
 
-PROC PozicOps(cSR)
+// ---------------------------
+// ---------------------------
+FUNCTION PozicOps(cSR)
  LOCAL nArr:=SELECT(), cO:=""
   IF cSR=="1"      // stanovanja
     cO:=RADN->idopsst
@@ -2406,8 +2418,9 @@ PROC PozicOps(cSR)
   SELECT (nArr)
 RETURN
 
-
-PROCEDURE ScatterS(cG,cM,cJ,cR,cPrefix)
+// ----------------------------------------
+// ----------------------------------------
+FUNCTION ScatterS(cG, cM, cJ, cR, cPrefix)
  private cP7:=cPrefix
   IF cPrefix==NIL
     Scatter()
@@ -2439,8 +2452,9 @@ PROCEDURE ScatterS(cG,cM,cJ,cR,cPrefix)
   SKIP -1
 RETURN
 
-
-FUNC IspisObr()
+// -------------------------------------
+// -------------------------------------
+FUNCTION IspisObr()
  LOCAL cVrati:=""
  if lViseObr .and. !EMPTY(cObracun)
    cVrati:="/"+cObracun
@@ -2448,11 +2462,11 @@ FUNC IspisObr()
 RETURN cVrati
 
 
-FUNC Obr2_9()
+FUNCTION Obr2_9()
 RETURN lViseObr .and. !EMPTY(cObracun) .and. cObracun<>"1"
 
 
-FUNC TagVO(cT,cI)
+FUNCTION TagVO(cT,cI)
   IF cI==NIL; cI:=""; ENDIF
   IF lViseObr .and. cT $ "12"
     IF cI=="I" .or. EMPTY(cObracun)

@@ -30,7 +30,7 @@ private cVPosla:="  "
 cIdMinuli:="17"
 cKontrola:="N"
 Box(,9,75)
-@ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve): "  GET cIdRJ
+@ m_x+1,m_y+2 SAY Lokal( "Radna jedinica (prazno-sve): ")  GET cIdRJ
 @ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
 IF lViseObr
   @ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
@@ -39,13 +39,14 @@ ENDIF
 @ m_x+4,m_y+2 SAY "Koeficijent benef.radnog staza (prazno-svi): "  GET  cKBenef valid empty(cKBenef) .or. P_KBenef(@cKBenef)
 @ m_x+5,m_y+2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
 @ m_x+7,m_y+2 SAY "Sifra primanja minuli: "  GET  cIdMinuli pict "@!"
-@ m_x+8,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
+@ m_x+8,m_y+2 SAY Lokal("Sortirati po(1-sifri,2-prezime+ime)")  GET cVarSort VALID cVarSort$"12"  pict "9"
 @ m_x+9,m_y+2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola$"DN" PICT "@!"
 read; clvbox(); ESC_BCR
 BoxC()
 
  WPar("VS",cVarSort)
- SELECT PARAMS; USE
+ SELECT PARAMS
+ USE
 
 if lViseObr
   O_TIPPRN

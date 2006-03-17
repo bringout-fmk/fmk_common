@@ -254,7 +254,7 @@ IF lSkrivena
 		?
 	NEXT
 	P_12CPI
-	?? cLMSK+"OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS)),gNFirma
+	?? cLMSK + Lokal("OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4))," ZA "+UPPER(TRIM(gTS)), gNFirma
 	? cLMSK+idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, cLMSK)
 	? cLMSK+"Radno mjesto:",radn->rmjesto,"  STR.SPR:",IDSTRSPR
@@ -270,7 +270,7 @@ IF lSkrivena
 	endif
 	? cLMSK+IF(gBodK=="1","Vrijednost boda:","Vr.koeficijenta:"), transform(parobr->vrbod,"99999.99999")
 ELSE
-	? "OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS)),gNFirma
+	? LOKAL("OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4)," ZA ")+ UPPER(TRIM(gTS)), gNFirma
 	? "RJ:",idrj,rj->naz
 	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")
@@ -306,7 +306,7 @@ IF l2kolone
 	// SETPRC(0,0)
 ENDIF
 ? m
-? cLMSK+" Vrsta                  Opis         sati/iznos             ukupno"
+? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
 ? m
 cUneto:="D"
 nRRsati:=0 
@@ -453,10 +453,10 @@ if cVarijanta=="5"
 	PopWA()
 endif
 if lRadniSati
-	? "NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena "
+	? Lokal("NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena ")
 	?? ALLTRIM(STR((ld->radsat)-nRRSati))  + " sati."
-	? "          Uplaceno za tekuci mjesec: " + " sati." 
-	? "          Ostatak predhodnih obracuna: " + GetStatusRSati(cIdRadn) + " sati"
+	? Lokal("          Uplaceno za tekuci mjesec: " + " sati.")
+	? Lokal("          Ostatak predhodnih obracuna: ") + GetStatusRSati(cIdRadn) + " sati"
 	?
 endif
          
@@ -531,7 +531,7 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		else
 			nPorOl:= &("_I"+cVarPorol)
 		endif
-		? cLMSK+"PORESKA OLAKSICA"
+		? cLMSK+Lokal("PORESKA OLAKSICA")
 		if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
 			nPorOl:=nPor
 		endif
@@ -624,12 +624,6 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 			FF
 		endif
 	endif
-	//else
-	//   ?
-	//   ?
-	//   ?
-	//   ?
-	//endif
 endif // gPrBruto
 
 if l2kolone
@@ -661,8 +655,8 @@ if lSkrivena
 	endif
 elseif gPotp=="D"
 	?
-	? cLMSK+space(5),"   Obracunao:  ",space(30),"    Potpis:"
-	? cLMSK+space(5),"_______________",space(30),"_______________"
+	? cLMSK+space(5), Lokal("   Obracunao:  "), space(30), Lokal("    Potpis:")
+	? cLMSK+space(5),"_______________", space(30) , "_______________"
 	if lNKNS .or. pcount()==0 .and.  prow()>31
 		FF
 	else
@@ -696,7 +690,7 @@ IF l2kolone
 	// SETPRC(0,0)
 ENDIF
 ? m
-? cLMSK+" Vrsta                  Opis         sati/iznos             ukupno"
+? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
 ? m
 private nC1:=30+LEN(cLMSK)
 for i:=1 to cLDPolja
@@ -708,7 +702,7 @@ for i:=1 to cLDPolja
 	endif
 next
 ? m
-? cLMSK+"UKUPNO NETO:"
+? cLMSK+ Lokal("UKUPNO NETO:")
 @ prow(),nC1+8  SAY  _USati  pict gpics
 ?? " sati"
 @ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
@@ -764,7 +758,7 @@ if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() // poreska olaksica
 		nPorOl:= &("_I"+cVarPorol)
 	endif
 	IF !lSkrivena
-		? cLMSK+"PORESKA OLAKSICA"
+		? cLMSK+ Lokal("PORESKA OLAKSICA")
 	ENDIF
 	if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
 		nPorOl:=nPor
@@ -846,12 +840,12 @@ IF lSkrivena
 	? cLMSK+"UKUPNO POREZ:"+TRANSFORM(nPor-nPorOl,gPicI)+", DOPRINOSI:"+TRANSFORM(nDopr,gPicI)+", POR.+DOPR.:"+TRANSFORM(nPorDopr,gPicI)
 ELSE
 	? m
-	? cLMSK+"UKUPNO POREZ+DOPRINOSI"
+	? cLMSK+ Lokal("UKUPNO POREZ+DOPRINOSI")
 	@ prow(),39+LEN(cLMSK) SAY nPorDopr pict gpici
 ENDIF
 
 ? m
-? cLMSK+"BRUTO IZNOS"
+? cLMSK+ Lokal("BRUTO IZNOS")
 @ prow(),60+LEN(cLMSK) SAY nBruto pict gpici
 ? m
 SELECT LD
@@ -906,7 +900,7 @@ IF !lSkrivena
 ENDIF
 
 ? m
-?  cLMSK+"UKUPNO ZA ISPLATU :"
+?  cLMSK+Lokal("UKUPNO ZA ISPLATU :")
 @ prow(),60+LEN(cLMSK) SAY _UIznos pict gpici
 ?? "",gValuta
 ? m
@@ -919,12 +913,12 @@ if cVarijanta=="5"
 	hseek str(_godina,4)+str(_mjesec,2)+"1"+_idradn+_idrj
 	//hseek "1"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
 	?
-	? cLMSK+"Od toga 1. dio:"
+	? cLMSK+ Lokal("Od toga 1. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
 	? m
 	hseek str(_godina,4)+str(_mjesec,2)+"2"+_idradn+_idrj
 	// hseek "2"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
-	? cLMSK+"Od toga 2. dio:"
+	? cLMSK+ Lokal("Od toga 2. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
 	? m
 	select ld
@@ -934,7 +928,7 @@ endif
 // FF
 if gPotp=="D" .and. !lSkrivena
 	?
-	? cLMSK+space(5),"   Obracunao:  ",space(30),"    Potpis:"
+	? cLMSK+space(5), Lokal("   Obracunao:  "), space(30), Lokal("    Potpis:")
 	? cLMSK+space(5),"_______________",space(30),"_______________"
 endif
 
