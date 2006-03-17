@@ -26,13 +26,30 @@ static PIC_KOLICINA := ""
 static PIC_VRIJEDNOST := ""
 static PIC_CIJENA := ""
 
-static LEN_STRANICA := 60
-static LEN_REKAP_PDV := 9
+static LEN_STRANICA := 58
+static LEN_REKAP_PDV := 7
 
 static RAZMAK := ""
 
+static nStr := 0
+static lPrintedTotal := .f.
+
+// ako se koristi PTXT onda se ova korekcija primjenjuje
+// za prikaz vecih fontova
+static nDuzStrKorekcija := 0
+
 static lShowPopust := .t.
 static lKomision := .f.
+
+// linije sa "=" prva i zadnja
+static nSw1
+// linija sa "-" prva
+static nSw2
+// local sa "-" druga
+static nSw3
+// linija ispod kupac
+static nSw4
+
 
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
@@ -94,6 +111,9 @@ private cValuta // prikaz valute KM ili ???
 private lStZagl // automatski formirati zaglavlje
 private nGMargina // gornja margina
 
+nDuzStrKorekcija := 0
+
+lPrintedTotal := .f.
 
 if lStartPrint
 
@@ -103,6 +123,13 @@ if lStartPrint
 	endif
 
 endif
+
+nSw1 := VAL(get_dtxt_opis("X04"))
+nSw2 := VAL(get_dtxt_opis("X05"))
+nSw3 := VAL(get_dtxt_opis("X06"))
+nSw4 := VAL(get_dtxt_opis("X07"))
+
+
 
 // uzmi glavne varijable za stampu fakture
 // razmak, broj redova sl.teksta, 
@@ -161,14 +188,14 @@ do while !EOF()
 	// idroba, naziv robe, kolicina, jmj
 	?? PADR( aNazivDobra[1], LEN_NAZIV) 
 	?? " "
-	?? TRANSFORM(rn->kolicina, PIC_KOLICINA) 
+	?? show_number(rn->kolicina, PIC_KOLICINA) 
 	?? " "
 	
 	// cijene
 	if !lSamoKol
 		
 		// cijena bez pdv
-		?? TRANSFORM(rn->cjenbpdv, PIC_CIJENA) 
+		?? show_number(rn->cjenbpdv, PIC_CIJENA) 
 		?? " "
 		
 		if lShowPopust
@@ -177,12 +204,12 @@ do while !EOF()
 			?? " "
 
 			// cijena bez pd - popust
-			?? TRANSFORM(rn->cjen2bpdv, PIC_CIJENA) 
+			?? show_number(rn->cjen2bpdv, PIC_CIJENA) 
 			?? " "
 		endif
 		
 		// ukupno bez pdv
-		?? TRANSFORM( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST)
+		?? show_number( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST)
 	endif
 	
 	
@@ -195,16 +222,17 @@ do while !EOF()
 	endif
 	
 	// provjeri za novu stranicu
-	if prow() > nDodRedova + LEN_STRANICA 
+	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA()
 		++nStr
 		Nstr_a4(nStr, .t.)
     	endif	
 
+	SELECT rn
 	skip
 enddo
 
 // provjeri za novu stranicu
-if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV)
+if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA()
 	++nStr
 	Nstr_a4(nStr, .t.)
 endif	
@@ -213,68 +241,12 @@ endif
 ? cLine
 
 if !lSamoKol
-   ? RAZMAK
-   ?? PADL("Ukupno bez PDV ("+cValuta+") :", LEN_UKUPNO)
-   ?? TRANSFORM(drn->ukbezpdv, PIC_VRIJEDNOST)
-   ++nStr
-   
-   // provjeri i dodaj stavke vezane za popust
-   if Round(drn->ukpopust, 2) <> 0
-		? RAZMAK 
-		?? PADL("Popust ("+cValuta+") :", LEN_UKUPNO)
-		?? TRANSFORM(drn->ukpopust, PIC_VRIJEDNOST)
-		
-		? RAZMAK 
-		?? PADL("Uk.bez.PDV-popust ("+cValuta+") :", LEN_UKUPNO)
-		?? TRANSFORM(drn->ukbpdvpop, PIC_VRIJEDNOST)
-    endif
-	
-    
-    ? RAZMAK 
-    ?? PADL("PDV 17% :", LEN_UKUPNO)
-    ?? TRANSFORM(drn->ukpdv, PIC_VRIJEDNOST)
-    
-    // zaokruzenje
-    if ROUND(drn->zaokr,4) <> 0
-		? RAZMAK 
-		?? PADL("Zaokruzenje :", LEN_UKUPNO)
-		?? TRANSFORM(drn->zaokr, PIC_VRIJEDNOST)
-    endif
-	
-    ? cLine
-    ? RAZMAK
-    // ipak izleti za dva karaktera rekapitulacija u bold rezimu
-    ?? SPACE(50 - 2)
-    B_ON
-    ?? PADL("** SVEUKUPNO SA PDV  ("+cValuta+") :", LEN_UKUPNO - 50)
-    ?? TRANSFORM(drn->ukupno, PIC_VRIJEDNOST)
-    B_OFF
+	print_total(cValuta, cLine)
 
-    // popust na teret prodavca 
-    if drn->(fieldpos("ukpoptp")) <> 0
-             if Round(drn->ukpoptp, 2) <> 0
-		? RAZMAK
-		?? PADL("Popust na teret prodavca ("+cValuta+") :", LEN_UKUPNO)
-		?? TRANSFORM(drn->ukpoptp, PIC_VRIJEDNOST)
-		
-	        ? RAZMAK 
-		?? SPACE(50 - 2)
-		B_ON
-		? PADL("SVEUKUPNO SA PDV - POPUST NA T.P. ("+cValuta+") : ZA PLATITI :", LEN_UKUPNO - 50)
-		?? TRANSFORM(drn->ukupno - drn->ukpoptp, PIC_VRIJEDNOST)
-		B_OFF
-	     endif
-    endif
-	
-    cSlovima := get_dtxt_opis("D04")
-    ? RAZMAK 
-    B_ON
-    ?? "slovima: " + cSlovima
-    B_OFF
-    ? cLine
 endif
+lPrintedTotal := .t.
 
-if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV)
+if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() 
 	++nStr
 	Nstr_a4(nStr, .t.)
 endif	
@@ -383,8 +355,9 @@ local nFTip
 
 cLine := a4_line("pf")
 
-if prow() > nDodRedova + LEN_STRANICA
-         Nstr_a4(nil, .f.)
+if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA()
+         ++nStr
+	 Nstr_a4(nil, .f.)
 endif
 
 
@@ -400,7 +373,8 @@ do while !EOF() .and. field->tip = "F"
 		p_line(cTxt, 17, .f., .t.)
 	endif
 
-	if prow() > nDodRedova + LEN_STRANICA
+	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() 
+		 ++nStr
         	 Nstr_a4(nil, .f.)
 	endif
 
@@ -439,14 +413,17 @@ next
 return
 *}
 
-
+// --------------------------
 // funkcija za ispis headera
+// ----------------------------
 function a4_header()
-*{
+local cPom
+local nPom
+
 local nPos1
 
-local cDLHead := REPLICATE("=", 72) // double line header
-local cSLHead := REPLICATE("-", 72) // single line header
+local cDLHead 
+local cSLHead 
 local cINaziv
 local cIAdresa
 local cIIdBroj
@@ -457,10 +434,19 @@ local cIWeb
 local cIText1
 local cIText2
 local cIText3
+local nPRowsDelta
 
-cINaziv  := get_dtxt_opis("I01") // naziv
-cIAdresa := get_dtxt_opis("I02") // adresa
-cIIdBroj := get_dtxt_opis("I03") // idbroj
+// double line header
+cDLHead := REPLICATE("=", nSw1())
+// single line header
+cSLHead := REPLICATE("-", nSw3())
+nPRowsDelta := prow()
+// naziv
+cINaziv  := get_dtxt_opis("I01")
+// adresa
+cIAdresa := get_dtxt_opis("I02")
+// idbroj
+cIIdBroj := get_dtxt_opis("I03") 
 cIBanke  := get_dtxt_opis("I09")
 
 if "##" $ cIBanke
@@ -491,7 +477,21 @@ cIText3  := get_dtxt_opis("I14") // sl.text 3
 
 p_line(cDLHead, 10, .t.)
 p_line(cINaziv, 10, .t.)
-p_line(REPLICATE("-", LEN(cINaziv)), 10, .t.)
+
+if nSw2 == 1
+	// ako je 1 neka ima duzinu kao naziv firme
+	nPom := LEN(cINaziv) 
+elseif nSw2 == 0
+	// ne prikazuj
+	nPom := 0
+else
+	// duzina zadata
+	nPom := nSw2
+endif
+cPom := REPLICATE("-", nPom)
+p_line( cPom , 10, .t.)
+
+
 p_line("Adresa: " + cIAdresa + ", ID broj: " + cIIdBroj, 12, .f.)
 p_line(cITelef, 12, .f.)
 p_line(cIWeb, 12, .f.)
@@ -514,6 +514,11 @@ if !EMPTY(cIText1 + cIText2 + cIText3)
 endif
 p_line(cDLHead, 10, .f.)
 ?
+
+nPRowsDelta:= prow() - nPRowsDelta 
+if IsPtxtOutput()
+	nDuzStrKorekcija += nPRowsDelta * 7/100 
+endif
 
 return
 *}
@@ -585,6 +590,12 @@ local nRowsIznad
 local nRowsIspod
 local nRowsOdTabele
 
+
+// koliko je redova odstampano u zaglavlju
+local nPRowsDelta
+
+
+nPRowsDelta := prow()
 
 nRowsIznad := VAL(get_dtxt_opis("X01"))
 nRowsIspod := VAL(get_dtxt_opis("X02"))
@@ -702,7 +713,7 @@ endcase
 
 I_ON
 p_line( cPom , 10, .t.)
-p_line( REPLICATE("-", LEN_KUPAC - 4) , 10, .f.)
+p_line( REPLICATE("-", nSw4) , 10, .f.)
 I_OFF
 
 // prvi red kupca, 10cpi, bold
@@ -816,6 +827,12 @@ else
     
 endif
 
+// koliko je redova odstampano u zaglavlju
+nPRowsDelta :=  prow() - nPRowsDelta
+
+if IsPtxtOutput()
+	nDuzStrKorekcija += nPRowsDelta * 7/100 
+endif
 
 
 return
@@ -823,11 +840,14 @@ return
 
 
 // funkcija za novu stranu
-function NStr_a4(nStr, lShZagl)
+static function NStr_a4(nStr, lShZagl)
 *{
 local cLine
 
 cLine := a4_line("pf")
+
+// korekcija duzine je na svako strani razlicita
+nDuzStrKorekcija := 0 
 
 P_COND
 ? cLine
@@ -841,8 +861,16 @@ P_COND
 if nStr <> nil
 	p_line( "       Strana:" + str(nStr, 3), 17, .f.)
 endif
-if lShZagl
-	st_zagl_data()
+
+// total nije odstampan znaci ima jos podataka
+if lShZagl 
+	if !lPrintedTotal
+		st_zagl_data()
+	else
+		// vec je odstampan, znaci nema vise stavki
+		// najbolje ga prenesi na ovu stranu koja je posljednja
+		print_total(cValuta, cLine)
+	endif
 else
 	? cLine
 endif
@@ -851,6 +879,73 @@ return
 *}
 
 
+// ---------------------------------------
+// printaj rekapitulaciju PDV-a
+// ---------------------------------------
+static function print_total(cValuta, cLine)
+
+? RAZMAK
+?? PADL("Ukupno bez PDV ("+cValuta+") :", LEN_UKUPNO)
+?? show_number(drn->ukbezpdv, PIC_VRIJEDNOST)
+   
+// provjeri i dodaj stavke vezane za popust
+if Round(drn->ukpopust, 2) <> 0
+		? RAZMAK 
+		?? PADL("Popust ("+cValuta+") :", LEN_UKUPNO)
+		?? show_number(drn->ukpopust, PIC_VRIJEDNOST)
+		
+		? RAZMAK 
+		?? PADL("Uk.bez.PDV-popust ("+cValuta+") :", LEN_UKUPNO)
+		?? show_number(drn->ukbpdvpop, PIC_VRIJEDNOST)
+endif
+	
+    
+? RAZMAK 
+?? PADL("PDV 17% :", LEN_UKUPNO)
+?? show_number(drn->ukpdv, PIC_VRIJEDNOST)
+    
+// zaokruzenje
+if ROUND(drn->zaokr,4) <> 0
+	? RAZMAK 
+	?? PADL("Zaokruzenje :", LEN_UKUPNO)
+	?? show_number(drn->zaokr, PIC_VRIJEDNOST)
+endif
+	
+? cLine
+? RAZMAK
+// ipak izleti za dva karaktera rekapitulacija u bold rezimu
+?? SPACE(50 - 2)
+B_ON
+?? PADL("** SVEUKUPNO SA PDV  ("+cValuta+") :", LEN_UKUPNO - 50)
+?? show_number(drn->ukupno, PIC_VRIJEDNOST)
+B_OFF
+
+// popust na teret prodavca 
+if drn->(fieldpos("ukpoptp")) <> 0
+             if Round(drn->ukpoptp, 2) <> 0
+		? RAZMAK
+		?? PADL("Popust na teret prodavca ("+cValuta+") :", LEN_UKUPNO)
+		?? show_number(drn->ukpoptp, PIC_VRIJEDNOST)
+		
+	        ? RAZMAK 
+		?? SPACE(50 - 2)
+		B_ON
+		? PADL("SVEUKUPNO SA PDV - POPUST NA T.P. ("+cValuta+") : ZA PLATITI :", LEN_UKUPNO - 50)
+		?? show_number(drn->ukupno - drn->ukpoptp, PIC_VRIJEDNOST)
+		B_OFF
+	     endif
+endif
+	
+cSlovima := get_dtxt_opis("D04")
+? RAZMAK 
+B_ON
+?? "slovima: " + cSlovima
+B_OFF
+? cLine
+return
+
+// --------------------------------------------
+// --------------------------------------------
 function NazivDobra(cIdRoba, cRobaNaz, cJmj)
 local cPom
 
@@ -863,7 +958,9 @@ endif
 return cPom
 
 
-static function show_popust(nPopust)
+// -------------------------------------
+// -------------------------------------
+function show_popust(nPopust)
 local cPom
 local i
 for i:=0 to 2
@@ -883,6 +980,8 @@ endif
 return PADL(cPom, LEN_PROC2)
 
 
+// ---------------------------------------------
+// ---------------------------------------------
 function p_line(cPLine, nCpi, lBold, lNewLine)
 // ako nije prazno telefon ispisi
 
@@ -922,6 +1021,8 @@ endif
 ??  cPLine
 return
 
+// ---------------------------------
+// ---------------------------------
 function len_rbr(xPom)
 if xPom <> NIL
 	LEN_RBR := xPom
@@ -1039,12 +1140,56 @@ if xPom <> NIL
 endif
 return LEN_REKAP_PDV
 
+// ------------------------------
+// ------------------------------
 function razmak(xPom)
 if xPom <> NIL
 	RAZMAK := xPom
 endif
 return RAZMAK
 
+// ------------------------------
+// ------------------------------
+function nSw1(xPom)
+if xPom <> NIL
+	nSw1 := xPom
+endif
+return nSw1
+// ------------------------------
+// ------------------------------
+function nSw2(xPom)
+if xPom <> NIL
+	nSw2 := xPom
+endif
+return nSw2
+// ------------------------------
+// ------------------------------
+function nSw3(xPom)
+if xPom <> NIL
+	nSw3 := xPom
+endif
+return nSw3
+
+// ------------------------------
+// ------------------------------
+function nSw4(xPom)
+if xPom <> NIL
+	nSw4 := xPom
+endif
+return nSw4
+
+// ------------------------------
+// ------------------------------
+function nSw5(xPom)
+if xPom <> NIL
+	nSw5 := xPom
+endif
+return nSw5
+
+
+
+// ------------------------------
+// ------------------------------
 function lomi_tarabe(cLomi)
 local nPos1
 local aLomi
@@ -1066,3 +1211,25 @@ enddo
 	
 
 return aLomi
+
+// --------------------------
+// --------------------------
+function IsPtxtOutput()
+return gpIni == "#%INI__#"
+
+
+// --------------------------------
+// korekcija za duzinu strane
+// --------------------------------
+static function	DSTR_KOREKCIJA()
+local nPom
+
+nPom := ROUND(nDuzStrKorekcija, 0)
+if ROUND(nDuzStrKorekcija - nPom, 1) > 0.2
+	nPom ++
+endif
+
+return nPom
+
+
+return

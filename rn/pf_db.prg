@@ -442,7 +442,7 @@ set order to tag "1"
 hseek cTip
 
 if !Found()
-	return "???"
+	return "-"
 endif
 cRet := RTRIM(opis)
 
