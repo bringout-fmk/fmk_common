@@ -257,27 +257,6 @@ static function DefKonv()
 RETURN
 *}
 
-function PTXT(cImeF)
-*{
-local cPTXTSW:="", nFH
-local cKom
-
-cKom:=EXEPATH+"PTXT "+cImeF+" "
-cPTXTSW:=R_IniRead ( 'DOS','PTXTSW',  "/P", EXEPATH+'FMK.INI' )
-
-if !file(EXEPATH+'FMK.INI')
-  nFH:=FCreate(EXEPATH+'FMK.INI')
-  FWrite(nFh,";------- Ini Fajl FMK-------")
-  Fclose(nFH)
-  cPTXTSW:=R_IniWrite ( 'DOS','PTXTSW',  "/P", EXEPATH+'FMK.INI')
-endif
-
-// switchewi za ptxt
-cKom+=" "+cPTXTSW
-
-Run(cKom)
-return
-*}
 
 function Adresar()
 *{

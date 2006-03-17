@@ -434,7 +434,7 @@ cAdresa:=get_dtxt_opis("K02")
 cIdBroj:=get_dtxt_opis("K03")
 cDestinacija:=get_dtxt_opis("D08")
 
-cTelFax:="Tel: "
+cTelFax:="tel: "
 cPom:=ALLTRIM(get_dtxt_opis("K13"))
 if empty(cPom)
 	cPom:="-"
@@ -466,7 +466,7 @@ cAdresa2 := ALLTRIM(partn->adresa)
 cAdresa2 := get_dtxt_opis("I02")
 // idbroj
 cIdBroj2 := get_dtxt_opis("I03") 
-cTelFax2 := "Tel: " + ALLTRIM(partn->telefon)  + ", fax: " + ALLTRIM(partn->fax)
+cTelFax2 := "tel: " + ALLTRIM(partn->telefon)  + ", fax: " + ALLTRIM(partn->fax)
 
 PopWa()
 

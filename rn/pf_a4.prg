@@ -569,6 +569,7 @@ local cKPorBroj
 local cKBrRjes
 local cKBrUpisa
 local cKMjesto
+local cKTelFax
 local aKupac
 local cMjesto
 local cDatDok
@@ -763,7 +764,24 @@ endif
 cPom := "ID broj: " + cPom
 p_line(SPACE(2) + PADR(cPom, LEN_KUPAC), 10, .f.)
 
+cKTelFax:=""
+cPom:=ALLTRIM(get_dtxt_opis("K13"))
+if !empty(cPom)
+	cKTelFax:="tel: "+ cPom
+endif
+cPom:=ALLTRIM(get_dtxt_opis("K14"))
+if !empty(cPom)
+	if !empty(cKTelFax)
+		cKTelFax += ", "
+	endif
+	cKTelFax += "fax: " + cPom
+endif
 
+if !EMPTY(cKTelFax)
+	p_line(SPACE(2), 10, .f., .t.)
+	P_12CPI
+	?? PADR(cKTelFax, LEN_KUPAC)
+endif
 
 if !EMPTY(cDestinacija)
  p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
@@ -992,7 +1010,9 @@ endif
 if EMPTY(cPLine) 
  if lNewLine
   // odstampaj i praznu liniju
-  cPLine := " "
+  if LEN(cPLine) == 0
+  	cPLine := " "
+  endif
  else
   return
  endif
