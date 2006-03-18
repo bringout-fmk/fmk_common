@@ -526,11 +526,23 @@ cPom2 := ALLTRIM(cMjesto2)
 if EMPTY(cPom2)
   cPom2 := "-"
 endif
-
-
 cPom := PADR(cPom, LEN_COLONA)
 cPom += " " + PADR(cPom2, LEN_COLONA)
 p_line( cPom, 12, .t.)
+
+// idbroj
+cPom := ALLTRIM(cIdBroj)
+if EMPTY(cPom)
+  cPom := "-"
+endif
+cPom2 := ALLTRIM(cIdBroj2)
+if EMPTY(cPom2)
+  cPom2 := "-"
+endif
+cPom := PADR("ID: " + cPom, LEN_COLONA)
+cPom += " " + PADR("ID: " + cPom2, LEN_COLONA)
+p_line( cPom, 12, .t.)
+
 
 // telfax
 cPom := ALLTRIM(cTelFax)
