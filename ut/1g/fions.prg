@@ -466,7 +466,7 @@ do while .t.
     endif
    endif
  else
-   MsgBeep("Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !")
+   MsgBeep(Lokal("Prosjek je uzet iz sifrarnika radnika - OSN.BOL. !"))
    SELECT RADN; SET ORDER TO TAG "1"; GO TOP
    HSEEK _IdRadn
    nMj1 := osnbol
@@ -640,7 +640,7 @@ return nRezult
 function FillBrBod()
 *{
 if (radn->brbod<>_brbod)
-	if Pitanje(,"Staviti u sifrarnik radnika ovu vrijednost D/N?","N")=="D"
+	if Pitanje(, Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
      		select radn
      		replace brbod with _brbod
      		select ld
@@ -654,7 +654,7 @@ return .t.
 function FillKMinRad()
 *{
 if radn->kminrad<>_kminrad
-	if Pitanje(,"Staviti u sifrarnik radnika ovu vrijednost D/N?","N")=="D"
+	if Pitanje(,Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
      		select radn
      		replace kminrad with _kminrad
      		select ld
@@ -665,7 +665,7 @@ return .t.
 
 function FillRadSati(cIdRadnik,nRadniSati)
 *{
-if Pitanje(,"Unos placenih sati (D/N)?","D")=="N"
+if Pitanje(, Lokal("Unos placenih sati (D/N)?"),"D")=="N"
 	return
 endif
 
@@ -674,22 +674,22 @@ cOdgovor:="D"
 
 Box(,9,48)
 	cSatiPredhodni:=GetStatusRSati(cIdRadnik)	
-	@ m_x+1,m_y+2 SAY "Radnik: " + ALLTRIM(cIdRadnik)
-	@ m_x+2,m_y+2 SAY "Ostalo iz predhodnih obracuna: " + ALLTRIM(cSatiPredhodni) + " sati"
+	@ m_x+1,m_y+2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
+	@ m_x+2,m_y+2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
 	@ m_x+3,m_y+2 SAY "-----------------------------------------------"
-	@ m_x+4,m_y+2 SAY "Uplaceno sati: " GET nPlacenoRSati PICT "99999999" 
+	@ m_x+4,m_y+2 SAY Lokal("Uplaceno sati: ") GET nPlacenoRSati PICT "99999999" 
 	read
 	@ m_x+5,m_y+2 SAY "-----------------------------------------------"
-	@ m_x+6,m_y+2 SAY "Radni sati ovaj mjesec  : " + ALLTRIM(STR(nRadniSati))
-	@ m_x+7,m_y+2 SAY "Placeni sati ovaj mjesec: " + ALLTRIM(STR(nPlacenoRSati))
-	@ m_x+8,m_y+2 SAY "Ostalo " + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + " sati za sljedeci mjesec !"
-  	@ m_x+9,m_y+2 SAY "Sacuvati promjene (D/N)? " GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
+	@ m_x+6,m_y+2 SAY Lokal("Radni sati ovaj mjesec  : ") + ALLTRIM(STR(nRadniSati))
+	@ m_x+7,m_y+2 SAY Lokal("Placeni sati ovaj mjesec: ") + ALLTRIM(STR(nPlacenoRSati))
+	@ m_x+8,m_y+2 SAY Lokal("Ostalo ") + ALLTRIM(STR(nRadniSati-nPlacenoRSati+VAL(cSatiPredhodni))) + Lokal(" sati za sljedeci mjesec !")
+  	@ m_x+9,m_y+2 SAY Lokal("Sacuvati promjene (D/N)? ") GET cOdgovor VALID cOdgovor$"DN" PICT "@!"
 	read
 	
 	if cOdgovor=="D"	
 		UbaciURadneSate(cIdRadnik,nRadniSati-nPlacenoRSati)
 	else
-		MsgBeep("Promjene nisu sacuvane !!!")
+		MsgBeep(Lokal("Promjene nisu sacuvane !!!"))
 	endif
 BoxC()
 return
@@ -734,7 +734,7 @@ return
 function FillVPosla()
 *{
 if radn->idvposla<>_idvposla
-	if Pitanje(,"Staviti u sifrarnik radnika ovu vrijednost D/N?","N")=="D"
+	if Pitanje( , Lokal("Staviti u sifrarnik radnika ovu vrijednost D/N?"),"N")=="D"
     		select radn
      		replace idvposla with _idvposla
      		select ld
@@ -872,7 +872,7 @@ PROCEDURE PromSif()
  cSifr:="1"            // 1-radnici, 2-firme
  Box(,4,70)
   @ m_x+2, m_y+2 SAY "Iz kojeg sifrarnika je sifra koju zelite promijeniti?"
-  @ m_x+3, m_y+2 SAY "(1-radnici,2-firme).................................." GET cSifr VALID cSifr$"12"
+  @ m_x+3, m_y+2 SAY Lokal("(1-radnici,2-firme)..................................") GET cSifr VALID cSifr$"12"
   READ
  BoxC()
  IF LASTKEY()==K_ESC; CLOSERET; ENDIF
@@ -891,14 +891,14 @@ PROCEDURE PromSif()
        @ m_x+3, m_y+2 SAY "Nova sifra :" GET cIdN
        READ
       BoxC()
-      IF LASTKEY()==K_ESC .or. Pitanje(,"Jeste li sigurni da zelite promijeniti ovu sifru? (D/N)","N")=="N"
+      IF LASTKEY()==K_ESC .or. Pitanje( , Lokal("Jeste li sigurni da zelite promijeniti ovu sifru? (D/N)"),"N")=="N"
         CLOSERET
       ENDIF
 
       O_RADN
       SEEK cIdN
       IF FOUND()
-        IF Pitanje(,"Nova sifra vec postoji u sifrarniku! Zelite li nastaviti?","N")=="N"
+        IF Pitanje( , Lokal("Nova sifra vec postoji u sifrarniku! Zelite li nastaviti?"), "N" ) == "N"
           CLOSERET
         ENDIF
       ENDIF

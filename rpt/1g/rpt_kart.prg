@@ -1,6 +1,6 @@
 #include "\dev\fmk\ld\ld.ch"
 
-function KartPl(cIdRj,cMjesec,cGodina,cIdRadn,cObrac)
+function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
 *{
 local i
 local aNeta:={}
@@ -62,20 +62,20 @@ if (PCount()<4)
 	RPar("NK",@cNKNS)
 	cIdRadn:=SPACE(_LR_)
 	Box(,8,75)
-	@ m_x+1,m_y+2 SAY "Radna jedinica (prazno-sve rj): "  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
-	@ m_x+2,m_y+2 SAY "Mjesec: " GET cMjesec pict "99"
+	@ m_x+1,m_y+2 SAY Lokal("Radna jedinica (prazno-sve rj): ")  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
+	@ m_x+2,m_y+2 SAY Lokal("Mjesec: ") GET cMjesec pict "99"
 	if lViseObr
-		@ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+		@ m_x+2,col()+2 SAY Lokal("Obracun: ") GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
 	endif
-	@ m_x+3,m_y+2 SAY "Godina: " GET cGodina pict "9999"
-	@ m_x+4,m_y+2 SAY "Radnik (prazno-svi radnici): "  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
+	@ m_x+3,m_y+2 SAY Lokal("Godina: ") GET cGodina pict "9999"
+	@ m_x+4,m_y+2 SAY Lokal("Radnik (prazno-svi radnici): ")  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
 	if !lSkrivena
-		@ m_x+5,m_y+2 SAY "Varijanta ( /5): "  GET  cVarijanta valid cVarijanta $ " 5"
+		@ m_x+5,m_y+2 SAY Lokal("Varijanta ( /5): ")  GET  cVarijanta valid cVarijanta $ " 5"
 	endif
-	@ m_x+6,m_y+2 SAY "Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
+	@ m_x+6,m_y+2 SAY Lokal("Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)")  GET cVarSort VALID cVarSort$"12"  pict "9"
 	if !lSkrivena
-		@ m_x+7,m_y+2 SAY "Dvije kartice na jedan list ? (D/N)"  GET c2K1L VALID c2K1L$"DN"  pict "@!"
-		@ m_x+8,m_y+2 SAY "Ispis svake kartice krece od pocetka stranice? (D/N)"  GET cNKNS VALID cNKNS$"DN"  pict "@!"
+		@ m_x+7,m_y+2 SAY Lokal("Dvije kartice na jedan list ? (D/N)")  GET c2K1L VALID c2K1L $ "DN"  pict "@!"
+		@ m_x+8,m_y+2 SAY Lokal("Ispis svake kartice krece od pocetka stranice? (D/N)")  GET cNKNS VALID cNKNS$"DN"  pict "@!"
 	endif
 	read
 	clvbox()
@@ -257,34 +257,34 @@ IF lSkrivena
 	?? cLMSK + Lokal("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4), " ZA " + UPPER(TRIM(gTS)), gNFirma
 	? cLMSK+idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, cLMSK)
-	? cLMSK+Lokal("Radno mjesto:"),radn->rmjesto,"  STR.SPR:",IDSTRSPR
-	? cLMSK+Lokal("Vrsta posla:"),idvposla,vposla->naz,"         Radi od:",radn->datod
+	? cLMSK + Lokal("Radno mjesto:"), radn->rmjesto, Lokal("  STR.SPR:"), IDSTRSPR
+	? cLMSK + Lokal("Vrsta posla:"), idvposla, vposla->naz, Lokal("         Radi od:"), radn->datod
 	FOR i:=1 TO nIZRSK
 		?
 	NEXT
-	? cLMSK+IF(gBodK=="1",Lokal("Broj bodova :"),Lokal("Koeficijent :")),transform(brbod,"99999.99"),space(24)
+	? cLMSK+IF(gBodK=="1", Lokal("Broj bodova :"), Lokal("Koeficijent :")), transform(brbod,"99999.99"),space(24)
 	if gMinR=="B"
-		?? Lokal("Minuli rad:"),transform(kminrad,"9999.99")
+		?? Lokal("Minuli rad:"), transform(kminrad,"9999.99")
 	else
-		?? Lokal("K.Min.rada:"),transform(kminrad,"99.99%")
+		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
 	endif
-	? cLMSK+IF(gBodK=="1",Lokal("Vrijednost boda:"),Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
+	? cLMSK+IF(gBodK=="1", Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 ELSE
 	? LOKAL("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4)," ZA "+ UPPER(TRIM(gTS)), gNFirma
 	? "RJ:",idrj,rj->naz
 	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")
-	? Lokal("Radno mjesto:"),radn->rmjesto,"  STR.SPR:",IDSTRSPR
+	? Lokal("Radno mjesto:"),radn->rmjesto, "  STR.SPR:",IDSTRSPR
 	? Lokal("Vrsta posla:"),idvposla,vposla->naz,"         Radi od:",radn->datod
-	? IF(gBodK=="1",Lokal("Broj bodova :"),Lokal("Koeficijent :")),transform(brbod,"99999.99"),space(24)
+	? IF(gBodK=="1", Lokal("Broj bodova :"),Lokal("Koeficijent :")),transform(brbod,"99999.99"),space(24)
 	if gMinR=="B"
-		?? Lokal("Minuli rad:"),transform(kminrad,"9999.99")
+		?? Lokal("Minuli rad:"), transform(kminrad,"9999.99")
 	else
-		?? Lokal("K.Min.rada:"),transform(kminrad,"99.99%")
+		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
 	endif
-	? IF(gBodK=="1",Lokal("Vrijednost boda:"),Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
+	? IF(gBodK=="1",Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 	if lRadniSati
-		?? SPACE(19) + "Radni sati:   " + ALLTRIM(STR(ld->radsat))
+		?? SPACE(19) + Lokal("Radni sati:   ") + ALLTRIM(STR(ld->radsat))
 	endif
 ENDIF
 return
@@ -295,7 +295,7 @@ static function KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 *{
 Eval(bZagl)
 if gTipObr=="2" .and. parobr->k1<>0
-	?? "        Bod-sat:"
+	?? Lokal("        Bod-sat:")
 	@ prow(),pcol()+1 SAY parobr->vrbod/parobr->k1*brbod pict "99999.99999"
 endif
 IF l2kolone
@@ -454,7 +454,7 @@ if cVarijanta=="5"
 endif
 if lRadniSati
 	? Lokal("NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena ")
-	?? ALLTRIM(STR((ld->radsat)-nRRSati))  + " sati."
+	?? ALLTRIM(STR((ld->radsat)-nRRSati))  + Lokal(" sati.")
 	? Lokal("          Uplaceno za tekuci mjesec: " + " sati.")
 	? Lokal("          Ostatak predhodnih obracuna: ") + GetStatusRSati(cIdRadn) + SPACE(1) + Lokal("sati")
 	?
@@ -672,11 +672,11 @@ return
 *}
 
 
-
-
+// ----------------------------------------------------------------
+// opcina zenica ...............
+// -----------------------------------------------------------------
 static function KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 *{
-************************ opcina zenica ...............
 Eval(bZagl)
 if gTipObr=="2" .and. parobr->k1<>0
 	?? "        Bod-sat:"

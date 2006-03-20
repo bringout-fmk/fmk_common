@@ -3,59 +3,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/ld/main/2g/app.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.16 $
- * $Log: app.prg,v $
- * Revision 1.16  2004/01/24 08:01:23  sasavranic
- * no message
- *
- * Revision 1.15  2004/01/13 19:07:59  sasavranic
- * appsrv konverzija
- *
- * Revision 1.14  2003/01/24 21:33:36  mirsad
- * dorada za pogon.knjig.
- *
- * Revision 1.13  2002/11/22 10:00:11  mirsad
- * Login za security prebacen u SCLIB
- *
- * Revision 1.12  2002/11/18 22:42:47  sasa
- * korekcije koda
- *
- * Revision 1.11  2002/11/18 12:12:58  mirsad
- * dorade i korekcije-security
- *
- * Revision 1.10  2002/11/18 08:06:27  sasa
- * finalne dorade na LD-u (security, eventloging)
- *
- * Revision 1.9  2002/11/15 18:47:05  sasa
- * korekcija koda
- *
- * Revision 1.8  2002/11/14 22:23:05  sasa
- * korekcije koda
- *
- * Revision 1.7  2002/11/12 13:36:10  sasa
- * korekcija koda
- *
- * Revision 1.6  2002/11/11 23:38:11  sasa
- * no message
- *
- * Revision 1.5  2002/11/11 16:20:11  sasa
- * reduciranje koda
- *
- * Revision 1.4  2002/11/09 17:58:04  sasa
- * razrada koda
- *
- * Revision 1.3  2002/11/09 12:36:02  sasa
- * korekcija koda
- *
- * Revision 1.2  2002/11/08 13:52:08  mirsad
- * ciscenje koda
- *
- * Revision 1.1  2002/11/05 13:23:47  sasa
- * ubacivanje LD-a u cvs, novi kod
- *
- *
  */
 
 
@@ -181,15 +128,15 @@ method mMenuStandard
 private opc:={}
 private opcexe:={}
 
-AADD(opc,   "1. obracun (unos, ispravka...)              ")
+AADD(opc,   Lokal("1. obracun (unos, ispravka...)              "))
 AADD(opcexe, {|| MnuObracun()} )
-AADD(opc,   "2. brisanje")
+AADD(opc,   Lokal("2. brisanje"))
 AADD(opcexe, {|| MnuBrisanje()})
-AADD(opc,   "3. rekalkulacija")
+AADD(opc,   Lokal("3. rekalkulacija"))
 AADD(opcexe, {|| MnuRekalk()})
-AADD(opc,   "4. izvjestaji")
+AADD(opc,   Lokal("4. izvjestaji"))
 AADD(opcexe, {|| MnuIzvj()})
-AADD(opc,   "5. krediti")
+AADD(opc,   Lokal("5. krediti"))
 AADD(opcexe, {|| MnuKred()})
 
 if IzFmkIni("LD", "Korekcije", "N", KUMPATH)=="D"
@@ -199,20 +146,20 @@ endif
 
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
-AADD(opc,   "7. sifrarnici")
+AADD(opc,   Lokal("7. sifrarnici"))
 AADD(opcexe, {|| MnuSifre()})
-AADD(opc,   "9. administriranje baze podataka") 
+AADD(opc,   Lokal("9. administriranje baze podataka")) 
 AADD(opcexe, {|| MnuAdmin()})
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 // najcesece koristenje opcije
-AADD(opc,   "A. rekapitulacija")
+AADD(opc,   Lokal("A. rekapitulacija"))
 AADD(opcexe, {|| Rekap(.t.)})
-AADD(opc,   "B. kartica plate") 
+AADD(opc,   Lokal("B. kartica plate")) 
 AADD(opcexe, {|| KartPl()})
 AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
-AADD(opc,   "X. parametri")
+AADD(opc,   Lokal("X. parametri     "))
 AADD(opcexe, {|| MnuParams()})
 
 private Izbor:=1

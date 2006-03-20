@@ -25,32 +25,37 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc,"1. radnici                            ")
+AADD(opc, lokal("1. radnici                            "))
 if (ImaPravoPristupa(goModul:oDatabase:cName,"SIF","EDITRADN"))
 	AADD(opcexe, {|| P_Radn()})
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
-AADD(opc,"5. radne jedinice")
+AADD(opc, lokal("5. radne jedinice"))
 AADD(opcexe, {|| P_RJ()})
-AADD(opc,"6. opstine")
+AADD(opc, lokal("6. opstine"))
 AADD(opcexe, {|| P_Ops()})
-AADD(opc,"9. vrste posla")
+AADD(opc, lokal("9. vrste posla"))
 AADD(opcexe, {|| P_VPosla()})
-AADD(opc,"B. strucne spreme")
+AADD(opc, lokal("B. strucne spreme"))
 AADD(opcexe, {|| P_StrSpr()})
-AADD(opc,"C. kreditori")
+AADD(opc, lokal("C. kreditori"))
 AADD(opcexe, {|| P_Kred()})
-AADD(opc,"F. banke")
+AADD(opc, lokal("F. banke"))
 AADD(opcexe, {|| P_Banke()})
-AADD(opc,"G. sifk")
+AADD(opc, lokal("G. sifk"))
 AADD(opcexe, {|| P_SifK()})
 
 if (IsRamaGlas())
-	AADD(opc,"H. radni nalozi")
+	AADD(opc, lokal("H. radni nalozi") )
 	AADD(opcexe, {|| P_RNal()})
 endif
 
+gLokal:=ALLTRIM(gLokal)
+if gLokal <> "0"
+	AADD(opc, lokal("L. lokalizacija") )
+	AADD(opcexe, {|| P_Lokal()})
+endif
 Menu_SC("op")
 return
 *}

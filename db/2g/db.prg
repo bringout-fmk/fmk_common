@@ -4,65 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/ld/db/2g/db.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.18 $
- * $Log: db.prg,v $
- * Revision 1.18  2004/02/06 15:38:24  sasavranic
- * no message
- *
- * Revision 1.17  2004/02/06 11:56:22  sasavranic
- * Uveden niz aKonvZN{} koji smjesta promjene na sifrarniku radnika u LD-u i iz njega vuce podatak za sljedece promjene
- *
- * Revision 1.16  2004/02/06 10:02:22  sasavranic
- * Konverzija sifrarnika radnika i ld, ali samo polja ID i IDRADN
- *
- * Revision 1.15  2004/01/24 08:01:23  sasavranic
- * no message
- *
- * Revision 1.14  2004/01/13 19:07:59  sasavranic
- * appsrv konverzija
- *
- * Revision 1.13  2004/01/07 09:36:38  sasavranic
- * Izvjestaj toplih obroka za banku - mupzedo
- *
- * Revision 1.12  2003/08/25 10:56:23  mirsad
- * dodao uslov za radnu jedinicu na listi kredita (za ovo dodao polje IDRJ u RADN.DBF)
- *
- * Revision 1.11  2003/04/12 06:51:42  mirsad
- * napravljena priprema za kontiranje LD->FIN (proizvodni radnici, REKLDP.DBF)
- *
- * Revision 1.10  2003/02/19 02:08:05  mirsad
- * ispravka otvaranja nove godine
- *
- * Revision 1.9  2002/12/19 16:46:02  sasa
- * dodata nova tabela radsat
- *
- * Revision 1.8  2002/11/18 22:42:05  sasa
- * korekcije koda
- *
- * Revision 1.7  2002/11/18 12:12:58  mirsad
- * dorade i korekcije-security
- *
- * Revision 1.6  2002/11/16 14:16:58  sasa
- * korekcija koda
- *
- * Revision 1.5  2002/11/12 15:58:55  sasa
- * korekcija koda
- *
- * Revision 1.4  2002/11/12 13:26:02  sasa
- * korekcija koda
- *
- * Revision 1.3  2002/11/11 23:33:52  sasa
- * no message
- *
- * Revision 1.2  2002/11/09 17:56:35  sasa
- * razrada koda
- *
- * Revision 1.1  2002/11/05 13:21:51  sasa
- * ubacivanje LD-a u cvs, novi kod
- *
- *
  */
  
 function TDbLDNew()

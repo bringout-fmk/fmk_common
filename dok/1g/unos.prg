@@ -37,7 +37,7 @@ do while .t.
 		cIdRadn:=field->idRadn
 		if (_UIznos<0)
     			Beep(2)
-    			Msg("Radnik ne moze imati platu u negativnom iznosu!!!")
+    			Msg(Lokal("Radnik ne moze imati platu u negativnom iznosu!!!"))
   		endif
   		nPom:=0
   		for i:=1 to cLDPolja
@@ -139,28 +139,28 @@ endif
 lNovi:=.f.
 
 Box(,21,77)
-	@ m_x+1,m_y+2 SAY "Radna jedinica: "
+	@ m_x+1,m_y+2 SAY Lokal("Radna jedinica: ")
 	QQOutC(cIdRJ,"GR+/N")
 	if gUNMjesec=="D"
- 		@ m_x+1,col()+2 SAY "Mjesec: "  GET cMjesec pict "99"
+ 		@ m_x+1,col()+2 SAY Lokal("Mjesec: ")  GET cMjesec pict "99"
 	else
- 		@ m_x+1,col()+2 SAY "Mjesec: "
+ 		@ m_x+1,col()+2 SAY Lokal("Mjesec: ")
 		QQOutC(str(cMjesec,2),"GR+/N")
 	endif
 
 	if lViseObr
  		if gUNMjesec=="D"
-  			@ m_x+1,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
+  			@ m_x+1,col()+2 SAY Lokal("Obracun: ") GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
  		else
-  			@ m_x+1,col()+2 SAY "Obracun: "
+  			@ m_x+1,col()+2 SAY Lokal("Obracun: ")
 			QQOutC(cObracun,"GR+/N")
  		endif
 	endif
 
-	@ m_x+1,COL()+2 SAY "Godina: "
+	@ m_x+1,COL()+2 SAY Lokal("Godina: ")
 	QQOutC(str(cGodina,4),"GR+/N")
 	
-	@ m_x+2,m_y+2 SAY "Radnik" GET cIdRadn valid {|| P_Radn(@cIdRadn),SetPos(m_x+2,m_y+26),QQOUT(TRIM(radn->naz)+" ("+trim(radn->imerod)+") "+radn->ime),.t.}
+	@ m_x+2,m_y+2 SAY Lokal("Radnik   ") GET cIdRadn valid {|| P_Radn(@cIdRadn),SetPos(m_x+2,m_y+26),QQOUT(TRIM(radn->naz)+" ("+trim(radn->imerod)+") "+radn->ime),.t.}
 	read
 	clvbox()
 	ESC_BCR
@@ -169,8 +169,6 @@ Box(,21,77)
 	select ld
 	
 	seek STR(cGodina,4)+cIdRj+str(cMjesec,2)+IF(lViseObr,cObracun,"")+cIdRadn
-	altd()
-	
 	
 	if found()
   		lNovi:=.f.
@@ -199,18 +197,18 @@ Box(,21,77)
 	// podesi parametre obracuna za ovaj mjesec
 	
 	if gTipObr=="1"
- 		@ m_x+3,m_y+2   SAY IF(gBodK=="1","Broj bodova","Koeficijent") GET _brbod pict "99999.99" valid FillBrBod()
+ 		@ m_x+3,m_y+2   SAY IF(gBodK=="1", Lokal("Broj bodova"), Lokal("Koeficijent")) GET _brbod pict "99999.99" valid FillBrBod()
 	else
- 		@ m_x+3,m_y+2   SAY "Plan.osnov ld" GET _brbod pict "99999.99" valid FillBrBod()
+ 		@ m_x+3,m_y+2   SAY Lokal("Plan.osnov ld") GET _brbod pict "99999.99" valid FillBrBod()
 	endif
 	select ld
-	@ m_x+3,col()+2 SAY IF(gBodK=="1","Vrijednost boda","Vr.koeficijenta"); @ row(),col()+1 SAY parobr->vrbod  pict "99999.99999"
+	@ m_x+3,col()+2 SAY IF(gBodK=="1", Lokal("Vrijednost boda"), Lokal("Vr.koeficijenta")); @ row(),col()+1 SAY parobr->vrbod  pict "99999.99999"
 	if gMinR=="B"
- 		@ m_x+3,col()+2 SAY "Minuli rad (bod)" GET _kminrad pict "9999.99" valid FillKMinRad()
+ 		@ m_x+3,col()+2 SAY Lokal("Minuli rad (bod)") GET _kminrad pict "9999.99" valid FillKMinRad()
 	else
- 		@ m_x+3,col()+2 SAY "Koef.minulog rada" GET _kminrad pict "99.99%" valid FillKMinRad()
+ 		@ m_x+3,col()+2 SAY Lokal("Koef.minulog rada") GET _kminrad pict "99.99%" valid FillKMinRad()
 	endif
-	@ m_x+4,m_y+2 SAY "Vrsta posla koji radnik obavlja" GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
+	@ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
 	read
 	if (IsRamaGlas() .and. RadnikJeProizvodni())
 		UnosSatiPoRNal(cGodina,cMjesec,cIdRadn)
@@ -231,9 +229,9 @@ Box(,21,77)
 		
 	if lLogUnos
 		if lNovi
-			EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"","Obracunata plata za radnika")
+			EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"", Lokal("Obracunata plata za radnika"))
 		else
-			EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"","Korekcija obracuna za radnika")
+			EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"", Lokal("Korekcija obracuna za radnika"))
 		endif
 	endif
 
@@ -241,7 +239,8 @@ BoxC()
 return
 *}
 
-
+// ----------------------------------
+// ----------------------------------
 function PrikUkupno(lSaveObracun)
 *{
 
@@ -281,7 +280,8 @@ return
 *}
 
 
-
+// --------------------------
+// --------------------------
 function UzmiSiht()
 *{
 
