@@ -18,7 +18,7 @@ if !used()
   O_SIFK
   O_SIFV
 endif
-if (!("U"$TYPE("gSecurity")) .and. gSecurity=="D")
+if (!("U" $ TYPE("gSecurity")) .and. gSecurity=="D")
 	O_USERS
 	O_RULES
 	O_GROUPS
