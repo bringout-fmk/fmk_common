@@ -200,7 +200,7 @@ B_ON
 B_OFF
 
 if !empty(cstrspr)
-	?? Lokal(" za radnike strucne spreme "),cStrSpr
+	?? SPACE(1) + Lokal("za radnike strucne spreme") + SPACE(1),cStrSpr
 endif
 
 if !empty(cOpsSt)
