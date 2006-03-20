@@ -125,6 +125,8 @@ return nil
 *{
 method mMenuStandard
 
+say_fmk_ver()
+
 private opc:={}
 private opcexe:={}
 

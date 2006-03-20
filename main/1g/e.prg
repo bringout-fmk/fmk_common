@@ -20,14 +20,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/ld/main/1g/e.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.1 $
- * $Log: e.prg,v $
- * Revision 1.1  2002/11/05 13:23:31  sasa
- * ubacivanje LD-a u cvs, novi kod
- *
- * Revision 1.5  2002/06/25 08:44:24  ernad
  *
  */
  
