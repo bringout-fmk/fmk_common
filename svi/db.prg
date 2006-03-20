@@ -304,6 +304,9 @@ if IsRabati()
 	CreRabDB()
 endif
 
+// kreiraj lokal tabelu
+cre_lokal(F_LOKAL)
+
 return
 *}
 

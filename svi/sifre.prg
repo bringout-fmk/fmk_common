@@ -79,10 +79,18 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-if (IsRamaGlas().or.gModul=="FAKT".and.glRadNal)
-	AADD(opc,"10. radni nalozi")  
+if (IsRamaGlas() .or.  gModul=="FAKT".and. glRadNal )
+	AADD(opc, "R. radni nalozi")  
 	AADD(opcexe, {|| P_RNal() } )
 endif
+
+// lokalizacija
+gLokal := ALLTRIM(gLokal)
+if gLokal <> "0"
+	AADD(opc, "L. lokalizacija")
+	AADD(opcexe, {|| P_Lokal() } )
+endif
+
 
 CLOSE ALL
 OFmkSvi()

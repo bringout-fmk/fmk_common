@@ -10,7 +10,7 @@
   #include "sc.ch"
 #endif
 
-#define FMK_VER  "02.46"
+#define FMK_VER  "02.47"
 
 #define F_GPARAMS   1
 #define F_GPARAMSP  2
@@ -303,7 +303,7 @@
 #define F_R_KIF 172
 #define F_R_PDV 173
 
-#define F_SG_KIF 242
+#define F_LOKAL 242
 
 #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 
