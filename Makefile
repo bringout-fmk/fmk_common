@@ -19,6 +19,7 @@ all:
 	make -C rabat/1g
 	make -C rn
 	make -C exp_dbf
+	make -C lokal
 
 
 clean:
@@ -31,6 +32,7 @@ clean:
 	cd rabat/1g; make clean
 	cd rn; make clean
 	cd exp_dbf; make clean
+	cd lokal; make clean
 	rm -f *.obj
 
 
