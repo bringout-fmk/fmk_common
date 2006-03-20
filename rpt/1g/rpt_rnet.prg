@@ -223,16 +223,16 @@ PRIVATE cIdRadn:="", cNaziv:=""
 
 IF cVarijanta!="3"
  START PRINT CRET
- ?? space(gnLMarg); ?? "LD: Izvjestaj na dan",date()
+ ?? space(gnLMarg); ?? Lokal("LD: Izvjestaj na dan"),date()
  ? space(gnLMarg); IspisFirme("")
  ?
  if empty(cidrj)
-  ? "Pregled za sve RJ ukupno:"
+  ? Lokal("Pregled za sve RJ ukupno:")
  else
-  ? "RJ:", cidrj+" - "+Ocitaj(F_RJ,cIdRj,"naz")
+  ? Lokal("RJ:"), cidrj+" - "+Ocitaj(F_RJ,cIdRj,"naz")
  endif
- ?? "  Mjesec:",IF(EMPTY(cMjesec),"SVI",str(cmjesec,2))+IspisObr()
- ?? "    Godina:", IF(EMPTY(cGodina),"SVE",str(cGodina,5))
+ ?? SPACE(2) + Lokal("Mjesec:"),IF(EMPTY(cMjesec),"SVI",str(cmjesec,2))+IspisObr()
+ ?? SPACE(4) + Lokal("Godina:"), IF(EMPTY(cGodina),"SVE",str(cGodina,5))
  ?
 ENDIF
 
@@ -242,8 +242,8 @@ StampaTabele(aKol,{|| FSvaki4()},,gTabela,,;
 
 ?
 
-? "LEGENDA:"
-? "U kolonama tabele nalaze se sljedece sifre tipova primanja:"
+? Lokal("LEGENDA:")
+? Lokal("U kolonama tabele nalaze se sljedece sifre tipova primanja:")
 FOR j:=1 TO 3
   FOR i:=1 TO LEN(aLeg)
     IF !EMPTY(aLeg[i,j])
@@ -364,3 +364,4 @@ RETURN IF(siu<>0,.t.,.f.)
 
 PROCEDURE FSvaki4()
 RETURN
+

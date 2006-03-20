@@ -399,9 +399,9 @@ set order to tag "2"
 
 seek str(cgodina,4)+str(cmjesec,2)
 start print cret
-? "Radnici obradjeni vise puta za isti mjesec -",cgodina,"/",cmjesec
+? Lokal("Radnici obradjeni vise puta za isti mjesec -"),cgodina,"/",cmjesec
 ?
-? "RADNIK RJ     neto        sati"
+? Lokal("RADNIK RJ     neto        sati")
 ? "------ -- ------------- ----------"
 do while !eof() .and. str(cgodina,4)+str(cmjesec,2)==str(godina)+str(mjesec)
   cIdRadn:=idradn
@@ -425,11 +425,10 @@ return
 
 
 
-
-
 FUNC Reindex_all()
 RETURN (NIL)
 
-function o_nar()
 
+function o_nar()
+return
 

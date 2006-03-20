@@ -70,7 +70,7 @@ WPar("AH",cTip)
 USE
 
 if empty(cOpsSt)
-	cOpcinaSt:="SVE OPSTINE"
+	cOpcinaSt:=Lokal("SVE OPSTINE")
 	cOpsSt:=""
 else
 	cOpcinaSt:=ALLTRIM(Ocitaj(F_OPS,cOpsSt,"naz"))
@@ -280,7 +280,7 @@ do while !eof()
 
 if prow()>60+gPStranica; FF; Eval(bZagl); endif
 ? m
-? " UKUPNO:"
+? SPACE(1) + Lokal("UKUPNO:")
 @ prow(),nC1 SAY  nT1 pict gpici
 @ prow(),pcol()+1 SAY  space(8)
 @ prow(),pcol()+1 SAY  nT2 pict gpici
@@ -293,7 +293,7 @@ AADD(aPoOps,{cIdOpsSt,nT4})
 
 enddo
 ?
-? "REKAPITULACIJA POREZA PO OPSTINAMA:"
+? Lokal("REKAPITULACIJA POREZA PO OPSTINAMA:")
 ? "-----------------------------------"
 nUk:=0
 for i:=1 to len(aPoOps)
@@ -302,7 +302,7 @@ for i:=1 to len(aPoOps)
 	Rekapld("PORAH"+aPoOps[i,1],cgodina,cmjesec,aPoOps[i,2],0,aPoOps[i,1],)
 next
 ? m:="--------------------------------------"
-? "UKUPNO POREZ:            ", TRANS(nUk,"99999999.99")
+? Lokal("UKUPNO POREZ:") + "            ", TRANS(nUk,"99999999.99")
 ? m
 
 END PRINT
@@ -316,36 +316,37 @@ function ZAutorHonor()
 P_COND
 //? UPPER(gTS)+":",gnFirma
 B_ON
-? "Privredna stampa d.d. Sarajevo           Dzemala Bijedica 185         Identifikacijski broj: 4200088140005"
+? Lokal("Privredna stampa d.d. Sarajevo           Dzemala Bijedica 185         Identifikacijski broj: 4200088140005")
 B_OFF
 
-? "Autorski honorar: "
+? Lokal("Autorski honorar: ")
 U_ON
-?? PADC(IF(EMPTY(cIzdanje),"sva izdanja",cIzdanje),30)
+?? PADC(IF(EMPTY(cIzdanje),Lokal("sva izdanja"),cIzdanje),30)
 U_OFF
 ?
-? "Opcina prebivalista: "
+? Lokal("Opcina prebivalista: ")
 U_ON
 ?? PADC(cOpcinaSt,30)
 U_OFF
 ?
 
 if empty(cidrj)
- ? "Pregled za sve RJ ukupno:"
+ ? Lokal("Pregled za sve RJ ukupno:")
 else
- ? "RJ:",cidrj,rj->naz
+ ? Lokal("RJ:"),cidrj,rj->naz
 endif
 
-?? "  Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 devpos(prow(),74)
-?? "Str.",str(++nStrana,3)
+?? Lokal("Str."),str(++nStrana,3)
 ?
-? "Pregled za tip primanja:",ctip,tippr->naz
+? Lokal("Pregled za tip primanja:"),ctip,tippr->naz
 ?
 ? m
-? " Rbr            Naziv radnika               JMBG        Za isplatu      priznati tros.     Poreska            Porez     "
-? "                                                          (neto)         (% i iznos)       osnovica         (% i iznos)"
+? Lokal(" Rbr            Naziv radnika               JMBG        Za isplatu      priznati tros.     Poreska            Porez     ")
+? Lokal("                                                          (neto)         (% i iznos)       osnovica         (% i iznos)")
 ? m
 return
+
 

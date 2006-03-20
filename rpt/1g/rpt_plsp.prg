@@ -78,7 +78,7 @@ IF nIznosTO<>0
   qqImaTO:=IzFMKIni("LD","UslovImaTopliObrok",'UPPER(RADN->K2)=="D"',KUMPATH)
 ENDIF
 IF !EMPTY(cNaslov)
-  cNaslov += (" za mjesec:"+STR(cMjesec,2)+". godine:"+STR(cGodina,4)+".")
+  cNaslov += (SPACE(1) + Lokal("za mjesec:")+STR(cMjesec,2)+". " + Lokal("godine:")+STR(cGodina,4)+".")
 ENDIF
 
 select ld
@@ -210,7 +210,7 @@ enddo
 
 if prow()>60+gpStranica; FF; Eval(bZagl); endif
 ? m
-? " UKUPNO:"
+? SPACE(1) + Lokal("UKUPNO:")
 if cprikizn=="D"
   @ prow(),nC1 SAY  nT4 pict gpici
 endif
@@ -230,15 +230,15 @@ P_12CPI
 ? UPPER(gTS)+":",gnFirma
 ?
 if empty(cidrj)
-	? "Pregled za sve RJ ukupno:"
+	? Lokal("Pregled za sve RJ ukupno:")
 else
- 	? "RJ:",cidrj,rj->naz
+ 	? Lokal("RJ:"), cIdRj, rj->naz
 endif
 
-?? "  Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 DevPos(prow(),74)
-?? "Str.",str(++nStrana,3)
+?? Lokal("Str."),str(++nStrana,3)
 ?
 
 IF !EMPTY(cNaslov)
@@ -247,7 +247,7 @@ IF !EMPTY(cNaslov)
 ENDIF
 if nProcenat<>100
 	?
- 	? "Procenat za isplatu:"
+ 	? Lokal("Procenat za isplatu:")
  	if nDio==1
   		@ prow(),pcol()+1 SAY nprocenat pict "999.99%"
  	else
@@ -256,7 +256,7 @@ if nProcenat<>100
 	?
 endif
 ? m
-? "Rbr   Sifra           Naziv radnika               "+iif(cprikizn=="D","ZA ISPLATU","          ")+"         Potpis"
+? Lokal("Rbr   Sifra           Naziv radnika               ") + iif(cPrikIzn=="D",Lokal("ZA ISPLATU"),"          ")+"         " + Lokal("Potpis")
 ? m
 
 return
@@ -498,7 +498,7 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
 		Eval(bZagl)
 	endif
 	? m
-	? " UKUPNO:"
+	? SPACE(1) + Lokal("UKUPNO:")
 	if cPrikIzn=="D"
   		@ prow(),nC1 SAY nT4 pict gpici
 	endif
@@ -526,25 +526,25 @@ hseek cIdBanka
 select ld
 
 ?
-? "Poslovna BANKA: ", cIDBanka, "-", kred->naz
+? Lokal("Poslovna BANKA:") + SPACE(1), cIDBanka, "-", kred->naz
 ?
 ? UPPER(gTS)+":",gnFirma
 ?
 
-if empty(cidrj)
-	? "Pregled za sve RJ ukupno:"
+if empty(cIdRj)
+	? Lokal("Pregled za sve RJ ukupno:")
 else
- 	? "RJ:",cidrj,rj->naz
+ 	? Lokal("RJ:"),cIdRj,rj->naz
 endif
 
-?? "  Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 devpos(prow(),74)
-?? "Str.",str(++nStrana,3)
+?? Lokal("Str."),str(++nStrana,3)
 ?
 if nprocenat<>100
 	?
- 	? "Procenat za isplatu:"
+ 	? Lokal("Procenat za isplatu:")
 	if nDio==1
   		@ prow(),pcol()+1 SAY nprocenat pict "999.99%"
  	else
@@ -554,7 +554,7 @@ if nprocenat<>100
 endif
 ?
 ? m
-? "Rbr   Sifra           Naziv radnika               "+iif(cprikizn=="D","ZA ISPLATU","          ")+iif(cIsplata=="TR","         Broj T.Rac","        Broj St.knj")
+? Lokal("Rbr   Sifra           Naziv radnika               ") + iif(cPrikIzn=="D",Lokal("ZA ISPLATU"),"          ") + iif(cIsplata=="TR", SPACE(9) + Lokal("Broj T.Rac"),SPACE(8) + Lokal("Broj St.knj"))
 ? m
 
 return
@@ -785,7 +785,7 @@ do while !eof()
 		Eval(bZagl)
 	endif
 	? m
-	? " UKUPNO:"
+	? SPACE(1) + Lokal("UKUPNO:")
 	if cPrikIzn=="D"
   		@ prow(),nC1 SAY nT4 pict gpici
 	endif
@@ -814,30 +814,30 @@ hseek cIdTBanka
 select ld
 
 ?
-? "Poslovna BANKA: ", cIDTBanka, "-", kred->naz
+? Lokal("Poslovna BANKA:") + SPACE(1), cIDTBanka, "-", kred->naz
 ?
 ? UPPER(gTS)+":",gnFirma
 ?
 
 if empty(cidrj)
-	? "Pregled za sve RJ ukupno:"
+	? Lokal("Pregled za sve RJ ukupno:")
 else
- 	? "RJ:",cidrj,rj->naz
+ 	? Lokal("RJ:"), cIdRj, rj->naz
 endif
 
-?? "  Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+?? SPACE(2) + Lokal("Mjesec:"), str(cmjesec,2)+IspisObr()
+?? SPACE(4) + Lokal("Godina:"), str(cGodina,5)
 devpos(prow(),74)
-?? "Str.",str(++nStrana,3)
+?? Lokal("Str."), str(++nStrana,3)
 ?
 if empty(cIdTipPr)
-	? "PLATNI SPISAK"
+	? Lokal("PLATNI SPISAK")
 else
-	? "ISPLATA TIPA PRIMANJA:", cIdTipPr, TIPPR->naz
+	? Lokal("ISPLATA TIPA PRIMANJA:"), cIdTipPr, TIPPR->naz
 endif
 ?
 ? m
-? "Rbr   Sifra           Naziv radnika               "+iif(cprikizn=="D","ZA ISPLATU","          ")+iif(cIsplata=="TR","         Broj T.Rac","        Broj St.knj")
+? Lokal("Rbr   Sifra           Naziv radnika               ") + iif(cPrikIzn=="D",Lokal("ZA ISPLATU"),"          ")+iif(cIsplata=="TR",SPACE(9) + Lokal("Broj T.Rac"), SPACE(8) + Lokal("Broj St.knj"))
 ? m
 
 return
@@ -898,3 +898,4 @@ function CloseFileBanka(nHnd)
 FClose(nHnd)
 MsgBeep("Fajl pohranjen u " + cLokacija)
 *}
+

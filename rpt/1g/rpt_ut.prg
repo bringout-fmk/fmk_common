@@ -15,7 +15,7 @@ if !EOF()
 	? "-" + ALLTRIM(field->fil) + "-"
 	? ALLTRIM(field->adresa) + ", " + field->ptt + " " + ALLTRIM(field->mjesto)
 else
-	? "...Nema unesenih podataka...za kreditora..."
+	? Lokal("...Nema unesenih podataka...za kreditora...")
 endif
 
 select (nArr)
@@ -26,7 +26,7 @@ return
 function ShowPPDef()
 *{
 
-? SPACE(5) + "Obracunski radnik:" + SPACE(35) + "SEF SLUZBE:"
+? SPACE(5) + Lokal("Obracunski radnik:") + SPACE(35) + Lokal("SEF SLUZBE:")
 ?
 ? SPACE(5) + "__________________" + SPACE(35) + "__________________"
 
@@ -37,7 +37,7 @@ return
 function ShowPPFakultet()
 *{
  
-? SPACE(5) + "Likvidator:       " + SPACE(35) + "Dekan fakulteta:  "
+? SPACE(5) + Lokal("Likvidator:       ") + SPACE(35) + Lokal("Dekan fakulteta:  ")
 ?
 ? SPACE(5) + "__________________" + SPACE(35) + "__________________"
 
@@ -55,13 +55,13 @@ function ShowHiredFromTo(dHiredFrom, dHiredTo, cLM)
 cHiredFrom:=DToC(dHiredFrom)
 cHiredTo:=DToC(dHiredTo)
 
-? cLM + "Angazovan od: " + cHiredFrom
-?? ",  Angazovan do: "
+? cLM + Lokal("Angazovan od: ") + cHiredFrom
+?? ",  " + Lokal("Angazovan do: ")
 
 if !EMPTY(DToS(dHiredTo))
 	?? cHiredTo 
 else
-	?? "Trenutno angazovan"
+	?? Lokal("Trenutno angazovan")
 endif
 
 return

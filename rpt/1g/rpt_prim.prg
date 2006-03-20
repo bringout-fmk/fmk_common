@@ -230,7 +230,7 @@ enddo
 
 if prow()>60+gPStranica; FF; Eval(bZagl); endif
 ? m
-? " UKUPNO:"
+? SPACE(1) + Lokal("UKUPNO:")
 IF lKredit .and. !EMPTY(cSifKred)
   @ prow(),nC1 SAY  SPACE(LEN(RADKR->naosnovu))
 ELSE
@@ -258,36 +258,38 @@ P_12CPI
 ? UPPER(gTS)+":",gnFirma
 ?
 if empty(cidrj)
- ? "Pregled za sve RJ ukupno:"
+ ? Lokal("Pregled za sve RJ ukupno:")
 else
- ? "RJ:",cidrj,rj->naz
+ ? Lokal("RJ:"),cidrj,rj->naz
 endif
 
-?? "  Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+?? SPACE(2) + Lokal("Mjesec:"), str(cmjesec,2) + IspisObr()
+?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 devpos(prow(),74)
-?? "Str.",str(++nStrana,3)
+?? Lokal("Str."), str(++nStrana,3)
 ?
 #ifdef CPOR
-? "Pregled "+IF(lIsplaceni,"isplacenih iznosa","neisplacenih iznosa")+" za tip primanja:",ctip,tippr->naz
+? Lokal("Pregled") + SPACE(1) +IF(lIsplaceni, Lokal("isplacenih iznosa"),Lokal("neisplacenih iznosa"))+ SPACE(1) + Lokal("za tip primanja:"),ctip,tippr->naz
 #else
-? "Pregled za tip primanja:",ctip,tippr->naz
+? Lokal("Pregled za tip primanja:"), cTip, tippr->naz
 IF lKredit
-  ? "KREDITOR: "
+  ? Lokal("KREDITOR:") + SPACE(1)
   IF !EMPTY(cSifKred)
     ShowKreditor(cSifKred)
-    //?? cSifKred+"-"+Ocitaj(F_KRED,cSifKred,"naz")
   ELSE
-    ?? "SVI POSTOJECI"
+    ?? Lokal("SVI POSTOJECI")
   ENDIF
 ENDIF
 #endif
 ?
 ? m
 IF lKredit .and. !EMPTY(cSifKred)
-  ? " Rbr  "+padc("Sifra ",_LR_)+"          Naziv radnika               "+PADC("Na osnovu",LEN(RADKR->naosnovu))+"      Iznos"
+  ? " Rbr  "+padc("Sifra ",_LR_)+"          " + Lokal("Naziv radnika") + "               "+PADC("Na osnovu",LEN(RADKR->naosnovu))+"      " + Lokal("Iznos")
 ELSE
-  ? " Rbr  "+padc("Sifra ",_LR_)+"          Naziv radnika               "+iif(tippr->fiksan=="P"," %  ","Sati")+"      Iznos"
+  ? " Rbr  "+padc("Sifra ",_LR_)+"          " + Lokal("Naziv radnika") + "               "+iif(tippr->fiksan=="P"," %  ","Sati")+"      " + Lokal("Iznos")
 ENDIF
 ? m
+
 return
+
+

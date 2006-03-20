@@ -91,14 +91,14 @@ start print cret
 
 	P_12CPI
 
-	? "LD: BRUTO PLATE PROIZVODNIH RADNIKA PO RADNIM NALOZIMA"
+	? Lokal("LD: BRUTO PLATE PROIZVODNIH RADNIKA PO RADNIM NALOZIMA")
 	? "------------------------------------------------------"
-	? "Godina:",cGodina
-	? "Mjesec:",cMjesec
+	? Lokal("Godina:"),cGodina
+	? Lokal("Mjesec:"),cMjesec
 	? 
 	m:=REPL("-",10)+" "+REPL("-",LEN(rnal->naz))+" "+REPL("-",10)
 	? m
-	? PADC("Sifra i opis radnog naloga",11+LEN(rnal->naz))+"    Iznos  "
+	? PADC(Lokal("Sifra i opis radnog naloga"),11+LEN(rnal->naz))+"    " + Lokal("Iznos") + "  "
 	? m
 	select rnal
 	nUkPlata:=0
@@ -108,7 +108,7 @@ start print cret
 		nUkPlata+=aRNal[i,2]
 	next
 	? m
-	? "UKUPNO:   ", SPACE(LEN(rnal->naz)), TRANSFORM(nUkPlata,"9999999.99")
+	? Lokal("UKUPNO:") + "   ", SPACE(LEN(rnal->naz)), TRANSFORM(nUkPlata,"9999999.99")
 	? m
 
 	FF
@@ -309,13 +309,7 @@ do while !eof()  // DOPRINOSI
 
 	skip
 enddo // doprinosi
-//? m
-//? "UKUPNO POREZ+DOPRINOSI"
-//@ prow(),39 SAY nPorDopr pict gpici
-//? m
-//? "BRUTO IZNOS"
-//@ prow(),60 SAY nBruto pict gpici
-//? m
+
 return (nBruto)
 *}
 

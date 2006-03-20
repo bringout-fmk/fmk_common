@@ -1002,13 +1002,13 @@ P_10CPI
 
 ?? gnFirma
 ?
-? "Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+? Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+?? SPACE(4) + Lokal("Godina:"), str(cGodina,5)
 
 O_RJ
 select rj
 
-? "Obuhvacene radne jedinice: "
+? Lokal("Obuhvacene radne jedinice: ")
 
 if !EMPTY(qqRJ)
 	SET FILTER TO &aUsl2
@@ -1025,14 +1025,14 @@ endif
 
 SELECT LD
 
-? "Opstina stanovanja :",;
+? Lokal("Opstina stanovanja :"),;
     IF( EMPTY(cOpsSt) , "SVE" , Ocitaj(F_OPS,cOpsSt,"id+'-'+naz") )
-? "Opstina rada       :",;
+? Lokal("Opstina rada       :"),;
     IF( EMPTY(cOpsRad) , "SVE" , Ocitaj(F_OPS,cOpsRad,"id+'-'+naz") )
 ?
 
 StampaTabele(aKol,{|| FSvaki1()},,gTabela,,;
-     ,"SPECIFIKACIJA NETA I MINULOG RADA PO OPSTINAMA I RAD.JEDINICAMA",;
+     ,Lokal("SPECIFIKACIJA NETA I MINULOG RADA PO OPSTINAMA I RAD.JEDINICAMA"),;
                              {|| FFor1()},IF(gOstr=="D",,-1),,,,,)
 FF
 
@@ -1300,11 +1300,11 @@ START PRINT CRET
 
 P_12CPI
 
-?? space(gnLMarg); ?? "LD: Izvjestaj na dan",date()
+?? space(gnLMarg); ?? Lokal("LD: Izvjestaj na dan"),date()
 ? space(gnLMarg); IspisFirme("")
-? space(gnLMarg); ?? "RJ: "; B_ON; ?? IF( EMPTY(cIdRJ) , "SVE" , cIdRJ ); B_OFF
-?? "  GODINA: "; B_ON; ?? cGodina; B_OFF
-? "RADNIK: "
+? space(gnLMarg); ?? Lokal("RJ:") + SPACE(1); B_ON; ?? IF( EMPTY(cIdRJ) , "SVE" , cIdRJ ); B_OFF
+?? SPACE(2) + Lokal("GODINA: "); B_ON; ?? cGodina; B_OFF
+? Lokal("RADNIK: ")
 IF EMPTY(cIdRadn)
  ?? "SVI"
 ELSE
@@ -1314,27 +1314,27 @@ ELSE
  HSEEK RADN->idopsrad
  SELECT (F_RADN)
  B_ON; ?? cIdRadn+"-"+trim(naz)+' ('+trim(imerod)+') '+ime; B_OFF
- ? "Br.knjiz: "; B_ON; ?? brknjiz; B_OFF
- ?? "  Mat.br: "; B_ON; ?? matbr; B_OFF
- ?? "  R.mjesto: "; B_ON; ?? rmjesto; B_OFF
+ ? Lokal("Br.knjiz: "); B_ON; ?? brknjiz; B_OFF
+ ?? Lokal("  Mat.br: "); B_ON; ?? matbr; B_OFF
+ ?? Lokal("  R.mjesto: "); B_ON; ?? rmjesto; B_OFF
 
- ? "Min.rad: "; B_ON; ?? kminrad; B_OFF
- ?? "  Str.spr: "; B_ON; ?? STRSPR->naz; B_OFF
- ?? "  Opst.stan: "; B_ON; ?? cOStan; B_OFF
+ ? Lokal("Min.rad: "); B_ON; ?? kminrad; B_OFF
+ ?? Lokal("  Str.spr: "); B_ON; ?? STRSPR->naz; B_OFF
+ ?? Lokal("  Opst.stan: "); B_ON; ?? cOStan; B_OFF
 
- ? "Opst.rada: "; B_ON; ?? OPS->naz; B_OFF
- ?? "  Dat.zasn.rad.odnosa: "; B_ON; ?? datod; B_OFF
- ?? "  Pol: "; B_ON; ?? pol; B_OFF
+ ? Lokal("Opst.rada: "); B_ON; ?? OPS->naz; B_OFF
+ ?? Lokal("  Dat.zasn.rad.odnosa: "); B_ON; ?? datod; B_OFF
+ ?? Lokal("  Pol: "); B_ON; ?? pol; B_OFF
  SELECT MTEMP
 ENDIF
 
 #ifdef CPOR
 StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
-     ,"Specifikacija primanja po mjesecima"+IF(lIsplaceni,"","-neisplaceni"),;
+     ,Lokal("Specifikacija primanja po mjesecima")+IF(lIsplaceni,"",Lokal("-neisplaceni")),;
                              {|| FFor3()},IF(gOstr=="D",,-1),,,,,)
 #else
 StampaTabele(aKol,{|| FSvaki3()},,gTabela,,;
-     ,"Specifikacija primanja po mjesecima",;
+     ,Lokal("Specifikacija primanja po mjesecima"),;
                              {|| FFor3()},IF(gOstr=="D",,-1),,,,,,.f.)
 #endif
 
@@ -1503,16 +1503,16 @@ P_10CPI
 ?? gnFirma
 ?
 IF cMjesec==cMjesecDo
-  ? "Mjesec:",str(cmjesec,2)+IspisObr()
-  ?? "    Godina:",str(cGodina,5)
+  ? Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+  ?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 ELSE
-  ? "Od mjeseca:",str(cmjesec,2)+".","do mjeseca:",str(cmjesecdo,2)+"."+IspisObr()
-  ?? "    Godina:",str(cGodina,5)
+  ? Lokal("Od mjeseca:"),str(cmjesec,2)+".",Lokal("do mjeseca:"),str(cmjesecdo,2)+"."+IspisObr()
+  ?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 ENDIF
 
 O_RJ
 SELECT RJ
-? "Obuhvacene radne jedinice: "
+? Lokal("Obuhvacene radne jedinice: ")
 IF !EMPTY(qqRJ)
   SET FILTER TO &aUsl2
   GO TOP
@@ -1526,16 +1526,16 @@ ELSE
   ?
 ENDIF
 SELECT LD
-? "Opstina stanovanja :",;
+? Lokal("Opstina stanovanja :"),;
     IF( EMPTY(cOpsSt) , "SVE" , Ocitaj(F_OPS,cOpsSt,"id+'-'+naz") )
-? "Opstina rada       :",;
+? Lokal("Opstina rada       :"),;
     IF( EMPTY(cOpsRad) , "SVE" , Ocitaj(F_OPS,cOpsRad,"id+'-'+naz") )
 ?
 
 gaDodStavke:={}
 
 StampaTabele(aKol,{|| FSvaki31()},,gTabela,,;
-     ,"SPECIFIKACIJA PROSJECNOG NETA PO STRUCNOJ SPREMI",;
+     ,Lokal("SPECIFIKACIJA PROSJECNOG NETA PO STRUCNOJ SPREMI"),;
                              {|| FFor31()},IF(gOstr=="D",,-1),,,,,)
 
 END PRINT

@@ -254,35 +254,35 @@ IF lSkrivena
 		?
 	NEXT
 	P_12CPI
-	?? cLMSK + Lokal("OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4))," ZA "+UPPER(TRIM(gTS)), gNFirma
+	?? cLMSK + Lokal("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4), " ZA " + UPPER(TRIM(gTS)), gNFirma
 	? cLMSK+idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, cLMSK)
-	? cLMSK+"Radno mjesto:",radn->rmjesto,"  STR.SPR:",IDSTRSPR
-	? cLMSK+"Vrsta posla :",idvposla,vposla->naz,"         Radi od:",radn->datod
+	? cLMSK+Lokal("Radno mjesto:"),radn->rmjesto,"  STR.SPR:",IDSTRSPR
+	? cLMSK+Lokal("Vrsta posla:"),idvposla,vposla->naz,"         Radi od:",radn->datod
 	FOR i:=1 TO nIZRSK
 		?
 	NEXT
-	? cLMSK+IF(gBodK=="1","Broj bodova :","Koeficijent :"),transform(brbod,"99999.99"),space(24)
+	? cLMSK+IF(gBodK=="1",Lokal("Broj bodova :"),Lokal("Koeficijent :")),transform(brbod,"99999.99"),space(24)
 	if gMinR=="B"
-		?? "Minuli rad:",transform(kminrad,"9999.99")
+		?? Lokal("Minuli rad:"),transform(kminrad,"9999.99")
 	else
-		?? "K.Min.rada:",transform(kminrad,"99.99%")
+		?? Lokal("K.Min.rada:"),transform(kminrad,"99.99%")
 	endif
-	? cLMSK+IF(gBodK=="1","Vrijednost boda:","Vr.koeficijenta:"), transform(parobr->vrbod,"99999.99999")
+	? cLMSK+IF(gBodK=="1",Lokal("Vrijednost boda:"),Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 ELSE
-	? LOKAL("OBRACUN PLATE ZA "+str(mjesec,2)+IspisObr()+"/"+str(godina,4)," ZA ")+ UPPER(TRIM(gTS)), gNFirma
+	? LOKAL("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4)," ZA "+ UPPER(TRIM(gTS)), gNFirma
 	? "RJ:",idrj,rj->naz
 	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
 	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")
-	? "Radno mjesto:",radn->rmjesto,"  STR.SPR:",IDSTRSPR
-	? "Vrsta posla :",idvposla,vposla->naz,"         Radi od:",radn->datod
-	? IF(gBodK=="1","Broj bodova :","Koeficijent :"),transform(brbod,"99999.99"),space(24)
+	? Lokal("Radno mjesto:"),radn->rmjesto,"  STR.SPR:",IDSTRSPR
+	? Lokal("Vrsta posla:"),idvposla,vposla->naz,"         Radi od:",radn->datod
+	? IF(gBodK=="1",Lokal("Broj bodova :"),Lokal("Koeficijent :")),transform(brbod,"99999.99"),space(24)
 	if gMinR=="B"
-		?? "Minuli rad:",transform(kminrad,"9999.99")
+		?? Lokal("Minuli rad:"),transform(kminrad,"9999.99")
 	else
-		?? "K.Min.rada:",transform(kminrad,"99.99%")
+		?? Lokal("K.Min.rada:"),transform(kminrad,"99.99%")
 	endif
-	? IF(gBodK=="1","Vrijednost boda:","Vr.koeficijenta:"), transform(parobr->vrbod,"99999.99999")
+	? IF(gBodK=="1",Lokal("Vrijednost boda:"),Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
 	if lRadniSati
 		?? SPACE(19) + "Radni sati:   " + ALLTRIM(STR(ld->radsat))
 	endif
@@ -317,9 +317,9 @@ for i:=1 to cLDPolja
 	if tippr->uneto=="N" .and. cUneto=="D"
 		cUneto:="N"
 		? m
-		? cLMSK+"UKUPNO NETO:"
+		? cLMSK+Lokal("UKUPNO NETO:")
 		@ prow(),nC1+8  SAY  _USati  pict gpics
-		?? " sati"
+		?? SPACE(1) + Lokal("sati")
 		@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
 		?? "",gValuta
 		? m
@@ -334,7 +334,7 @@ for i:=1 to cLDPolja
 			if nDJ<>0
 				RSati:=_s&cPom
 				@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
-				@ prow()+1,0 SAY "Odbici od bruta: "
+				@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
 				@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
 				if type(cDJ)="C"
 					cTPNaz:=left(tippr->naz,nDJ-1)+&cDJ
@@ -349,7 +349,7 @@ for i:=1 to cLDPolja
 				if tippr->id=="01" .and. lRadniSati
 					nRRSati:=_s&cPom
 					@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
-					@ prow()+1,0 SAY "Odbici od bruta: "
+					@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
 					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
 				else
 					@ prow(),60+LEN(cLMSK) say _i&cPom pict gpici
@@ -370,7 +370,7 @@ for i:=1 to cLDPolja
 					P_COND
 				ENDIF
 				? m
-				? cLMSK+"  ","Od toga pojedinacni krediti:"
+				? cLMSK+"  ",Lokal("Od toga pojedinacni krediti:")
 				select radkr
 				set order to 1
 				seek str(_godina,4)+str(_mjesec,2)+_idradn
@@ -403,7 +403,7 @@ for i:=1 to cLDPolja
 					P_COND
 				ENDIF
 				? m2:=cLMSK+"   ------------------------------------------------  --------- --------- -------"
-				?     cLMSK+"        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata"
+				?     cLMSK+Lokal("        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata")
 				? m2
 				do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn==_idradn
 					select kred
@@ -429,7 +429,7 @@ for i:=1 to cLDPolja
 next
 ?
 ? m
-?  cLMSK+"UKUPNO ZA ISPLATU"
+?  cLMSK+Lokal("UKUPNO ZA ISPLATU")
 @ prow(),60+LEN(cLMSK) SAY _UIznos pict gpici
 ?? "",gValuta
 ? m
@@ -441,12 +441,12 @@ if cVarijanta=="5"
 	hseek str(_godina,4)+str(_mjesec,2)+"1"+_idradn+_idrj
 	// hseek "1"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
 	?
-	? cLMSK+"Od toga 1. dio:"
+	? cLMSK+Lokal("Od toga 1. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
 	? m
 	hseek str(_godina,4)+str(_mjesec,2)+"2"+_idradn+_idrj
 	// hseek "2"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
-	? cLMSK+"Od toga 2. dio:"
+	? cLMSK+Lokal("Od toga 2. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
 	? m
 	select ld
@@ -456,7 +456,7 @@ if lRadniSati
 	? Lokal("NAPOMENA: Ostaje da se plati iz preraspodjele radnog vremena ")
 	?? ALLTRIM(STR((ld->radsat)-nRRSati))  + " sati."
 	? Lokal("          Uplaceno za tekuci mjesec: " + " sati.")
-	? Lokal("          Ostatak predhodnih obracuna: ") + GetStatusRSati(cIdRadn) + " sati"
+	? Lokal("          Ostatak predhodnih obracuna: ") + GetStatusRSati(cIdRadn) + SPACE(1) + Lokal("sati")
 	?
 endif
          
@@ -545,7 +545,7 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	endif
 	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
 		? m
-		? cLMSK+"Ukupno Porez"
+		? cLMSK+Lokal("Ukupno Porez")
 		@ prow(),nC1 SAY space(len(gpici))
 		@ prow(),pcol()+1 SAY nPor-nPorOl pict gpici
 		? m
@@ -704,7 +704,7 @@ next
 ? m
 ? cLMSK+ Lokal("UKUPNO NETO:")
 @ prow(),nC1+8  SAY  _USati  pict gpics
-?? " sati"
+?? SPACE(1) + Lokal("sati")
 @ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
 ?? "",gValuta
 ? m
@@ -778,7 +778,7 @@ endif
 IF !lSkrivena
 	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
 		? m
-		? cLMSK+"Ukupno Porez"
+		? cLMSK+Lokal("Ukupno Porez")
 		// @ prow(),nC1 SAY space(len(gpici))
 		@ prow(),39+LEN(cLMSK) SAY nPor-nPorOl pict gpici
 		? m
@@ -837,7 +837,7 @@ do while !eof()  // DOPRINOSI
 enddo // doprinosi
 
 IF lSkrivena
-	? cLMSK+"UKUPNO POREZ:"+TRANSFORM(nPor-nPorOl,gPicI)+", DOPRINOSI:"+TRANSFORM(nDopr,gPicI)+", POR.+DOPR.:"+TRANSFORM(nPorDopr,gPicI)
+	? cLMSK+Lokal("UKUPNO POREZ:")+TRANSFORM(nPor-nPorOl,gPicI)+", " + Lokal("DOPRINOSI:")+TRANSFORM(nDopr,gPicI)+", " + Lokal("POR.+DOPR.:")+TRANSFORM(nPorDopr,gPicI)
 ELSE
 	? m
 	? cLMSK+ Lokal("UKUPNO POREZ+DOPRINOSI")
@@ -855,7 +855,7 @@ IF !lSkrivena
 	? m
 ENDIF
 
-? cLMSK+"- OBUSTAVE :"
+? cLMSK+Lokal("- OBUSTAVE :")
 ? m
 private fImaNak:=.f.,nObustave:=0
 
@@ -873,7 +873,7 @@ next
 
 if nObustave>0
 	? m
-	? cLMSK+"UKUPNO OBUSTAVE:"
+	? cLMSK+Lokal("UKUPNO OBUSTAVE:")
 	@ prow(),60+LEN(cLMSK) SAY nObustave pict gpici
 	? m
 endif
@@ -882,7 +882,7 @@ if fImaNak
 	if !(nObustave>0)
 		? m
 	endif
-	? cLMSK+"+ NAKNADE (primanja van neta):"
+	? cLMSK+"+ " + Lokal("NAKNADE (primanja van neta):")
 	? m
 endif
 

@@ -199,7 +199,7 @@ enddo
 
 if prow()>60+gpStranica; FF; Eval(bZagl); endif
 ? m
-? " UKUPNO:"
+? SPACE(1) + Lokal("UKUPNO:")
 @ prow(),nC1 SAY  nT1 pict gpics
 IF gVarPP="2"
   @ prow(),pcol()+1 SAY  nT2a pict gpici
@@ -225,28 +225,29 @@ P_COND
 ? UPPER(gTS)+":",gnFirma
 ?
 if empty(cidrj)
- ? "Pregled za sve RJ ukupno:"
+ ? Lokal("Pregled za sve RJ ukupno:")
 else
- ? "RJ:",cidrj,rj->naz
+ ? Lokal("RJ:"), cIdRj, rj->naz
 endif
-?? "  Mjesec:",str(cmjesec,2)+IspisObr()
-?? "    Godina:",str(cGodina,5)
+?? SPACE(2) + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
+?? SPACE(4) + Lokal("Godina:"),str(cGodina,5)
 devpos(prow(),74)
-?? "Str.",str(++nStrana,3)
+?? Lokal("Str."),str(++nStrana,3)
 if !empty(cvposla)
-  ? "Vrsta posla:",cvposla,"-",vposla->naz
+  ? Lokal("Vrsta posla:"),cvposla,"-",vposla->naz
 endif
 if !empty(cKBenef)
-  ? "Stopa beneficiranog r.st:",ckbenef,"-",kbenef->naz,":",kbenef->iznos
+  ? Lokal("Stopa beneficiranog r.st:"),ckbenef,"-",kbenef->naz,":",kbenef->iznos
 endif
 ? m
 IF gVarPP=="2"
-  ? " Rbr * Sifra*         Naziv radnika            *  Sati *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*"
-  ? "     *      *                                  *       *     rad   *   rad     *           * Primanja  * Obustave *           *"
+  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
+  ? Lokal("     *      *                                  *       *     rad   *   rad     *           * Primanja  * Obustave *           *")
 ELSE
-  ? " Rbr * Sifra*         Naziv radnika            *  Sati *   Neto    *  Odbici   * ZA ISPLATU*"
+  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati *   Neto    *  Odbici   * ZA ISPLATU*")
   ? "     *      *                                  *       *           *           *           *"
 ENDIF
 ? m
 return
 *}
+
