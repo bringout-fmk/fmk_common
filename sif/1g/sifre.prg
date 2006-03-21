@@ -17,30 +17,36 @@ if (!used())
 endif
 select (nArr)
 
-ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Prezime",20),{|| naz}, "naz" } ,;
-          { padr("Ime roditelja",15),{|| imerod}, "imerod" } ,;
-          { padr("Ime",15),{|| ime}, "ime" } ,;
-          { padr(IF(gBodK=="1","Br.bodova","Koeficij."),10),{|| brbod}, "brbod" }, ;
-          { padr("MinR%",5),{|| kminrad}, "kminrad" }, ;
-          { padr("StrSpr",6),{|| padc(Idstrspr,6)}, "idstrspr", {||.t.}, {|| P_StrSpr(@wIdStrSpr)} } ,;
-          { padr("V.Posla",6),{|| padc(IdVPosla,6)}, "IdVPosla", {||.t.}, {|| empty(widvposla) .or. P_VPosla(@wIdVPosla)} }, ;
-          { padr("Ops.Stan",8),{|| padc(IdOpsSt,8)}, "IdOpsSt", {||.t.}, {|| P_Ops(@wIdOpsSt)} }, ;
-          { padr("Ops.Rada",8),{|| padc(IdOpsRad,8)}, "IdOpsRad", {||.t.}, {|| P_Ops(@wIdOpsRad)} }, ;
-          { padr("Maticni Br.",13),{|| padc(matbr,13)}, "MatBr", {||.t.}, {|| .t.} }, ;
-          { padr("Dat.Od",8),{|| datod}, "datod", {||.t.}, {|| .t.} }, ;
-          { padr("POL",3),{|| padc(pol,3)}, "POL", {||.t.}, {|| wPol $ "MZ"} }, ;
-          { padr("K1",2),{|| padc(k1,2)}, "K1", {||.t.}, {|| .t.} }, ;
-          { padr("K2",2),{|| padc(k2,2)}, "K2", {||.t.}, {|| .t.} }, ;
-          { padr("K3",2),{|| padc(k3,2)}, "K3", {||.t.}, {|| .t.} }, ;
-          { padr("K4",2),{|| padc(k4,2)}, "K4", {||.t.}, {|| .t.} }, ;
-          { padr("PorOl",6),{|| porol}, "POROL", {||.t.}, {|| .t.} }, ;
-          { padr("Radno mjesto",30),{|| rmjesto}, "RMJESTO", {||.t.}, {|| .t.} },;
-          { padr("Br. Knjizice ",12),{|| padc(brknjiz,12)}, "brknjiz", {||.t.}, {|| .t.} }, ;
-          { padr("Br. Tekuceg rac.",20) ,{|| padc(brtekr,20)}, "brtekr", {||.t.}, {|| .t.} }, ;
-          { padr("Isplata",7),{|| padc(isplata,7)}, "isplata", {||.t.}, {|| wIsplata $ "  #TR#SK#BL" .or. MsgIspl()} }, ;
-          { padr("Banka",6),{|| padc(idbanka,6)}, "idbanka", {||.t.}, {|| EMPTY(WIDBANKA) .OR. P_Kred(@widbanka)} } ,;
-          { padr("OSN.Bol",11),{|| osnbol}, "osnbol" }}
+ImeKol:={}
+AADD(ImeKol, { Local(padr("Id",6)), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} })
+AADD(ImeKol, { Local(padr("Prezime", 20)),{|| naz}, "naz" } )
+AADD(ImeKol, { Local(padr("Ime roditelja",15)),{|| imerod}, "imerod" } )
+AADD(ImeKol, { Local(padr("Ime",15)), {|| ime}, "ime" } )
+AADD(ImeKol, { padr( IF(gBodK=="1", Local("Br.bodova"), Local("Koeficij.")), 10),{|| brbod}, "brbod" })
+AADD(ImeKol, { Local(padr("MinR%", 5)), {|| kminrad}, "kminrad" })
+AADD(ImeKol, { Local(padr("StrSpr",6)), {|| padc(Idstrspr,6)}, "idstrspr", {||.t.}, {|| P_StrSpr(@wIdStrSpr)} } )
+AADD(ImeKol, { Local(padr("V.Posla",6)), {|| padc(IdVPosla,6)}, "IdVPosla", {||.t.}, {|| empty(widvposla) .or. P_VPosla(@wIdVPosla)} })
+AADD(ImeKol, { Local(padr("Ops.Stan",8)),{|| padc(IdOpsSt,8)}, "IdOpsSt", {||.t.}, {|| P_Ops(@wIdOpsSt)} })
+AADD(ImeKol, { Local(padr("Ops.Rada",8)),{|| padc(IdOpsRad,8)}, "IdOpsRad", {||.t.}, {|| P_Ops(@wIdOpsRad)} })
+AADD(ImeKol, { Local(padr("Maticni Br.",13)),{|| padc(matbr,13)}, "MatBr", {||.t.}, {|| .t.} })
+AADD(ImeKol, { Local(padr("Dat.Od",8)), {|| datod}, "datod", {||.t.}, {|| .t.} })
+AADD(ImeKol, { Local(padr("POL",3)), {|| padc(pol,3)}, "POL", {||.t.}, {|| wPol $ "MZ"} })
+AADD(ImeKol, { padr("K1",2),{|| padc(k1,2)}, "K1", {||.t.}, {|| .t.} })
+AADD(ImeKol, { padr("K2",2),{|| padc(k2,2)}, "K2", {||.t.}, {|| .t.} })
+AADD(ImeKol, { padr("K3",2),{|| padc(k3,2)}, "K3", {||.t.}, {|| .t.} })
+AADD(ImeKol, { padr("K4",2),{|| padc(k4,2)}, "K4", {||.t.}, {|| .t.} })
+AADD(ImeKol, { Local(padr("PorOl",6)), {|| porol}, "POROL", {||.t.}, {|| .t.} })
+
+AADD(ImeKol, { Local(padr("Radno mjesto",30)), {|| rmjesto}, "RMJESTO", {||.t.}, {|| .t.} })
+
+AADD(ImeKol, { Local(padr("Br. Knjizice ",12)), {|| padc(brknjiz,12)}, "brknjiz", {||.t.}, {|| .t.} })
+
+AADD(ImeKol, { Local(padr("Br. Tekuceg rac.",20)) , {|| padc(brtekr,20)}, "brtekr", {||.t.}, {|| .t.} })
+
+AADD(ImeKol, { Local(padr("Isplata",7)), {|| padc(isplata,7)}, "isplata", {||.t.}, {|| wIsplata $ "  #TR#SK#BL" .or. MsgIspl()} })
+AADD(ImeKol, { Local(padr("Banka",6)), {|| padc(idbanka,6)}, "idbanka", {||.t.}, {|| EMPTY(WIDBANKA) .OR. P_Kred(@widbanka)} } )
+
+AADD( ImeKol, { Local( padr("OSN.Bol", 11) ) , {|| osnbol}, "osnbol" } )
 
 if radn->(fieldpos("N1")<>0)
 	AADD(ImeKol,{padc("N1",12 ),{|| n1},"n1"})
@@ -49,15 +55,15 @@ if radn->(fieldpos("N1")<>0)
 endif
 
 if radn->(fieldpos("IDRJ")<>0)
-	AADD(ImeKol, {"ID RJ", {|| idrj}, "idrj", {||.t.}, {|| EMPTY(wIdRj) .or. P_Rj(@wIdRj)} } )
+	AADD(ImeKol, { "ID RJ" , {|| idrj}, "idrj", {||.t.}, {|| EMPTY(wIdRj) .or. P_Rj(@wIdRj)} } )
 endif
 
 // Dodaj specificna polja za popunu obrasca DP
 if radn->(fieldpos("STREETNAME")<>0)
-	AADD(ImeKol,{padc("Ime ul.",40 ),{|| streetname},"streetname"})
-  	AADD(ImeKol,{padc("Broj ul.",10 ),{|| streetnum},"streetnum"})
-  	AADD(ImeKol,{padc("Zaposl.od",12 ),{|| hiredfrom},"hiredfrom",{|| .t.},{|| P_HiredFrom(@wHiredfrom)}})
-  	AADD(ImeKol,{padc("Zaposl.do",12 ),{|| hiredto},"hiredto"})
+	AADD(ImeKol,{Local(padc("Ime ul.",40 )), {|| streetname},"streetname"})
+  	AADD(ImeKol,{Local(padc("Broj ul.",10 )),{|| streetnum},"streetnum"})
+  	AADD(ImeKol,{Local(padc("Zaposl.od",12 )),{|| hiredfrom},"hiredfrom",{|| .t.},{|| P_HiredFrom(@wHiredfrom)}})
+  	AADD(ImeKol,{Local(padc("Zaposl.do",12 )),{|| hiredto},"hiredto"})
 endif
 
 Kol:={}
@@ -67,7 +73,7 @@ for i:=1 to LEN(ImeKol)
 next
 
 if gMinR=="B"
-	ImeKol[6]:={padr("MinR",7),{|| transform(kminrad,"9999.99")},"kminrad"}
+	ImeKol[6]:={Local(padr("MinR",7)), {|| transform(kminrad,"9999.99")},"kminrad"}
 endif
 
 for i:=1 to 9
@@ -81,7 +87,9 @@ for i:=1 to 9
 next
 
 
-return PostojiSifra(F_RADN,1,12,72,"Lista radnika",@cId,dx,dy,{|Ch| RadBl(Ch)},,,,,{"ID"})
+return PostojiSifra(F_RADN, 1, 12, 72, Local("Lista radnika"), ;
+          @cId, dx, dy, ;
+	  {|Ch| RadBl(Ch)},,,,,{"ID"})
 *}
 
 /*! \fn P_HiredFrom(dHiredFrom)
@@ -90,7 +98,7 @@ return PostojiSifra(F_RADN,1,12,72,"Lista radnika",@cId,dx,dy,{|Ch| RadBl(Ch)},,
  */
 function P_HiredFrom(dHiredFrom)
 *{
-if EMPTY(DToS(dHiredFrom)) .and. !EMPTY(DToS(field->datod)) .and. Pitanje(,"Popuni polje na osnovu polja Datum Od","D")=="D"
+if EMPTY(DToS(dHiredFrom)) .and. !EMPTY(DToS(field->datod)) .and. Pitanje(, Local("Popuni polje na osnovu polja Datum Od"), "D") == "D"
 	dHiredFrom:=field->datod
 endif
 return .t.
@@ -124,7 +132,7 @@ if (Ch==K_ALT_M)
 		return DE_CONT
 	endif
 
-	MsgO("Prolazim kroz tabelu radnika..")
+	MsgO(Local("Prolazim kroz tabelu radnika.."))
 
 	select radn
 	go top
@@ -148,7 +156,7 @@ if (Ch==K_ALT_M)
 elseif (Ch==K_CTRL_T)
 	if ImaURadKr(radn->id,"2")
    		Beep(1)
-   		Msg("Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!")
+   		Msg(Local("Stavka radnika se ne moze brisati jer se vec nalazi u obracunu!"))
   		return 7
  	endif
 elseif (Ch==K_F2)
@@ -164,15 +172,16 @@ return DE_CONT
 function MsgIspl()
 *{
 Box(,3,50)
-	@ m_x+1,m_y+2 SAY "Vazece sifre su: TR - tekuci racun   "
- 	@ m_x+2,m_y+2 SAY "                 SK - stedna knjizica"
- 	@ m_x+3,m_y+2 SAY "                 BL - blagajna"
+	@ m_x+1,m_y+2 SAY Local("Vazece sifre su: TR - tekuci racun   ")
+ 	@ m_x+2,m_y+2 SAY Local("                 SK - stedna knjizica")
+ 	@ m_x+3,m_y+2 SAY Local("                 BL - blagajna")
  	inkey(0)
 BoxC()
 return .f.
 *}
 
-
+// ------------------------------
+// ------------------------------
 function P_ParObr(cId,dx,dy)
 *{
 local nArr
@@ -211,10 +220,13 @@ for i:=1 to LEN(ImeKol)
 	AADD(kol,i)
 next
 
-return PostojiSifra(F_PAROBR,1,10,70,"Parametri obracuna",@cId,dx,dy)
+return PostojiSifra(F_PAROBR, 1, 10, 70, Local("Parametri obracuna"), ;
+	@cId, dx, dy)
 *}
 
 
+// --------------------------------------------
+// --------------------------------------------
 function P_TipPr(cId,dx,dy)
 *{
 local nArr
@@ -238,10 +250,14 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Opis",8), {|| opis}, "opis"  } ;
        }
 Kol:={1,2,3,4,5,6,7,8}
-return PostojiSifra(F_TIPPR,1,10,55,"Tipovi primanja",@cId,dx,dy,{|Ch| TprBl(Ch)},,,,,{"ID"})
+return PostojiSifra(F_TIPPR, 1, 10, 55, Local("Tipovi primanja"), ;
+	@cId, dx, dy, ;
+	{|Ch| TprBl(Ch)},,,,,{"ID"})
 *}
 
 
+// ------------------------------------------
+// ------------------------------------------
 function TprBl(Ch)
 *{
 if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR")
@@ -284,11 +300,14 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Opis",8), {|| opis}, "opis"  } ;
        }
 Kol:={1,2,3,4,5,6,7,8}
-return PostojiSifra(F_TIPPR2,1,10,55,"Tipovi primanja za obracun 2",@cId,dx,dy,{|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
+return PostojiSifra( F_TIPPR2, 1, 10, 55, Local("Tipovi primanja za obracun 2"), ;
+	@cId, dx, dy, ;
+	{|Ch| Tpr2Bl(Ch)},,,,,{"ID"})
 *}
 
 
-
+// -----------------------------------------------
+// -----------------------------------------------
 function Tpr2Bl(Ch)
 *{
 if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR2")
@@ -309,6 +328,8 @@ return DE_CONT
 
 
 
+// -----------------------------------------------
+// -----------------------------------------------
 function P_RJ(cId,dx,dy)
 *{
 local nArr
@@ -327,10 +348,12 @@ ImeKol:={{padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
        }
 Kol:={1,2}
 
-return PostojiSifra(F_RJ,1,10,55,"Lista radnih jedinica",@cId,dx,dy)
+return PostojiSifra(F_RJ, 1, 10, 55, Local("Lista radnih jedinica"), @cId, dx, dy)
 *}
 
 
+// ------------------------------------
+// ------------------------------------
 function P_Ops(cId,dx,dy)
 *{
 local nArr
@@ -376,7 +399,9 @@ endif
 for i:=1 to LEN(ImeKol)
 	AADD(kol,i)
 next
-return PostojiSifra(F_OPS,1,10,65,"Lista opcina",@cId,dx,dy)
+return PostojiSifra(F_OPS, 1, 10, 65, ;
+ 	Local("Lista opcina"), ;
+	@cId,dx,dy)
 *}
 
 
@@ -403,16 +428,18 @@ ImeKol:={ { padr("Id",6), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
        }
 // Dorade 2001
 Kol:={1,2,3,4,5,6,7,8}
-return PostojiSifra(F_KRED,1,10,55,"Lista kreditora",@cId,dx,dy)
+return PostojiSifra(F_KRED, 1, 10, 55, Local("Lista kreditora"), ;
+	@cId, dx, dy)
 *}
 
-
+// -----------------------------
+// -----------------------------
 function KrBlok(Ch)
 *{
 if (Ch==K_CTRL_T)
 	if ImaURadKr(KRED->id,"3")
    		Beep(1)
-   		Msg("Firma se ne moze brisati jer je vec koristena u obracunu!")
+   		Msg(Local("Firma se ne moze brisati jer je vec koristena u obracunu!"))
    		return 7
  	endif
 elseif (Ch==K_F2)
@@ -424,7 +451,8 @@ endif
 return DE_CONT
 *}
 
-
+// ------------------------------------------------
+// ------------------------------------------------
 function ImaURadKr(cKljuc,cTag)
 *{
 local lVrati:=.f.
@@ -504,7 +532,8 @@ select (nArr)
 return lVrati
 *}
 
-
+// ---------------------------------
+// ---------------------------------
 function P_POR(cId,dx,dy)
 *{
 local nArr
@@ -564,7 +593,9 @@ do while !eof() .and. ID="POR"
 enddo
 
 PopWa()
-return PostojiSifra(F_POR,1,10,75,"Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled",@cId,dx,dy,{|Ch| PorBl(Ch)})
+return PostojiSifra(F_POR, 1, 10, 75, ;
+        Local("Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled"), ;
+	@cId,dx,dy,{|Ch| PorBl(Ch)})
 *}
 
 
@@ -635,10 +666,13 @@ do while !eof() .and. ID="DOPR"
 enddo
 
 PopWa()
-return PostojiSifra(F_DOPR,1,10,75,"Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled",@cId,dx,dy,{|Ch| DoprBl(Ch)})
+return PostojiSifra(F_DOPR, 1, 10, 75, ;
+	Local("Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled"), ;
+	@cId,dx,dy,{|Ch| DoprBl(Ch)})
 *}
 
-
+// --------------------------------
+// --------------------------------
 function P_KBenef(cId,dx,dy)
 *{
 local nArr
@@ -657,7 +691,9 @@ ImeKol:={ { padr("Id",3), {|| padc(id,3)}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("Iznos",5), {||  iznos}, "iznos" }                       ;
        }
 Kol:={1,2,3}
-return PostojiSifra(F_KBENEF,1,10,55,"Lista koef.beneficiranog radnog staza",@cId,dx,dy)
+return PostojiSifra(F_KBENEF, 1, 10, 55, ;
+	Local("Lista koef.beneficiranog radnog staza"), ;
+	@cId,dx,dy)
 *}
 
 
@@ -679,7 +715,9 @@ ImeKol:={ { padr("Id",3), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("naz2",6), {|| naz2}, "naz2" }                     ;
        }
 Kol:={1,2,3}
-return PostojiSifra(F_STRSPR,1,10,55,"Lista: strucne spreme",@cId,dx,dy)
+return PostojiSifra( F_STRSPR, 1, 10, 55, ;
+	Local("Lista: strucne spreme"), ;
+	@cId,dx,dy)
 *}
 
 
@@ -701,7 +739,9 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| P_KBenef(@widkbenef) }  }  ;
        }
 Kol:={ 1,2,3}
-return PostojiSifra(F_VPOSLA,1,10,55,"Lista: Vrste posla",@cId,dx,dy)
+return PostojiSifra(F_VPOSLA, 1, 10, 55, ;
+	Local("Lista: Vrste posla"), ;
+	@cId,dx,dy)
 *}
 
 
@@ -768,8 +808,8 @@ O_LD           // idradn, "RADN"
 O_LDSM         // idradn, "RADN"
 
 Box(,7,75)
-	@ m_x+ 0, m_y+ 5 SAY "TOTALNO BRISANJE RADNIKA IZ EVIDENCIJE"
- 	@ m_x+ 8, m_y+20 SAY "<F5> - trazenje radnika pomocu sifrarnika"
+	@ m_x+ 0, m_y+ 5 SAY Local("TOTALNO BRISANJE RADNIKA IZ EVIDENCIJE")
+ 	@ m_x+ 8, m_y+20 SAY Local("<F5> - trazenje radnika pomocu sifrarnika")
  	set key K_F5 TO TRUSif()
  	do while .t.
     		BoxCLS()
@@ -777,7 +817,7 @@ Box(,7,75)
       				cIdRadn:=SPACE(6)
       				cSigurno:="N"
     			endif
-    			@ m_x+2, m_y+2 SAY "Radnik" GET cIdRadn PICT "@!"
+    			@ m_x+2, m_y+2 SAY Local("Radnik") GET cIdRadn PICT "@!"
     			@ m_x+6, m_y+2 SAY "Sigurno ga zelite obrisati (D/N) ?" GET cSigurno WHEN PrTotBR(cIdRadn) VALID cSigurno$"DN" PICT "@!"
     			read
     			if (LastKey()==K_ESC)
@@ -933,7 +973,9 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
           { "Mjesto", {|| mjesto}, "mjesto" }                ;
        }
 Kol:={1,2,3}
-return PostojiSifra(F_BANKE,1,10,55,"Lista banaka",@cId,dx,dy)
+return PostojiSifra(F_BANKE, 1, 10, 55,;
+	Local("Lista banaka"), ;
+	@cId,dx,dy)
 *}
 
 
@@ -1044,6 +1086,8 @@ return nVrati
 *}
 
 
+// ------------------------------------
+// ------------------------------------
 function DoprBl(Ch)
 *{
 local nVrati:=DE_CONT
@@ -1057,8 +1101,8 @@ DO CASE
       cMj  := gMjesec
       cGod := gGodina
       private GetList:={}
-      Box("#PROMJENA DOPRINOSA U TOKU GODINE",4,60)
-        @ m_x+2, m_y+2 SAY "Posljednji mjesec po starim doprinosima:" GET cMj VALID cMj>0 .and. cMj<13
+      Box( Local("#PROMJENA DOPRINOSA U TOKU GODINE"), 4, 60)
+        @ m_x+2, m_y+2 SAY Local("Posljednji mjesec po starim doprinosima:") GET cMj VALID cMj>0 .and. cMj<13
         @ m_x+3, m_y+2 SAY "Godina: "+STR(cGod)
         READ
         IF LASTKEY()==K_ESC; BoxC(); RETURN nVrati; ENDIF
