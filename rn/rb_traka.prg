@@ -97,6 +97,8 @@ local cTemp
 cTemp := get_dtxt_opis("D01")
 if cTemp == "A"
 	lRet := .t.
+elseif cTemp == "S"
+	lRet := .t.
 else
 	lRet := .f.
 endif
@@ -159,6 +161,7 @@ local lViseRacuna := .f.
 local nPFeed
 local cOtvLadSkv // sekv.otvaranja ladice
 local cSjeTraSkv // sekv.sjecenja trake
+local cZakBr:=""
 
 if lStartPrint
 	START PRINT2 CRET gLocPort, SPACE(5)
@@ -170,6 +173,8 @@ rb_traka_line(@cLine)
 get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
 
 hd_rb_traka()
+
+g_sto_zaklj(@cZakBr)
 
 select drn
 go top
@@ -188,7 +193,8 @@ go top
 ? cLine
 
 // broj racuna
-? SPACE(10) + "BLAGAJNA RACUN br." + ALLTRIM(drn->brdok) 
+? SPACE(10) + "BLAGAJNA RACUN br." + ALLTRIM(drn->brdok) + IF(!Empty(cZakBr),"-"+cZakBr, "") 
+
 if lAzurDok
 	if lStartPrint
 		? SPACE(15) + "PREPIS"
@@ -329,6 +335,16 @@ endif
 
 ?
 
+return
+*}
+
+
+function g_sto_zaklj(cZakBr)
+*{
+cZakBr := get_dtxt_opis("R11")
+if cZakBr == "-"
+	cZakBr:=""
+endif
 return
 *}
 
