@@ -174,7 +174,7 @@ get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
 
 hd_rb_traka()
 
-g_sto_zaklj(@cZakBr)
+//g_sto_zaklj(@cZakBr)
 
 select drn
 go top
@@ -193,7 +193,7 @@ go top
 ? cLine
 
 // broj racuna
-? SPACE(10) + "BLAGAJNA RACUN br." + ALLTRIM(drn->brdok) + IF(!Empty(cZakBr),"-"+cZakBr, "") 
+? SPACE(10) + "BLAGAJNA RACUN br." + ALLTRIM(drn->brdok) 
 
 if lAzurDok
 	if lStartPrint
@@ -339,14 +339,14 @@ return
 *}
 
 
-function g_sto_zaklj(cZakBr)
+//function g_sto_zaklj(cZakBr)
 *{
-cZakBr := get_dtxt_opis("R11")
-if cZakBr == "-"
-	cZakBr:=""
-endif
-return
-*}
+//cZakBr := get_dtxt_opis("R11")
+//if cZakBr == "-"
+//	cZakBr:=""
+//endif
+//return
+//*}
 
 
 function ft_rb_traka(cIdRadnik)

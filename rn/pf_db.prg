@@ -64,7 +64,10 @@ endif
 
 // kreiraj indexe
 CREATE_INDEX("1", "brdok+DToS(datdok)", PRIVPATH + "DRN")
+
 CREATE_INDEX("1", "brdok+rbr+podbr", PRIVPATH + "RN")
+CREATE_INDEX("IDROBA", "idroba", PRIVPATH + "RN")
+
 CREATE_INDEX("1", "tip", PRIVPATH + "DRNTEXT")
 
 return
