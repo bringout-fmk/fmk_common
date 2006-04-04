@@ -174,7 +174,6 @@ get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
 
 hd_rb_traka()
 
-//g_sto_zaklj(@cZakBr)
 
 select drn
 go top
@@ -339,14 +338,14 @@ return
 *}
 
 
-//function g_sto_zaklj(cZakBr)
+function g_br_stola(cBrStola)
 *{
-//cZakBr := get_dtxt_opis("R11")
-//if cZakBr == "-"
-//	cZakBr:=""
-//endif
-//return
-//*}
+cBrStola := get_dtxt_opis("R11")
+if cBrStola == "-"
+	cBrStola := ""
+endif
+return
+*}
 
 
 function ft_rb_traka(cIdRadnik)
@@ -358,6 +357,7 @@ local cVrstaP
 local cPomTxt1
 local cPomTxt2
 local cPomTxt3
+local cBrStola
 
 cRadnik := get_dtxt_opis("R02")
 cSmjena := get_dtxt_opis("R03")
@@ -366,9 +366,15 @@ cPomTxt1 := get_dtxt_opis("R06")
 cPomTxt2 := get_dtxt_opis("R07")
 cPomTxt3 := get_dtxt_opis("R08")
 
+g_br_stola(@cBrStola)
+
 ? cRazmak + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
 ?
 ? cRazmak + "Placanje izvrseno: " + cVrstaP 
+
+if !EMPTY(cBrStola)
+	? cRazmak + "Sto.br:" + SPACE(1) + cBrStola
+endif
 
 // pomocni text na racunu
 if !EMPTY(cPomTXT1)
