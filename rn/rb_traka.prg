@@ -348,6 +348,19 @@ return
 *}
 
 
+function g_vez_racuni(aRacuni)
+*{
+local cRead
+cRead := get_dtxt_opis("R12")
+if cRead == "-"
+	aRacuni := {}
+	return
+endif
+aRacuni:=SjeciStr(cRead, 20)
+return
+*}
+
+
 function ft_rb_traka(cIdRadnik)
 *{
 local cRazmak := SPACE(1)
@@ -358,6 +371,8 @@ local cPomTxt1
 local cPomTxt2
 local cPomTxt3
 local cBrStola
+local cVezRacuni:=""
+local aVezRacuni:={}
 
 cRadnik := get_dtxt_opis("R02")
 cSmjena := get_dtxt_opis("R03")
@@ -367,10 +382,21 @@ cPomTxt2 := get_dtxt_opis("R07")
 cPomTxt3 := get_dtxt_opis("R08")
 
 g_br_stola(@cBrStola)
+g_vez_racuni(@aVezRacuni)
 
 ? cRazmak + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
 if !EMPTY(cBrStola)
 	? cRazmak + "Sto.br:" + SPACE(1) + cBrStola
+	if LEN(aVezRacuni) > 0
+		?? " RN: "
+		for i:=1 to LEN(aVezRacuni)
+			if i == 1
+				?? aVezRacuni[i]
+			else
+				? cRazmak + aVezRacuni[i]
+			endif
+		next
+	endif
 else
 	?
 endif
