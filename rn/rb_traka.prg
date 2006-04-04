@@ -369,12 +369,12 @@ cPomTxt3 := get_dtxt_opis("R08")
 g_br_stola(@cBrStola)
 
 ? cRazmak + PADR(cRadnik,27), PADL("Smjena: " + cSmjena, 10)
-?
-? cRazmak + "Placanje izvrseno: " + cVrstaP 
-
 if !EMPTY(cBrStola)
 	? cRazmak + "Sto.br:" + SPACE(1) + cBrStola
+else
+	?
 endif
+? cRazmak + "Placanje izvrseno: " + cVrstaP 
 
 // pomocni text na racunu
 if !EMPTY(cPomTXT1)
