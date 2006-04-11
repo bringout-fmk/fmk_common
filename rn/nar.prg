@@ -13,6 +13,9 @@ static nStr := 0
 // za prikaz vecih fontova
 static nDuzStrKorekcija := 0
 
+// prikaz samo kolicine 0, cijena 1
+static nSw6
+
 
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
@@ -76,6 +79,8 @@ if lStartPrint
 
 endif
 
+nSw6 := VAL(get_dtxt_opis("X09"))
+
 lPrintedTotal := .f.
 
 // uzmi glavne varijable za stampu fakture
@@ -129,12 +134,14 @@ do while !EOF()
 	?? show_number(rn->kolicina, PIC_KOLICINA()) 
 	?? " "
 	
-	// cijena bez pdv
-	?? show_number(rn->cjenbpdv, PIC_CIJENA()) 
-	?? " "
+	if nSw6 > 0
+	
+		// cijena bez pdv
+		?? show_number(rn->cjenbpdv, PIC_CIJENA()) 
+		?? " "
 
 
-	if lShowPopust
+		if lShowPopust
 			// procenat popusta
 			?? show_popust(rn->popust)
 			?? " "
@@ -142,12 +149,13 @@ do while !EOF()
 			// cijena bez pd - popust
 			?? show_number(rn->cjen2bpdv, PIC_CIJENA()) 
 			?? " "
+		endif
+
+
+		// ukupno bez pdv
+		?? show_number( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST())
+		?? " "
 	endif
-
-
-	// ukupno bez pdv
-	?? show_number( rn->cjenbpdv * rn->kolicina,  PIC_VRIJEDNOST())
-	?? " "
 
 	if LEN(aNazivDobra) > 1
 	    // DRUGI RED
@@ -173,14 +181,15 @@ if prow() > nDodRedova + (LEN_STRANICA() - LEN_FOOTER)
 	Nstr_a4(nStr, .t.)
 endif	
 
+if nSw6 > 0
+	print_total()
+	lPrintedTotal:=.t.
 
-print_total()
-lPrintedTotal:=.t.
-
-if prow() > nDodRedova + (LEN_STRANICA() - LEN_FOOTER)
-	++nStr
-	Nstr_a4(nStr, .t.)
-endif	
+	if prow() > nDodRedova + (LEN_STRANICA() - LEN_FOOTER)
+		++nStr
+		Nstr_a4(nStr, .t.)
+	endif	
+endif
 
 // dodaj text na kraju fakture
 nar_footer()
@@ -260,14 +269,15 @@ cRed1 += PADC("R.br", LEN_RBR())
 cRed1 += " " + PADR("Trgovacki naziv dobra (sifra, naziv, jmj)", LEN_NAZIV())
 
 cRed1 += " " + PADC("kolicina", LEN_KOLICINA())
-cRed1 += " " + PADC("C.b.PDV", LEN_CIJENA())
 
-if lShowPopust
- cRed1 += " " + PADC("Pop.%", LEN_PROC2())
- cRed1 += " " + PADC("C.2.b.PDV", LEN_CIJENA())
+if nSw6 > 0
+	cRed1 += " " + PADC("C.b.PDV", LEN_CIJENA())
+	if lShowPopust
+ 		cRed1 += " " + PADC("Pop.%", LEN_PROC2())
+ 		cRed1 += " " + PADC("C.2.b.PDV", LEN_CIJENA())
+	endif
+	cRed1 += " " + PADC("Uk.bez.PDV", LEN_VRIJEDNOST())
 endif
-
-cRed1 += " " + PADC("Uk.bez.PDV", LEN_VRIJEDNOST())
 
 ? cRed1
 
@@ -275,10 +285,6 @@ cRed1 += " " + PADC("Uk.bez.PDV", LEN_VRIJEDNOST())
 
 return
 *}
-
-
-
-
 
 // definicija linije za glavnu tabelu sa stavkama
 function nar_line()
@@ -291,19 +297,20 @@ cLine += " " + REPLICATE("-", LEN_NAZIV())
 // kolicina
 cLine += " " + REPLICATE("-", LEN_KOLICINA())
 
-// cijena b. pdv
-cLine += " " + REPLICATE("-", LEN_CIJENA())
+if nSw6 > 0
+	// cijena b. pdv
+	cLine += " " + REPLICATE("-", LEN_CIJENA())
 
-if lShowPopust
- // popust
- cLine += " " + REPLICATE("-", LEN_PROC2())
- // cijen b. pdv - popust
- cLine += " " + REPLICATE("-", LEN_CIJENA())
+	if lShowPopust
+ 		// popust
+ 		cLine += " " + REPLICATE("-", LEN_PROC2())
+ 		// cijen b. pdv - popust
+ 		cLine += " " + REPLICATE("-", LEN_CIJENA())
+	endif
+
+	// vrijednost b. pdv
+	cLine += " " + REPLICATE("-", LEN_VRIJEDNOST())
 endif
-
-
-// vrijednost b. pdv
-cLine += " " + REPLICATE("-", LEN_VRIJEDNOST())
 
 return cLine
 
