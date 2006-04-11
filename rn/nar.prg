@@ -95,12 +95,17 @@ cLine := nar_line()
 // zaglavlje por.fakt
 nar_header()
 
+if nSw6 == 0
+	P_12CPI
+endif
 
 select rn
 set order to tag "1"
 go top
 
-P_COND
+if nSw6 > 0
+	P_COND
+endif
 
 st_zagl_data()
 
@@ -266,7 +271,7 @@ local cRed3:=""
 
 cRed1 := RAZMAK() 
 cRed1 += PADC("R.br", LEN_RBR()) 
-cRed1 += " " + PADR("Trgovacki naziv dobra (sifra, naziv, jmj)", LEN_NAZIV())
+cRed1 += " " + PADR("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)", LEN_NAZIV())
 
 cRed1 += " " + PADC("kolicina", LEN_KOLICINA())
 

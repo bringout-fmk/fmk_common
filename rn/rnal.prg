@@ -28,7 +28,7 @@ drn_open()
 select drn
 go top
 
-LEN_NAZIV(53)
+LEN_NAZIV(71)
 LEN_UKUPNO(99)
 
 radni_nalog(lStartPrint)
@@ -76,11 +76,11 @@ cLine := rnal_line()
 // zaglavlje por.fakt
 rnal_header()
 
+P_12CPI
+
 select rn
 set order to tag "1"
 go top
-
-P_COND
 
 st_zagl_data()
 
@@ -212,7 +212,7 @@ local cRed3:=""
 
 cRed1 := RAZMAK() 
 cRed1 += PADC("R.br", LEN_RBR()) 
-cRed1 += " " + PADR("Trgovacki naziv dobra (sifra, naziv, jmj)", LEN_NAZIV())
+cRed1 += " " + PADR("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)", LEN_NAZIV())
 
 cRed1 += " " + PADC("kolicina", LEN_KOLICINA())
 
@@ -427,8 +427,9 @@ P_10CPI
 cPom := SPACE(15)
 cPom += "RADNI NALOG br. ___________ od ___________"
 p_line( cPom, 10, .t.)
-cPom := SPACE(29)
-cPom += "Veza (narudzba,ugovor,zahtjev) ________________ od _______________"
+?
+cPom := SPACE(15)
+cPom += "Veza (narudzba,ugovor,zahtjev) __________________________ od __________________________"
 p_line( cPom, 17, .t.)
 
 B_OFF

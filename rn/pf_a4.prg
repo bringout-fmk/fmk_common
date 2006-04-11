@@ -328,7 +328,7 @@ cLine := a4_line("pf")
 
 cRed1 := RAZMAK 
 cRed1 += PADC("R.br", LEN_RBR) 
-cRed1 += " " + PADR("Trgovacki naziv dobra (sifra, naziv, jmj)", LEN_NAZIV)
+cRed1 += " " + PADR("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)", LEN_NAZIV)
 cRed1 += " " + PADC("kolicina", LEN_KOLICINA)
 cRed1 += " " + PADC("C.b.PDV", LEN_CIJENA)
 if lShowPopust
