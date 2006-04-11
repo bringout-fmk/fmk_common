@@ -424,10 +424,12 @@ B_OFF
 ?
 P_10CPI
 // broj dokumenta
-cPom := "RADNI NALOG br. ___________"
+cPom := SPACE(15)
+cPom += "RADNI NALOG br. ___________ od ___________"
 p_line( cPom, 10, .t.)
-cPom := "veza (narudzba,ugovor,zahtjev) ________________"
-p_line( cPom, 10, .t.)
+cPom := SPACE(29)
+cPom += "Veza (narudzba,ugovor,zahtjev) ________________ od _______________"
+p_line( cPom, 17, .t.)
 
 B_OFF
 ?
