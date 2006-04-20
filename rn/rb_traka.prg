@@ -82,12 +82,22 @@ return
 *}
 
 
-function get_rb_vars(nFeedLines, cOLadSkv, cSTrakSkv)
+function get_rb_vars(nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije)
 *{
+local cTmp
+
 // broj linija za odcjepanje trake
 nFeedLines := VAL(get_dtxt_opis("P12"))
 cOLadSkv := get_dtxt_opis("P13") // sekv.za otv.ladice
 cSTrakSkv := get_dtxt_opis("P14") // sekv.za sjec.trake
+nPdvCijene := VAL(get_dtxt_opis("P20")) // cijene sa pdv, bez pdv
+cTmp := get_dtxt_opis("P21") // prikaz id artikal na racunu
+lStampId := .f.
+if ( cTmp == "D" )
+	lStampId := .t.
+endif
+nVrRedukcije := VAL(get_dtxt_opis("P22")) // redukcija trake
+
 return
 *}
 
@@ -162,6 +172,12 @@ local nPFeed
 local cOtvLadSkv // sekv.otvaranja ladice
 local cSjeTraSkv // sekv.sjecenja trake
 local cZakBr:=""
+local nSetCijene
+local lStRobaId
+local nRedukcija
+local cRb_row
+local aRb_row
+local cPop_row
 
 if lStartPrint
 	START PRINT2 CRET gLocPort, SPACE(5)
@@ -170,10 +186,9 @@ endif
 rb_traka_line(@cLine)
 
 // uzmi glavne varijable
-get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
+get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija)
 
-hd_rb_traka()
-
+hd_rb_traka(nRedukcija)
 
 select drn
 go top
@@ -203,41 +218,78 @@ endif
 ? cLine
 
 // opis kolona
-? " R.br  Sifra, Naziv"
-? cLine
-? "     kol/jmj  Cijena sa PDV     Ukupno"
+// setcijene = 1 (sa pdv)
+// setcijene = 2 (bez pdv)
+
+if nSetCijene == 2
+	? " R.br  Artikal  Cij.sa PDV   Uk.sa PDV"
+else
+	? " R.br  Artikal Cij.bez PDV  Uk.bez PDV"
+endif
 
 ? cLine
 
 select rn
 
-// data
+// stampa stavki racuna
 do while !EOF()
 
-	// rbr
-	? cRazmak + rn->rbr
-
-	// artikal
-	cArtikal := ALLTRIM(field->idroba) + " - " + ALLTRIM(field->robanaz)
-	aRNaz := SjeciStr(cArtikal, 34)
-	for i:=1 to LEN(aRNaz)
-		if i == 1
-			?? cRazmak + aRNaz[i]
-		else
-			? SPACE(5) + aRNaz[i]
-		endif
-	next
-
-	// kolicina, jmj, cjena sa pdv
-	? cRazmak + STR(rn->kolicina, 9, 2), rn->jmj + cRazmak + STR(rn->cjenpdv, 12, 2)
-	// da li postoji popust
-	if Round(rn->cjen2pdv, 4) <> 0
-		?? " popust:" + STR(rn->popust, 3) + "%"
-		? cRazmak + "  Cij-popust:", STR(rn->cjen2pdv, 12, 2)
+	// odredi tip cijene za prikaz
+	if nSetCijene == 2 // cijena sa pdv
+		nPdvCijena := rn->cjenpdv
+		nRnUkupno := rn->ukupno
+	else
+		nPdvCijena := rn->cjenbpdv
+		nRnUkupno := rn->ukupno
 	endif
 
-	?? STR(rn->ukupno, 12, 2)	
+	cRb_row := rn->rbr + SPACE(1) // r.br
+	
+	if lStRobaId // prikaz id robe .t. 
+		cRb_row += ALLTRIM(rn->idroba) + "-" // id roba
+	endif
 
+	cRb_row += ALLTRIM(rn->robanaz) // naziv robe
+	cRb_row += SPACE(1) + "(" + rn->jmj + ")" // jmj
+	cRb_row += SPACE(1) + show_number(rn->kolicina, -1) // kolicina
+	cRb_row += "x" 
+	cRb_row += show_number(nPdvCijena, -1) // cijena
+	
+	aRb_row := SjeciStr(cRb_row, 39)
+	
+	nLenRow := 0
+	
+	for i:=1 to LEN(aRb_row)
+		if i == 1
+			? cRazmak + aRb_row[i]
+		else
+			? cRazmak + SPACE(4) + ALLTRIM(aRb_row[i])
+		endif
+		
+		nLenRow := LEN(ALLTRIM(aRb_row[i]))
+	next
+	
+	// da li postoji popust
+	if Round(rn->cjen2pdv, 4) <> 0
+		
+		if nSetCijene == 2 // cijena sa pdv
+			nPopcjen := rn->cjen2pdv
+		else
+			nPopcjen := rn->cjen2bpdv
+		endif
+	
+		cPop_row := "cij-pop" + STR(rn->popust,3) + "%" 
+		cPop_row += show_number(nPopcjen, -1)
+		cPop_row := cRazmak + SPACE(4) + cPop_row
+		
+		? cPop_row
+		
+		nLenRow := LEN(cPop_row)
+		
+	endif
+	
+	?? PADL(show_number(nRnUkupno, -1), 39-nLenRow)
+	
 	skip
 enddo
 
@@ -293,7 +345,7 @@ return
 *}
 
 
-function hd_rb_traka()
+function hd_rb_traka(nRedukcija)
 *{
 local cDuplaLin
 local cINaziv
@@ -313,24 +365,37 @@ cITelef := get_dtxt_opis("I05")
 
 // stampaj header
 
-? cRazmak + cDuplaLin
+if ( nRedukcija < 1 )
+	? cRazmak + cDuplaLin
+endif
 
 ? cRaz2 + cINaziv
-? cRaz2 + REPLICATE("-", LEN(cINaziv))
+
+if (nRedukcija < 1)
+	? cRaz2 + REPLICATE("-", LEN(cINaziv))
+endif
 
 ? cRaz2 + "Adresa : " + cIAdresa
 ? cRaz2 + "ID broj: " + cIIdBroj
 
-? cRaz2 + REPLICATE("-", 30)
+if ( nRedukcija < 1 )
+	? cRaz2 + REPLICATE("-", 30)
+endif
 
-? cRaz2 + "Prodajno mjesto:"
-? cRaz2 + cIPM
+if ( nRedukcija > 0 )
+	? cRaz2 + "PM:", cIPM
+else
+	? cRaz2 + "Prodajno mjesto:"
+	? cRaz2 + cIPM
+endif
 
 if !EMPTY(cITelef)
 	? cRaz2 + "Telefon: " + cITelef
 endif
 
-? cRazmak + cDuplaLin
+if ( nRedukcija < 1 )
+	? cRazmak + cDuplaLin
+endif
 
 ?
 
