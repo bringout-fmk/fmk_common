@@ -46,44 +46,48 @@ if partn->(fieldpos("FIDBR"))<>0
 	AADD(ImeKol,{padr("Partn Firma ID",20 ),{|| mobtel},"fidbr"})
 endif
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+FOR i:=1 TO LEN(ImeKol)
+	AADD(Kol,i)
+NEXT
 
 PushWa()
 
 select (F_SIFK)
 if !used()
-  O_SIFK; O_SIFV
+	O_SIFK
+  	O_SIFV
 endif
 
-select sifk; set order to tag "ID"; seek "PARTN"
+select sifk
+set order to tag "ID"
+seek "PARTN"
+
 do while !eof() .and. ID="PARTN"
+	AADD (ImeKol, {  IzSifKNaz("PARTN",SIFK->Oznaka) })
+ 	AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
+ 	AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
+ 	if sifk->edkolona > 0
+   		for ii:=4 to 9
+    			AADD( ImeKol[Len(ImeKol)], NIL  )
+   		next
+   		AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
+ 	else
+   		for ii:=4 to 10
+    			AADD( ImeKol[Len(ImeKol)], NIL  )
+   		next
+ 	endif
 
- AADD (ImeKol, {  IzSifKNaz("PARTN",SIFK->Oznaka) })
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('PARTN','" + sifk->oznaka + "')) }" ) )
- AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
- if sifk->edkolona > 0
-   for ii:=4 to 9
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
-   AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- else
-   for ii:=4 to 10
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
- endif
+ 	// postavi picture za brojeve
+ 	if sifk->Tip="N"
+   		if decimal > 0
+     			ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
+   		else
+     			ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
+   		endif
+ 	endif
 
- // postavi picture za brojeve
- if sifk->Tip="N"
-   if decimal > 0
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina - sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
-   else
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
-   endif
- endif
-
- AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
-
- skip
+ 	AADD(Kol, iif( sifk->UBrowsu='1',++i, 0) )
+	skip
 enddo
 PopWa()
 
@@ -93,3 +97,76 @@ gTBDir:="N"
 return PostojiSifra(F_PARTN,1,10,60,"Lista Partnera", @cId, dx, dy,;
        gPartnBlock)
 *}
+
+
+// funkcija vraca .t. ako je definisana grupa partnera
+function p_group()
+local lRet:=.f.
+
+O_SIFK
+select sifk
+set order to tag "ID"
+go top
+seek "PARTN"
+do while !eof() .and. ID="PARTN"
+	if field->oznaka == "GRUP"
+		lRet := .t.
+		exit
+	endif
+	skip
+enddo
+return lRet
+
+
+
+
+function p_set_group(set_field)
+*{
+private Opc:={}
+private opcexe:={}
+private Izbor
+
+AADD(Opc, "VP  - veleprodaja          ")
+AADD(opcexe, {|| set_field := "VP ", Izbor := 0 } )
+AADD(Opc, "AMB - ambulantna dostava  ")
+AADD(opcexe, {|| set_field := "AMB", Izbor := 0 } )
+AADD(Opc, "SIS - sistemska kuca      ")
+AADD(opcexe, {|| set_field := "SIS", Izbor := 0 } )
+AADD(Opc, "OST - ostali      ")
+AADD(opcexe, {|| set_field := "OST", Izbor := 0 } )
+
+Izbor:=1
+Menu_Sc("pgr")
+
+m_x := 1
+m_y := 5
+
+return .t.
+*}
+
+function p_gr(xVal, nX, nY)
+*{
+local cRet := ""
+local cPrn := ""
+do case
+	case xVal == "AMB"
+		cRet := "ambulantna dostava"
+	case xVal == "SIS"
+		cRet := "sistemska obrada"
+	case xVal == "VP "
+	 	cRet := "veleprodaja"
+	case xVal == "OST"
+		cRet := "ostali"
+	otherwise
+		cRet := ""
+endcase
+
+cPrn := SPACE(2) + "-" + SPACE(1) + cRet
+
+@ nX, nY+25 SAY SPACE(40)
+@ nX, nY+25 SAY cPrn
+
+
+return .t.
+*}
+
