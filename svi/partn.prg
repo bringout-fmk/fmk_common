@@ -144,29 +144,49 @@ m_y := 5
 return .t.
 *}
 
-function p_gr(xVal, nX, nY)
-*{
-local cRet := ""
-local cPrn := ""
+// vraca opis grupe
+function gr_opis(cGroup)
+local cRet
 do case
-	case xVal == "AMB"
+	case cGroup == "AMB"
 		cRet := "ambulantna dostava"
-	case xVal == "SIS"
+	case cGroup == "SIS"
 		cRet := "sistemska obrada"
-	case xVal == "VP "
+	case cGroup == "VP "
 	 	cRet := "veleprodaja"
-	case xVal == "OST"
+	case cGroup == "OST"
 		cRet := "ostali"
 	otherwise
 		cRet := ""
 endcase
 
+return cRet
+
+
+function p_gr(xVal, nX, nY)
+*{
+local cRet := ""
+local cPrn := ""
+
+cRet := gr_opis(xVal)
 cPrn := SPACE(2) + "-" + SPACE(1) + cRet
 
 @ nX, nY+25 SAY SPACE(40)
 @ nX, nY+25 SAY cPrn
 
-
 return .t.
 *}
+
+
+// da li partner 'cPartn' pripada grupi 'cGroup'
+function p_in_group(cPartn, cGroup)
+local cSifKVal
+cSifKVal := IzSifK("PARTN", "GRUP", cPartn, .f.)
+
+if cSifKVal == cGroup
+	return .t.
+endif
+
+return .f.
+
 
