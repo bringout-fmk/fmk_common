@@ -129,8 +129,6 @@ nSw2 := VAL(get_dtxt_opis("X05"))
 nSw3 := VAL(get_dtxt_opis("X06"))
 nSw4 := VAL(get_dtxt_opis("X07"))
 
-
-
 // uzmi glavne varijable za stampu fakture
 // razmak, broj redova sl.teksta, 
 get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta)
@@ -168,7 +166,6 @@ aArtNaz := {}
 
 // data
 do while !EOF()
-	
 	
 	// uzmi naziv u matricu
 	cNazivDobra := NazivDobra(rn->idroba, rn->robanaz, rn->jmj)
@@ -602,6 +599,8 @@ nRowsIznad := VAL(get_dtxt_opis("X01"))
 nRowsIspod := VAL(get_dtxt_opis("X02"))
 nRowsOdTabele := VAL(get_dtxt_opis("X03"))
 
+nShowRj := VAL(get_dtxt_opis("X10"))
+
 // redova iznad
 if nRowsIznad == nil
 	nRowsIznad := 0
@@ -615,6 +614,11 @@ endif
 // redova ispod linije broj narudzbe/otpremnice i tabele
 if nRowsOdTabele == nil
 	nRowsOdTabele := 0
+endif
+
+// prije broja dokumenta prikazi i idfirma (radna jedinica)
+if nShowRj == nil
+	nShowRj := 0
 endif
 
 drn_open()
@@ -645,6 +649,10 @@ cKAdresa:=get_dtxt_opis("K02")
 cKIdBroj:=get_dtxt_opis("K03")
 cDestinacija:=get_dtxt_opis("D08")
 cIdVd:=get_dtxt_opis("D09")
+
+if nShowRj == 1
+	cIdRj:=get_dtxt_opis("D10")
+endif
 
 //K10 - partner mjesto
 cPartMjesto := get_dtxt_opis("K10") 
@@ -798,7 +806,13 @@ cPom := ALLTRIM(cTipDok)
 if lKomision
 	cPom := "KOMISIONA DOSTAVNICA br. "
 endif
-cPom += " " + cBrDok
+
+if nShowRj == 1
+	cPom += cIdRj + "-" + cBrDok
+else
+	cPom += " " + cBrDok
+endif
+
 cPom := ALLTRIM(cPom)
 p_line( PADL( cPom, LEN_KUPAC + LEN_DATUM), 10, .t.)
 B_OFF
