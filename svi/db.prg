@@ -248,6 +248,10 @@ if !file(SIFPATH+"OPS.DBF")
    AADD(aDBf,{ 'IdN0'                , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'IdKan'               , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+   AADD(aDBf,{ 'ZIPCODE'             , 'C' ,   5 ,  0 })
+   AADD(aDBf,{ 'PUCCANTON'           , 'C' ,   2 ,  0 })
+   AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
+   
    DBCREATE2(SIFPATH+'OPS.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"OPS")
