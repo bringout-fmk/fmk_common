@@ -313,6 +313,10 @@ AADD(aDBf,{ 'POL'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'RMJESTO'             , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'POROL'               , 'N' ,   5 ,  2 })
 AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
+AADD(aDBf,{ 'STREETNAME'          , 'C' ,  40 ,  0 })
+AADD(aDBf,{ 'STREETNUM'           , 'C' ,   6 ,  0 })
+AADD(aDBf,{ 'HIREDFROM'           , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'HIREDTO'             , 'D' ,   8 ,  0 })
 
 if (nArea==-1 .or. nArea==(F_RADN))
 	//RADN.DBF & _RADN.DBF
@@ -489,6 +493,7 @@ CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
 
 
 // OPS
+/*
 if !file(SIFPATH+"OPS.DBF")
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
@@ -496,14 +501,18 @@ if !file(SIFPATH+"OPS.DBF")
    AADD(aDBf,{ 'IDKAN'               , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'IDN0'                , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+   AADD(aDBf,{ 'ZIPCODE'             , 'C' ,   5 ,  0 })
+   AADD(aDBf,{ 'PUCCANTON'           , 'C' ,   2 ,  0 })
+   AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
    DBCREATE2(SIFPATH+'OPS.DBF',aDbf)
 endif
-
 CREATE_INDEX("ID","id",SIFPATH+"OPS")
 CREATE_INDEX("IDJ","idj",SIFPATH+"OPS")
 CREATE_INDEX("IDKAN","idkan",SIFPATH+"OPS")
 CREATE_INDEX("IDN0","idN0",SIFPATH+"OPS")
 CREATE_INDEX("NAZ","naz",SIFPATH+"OPS")
+
+*/
 
 
 // POR

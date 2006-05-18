@@ -44,7 +44,8 @@ class TLDMod: public TAppMod
 	*void mMenuStandard();
 	*void sRegg();
 	*void initdb();
-	*void srv();	
+	*void srv();
+	*void chk_db();
 #endif
 
 #ifndef CPP
@@ -58,6 +59,7 @@ CREATE CLASS TLDMod INHERIT TAppMod
 	method sRegg
 	method initdb
 	method srv
+	method chk_db
 END CLASS
 #endif
 
@@ -83,6 +85,24 @@ return nil
 *}
 
 
+/*! \fn *void TLDMod::chk_db()
+ *  \brief provjera tabela
+ */
+*void TLDMod::chk_db()
+*{
+method chk_db()
+// provjeri postojanje specificnih polja LD.DBF
+// HIREDFROM
+O_RADN
+select radn
+if radn->(FieldPOS("HIREDFROM")) == 0
+	// obavjesti za modifikaciju
+	MsgBeep("Upozorenje!##Odraditi modifikaciju struktura:#DP.CHS")
+endif
+
+return
+
+
 /*! \fn *void TLDMod::mMenu()
  *  \brief Osnovni meni LD modula
  */
@@ -99,9 +119,12 @@ SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
 
 O_LD
-
 select ld
+
 TrebaRegistrovati(10)
+
+::chk_db()
+
 use
 
 #ifdef PROBA
