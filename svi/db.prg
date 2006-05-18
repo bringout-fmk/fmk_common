@@ -73,7 +73,11 @@ function CreFmkSvi()
 
 if !file(KUMPATH+"RJ.DBF")
    aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+   if goModul:oDataBase:cName == "LD"
+   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   else
+   	AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
+   endif
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
    DBCREATE2(KUMPATH+'RJ.DBF',aDbf)
 endif
