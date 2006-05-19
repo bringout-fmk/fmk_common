@@ -129,14 +129,17 @@ local nPFeed
 local cSjeTraSkv
 local cOtvLadSkv
 local nLeft1 := 22
+local nRedukcija
+local nSetCijene
+local lStRobaId
 
 START PRINT2 CRET gLocPort, SPACE(5)
 
 cLine := pf_traka_line(1)
 
-get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv)
+get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija)
 
-hd_rb_traka()
+hd_rb_traka(nRedukcija)
 
 kup_rb_traka()
 
