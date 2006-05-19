@@ -91,13 +91,25 @@ return nil
 *void TLDMod::chk_db()
 *{
 method chk_db()
+local cModStru:=""
 // provjeri postojanje specificnih polja LD.DBF
 // HIREDFROM
 O_RADN
 select radn
 if radn->(FieldPOS("HIREDFROM")) == 0
 	// obavjesti za modifikaciju
-	MsgBeep("Upozorenje!##Odraditi modifikaciju struktura:#DP.CHS")
+	cModStru += "DP.CHS, "
+endif
+
+// provjeri KRED->FIL polje
+O_KRED
+select kred
+if kred->(FieldPos("FIL")) == 0
+	cModStru += "KRED.CHS"
+endif
+
+if !EMPTY(cModStru)
+	MsgBeep("Upozorenje!##Odraditi modifikacije struktura:#" + cModStru)
 endif
 
 return
