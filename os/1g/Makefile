@@ -5,7 +5,6 @@ PRGS=/cl/sigma/fmk/os/main/1g/e.prg
 CS=
 ASMS=
 
-include /cl/sigma/Makefile_clipper
 
 FMK_LIBS=fmk_roba.lib fmk_svi.lib fmk_pi.lib fmk_evn.lib fmk_sec.lib
 
@@ -17,7 +16,7 @@ PREF2=lib $(LIB_DOS_DEST)
 FMKLIBCMD=$(addprefix $(PREF2), $(SCLIB_LIBS) $(FMK_LIBS) $(MODUL_LIBS) )
 
 
-OBJS=$(OBJPRGS) $(OBJCS) $(OBJASMS)
+include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
 
 all:    cleaneobj mod 
 
@@ -42,7 +41,6 @@ zip:
 clean:
 	rm -f *.obj *.OBJ
 	rm -f $(OBJS) I$(MODULH).OBJ *.bak *.BAK
-
 
 
 

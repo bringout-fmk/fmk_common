@@ -1,14 +1,6 @@
+include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
 
-include /sclib/Makefile_clipper
-
-PREF2=/clip/
-SVI1A=$(addprefix $(PREF2), $(FMKLIBS) )
-
-
-LIB=libsclib.a
-SLIB=libsclib.dll.a
-
-all:
+liball:
 	make -C svi
 	make -C roba
 	make -C event
@@ -22,7 +14,7 @@ all:
 	make -C lokal
 
 
-clean:
+cleanall:
 	cd svi; make clean
 	cd roba; make clean
 	cd event; make clean
@@ -35,4 +27,5 @@ clean:
 	cd lokal; make clean
 	rm -f *.obj
 
+fmk: cleanall liball 
 

@@ -1,9 +1,10 @@
 VERZIJA=CDX
-MODUL=partnst
+MODUL=fmk_exp
 
-SRCDOSROOT=c:\\dev\\fmk\\\AF\\cl-AF\\partnst\\
+SRCDOSROOT=c:\\dev\\fmk\\\AF\\cl-AF\\exp_dbf\\
 
-PRGS=db.prg main.prg
+
+PRGS=exp_dbf.prg
 CS=
 ASMS=
 
