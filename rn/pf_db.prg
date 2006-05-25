@@ -327,7 +327,11 @@ if EMPTY(drn->BrDok)
 else
 
 	if FIELDPOS("datisp")<>0
-		xRet := datisp
+		if EMPTY(datisp)
+			xRet := datdok
+		else
+			xRet := datisp
+		endif
 	else
 		MsgBeep("DATISP ne postoji u drn.dbf (get_drn_di)#Izvrsiti modstru "+gModul+".CHS !")
 		xRet := nil
