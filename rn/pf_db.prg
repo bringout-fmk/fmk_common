@@ -524,12 +524,12 @@ local cFilter:=""
 local cPartData
 local cTmp
 
-if RIGHT(ALLTRIM(cKupac), 1) <> "."
+if RIGHT(ALLTRIM(cKupac), 2) <> ".."
 	return aRet
 endif
 
 // prvo ukini tacku sa kupca
-cKupac := STRTRAN(ALLTRIM(cKupac), ".", ";")
+cKupac := STRTRAN(ALLTRIM(cKupac), "..", ";")
 
 nArr := SELECT()
 

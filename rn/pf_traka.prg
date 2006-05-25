@@ -286,7 +286,7 @@ function get_arr_kup_data(cKupac, cKAdr, cKIdBroj)
 local aKupci:={}
 local nKupIzbor
 
-if RIGHT(ALLTRIM(cKupac), 1) <> "."
+if RIGHT(ALLTRIM(cKupac), 2) <> ".."
 	return .t.
 endif
 
