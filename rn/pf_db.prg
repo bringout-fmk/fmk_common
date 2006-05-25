@@ -95,6 +95,7 @@ if !FILE(KUMPATH + "\DOKSPF.DBF")
 endif
 
 CREATE_INDEX("1", "idpos+idvd+DToS(datum)+brdok", KUMPATH + "DOKSPF")
+CREATE_INDEX("2", "knaz", KUMPATH + "DOKSPF")
 
 return
 *}
@@ -509,5 +510,44 @@ SmReplace("kidbr", cKIdBroj)
 
 return
 *}
+
+
+// pretrazi tabelu kupaca i napuni matricu
+function fnd_kup_data(cKupac)
+local aRet:={}
+local nArr
+local cFilter:=""
+
+if RIGHT(ALLTRIM(cKupac), 1) <> "."
+	return aRet
+endif
+
+// prvo ukini tacku sa kupca
+cKupac := STRTRAN(ALLTRIM(cKupac), ".", ";")
+
+nArr := SELECT()
+
+O_DOKSPF
+select dokspf
+
+cFilter := Parsiraj(cKupac, "knaz")
+
+set filter to &cFilter
+set order to tag "2"
+go top
+
+if !EOF()
+	do while !EOF()
+		AADD(aRet, {field->knaz, field->kadr, field->kidbr})
+		skip
+	enddo
+endif
+
+set filter to
+
+select (nArr)
+
+return aRet
+
 
 

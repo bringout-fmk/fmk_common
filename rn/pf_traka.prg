@@ -20,13 +20,17 @@ return
 *}
 
 
-function f7_pf_traka()
+function f7_pf_traka(lSilent)
 *{
 local lPfTraka
 
+if lSilent == nil
+	lSilent := .f.
+endif
+
 isPfTraka(@lPfTraka)
 
-if Pitanje(,"Stampati poresku fakturu za zadnji racun (D/N)?", "D") == "N"
+if !lSilent .and. Pitanje(,"Stampati poresku fakturu za zadnji racun (D/N)?", "D") == "N"
 	return
 endif
 
@@ -52,11 +56,12 @@ function read_kup_data()
 *{
 local cKNaziv
 cKNaziv := get_dtxt_opis("K01")
-if cKNaziv == "???"
+if cKNaziv == "-"
 	return .f.
 endif
 return .t.
 *}
+
 
 function get_kup_data()
 *{
@@ -67,6 +72,8 @@ local cKIdBroj := SPACE(13)
 local cUnosOk := "D"
 local dDatIsp := DATE()
 local GetList:={}
+local nMX
+local nMY
 
 SET CURSOR ON
 if read_kup_data()
@@ -80,9 +87,17 @@ if read_kup_data()
 endif
 
 Box(,7, 65)
-
+	
+	nMX := m_x
+	nMY := m_y
+	
 	@ 1+m_x, 2+m_y SAY "Podaci o kupcu:" COLOR "I"
-	@ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) PICT "@S20"
+	@ 2+m_x, 2+m_y SAY "Naziv (pravnog ili fizickog lica):" GET cKNaziv VALID !Empty(cKNaziv) .and. get_arr_kup_data(@cKNaziv, @cKAdres, @cKIdBroj) PICT "@S20"
+	read
+	
+	m_x := nMX
+	m_y := nMY
+	
 	@ 3+m_x, 2+m_y SAY "Adresa:" GET cKAdres VALID !Empty(cKAdres)
 	@ 4+m_x, 2+m_y SAY "Identifikacijski broj:" GET cKIdBroj VALID !Empty(cKIdBroj)
 	@ 5+m_x, 2+m_y SAY "Datum isporuke " GET dDatIsp
@@ -96,9 +111,6 @@ if (cUnosOk <> "D") .or. (LASTKEY()==K_ESC)
 	return .f.
 endif
 	
-
-
-
 //dodaj parametre u drntext
 add_drntext("K01", cKNaziv)
 add_drntext("K02", cKAdres)
@@ -267,4 +279,49 @@ cKIdBroj := get_dtxt_opis("K03")
 
 return
 *}
+
+
+// vraca matricu sa dostupnim kupcima koji pocinju sa cKupac
+function get_arr_kup_data(cKupac, cKAdr, cKIdBroj)
+local aKupci:={}
+local nKupIzbor
+
+if RIGHT(ALLTRIM(cKupac), 1) <> "."
+	return .t.
+endif
+
+aKupci := fnd_kup_data(cKupac)
+
+if LEN(aKupci) > 0
+	
+	nKupIzbor := list_kup_data(aKupci)
+	
+	cKupac := aKupci[nKupIzbor, 1]
+	cKAdr := aKupci[nKupIzbor, 2]
+	cKIdBroj := aKupci[nKupIzbor, 3]
+	
+	return .t.
+else
+	MsgBeep("Trazeni pojam ne postoji u tabeli kupaca !")
+endif
+
+return .f.
+
+
+function list_kup_data(aKupci)
+local nIzbor
+private GetList:={}
+private Izbor := 1
+private opc:={}
+private opcexe:={}
+
+for i:=1 to LEN(aKupci)
+	AADD(opc, STR(i, 3) + ". " + TRIM(aKupci[i, 1]) + " - " + TRIM(aKupci[i, 2]))
+	AADD(opcexe, {|| nIzbor := Izbor, Izbor:=0})
+next
+
+Izbor:=1
+Menu_SC("kup")
+
+return nIzbor
 
