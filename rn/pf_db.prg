@@ -517,6 +517,8 @@ function fnd_kup_data(cKupac)
 local aRet:={}
 local nArr
 local cFilter:=""
+local cPartData
+local cTmp
 
 if RIGHT(ALLTRIM(cKupac), 1) <> "."
 	return aRet
@@ -530,15 +532,28 @@ nArr := SELECT()
 O_DOKSPF
 select dokspf
 
-cFilter := Parsiraj(cKupac, "knaz")
+cFilter := Parsiraj(LOWER(cKupac), "lower(knaz)")
 
 set filter to &cFilter
 set order to tag "2"
 go top
 
+cTmp := "XXX"
+
 if !EOF()
 	do while !EOF()
+		
+		cPartData := field->knaz + field->kadr + field->kidbr
+		
+		if cPartData == cTmp
+			skip
+			loop
+		endif
+		
 		AADD(aRet, {field->knaz, field->kadr, field->kidbr})
+		
+		cTmp := cPartData
+		
 		skip
 	enddo
 endif

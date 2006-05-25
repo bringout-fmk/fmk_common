@@ -296,6 +296,11 @@ if LEN(aKupci) > 0
 	
 	nKupIzbor := list_kup_data(aKupci)
 	
+	// odabrano je ESC
+	if nKupIzbor == nil
+		return .f.
+	endif
+
 	cKupac := aKupci[nKupIzbor, 1]
 	cKAdr := aKupci[nKupIzbor, 2]
 	cKIdBroj := aKupci[nKupIzbor, 3]
@@ -310,14 +315,17 @@ return .f.
 
 function list_kup_data(aKupci)
 local nIzbor
+local cPom
 private GetList:={}
 private Izbor := 1
 private opc:={}
 private opcexe:={}
 
 for i:=1 to LEN(aKupci)
-	AADD(opc, STR(i, 3) + ". " + TRIM(aKupci[i, 1]) + " - " + TRIM(aKupci[i, 2]))
-	AADD(opcexe, {|| nIzbor := Izbor, Izbor:=0})
+	cPom := STR(i, 2) + ". " + TRIM(aKupci[i, 1]) + " - " + TRIM(aKupci[i, 2]) 
+	cPom := PADR(cPom, 50)
+	AADD( opc, cPom )
+	AADD( opcexe, {|| nIzbor := Izbor, Izbor:=0} )
 next
 
 Izbor:=1
