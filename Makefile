@@ -2,6 +2,7 @@
 liball: 
 	make -C dok/1g
 	make -C kredit/1g
+	make -C korek/1g
 	make -C main/1g
 	make -C main/2g
 	make -C db/1g
