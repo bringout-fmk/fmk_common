@@ -1,5 +1,3 @@
-include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
-
 liball:
 	make -C svi
 	make -C roba

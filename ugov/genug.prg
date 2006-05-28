@@ -1,8 +1,12 @@
-#include "\dev\fmk\AF\cl-AF\fmk.ch"
+#include "sc.ch"
 
+// -------------------------
+// Generisi ugovore
+// -------------------------
 PROCEDURE GenUg()
 O_FTXT
-O_SIFK; O_SIFV
+O_SIFK
+O_SIFV
 O_ROBA
 O_PARTN
 O_UGOV
@@ -15,8 +19,11 @@ nN2:=0
 nN3:=0
 O_PARAMS
 private cSection:="U",cHistory:=" "; aHistory:={}
-private cUPartner:=space(IF(gVFU=="1",16,20))
-private dDatDok:=ctod(""), cFUArtikal:=SPACE(LEN(ROBA->id))
+
+private cUPartner:=space(IIF(gVFU=="1", 16, 20))
+
+private dDatDok:=ctod("")
+private cFUArtikal:=SPACE(LEN(ROBA->id))
 private cSamoAktivni:="D"
 
 RPar("uP",@cUPartner)
@@ -72,15 +79,19 @@ if nTekug=1
   cUPartner:=lefT(cUPartner,IF(gVFU=="1",15,19))+chr(254)
 else
   // ne browsaj
-  skip 1 // saltaj ugovore
-  IF EOF(); EXIT; ENDIF
+  skip 1
+  IF EOF()
+  	EXIT
+  ENDIF
 endif
 
-if empty(cUPartner) // eof()
+// eof()
+if empty(cUPartner)
   exit
 endif
 
-if nTekug=1 // kada je vise ugovora, samo prvi browsaj
+// kada je vise ugovora, samo prvi browsaj
+if nTekug=1 
   P_ugov(cUPartner)
 endif
 
@@ -110,42 +121,46 @@ use
 
 SELECT PRIPR
 
-    cIdTipdok:=ugov->idtipdok
+cIdTipdok:=ugov->idtipdok
 
-   if IzFMkIni('FAKT_Specif',"ZIPS",'N')=="D" // specifiŸno zips
-      if nn3=1 .and. ugov->idtipdok="20" // konverzija 20->10
+// specificno zips
+if IzFMkIni('FAKT_Specif',"ZIPS",'N')=="D" 
+      // konverzija 20->10
+      if nn3=1 .and. ugov->idtipdok="20" 
          cIdTipDok:="10"
       endif
-   endif
+endif
 
-   select pripr
-   seek gFirma+cidtipdok+"È"
-   skip -1
-   if idtipdok <> cIdTipdok
-     seek "È" // idi na kraj, nema zeljenih dokumenata
-   endif
+select pripr
+seek gFirma+cidtipdok+"È"
+skip -1
+if idtipdok <> cIdTipdok
+     // idi na kraj, nema zeljenih dokumenata
+     seek "È" 
+endif
 
-   select fakt
-   seek gFirma+cidtipdok+"È"
-   skip -1
+select fakt
+seek gFirma+cidtipdok+"È"
+skip -1
 
-   if idtipdok <> cIdTipdok
-     seek "È" // idi na kraj, nema zeljenih  dokumenata
-   endif
+if idtipdok <> cIdTipdok
+     seek "È" 
+endif
 
-   if pripr->brdok > fakt->brdok
-     select pripr  // odaberi tabelu u kojoj ima vise dokumenata
-   endif
+if pripr->brdok > fakt->brdok
+   // odaberi tabelu u kojoj ima vise dokumenata
+   select pripr  
+endif
 
 
-   if cidtipdok<>idtipdok
+if cidtipdok<>idtipdok
       cBrDok:=UBrojDok(1,gNumDio,"")
-   else
+else
       cBrDok:=UBrojDok( val(left(brdok,gNumDio))+1, ;
                         gNumDio, ;
                         right(brdok,len(brdok)-gNumDio) ;
                       )
-   endif
+endif
 
 select ugov
 if lSamoAktivni .and. aktivan!="D"
@@ -164,13 +179,13 @@ nRbr:=0
 seek cidugov
 
 // prvi krug odredjuje glavnicu
-nGlavnica:=0  // jedna stavka mo§e biti glavnica za ostale
+// jedna stavka moze biti glavnica za ostale
+nGlavnica:=0 
 do while !eof() .and. id==cidugov
    select roba; hseek rugov->idroba
    select rugov
    if K1=="G"
-//     nGlavnica+=kolicina*roba->vpc
-     nGlavnica+=kolicina*10
+      nGlavnica+=kolicina*10
    endif
    skip
 enddo
@@ -196,7 +211,9 @@ do while !eof() .and. id==cidugov
      _kolicina += RUGOV->kolicina
      // tag "1": "IdFirma+idtipdok+brdok+rbr+podbr"
      Gather()
-     SELECT RUGOV; SKIP 1; LOOP
+     SELECT RUGOV
+     SKIP 1
+     LOOP
    ELSE
      append blank; Scatter()
    ENDIF
@@ -206,25 +223,29 @@ do while !eof() .and. id==cidugov
     _txt3b:=_txt3c:=""
     _txt3a:=ugov->idpartner+"."
     IzSifre()
-    select ftxt; hseek ugov->iddodtxt; cDodTxt:=TRIM(naz)
+    select ftxt
+    HSEEK ugov->iddodtxt
+    cDodTxt:=TRIM(naz)
     hseek ugov->idtxt
     private _Txt1:=""
 
-    select roba; hseek rugov->idroba
+    select roba
+    HSEEK rugov->idroba
     if roba->tip=="U"
       _txt1:=roba->naz
     else
-     _txt1:=" "
+      _txt1:=" "
     endif
+    
     IF IzFMKINI("Fakt_Ugovori","UNapomenuSamoBrUgovora","D")=="D"
       cVezaUgovor := "Veza: "+trim(ugov->id)
     ELSE
       cVezaUgovor := "Veza: UGOVOR: "+trim(ugov->id)+" od "+dtoc(ugov->datod)
     ENDIF
     _txt:=Chr(16)+_txt1 +Chr(17)+;
-         Chr(16)+trim(ftxt->naz)+chr(13)+chr(10)+;
-         IF(gNovine=="D","",cVezaUgovor+chr(13)+chr(10))+;
-         cDodTxt+Chr(17)+Chr(16)+_Txt3a+ Chr(17)+ Chr(16)+_Txt3b+Chr(17)+;
+         Chr(16)+trim(ftxt->naz)+ chr(13)+chr(10)+;
+         IF(gNovine=="D","", cVezaUgovor + chr(13)+chr(10)) + ;
+         cDodTxt + Chr(17)+ Chr(16)+ _Txt3a + Chr(17)+ Chr(16)+ _Txt3b + Chr(17)+;
          Chr(16)+_Txt3c+Chr(17)
 
    endif
@@ -234,8 +255,9 @@ do while !eof() .and. id==cidugov
 
    private nKolicina:=rugov->kolicina
 
-
-   if rugov->k1="A"  // onda je kolicina= A2-A1  (novo stanje - staro stanje)
+   do case
+     case rugov->k1="A" 
+      // onda je kolicina= A2-A1  (novo stanje - staro stanje)
       nA2:=0
       Box(,5,60)
         @ M_X+1,M_Y+2 say ugov->naz
@@ -250,30 +272,39 @@ do while !eof() .and. id==cidugov
       endif
 
       nKolicina:=ugov->(a2-a1)
-   elseif rugov->k1="B"
-      nB2:=0
-      Box(,5,60,,ugov->naz)
-        @ M_X+1,M_Y+2 say ugov->naz
-        @ m_x+3,m_y+2 SAY "B: Stara vrijednost:"; ?? ugov->B2
-        @ m_x+5,m_y+2 SAY "B: Nova vrijednost (0 ne mjenjaj):" GET nB2 pict "999999.99"
-        read
-      BoxC()
-      if nB2<>0
+   
+      case rugov->k1="B"
+       nB2:=0
+       Box(,5,60,,ugov->naz)
+         @ M_X+1,M_Y+2 say ugov->naz
+         @ m_x+3,m_y+2 SAY "B: Stara vrijednost:"; ?? ugov->B2
+         @ m_x+5,m_y+2 SAY "B: Nova vrijednost (0 ne mjenjaj):" GET nB2 pict "999999.99"
+         read
+       BoxC()
+       if nB2<>0
          select ugov
          replace B1 with B2 , B2 with nB2
          select pripr
-      endif
-      nKolicina:=ugov->(b2-b1)
-   elseif rugov->k1="%"   // procenat na neku stavku
-      nKolicina:=1
-      nCijena:=rugov->kolicina*nGlavnica/100
-   elseif rugov->k1="1"   // kolicinu popunjava ulazni parametar n1
-       nKolicina:=nn1
-   elseif rugov->k1="2"   // kolicinu popunjava ulazni parametar n2
-       nKolicina:=nn2
-   elseif rugov->k1="3"   // kolicinu popunjava ulazni parametar n3
-       nKolicina:=nn3
-   endif
+       endif
+       nKolicina:=ugov->(b2-b1)
+   
+      case rugov->k1="%"  
+            // procenat na neku stavku
+            nKolicina:=1
+            nCijena:=rugov->kolicina*nGlavnica/100
+   
+      case rugov->k1="1"   
+            // kolicinu popunjava ulazni parametar n1
+            nKolicina:=nn1
+
+      case rugov->k1="2"   
+            // kolicinu popunjava ulazni parametar n2
+            nKolicina:=nn2
+
+      case rugov->k1="3"   
+            // kolicinu popunjava ulazni parametar n3
+            nKolicina:=nn3
+   endcase
 
    private _Txt1:=""
 
@@ -291,7 +322,8 @@ do while !eof() .and. id==cidugov
    _datdok:=dDatDok
    _kolicina:=nKolicina
    _idroba:=rugov->idroba
-   select roba; hseek _idroba
+   select roba
+   HSEEK _idroba
 
    Odredi_IDROBA()
 
@@ -315,4 +347,3 @@ enddo
 next
 
 closeret
-
