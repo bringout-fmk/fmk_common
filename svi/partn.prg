@@ -6,8 +6,8 @@
  * ----------------------------------------------------------------
  *
  */
+
 function P_Firma(cId, dx, dy)
-*{
 private ImeKol
 private Kol
 
@@ -119,9 +119,9 @@ return lRet
 
 
 
-
+// -----------------------------------
+// -----------------------------------
 function p_set_group(set_field)
-*{
 private Opc:={}
 private opcexe:={}
 private Izbor
@@ -163,8 +163,9 @@ endcase
 return cRet
 
 
+// -----------------------------------
+// -----------------------------------
 function p_gr(xVal, nX, nY)
-*{
 local cRet := ""
 local cPrn := ""
 
@@ -175,7 +176,6 @@ cPrn := SPACE(2) + "-" + SPACE(1) + cRet
 @ nX, nY+25 SAY cPrn
 
 return .t.
-*}
 
 
 // da li partner 'cPartn' pripada grupi 'cGroup'
@@ -189,4 +189,48 @@ endif
 
 return .f.
 
+// -----------------------------
+// get partner fax
+// -----------------------------
+function g_part_fax(cIdPartner)
+local cFax
 
+PushWa()
+
+SELECT F_PARTN
+if !used()
+	O_PARTN
+endif
+SEEK cIdPartner
+if !found()
+ cFax := "!NOFAX!"
+else
+ cFax := fax
+endif
+
+PopWa()
+
+return cFax
+
+// -----------------------------
+// get partner naziv + mjesto
+// -----------------------------
+function g_part_name(cIdPartner)
+local cRet
+
+PushWa()
+
+SELECT F_PARTN
+if !used()
+	O_PARTN
+endif
+SEEK cIdPartner
+if !found()
+ cRet := "!NOPARTN!"
+else
+ cRet := TRIM(naz) + " " + TRIM(mjesto)
+endif
+
+PopWa()
+
+return cRet
