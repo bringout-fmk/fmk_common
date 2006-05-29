@@ -136,7 +136,7 @@ CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
 
 if !file(SIFPATH+"trfp.dbf")
         aDbf:={}
-        AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
+        AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
         AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
         AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
         AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
