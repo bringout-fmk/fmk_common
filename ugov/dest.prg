@@ -1,3 +1,5 @@
+#include "sc.ch"
+
 function P_Destin(cId,dx,dy)
  LOCAL GetList:={}
  PRIVATE ImeKol, Kol:={}, cLastOznaka:=" "

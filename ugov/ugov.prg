@@ -805,7 +805,7 @@ function DFTParUg(lIni)
     private DFTkolicina := 1
     private DFTidroba := PADR("ZIPS",10)
     private DFTvrsta := "1"
-    pravite DFTidtipdok :="20"
+    private DFTidtipdok :="20"
     private DFTdindem   :="KM "
     private DFTidtxt    :="10"
     private DFTzaokr    :=2
