@@ -50,11 +50,12 @@ static nSw3
 // linija ispod kupac
 static nSw4
 
-
+// ------------------------------------------------------
 // glavna funkcija za poziv stampe fakture a4
 // lStartPrint - pozovi funkcije stampe START PRINT
-function pf_a4_print(lStartPrint)
-*{
+// -----------------------------------------------------
+function pf_a4_print(lStartPrint, cDocumentName)
+
 // ako je nil onda je uvijek .t.
 if lStartPrint == nil
 	lStartPrint := .t.
@@ -82,18 +83,16 @@ endif
 
 if (gPdvDokVar == "1")
  // stampaj racun
- st_pf_a4(lStartPrint)
+ st_pf_a4(lStartPrint, cDocumentName)
 else
- st_pf_a4_2(lStartPrint)
+ st_pf_a4_2(lStartPrint, cDocumentName)
 endif
 
 return
-*}
 
 
 // stampa fakture a4
-function st_pf_a4(lStartPrint)
-*{
+function st_pf_a4(lStartPrint, cDocumentName)
 local cBrDok
 local dDatDok
 local aRNaz
@@ -101,15 +100,24 @@ local cArtikal
 local cSlovima
 local cLine
 
-private nLMargina // lijeva margina
-private nDodRedova // broj dodatnih redova
-private nSlTxtRow // broj redova slobodnog text-a
-private lSamoKol // prikaz samo kolicina
-private lZaglStr // zaglavlje na svakoj stranici
-private lDatOtp // prikaz datuma otpremnice i narudzbenice
-private cValuta // prikaz valute KM ili ???
-private lStZagl // automatski formirati zaglavlje
-private nGMargina // gornja margina
+// lijeva margina
+private nLMargina
+// broj dodatnih redova
+private nDodRedova
+// broj redova slobodnog text-a
+private nSlTxtRow
+// prikaz samo kolicina
+private lSamoKol
+// zaglavlje na svakoj stranici
+private lZaglStr
+// prikaz datuma otpremnice i narudzbenice
+private lDatOtp
+// prikaz valute KM ili ???
+private cValuta
+// automatski formirati zaglavlje
+private lStZagl
+// gornja margina
+private nGMargina 
 
 nDuzStrKorekcija := 0
 
@@ -117,7 +125,7 @@ lPrintedTotal := .f.
 
 if lStartPrint
 
-	if !StartPrint()
+	if !StartPrint(nil, nil, cDocumentName)
 		close all
 		return
 	endif
