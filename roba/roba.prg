@@ -118,8 +118,8 @@ endif
 
 
 if roba->(fieldpos("IDTARIFA2"))<>0
-	AADD (ImeKol,{ "Tarifa R2",{|| IdTarifa2}, "IdTarifa2", {|| .t. }, {|| P_Tarifa(@wIdTarifa2) }   })
-	AADD (ImeKol,{ "Tarifa R3",{|| IdTarifa3}, "IdTarifa3", {|| .t. }, {|| P_Tarifa(@wIdTarifa3) }   })
+	AADD (ImeKol,{ "Tarifa R2",{|| IdTarifa2}, "IdTarifa2", {|| .t. }, {|| set_tar_rs(@wIdTarifa2, wIdTarifa) .or. P_Tarifa(@wIdTarifa2) }   })
+	AADD (ImeKol,{ "Tarifa R3",{|| IdTarifa3}, "IdTarifa3", {|| .t. }, {|| set_tar_rs(@wIdTarifa3, wIdTarifa) .or. P_Tarifa(@wIdTarifa3) }   })
 endif
 
 
@@ -274,6 +274,13 @@ private GetList:={}, nZaokNa:=1, cMPC:=" ", cVPC:=" "
 return DE_CONT
 *}
 
+
+// setovanje tarife 2 i 3 u sifrarniku na osnovu idtarifa
+function set_tar_rs(cId1, cId2)
+if EMPTY(cId1)
+	cId1 := cId2
+endif
+return .t.
 
 
 function WhenBK()
