@@ -113,7 +113,6 @@ RETURN
  */
  
 function IspisFirme(cIdRj)
-*{
 local nOArr:=select()
 
 ?? "Firma: "
@@ -128,7 +127,6 @@ if !empty(cidrj)
 endif
 
 return
-*}
 
 function IspisNaDan(nEmptySpace)
 *{
