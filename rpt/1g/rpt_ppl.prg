@@ -127,91 +127,111 @@ nT2a:=nT2b:=0
 nT1:=nT2:=nT3:=nT3b:=nT4:=0
 nVanP:=0  // van neta plus
 nVanM:=0  // van neta minus
-do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.;
-         !( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
- IF lViseObr .and. EMPTY(cObracun)
-   ScatterS(godina,mjesec,idrj,idradn)
- ELSE
-   Scatter()
- ENDIF
- select radn; hseek _idradn
- select vposla; hseek _idvposla
- select kbenef; hseek vposla->idkbenef
- select ld
-// if !empty(cvposla) .and. cvposla<>left(_idvposla,1)
- if !empty(cvposla) .and. cvposla<>left(_idvposla,2)
-   skip; loop
- endif
- if !empty(ckbenef) .and. ckbenef<>kbenef->id
-   skip; loop
- endif
+do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
+	if lViseObr .and. EMPTY(cObracun)
+   		ScatterS(godina,mjesec,idrj,idradn)
+ 	else
+   		Scatter()
+ 	endif
+ 	select radn
+	hseek _idradn
+ 	select vposla
+	hseek _idvposla
+ 	select kbenef
+	hseek vposla->idkbenef
+ 	select ld
+ 	if !empty(cvposla) .and. cvposla<>left(_idvposla,2)
+   		skip
+		loop
+ 	endif
+ 	if !empty(ckbenef) .and. ckbenef<>kbenef->id
+   		skip
+		loop
+ 	endif
+	
+	nVanP:=0
+ 	nVanM:=0
+ 	nMinuli:=0
+ 	for i:=1 to cLDPolja
+  		cPom:=padl(alltrim(str(i)),2,"0")
+  		select tippr
+		seek cPom
+		select ld
 
- nVanP:=0
- nVanM:=0
- nMinuli:=0
- for i:=1 to cLDPolja
-  cPom:=padl(alltrim(str(i)),2,"0")
-  select tippr; seek cPom; select ld
+  		if tippr->(found()) .and. tippr->aktivan=="D"
+   			nIznos:=_i&cpom
+   			if tippr->uneto=="N" .and. nIznos<>0
+       				if nIznos>0
+         				nVanP+=nIznos
+       				else
+         				nVanM+=nIznos
+       				endif
+   			elseif tippr->uneto=="D" .and. nIznos<>0
+       				if cPom==cIdMinuli
+           				nMinuli:=nIznos
+       				endif
+   			endif
+  		endif
+ 	next
 
-  if tippr->(found()) .and. tippr->aktivan=="D"
-   nIznos:=_i&cpom
-   if tippr->uneto=="N" .and. nIznos<>0
-       if nIznos>0
-         nVanP+=nIznos
-       else
-         nVanM+=nIznos
-       endif
-   elseif tippr->uneto=="D" .and. nIznos<>0
-       if cPom==cIdMinuli
-           nMinuli:=nIznos
-       endif
-   endif
-  endif
- next
+ 	if prow()>58+gPStranica
+    		FF
+    		Eval(bZagl)
+ 	endif
+ 
+ 	? str(++nRbr,4)+".",idradn, RADNIK
+ 	nC1:=pcol()+1
+ 	@ prow(),pcol()+1 SAY _usati  pict gpics
+ 	if gVarPP=="2"
+   		@ prow(),pcol()+1 SAY _uneto-nMinuli  pict gpici
+   		@ prow(),pcol()+1 SAY nMinuli  pict gpici
+ 	endif
+ 	@ prow(),pcol()+1 SAY _uneto  pict gpici
+ 	if gVarPP=="2"
+   		@ prow(),pcol()+1 SAY nVanP   pict gpici
+   		@ prow(),pcol()+1 SAY nVanM   pict gpici
+ 	else
+   		@ prow(),pcol()+1 SAY nVanP+nVanM   pict gpici
+ 	endif
+ 	@ prow(),pcol()+1 SAY _uiznos pict gpici
 
- if prow()>62+gPStranica; FF; Eval(bZagl); endif
- ? str(++nRbr,4)+".",idradn, RADNIK
- nC1:=pcol()+1
- @ prow(),pcol()+1 SAY _usati  pict gpics
- IF gVarPP=="2"
-   @ prow(),pcol()+1 SAY _uneto-nMinuli  pict gpici
-   @ prow(),pcol()+1 SAY nMinuli  pict gpici
- ENDIF
- @ prow(),pcol()+1 SAY _uneto  pict gpici
- IF gVarPP=="2"
-   @ prow(),pcol()+1 SAY nVanP   pict gpici
-   @ prow(),pcol()+1 SAY nVanM   pict gpici
- ELSE
-   @ prow(),pcol()+1 SAY nVanP+nVanM   pict gpici
- ENDIF
- @ prow(),pcol()+1 SAY _uiznos pict gpici
+ 	if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
+   		@ prow(),pcol()+1 SAY "ERR"
+ 	endif
 
- if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
-   @ prow(),pcol()+1 SAY "ERR"
- endif
-
-  nT1+=_usati
-  nT2a+=_uneto-nMinuli
-  nT2b+=nMinuli
-  nT2+=_uneto; nT3+=nVanP; nT3b+=nVanM; nT4+=_uiznos
- skip
+  	nT1+=_usati
+  	nT2a+=_uneto-nMinuli
+  	nT2b+=nMinuli
+  	nT2+=_uneto
+	nT3+=nVanP
+	nT3b+=nVanM
+	nT4+=_uiznos
+ 	skip
 enddo
 
-if prow()>60+gpStranica; FF; Eval(bZagl); endif
+if prow()>58+gpStranica
+	FF
+    	Eval(bZagl)
+endif
+
 ? m
 ? SPACE(1) + Lokal("UKUPNO:")
 @ prow(),nC1 SAY  nT1 pict gpics
+
 IF gVarPP="2"
   @ prow(),pcol()+1 SAY  nT2a pict gpici
   @ prow(),pcol()+1 SAY  nT2b pict gpici
 ENDIF
+
 @ prow(),pcol()+1 SAY  nT2 pict gpici
+
 IF gVarPP="2"
   @ prow(),pcol()+1 SAY  nT3 pict gpici
   @ prow(),pcol()+1 SAY  nT3b pict gpici
 ELSE
   @ prow(),pcol()+1 SAY  nT3+nT3b pict gpici
 ENDIF
+
 @ prow(),pcol()+1 SAY  nT4 pict gpici
 ? m
 FF
