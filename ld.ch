@@ -2,7 +2,7 @@
 	#include "sc.ch"
 #endif
 
-#define D_LD_VERZIJA "02.04"
+#define D_LD_VERZIJA "02.05"
 #define D_LD_PERIOD '06.96-02.06.06'
 
 #ifndef FMK_DEFINED
