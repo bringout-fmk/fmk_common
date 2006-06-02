@@ -1,7 +1,8 @@
 #include "\dev\fmk\ld\ld.ch"
 
+// -------------------------------------------------------
+// -------------------------------------------------------
 function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
-*{
 local i
 local aNeta:={}
 
@@ -151,9 +152,8 @@ if pcount()>=4
 else
 	START PRINT CRET
 endif
-
+?
 P_12CPI
-
 IF lSkrivena
 	gRPL_Gusto()
 ENDIF

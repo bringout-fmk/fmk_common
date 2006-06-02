@@ -1,9 +1,8 @@
 #include "\dev\fmk\ld\ld.ch"
 
-
-
-function Rekap(fSvi)
-*{
+// ----------------------------------------
+// ----------------------------------------
+function Rekap(lSvi)
 private nC1:=20
 private i
 private cTPNaz
@@ -26,8 +25,8 @@ cMjesecDo:=cMjesec
 nStrana:=0
 aUkTr:={}
 
-if fSvi==nil
-	fSvi:=.f.
+if lSvi==nil
+	lSvi:=.f.
 endif
 
 ORekap()
@@ -38,9 +37,7 @@ cOpsSt:=SPACE(4)
 cOpsRad:=SPACE(4)
 cK4:="S"
 
-altd()
-
-if fSvi
+if lSvi
 	qqRJ:=SPACE(60)
 	BoxRekSvi()
 	if (LastKey()==K_ESC)
@@ -62,13 +59,13 @@ else
 	cObracun:=""
 endif
 
-if fSvi
+if lSvi
 	set order to tag (TagVO("2"))
 else
 	set order to tag (TagVO("1"))
 endif
 
-if fSvi
+if lSvi
 	
 	cFilt1:=".t." + IF(EMPTY(cStrSpr),"",".and.IDSTRSPR=="+cm2str(cStrSpr))+IF(EMPTY(qqRJ),"",".and."+aUsl1)
 	
@@ -76,13 +73,6 @@ if fSvi
   		cFilt1:=cFilt1 + ".and.mjesec>="+cm2str(cMjesec)+".and.mjesec<="+cm2str(cMjesecDo)+".and.godina="+cm2str(cGodina)
 	endif
 	
-	// benjo, 08.04.2004, ispravka buga na rekapitulaciji za sve rj
-	//if cMjesec==cMjesecDo
-  		//seek str(cGodina,4)+STR(cMjesec,2)+cObracun
-		//EOF CRET
-	//else
-  		//GO TOP
-	//endif
 GO TOP
 
 else
@@ -92,7 +82,7 @@ else
   		cFilt1 := cFilt1 + ".and.mjesec>="+cm2str(cMjesec)+".and.mjesec<="+cm2str(cMjesecDo)+".and.godina="+cm2str(cGodina)
 	endif
 
-endif //fSvi	
+endif 	
 
 
 if lViseObr
@@ -107,7 +97,7 @@ else
 	SET FILTER TO &cFilt1
 endif
 
-if !fSvi
+if !lSvi
 	seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+cObracun
 	EOF CRET
 else
@@ -118,7 +108,7 @@ endif
 
 
 
-PoDoIzSez(cGodina,cMjesecDo)
+PoDoIzSez(cGodina, cMjesecDo)
 
 
 if !lPorNaRekap
@@ -137,7 +127,7 @@ O_OPSLD
 select ld
 
 START PRINT CRET
-
+?
 P_10CPI
 
 if IzFMKIni("LD","RekapitulacijaGustoPoVisini","N",KUMPATH)=="D"
@@ -151,8 +141,8 @@ else
 endif
 
 
-ParObr(cmjesec,IF(lViseObr,cObracun,),IF(!fSvi,cIdRj,))
 // samo pozicionira bazu PAROBR na odgovarajuci zapis
+ParObr(cmjesec, IIF(lViseObr,cObracun,), IIF(!lSvi,cIdRj,))
 
 private aRekap[cLDPolja,2]
 
@@ -169,34 +159,32 @@ nUIznos:=nUSati:=nUOdbici:=nUOdbiciP:=nUOdbiciM:=0
 nLjudi:=0
 
 private aNeta:={}
-altd()
+
 select ld
 
 if cMjesec!=cMjesecDo
-	if fSvi
+	if lSvi
    		go top
 		private bUslov:={|| godina==cGodina .and. mjesec>=cMjesec .and. mjesec<=cMjesecDo .and. IF(lViseObr,obr=cObracun,.t.) }
  	else
    		private bUslov:={|| godina==cGodina .and. idrj==cIdRj .and. mjesec>=cMjesec .and. mjesec<=cMjesecDo .and. IF(lViseObr,obr=cObracun,.t.) }
  	endif
 else
- 	if fSvi
+ 	if lSvi
    		private bUslov:={|| cgodina==godina .and. cmjesec=mjesec .and. IF(lViseObr,obr=cObracun,.t.) }
  	else
    		private bUslov:={|| cgodina==godina .and. cidrj==idrj .and. cmjesec=mjesec .and. IF(lViseObr,obr=cObracun,.t.) }
  	endif
 endif
 
-VrtiSeULD(fSvi)
+VrtiSeULD(lSvi)
 
 if nLjudi==0
 	nLjudi:=9999999
 endif
 
 B_ON
-
 ?? cNaslovRekap
-
 B_OFF
 
 if !empty(cstrspr)
@@ -211,7 +199,7 @@ if !empty(cOpsRad)
 	? Lokal("Opstina rada:"),cOpsRad
 endif
 
-if fSvi
+if lSvi
 	ZaglSvi()
 else
 	ZaglJ()
@@ -223,7 +211,7 @@ endif
 
 ? cLinija
 
-IspisTP(fSvi)
+IspisTP(lSvi)
 
 if IzFmkIni("LD","Rekap_ZaIsplatuRasclanitiPoTekRacunima","N",KUMPATH)=="D" .and. LEN(aUkTR)>1
 	PoTekRacunima()
@@ -993,7 +981,7 @@ return
 *}
 
 
-function VrtiSeULD(fSvi)
+function VrtiSeULD(lSvi)
 *{
 
 nPorOl:=0
@@ -1114,7 +1102,7 @@ do while !eof() .and. eval(bUSlov)
 		ELSE
 			nTObl:=SELECT()
 			nTRec := PAROBR->(RECNO())
-			ParObr(mjesec,IF(lViseObr,cObracun,),IF(!fSvi,cIdRj,))      // samo pozicionira bazu PAROBR na odgovaraju†i zapis
+			ParObr(mjesec,IF(lViseObr,cObracun,),IF(!lSvi,cIdRj,))      // samo pozicionira bazu PAROBR na odgovaraju†i zapis
 			AADD(aNetoMj,{mjesec,_uneto,_usati,PAROBR->k3,PAROBR->k1})
 			SELECT PAROBR
 			GO (nTRec)
@@ -1142,7 +1130,6 @@ select por
 go top
 O_RJ
 select rj
-?
 P_10CPI
 
 ?? Lokal("Obuhvacene radne jedinice: ")
@@ -1207,7 +1194,7 @@ return
 *}
 
 
-function IspisTP(fSvi)
+function IspisTP(lSvi)
 *{
 
 cUNeto:="D"
@@ -1298,7 +1285,7 @@ for i:=1 to cLDPolja
      			Rekapld("PRIM"+tippr->id,cgodina,cMjesecDo,aRekap[i,2],aRekap[i,1])
    		ENDIF
 
-		IspisKred(fSvi)
+		IspisKred(lSvi)
 	endif
 
 next
@@ -1307,7 +1294,7 @@ return
 *}
 
 
-function IspisKred(fSvi)
+function IspisKred(lSvi)
 *{
 if "SUMKREDITA" $ tippr->formula
 	if gReKrOs=="X"
@@ -1328,7 +1315,7 @@ if "SUMKREDITA" $ tippr->formula
             			nUkKrRad := 0
             			DO WHILE !EOF() .and. IDKRED==cIdKred .and. cNaOsnovu==NAOSNOVU .and. cIdRadnKR==IDRADN
               				mj:=mjesec
-              				if fSvi
+              				if lSvi
                					select ld
 						set order to tag (TagVO("2"))
 						hseek  str(cGodina,4)+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
@@ -1336,7 +1323,7 @@ if "SUMKREDITA" $ tippr->formula
               				else
                 				select ld
 						hseek  str(cGodina,4)+cidrj+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-              				endif // fsvi
+              				endif // lSvi
               				select radkr
               				if ld->(found())
                 				nUkKred  += iznos
@@ -1374,7 +1361,7 @@ if "SUMKREDITA" $ tippr->formula
          		seek cidkred+cnaosnovu
          		private nUkKred:=0
          		do while !eof() .and. idkred==cidkred .and. ( cnaosnovu==naosnovu .or. gReKrOs=="N" )
-          			if fSvi
+          			if lSvi
            				select ld
 					set order to tag (TagVO("2"))
 					hseek  str(cGodina,4)+str(cmjesec,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
@@ -1382,14 +1369,14 @@ if "SUMKREDITA" $ tippr->formula
           			else
             				select ld
 					hseek  str(cGodina,4)+cidrj+str(cmjesec,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-          			endif // fsvi
+          			endif // lSvi
           			select radkr
           			if ld->(found()) .and. godina==cgodina .and. mjesec=cmjesec
             				nUkKred+=iznos
           			endif
           			IF cMjesecDo>cMjesec
             				FOR mj:=cMjesec+1 TO cMjesecDo
-              					if fSvi
+              					if lSvi
                						select ld
 							set order to tag (TagVO("2"))
 							hseek  str(cGodina,4)+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
@@ -1397,7 +1384,7 @@ if "SUMKREDITA" $ tippr->formula
               					else
                 					select ld
 							hseek  str(cGodina,4)+cidrj+str(mj,2)+if(lViseObr.and.!EMPTY(cObracun),cObracun,"")+radkr->idradn
-              					endif // fsvi
+              					endif // lSvi
               					select radkr
               					if ld->(found()) .and. godina==cgodina .and. mjesec=mj
                 					nUkKred+=iznos
@@ -1428,15 +1415,18 @@ return
 *}
 
 
+// -------------------------------
+// -------------------------------
 function PoTekRacunima()
-*{
- ? cLinija
-  ? Lokal("ZA ISPLATU:")
-  ? "-----------"
-  nMArr:=SELECT()
-  SELECT KRED
-  ASORT(aUkTr,,,{|x,y| x[1]<y[1]})
-  FOR i:=1 TO LEN(aUkTR)
+
+? cLinija
+? Lokal("ZA ISPLATU:")
+? "-----------"
+
+nMArr:=SELECT()
+SELECT KRED
+ASORT(aUkTr,,,{|x,y| x[1]<y[1]})
+FOR i:=1 TO LEN(aUkTR)
     IF EMPTY(aUkTR[i,1])
       ? PADR(Lokal("B L A G A J N A"),LEN(aUkTR[i,1]+KRED->naz)+1)
     ELSE
@@ -1444,15 +1434,15 @@ function PoTekRacunima()
       ? aUkTR[i,1], KRED->naz
     ENDIF
     @ prow(),60 SAY aUkTR[i,2] pict gpici; ?? "",gValuta
-  NEXT
-  SELECT (nMArr)
+NEXT
+SELECT (nMArr)
 
 
 return
-*}
 
 
-
+// ----------------------------------------------
+// ----------------------------------------------
 function ProizvTP()
 *{
 
