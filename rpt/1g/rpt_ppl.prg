@@ -64,8 +64,8 @@ if !empty(cVPosla)
 endif
 
 select ld
-//CREATE_INDEX("LDi1","str(godina)+idrj+str(mjesec)+idradn","LD")
-//CREATE_INDEX("LDi2","str(godina)+str(mjesec)+idradn","LD")
+//1 - "str(godina)+idrj+str(mjesec)+idradn"
+//2 - "str(godina)+str(mjesec)+idradn"
 if empty(cidrj)
   cidrj:=""
   IF cVarSort=="1"

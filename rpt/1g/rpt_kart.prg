@@ -238,9 +238,10 @@ endif
 return
 *}
 
-
+// ---------------------------
+// ---------------------------
 function ZaglKar()
-*{
+
 ++nRBrKart
 
 IF !lSkrivena .and. c2K1L=="D" .and. (nRBrKart%2)==0

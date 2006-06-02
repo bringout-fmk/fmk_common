@@ -1,7 +1,7 @@
 VERZIJA=CDX
 MODUL=LD
 
-PRGS=../main/1g/e.prg
+PRGS=e.prg
 CS=
 ASMS=
 

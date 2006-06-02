@@ -172,8 +172,9 @@ O_RADN
 nBrojac:=1
 
 START PRINT CRET
-
-? "RPT: Spisak razlika za isplatu radnicima"
+?
+P_10CPI
+?? "RPT: Spisak razlika za isplatu radnicima"
 ?
 
 P_COND

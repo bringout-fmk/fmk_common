@@ -1,24 +1,8 @@
 #include "\dev\fmk\ld\ld.ch"
 
-/*! \defgroup ini Parametri rada programa - fmk.ini
- *  @{
- *  @}
- */
- 
-/*! \defgroup params Parametri rada programa - *param.dbf
- *  @{
- *  @}
- */
-
-/*! \defgroup TblZnacenjePolja Tabele - znacenje pojedinih polja
- *  @{
- *  @}
- */
-
-
 /*
  * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
+ *                         Copyright Sigma-com software 1996-2006 
  * ----------------------------------------------------------------
  *
  */
@@ -29,9 +13,7 @@
  */
 
 
-#ifndef CPP
 EXTERNAL RIGHT,LEFT,FIELDPOS
-#endif
 
 #ifdef LIB
 

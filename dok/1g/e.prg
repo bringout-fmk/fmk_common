@@ -1384,7 +1384,8 @@ do while .t.
 enddo
 Boxc()
 
-O_LDX    ; set order to 0
+O_LDX   
+set order to 0
 
 start print cret
 

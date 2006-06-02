@@ -1031,7 +1031,6 @@ endif
 
 // Odstampaj rezultate zamjene sifara
 START PRINT CRET
-
 ? "Stanje zamjene sifara: Obracun plata"
 ?
 ? "--------------------------------------------------------"

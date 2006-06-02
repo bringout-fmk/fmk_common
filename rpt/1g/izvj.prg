@@ -361,10 +361,12 @@ index on  godina+mjesec+id  tag "1"
 set order to tag "1"
 use
 
-O_REKLD; O_OPSLD
+O_REKLD
+O_OPSLD
 select ld
 
 START PRINT CRET
+?
 P_10CPI
 
 IF IzFMKIni("LD","RekapitulacijaGustoPoVisini","N",KUMPATH)=="D"
@@ -416,7 +418,7 @@ aNetoMj:={}
 
 aUkTr:={}
 
-do while !eof() .and. eval(bUSlov)           // vrti se u bazi LD.DBF *******
+do while !eof() .and. eval(bUSlov) 
 
  if lViseObr .and. EMPTY(cObracun)
    ScatterS(godina,mjesec,idrj,idradn)
@@ -590,7 +592,7 @@ do while !eof() .and. eval(bUSlov)           // vrti se u bazi LD.DBF *******
  select ld
  skip
 
-enddo                                        // vrti se u bazi LD.DBF *******
+enddo 
 
 if nLjudi==0
   nLjudi:=9999999
@@ -598,9 +600,11 @@ endif
 B_ON
 ?? "LD: Rekapitulacija primanja"
 B_OFF
+
 #ifdef CPOR
  ?? IF(lIsplaceni,"","-neisplaceni radnici-")
 #endif
+
 if !empty(cstrspr)
  ?? " za radnike strucne spreme ",cStrSpr
 endif
@@ -643,7 +647,7 @@ if fSvi
  ?
 
 else
-// ************** ne fSvi
+ 
  select rj
  hseek cIdrj
 
@@ -1103,7 +1107,8 @@ nBO:=0
 
 
 
-select por; go top
+select por
+go top
 nPom:=nPor:=nPor2:=nPorOps:=nPorOps2:=0
 nC1:=20
 
@@ -1265,7 +1270,9 @@ IF !lGusto
  ?
 ENDIF
 ?
-if prow()>55+gpStranica; FF; endif
+if prow()>55+gpStranica
+	FF
+endif
 
 
 m:="----------------------- -------- ----------- -----------"
@@ -1542,11 +1549,6 @@ IF lGusto
   gPStranica-=nDSGusto
 ENDIF
 END PRINT
-#ifdef CAX
-select opsld; use
-select rekld; use
-select ld
-#endif
 CLOSERET
 
 
@@ -1600,19 +1602,7 @@ cGodina:=gGodina
 cObracun:=gObracun
 cRazdvoji := "N"
 
-#ifdef CPOR
-	IF Pitanje(,"Izvjestaj se pravi za isplacene(D) ili neisplacene(N) radnike?","D")=="D"
-   		lIsplaceni:=.t.
-   		O_LD
- 	ELSE
-   		lIsplaceni:=.f.
-   		select (F_LDNO)
-		usex (KUMPATH+"LDNO") alias LD
-		set order to 1
- 	ENDIF
-#else
- 	O_LD
-#endif
+O_LD
 
  copy structure extended to struct
  use
@@ -1631,8 +1621,8 @@ cRazdvoji := "N"
  create (cPom) from struct
  use (cPom)
  index on idradn+idrj tag "1"
+ 
  close all
- *
  O_PAROBR
  O_RJ
  O_RADN
@@ -1640,17 +1630,15 @@ cRazdvoji := "N"
  O_RADKR
  O_KRED
  O__LD
-#ifdef C50
- set index to (PRIVPATH+"_LDi1")
-#else
- set order to 1
-#endif
+ set order to tag "1"
 
 #ifdef CPOR
  IF lIsplaceni
    O_LD
  ELSE
-   select (F_LDNO)  ; usex (KUMPATH+"LDNO") alias LD; set order to 1
+   select (F_LDNO)  
+   usex (KUMPATH+"LDNO") alias LD
+   set order to 1
  ENDIF
 #else
  O_LD
@@ -1703,9 +1691,10 @@ endif
 EOF CRET
 
 nStrana:=0
+
 IF cRazdvoji=="N"
   bZagl:={|| ;
-             qqout("OBRACUN"+IF(lViseObr,IF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+ Lokal(" PLATE ZA PERIOD") + str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
+             qqout("OBRACUN"+ IIF(lViseObr,IF(EMPTY(cObracun)," ' '(SVI)"," '"+cObracun+"'"),"")+ Lokal(" PLATE ZA PERIOD") + str(cmjesec,2)+"-"+str(cmjesec2,2)+"/"+str(godina,4)," ZA "+UPPER(TRIM(gTS))+" ",gNFirma),;
              qout("RJ:",idrj,rj->naz),;
              qout(idradn,"-",RADNIK,"Mat.br:",radn->matbr," STR.SPR:",IDSTRSPR),;
              qout( Lokal("Broj knjizice:"), RADN->brknjiz),;
@@ -1732,7 +1721,6 @@ else
   START PRINT CRET
 endif
 
-//ParObr(cmjesec)
 select ld
 nT1:=nT2:=nT3:=nT4:=0
 do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. idradn=cIdRadn
@@ -1764,7 +1752,6 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. idradn==xIdRadn
    skip; loop
  endif
  Scatter()
- ***
  IF cRazdvoji=="D"
    SELECT _LD
    HSEEK xIdRadn+LD->IdRj
@@ -1774,7 +1761,6 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. idradn==xIdRadn
    Scatter ("w")
    For i:=1 To cLDpolja
      cPom:=padl(alltrim(str(i)),2,"0")
-     ** select tippr; seek cPom
      IF !lViseObr .or. cSatiVO=="S" .or. cSatiVO==_obr
        ws&cPom+=_s&cPom
      ENDIF
@@ -1791,7 +1777,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. idradn==xIdRadn
    SELECT LD
    SKIP; LOOP
  EndIF
- ***
+ 
  cUneto:="D"
  for i:=1 to cLDPolja
   cPom:=padl(alltrim(str(i)),2,"0")

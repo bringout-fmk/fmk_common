@@ -3,7 +3,6 @@ liball:
 	make -C dok/1g
 	make -C kredit/1g
 	make -C korek/1g
-	make -C main/1g
 	make -C main/2g
 	make -C db/1g
 	make -C db/2g
@@ -16,7 +15,6 @@ liball:
 cleanall:	
 	make -C dok/1g clean
 	make -C kredit/1g clean
-	make -C main/1g clean
 	make -C main/2g clean
 	make -C db/1g clean
 	make -C db/2g clean

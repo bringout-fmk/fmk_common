@@ -1134,15 +1134,19 @@ return
 *}
 
 
+// ----------------------------------------
+// ----------------------------------------
 function ZaglSvi()
-*{
 
-	select por
- 	go top
-	O_RJ
-	select rj
- 	? Lokal("Obuhvacene radne jedinice: ")
- 	IF !EMPTY(qqRJ)
+select por
+go top
+O_RJ
+select rj
+?
+P_10CPI
+
+?? Lokal("Obuhvacene radne jedinice: ")
+IF !EMPTY(qqRJ)
   		SET FILTER TO &aUsl2
   		GO TOP
   		DO WHILE !EOF()
@@ -1150,14 +1154,14 @@ function ZaglSvi()
    			? SPACE(27)
    			SKIP 1
   		ENDDO
- 	ELSE
+ELSE
   		?? "SVE"
   		?
- 	ENDIF
+ENDIF
  
- 	B_ON
+B_ON
  
- 	IF cMjesec==cMjesecDo
+IF cMjesec==cMjesecDo
    ? Lokal("Firma:"),gNFirma,"  " + Lokal("Mjesec:"),str(cmjesec,2)+IspisObr()
    ?? "    " + Lokal("Godina:"), str(cGodina,4)
    B_OFF
@@ -1166,22 +1170,24 @@ function ZaglSvi()
    ? Lokal("Firma:"),gNFirma,"  " + Lokal("Za mjesece od:"),str(cmjesec,2),"do",str(cmjesecDo,2)+IspisObr()
    ?? "    " + Lokal("Godina:"), str(cGodina,4)
    B_OFF
- ENDIF
- ?
+ENDIF
+?
 
 
 return
 *}
 
-
+// ----------------------------
+// ----------------------------
 function ZaglJ()
-*{
+
 O_RJ
 select rj
 hseek cIdRj
 select por
 go top
 select ld
+
 ?
 B_ON
 if cMjesec==cMjesecDo

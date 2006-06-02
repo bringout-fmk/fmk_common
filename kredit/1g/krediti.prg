@@ -592,11 +592,11 @@ return
 
 
 function ZaglKred()
-*{
+?
 P_10CPI
 
 if cRateDN=="R"
-	? "LD, izvjestaj na dan:",date()
+	?? "LD, izvjestaj na dan:", date()
  	? "FIRMA   :",gNFirma
  	?
 	if !fsvi
