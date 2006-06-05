@@ -694,14 +694,15 @@ ELSE // cMjesec==cMjesecDo // za viçe mjeseci nema prikaza poreza i doprinosa
 
 ENDIF
 
-?
 P_10CPI
-if prow()<62+gPStranica
- nPom:=62+gPStranica-prow()
- for i:=1 to nPom
-   ?
- next
-endif
+//if prow()<62+gPStranica
+// nPom:=62+gPStranica-prow()
+// for i:=1 to nPom
+//   ?
+// next
+//endif
+?
+?
 ?  PADC("     " + Lokal("Obradio:") + "                                 " + Lokal("Direktor:") + "    ",80)
 ?
 ?  PADC("_____________________                    __________________",80)
