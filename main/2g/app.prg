@@ -159,9 +159,6 @@ return nil
 *void TLDMod::mMenuStandard()
 *{
 method mMenuStandard
-
-say_fmk_ver()
-
 private opc:={}
 private opcexe:={}
 
@@ -200,6 +197,8 @@ AADD(opc,   Lokal("X. parametri     "))
 AADD(opcexe, {|| MnuParams()})
 
 private Izbor:=1
+
+say_fmk_ver()
 
 Menu_SC("gld",.t.,lPodBugom)
 
