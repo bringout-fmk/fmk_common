@@ -296,14 +296,21 @@
 // KUF shema za generaciju
 #define F_SG_KIF 241
 
-
-
 // reporti
 #define F_R_KUF 171
 #define F_R_KIF 172
 #define F_R_PDV 173
 
 #define F_LOKAL 242
+
+// RNAL
+#define F_P_RNAL 130
+#define F_P_RNOP 131
+#define F_RNAL 132
+#define F_RNOP 133
+#define F_S_RNOP 134
+#define F_S_RNKA 135
+
 
 #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 
