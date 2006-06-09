@@ -77,7 +77,7 @@ read
 
 ******************************
 ******************************
-nPrograma:=10
+nPrograma:=11
 
 if !fmem
  cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:=cProg16:="N"
@@ -91,7 +91,7 @@ endif
 
 
 // imena programa
-cnProg[1]:="FIN"
+cNProg[1]:="FIN"
 cNPROG[2]:="KALK"
 cNPROG[3]:="FAKT"
 cNPROG[4]:="LD"
@@ -100,7 +100,8 @@ cNPROG[6]:="VIRM"
 cNPROG[7]:="KAM"
 cNPROG[8]:="SII"
 cNPROG[9]:="EPDV"
-cNPROG[10]:="ADMIN"
+cNPROG[10]:="RNAL"
+cNPROG[11]:="ADMIN"
 
 // {to zna~i da ovo indicira da li program koristi podatke drugog programa
 // - master programa. Tako je master programa koji prenosi iz KALK u FIN -
@@ -114,7 +115,8 @@ cMProg[6]:="VIRM"
 cMProg[7]:="KAM"
 cMPROG[8]:="SII"
 cMPROG[9]:="EPDV"
-cMPROG[10]:="ADMIN"
+cMPROG[10]:="RNAL"
+cMPROG[11]:="ADMIN"
 
 // cTProgi title koji se pojavljuje u BAT-u
 cTProg[1]:="FIN  - Finansijsko"
@@ -126,7 +128,8 @@ cTPROG[6]:="VIRM - virmani"
 cTPROG[7]:="KAM - kamate"
 cTPROG[8]:="SII  - Sitan inventar"
 cTPROG[9]:="EPDV - KUF/KIF, P-PDV"
-cTPROG[10]:="ADMIN - administracija"
+cTPROG[10]:="RNAL - nalozi za pr."
+cTPROG[11]:="ADMIN - administracija"
 
 if cFmkInst=="N"
 
