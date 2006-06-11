@@ -306,10 +306,14 @@
 // RNAL
 #define F_P_RNAL 130
 #define F_P_RNOP 131
-#define F_RNAL 132
-#define F_RNOP 133
-#define F_S_RNOP 134
-#define F_S_RNKA 135
+#define F_T_RNST 132
+#define F_T_RNOP 133
+#define F_T_PARS 134
+#define F_RNAL 135
+#define F_RNOP 136
+#define F_RNLOG 137
+#define F_S_RNOP 138
+#define F_S_RNKA 139
 
 
 #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
