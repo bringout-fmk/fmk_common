@@ -314,6 +314,7 @@
 #define F_RNLOG 137
 #define F_S_RNOP 138
 #define F_S_RNKA 139
+#define F_S_TIPOVI 140
 
 
 #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
