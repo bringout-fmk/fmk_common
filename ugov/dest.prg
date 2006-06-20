@@ -1,13 +1,21 @@
 #include "sc.ch"
 
+// ----------------------------------
+// pregled destinacije 
+// ----------------------------------
 function P_Destin(cId,dx,dy)
- LOCAL GetList:={}
- PRIVATE ImeKol, Kol:={}, cLastOznaka:=" "
- private cIdTek:=UGOV->idpartner, nArr:=SELECT()
- SELECT DEST
- SET ORDER TO TAG "1"
- HSEEK cIdTek+cId
- IF FOUND()
+local GetList:={}
+private ImeKol:={}
+private Kol:={}
+private cLastOznaka:=" "
+private cIdTek:=UGOV->idpartner
+private nArr:=SELECT()
+
+SELECT DEST
+SET ORDER TO TAG "1"
+HSEEK cIdTek+cId
+
+IF FOUND()
    IF Pitanje(,"Izvrsiti ispravku destinacije "+cId+" ? (D/N)","N")=="D"
      EdDestBlok(K_F2,cId)
      CLEAR TYPEAHEAD
@@ -19,7 +27,7 @@ function P_Destin(cId,dx,dy)
    ENDIF
    SELECT (nArr)
    RETURN .t.
- ELSE 
+ELSE 
    // nova destinacija
    GO BOTTOM; SKIP 1
    EdDestBlok(K_CTRL_N,cId)
@@ -32,10 +40,10 @@ function P_Destin(cId,dx,dy)
    INKEY(0.5)
    READ
    RETURN .t.
- ENDIF
+ENDIF
 
- SET SCOPE TO cIdTek
- ImeKol:={ ;
+SET SCOPE TO cIdTek
+ImeKol:={ ;
           { "OZNAKA"  , {|| OZNAKA },  "OZNAKA"  },;
           { "NAZIV"   , {|| NAZ    },  "NAZ"     },;
           { "NAZIV2"  , {|| NAZ2   },  "NAZ2"    },;
@@ -46,17 +54,19 @@ function P_Destin(cId,dx,dy)
           { "FAX"     , {|| FAX    },  "FAX"     },;
           { "MOBTEL"  , {|| MOBTEL },  "MOBTEL"  };
          }
- for i:=1 to len(ImeKol); AADD(Kol,i); next
- private gTBDir:="N"
- PostojiSifra(F_DEST,"1",10,70,"Destinacije za:"+cIdTek+"-"+Ocitaj(F_PARTN,cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
+for i:=1 to len(ImeKol); AADD(Kol,i); next
+private gTBDir:="N"
+PostojiSifra(F_DEST,"1",10,70,"Destinacije za:"+cIdTek+"-"+Ocitaj(F_PARTN,cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
 
- private gTBDir:="D"
- cId:=cLastOznaka
- set scope to
- select (nArr)
+private gTBDir:="D"
+cId:=cLastOznaka
+set scope to
+select (nArr)
 return .t.
 
-
+// --------------------------------
+// key handler
+// --------------------------------
 function EdDestBlok(Ch,cDest)
 local GetList:={}
 local nRet:=DE_CONT
