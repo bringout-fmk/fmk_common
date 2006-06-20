@@ -89,7 +89,6 @@
 #define F__VALUTE   72
 #define F_RJ        73
 #define F_OPS       74
-#define F_RNAL      75
 
 //KALK
 #define F_KPRIPR    85 
