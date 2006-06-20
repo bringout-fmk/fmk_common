@@ -70,6 +70,9 @@ AADD(aDBf, { 'A1'        , 'N' , 12,  2 })
 AADD(aDBf, { 'A2'        , 'N' , 12,  2 })
 AADD(aDBf, { 'B1'        , 'N' , 12,  2 })
 AADD(aDBf, { 'B2'        , 'N' , 12,  2 })
+AADD(aDBf, { 'TXT2'      , 'C' ,  2,  0 })
+AADD(aDBf, { 'TXT3'      , 'C' ,  2,  0 })
+AADD(aDBf, { 'TXT4'      , 'C' ,  2,  0 })
 
 return aDbf
 
@@ -83,6 +86,7 @@ aDbf:={}
 AADD(aDBF, { "ID"       , "C" ,  10,  0 })
 AADD(aDBF, { "IDROBA"   , "C" ,  10,  0 })
 AADD(aDBF, { "Kolicina" , "N" ,  15,  4 })
+AADD(aDBF, { "Cijena"   , "N" ,  15,  3 })
 AADD(aDBf, { 'Rabat'    , 'N' ,   6,  3 })
 AADD(aDBf, { 'Porez'    , 'N' ,   5,  2 })
 AADD(aDBf, { 'K1'       , 'C' ,   1,  0 })
@@ -93,4 +97,32 @@ AADD(aDBf, { 'K2'    , 'C' ,   2,  0 })
 return aDbf
 
 
+// --------------------------------
+// otvori tabele neophodne za UGOV
+// --------------------------------
+function o_ugov()
+
+if !used(F_TXT)
+	O_FTXT
+endif
+if !used(F_SIFK)
+	O_SIFK
+endif
+if !used(F_SIFV)
+	O_SIFV
+endif
+if !used(F_ROBA)
+	O_ROBA
+endif
+if !used(F_PARTN)
+	O_PARTN
+endif
+if !used(F_UGOV)
+	O_UGOV
+endif
+if !used(F_RUGOV)
+	O_RUGOV
+endif
+
+return
 
