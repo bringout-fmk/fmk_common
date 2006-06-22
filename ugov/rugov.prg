@@ -56,6 +56,11 @@ if rugov->(fieldpos("K1"))<>0
  	endif
 endif
 
+if rugov->(fieldpos("cijena"))<>0
+  	AADD(aImeKol, { "Cijena", {|| cijena},  "cijena"    } )
+endif
+
+
 //if RUGOV->(FIELDPOS("DESTIN"))<>0
 //	AADD(aImeKol, { "DESTINACIJA",  {|| DESTIN},    "DESTIN"    } )
 //endif
