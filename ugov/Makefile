@@ -3,7 +3,7 @@ MODUL=fmk_ugov
 
 SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\ugov\\
 
-PRGS=ugov.prg genug.prg genug2.prg dest.prg m_ugov.prg rugov.prg db_ugov.prg param.prg
+PRGS=ugov.prg genug.prg genug2.prg dest.prg m_ugov.prg rugov.prg db_ugov.prg param.prg ut.prg
 CS=
 ASMS=
 

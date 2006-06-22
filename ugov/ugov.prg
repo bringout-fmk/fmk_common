@@ -17,12 +17,9 @@ private DFTdindem:="KM "
 private DFTidtxt:="10"
 private DFTzaokr:=2
 private DFTiddodtxt:=SPACE(2)
+private gGenUgV2:="1"
 private ImeKol
 private Kol
-
-if "U" $ TYPE("glDistrib") .or. !VALTYPE(glDistrib)=="L"
-	glDistrib:=.f.
-endif
 
 cHeader += "Lista Ugovora " 
 cHeader += "<F5> - definisi ugovor"
@@ -75,11 +72,6 @@ aKol := {}
 AADD(aImeKol, { "Ugovor", {|| id}, "id", {|| .t.}, {|| vpsifra(wid)}})
 AADD(aImeKol, { "Partner",{|| IdPartner}, "Idpartner", {|| .t.}, {|| P_Firma(@wIdPartner)}})
 
-// polje DESTIN - destinacija
-//if ( rugov->(FIELDPOS("DESTIN")) <> 0 )
-//	AADD(aImeKol, { "Naziv partnera", {|| Ocitaj(F_PARTN,IdPartner,"NazPartn()") }, ""})
-//endif
-
 // polje OPIS
 if ( IzFmkIni("Fakt_Ugovori", "Opis", "D") == "D" )
 	AADD(aImeKol, { "Opis", {|| naz}, "Naz" })
@@ -116,13 +108,8 @@ if IzFMkIni('Fakt_Ugovori',"Zaokruzenja",'D')=="D"
 endif
 
 // polje IDDODTXT
-if ugov->(fieldpos("IDDODTXT"))<>0
+if ugov->(fieldpos("IDDODTXT")) <> 0
 	AADD(aImeKol,{ "DodatniTXT", {|| IdDodTxt}, "IdDodTxt", {|| .t.}, {|| P_FTxt(@wIdDodTxt) } } )
-endif
-
-// ????
-if glDistrib
-	AADD(aImeKol,{ "Rok pl.", {|| rokpl}, "rokpl"})
 endif
 
 if ( ugov->(fieldpos("A1")) <> 0 )
@@ -158,136 +145,34 @@ local nRec:=0
 
 do case
 	case ( Ch == K_CTRL_T )
-	   if Pitanje(,"Izbrisati ugovor sa pripadajucim stavkama ?","N")=="D"
-    		cId:=id
-    		select rugov
-    		seek cid
-    		do while !eof() .and. cId==id
-       			skip
-			nTrec := RecNo()
-			skip -1
-       			delete
-       			go nTrec
-    		enddo
-    		select ugov
-    		delete
-		return 7  
-    		// prekini zavrsi i refresh
-	   endif
-	   
-	case ( Ch == K_CTRL_G )
-	   // automatsko generisanje ugovora za sve partnere
-  	   // sa podacima predhodnog
-	   if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
-     		select rugov
-     		cArtikal:=idroba
-     		cArtikalOld:=idroba
-     		cDN:="N"
-		Box(,3,50)
-      		@ m_x+1, m_y+5 SAY "Generisi ugovore za artikal: " GET cArtikal
-      		@ m_x+2, m_y+5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
-      		@ m_x+3, m_y+5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN valid cDN $ "DN"
-      		read
-     		BoxC()
-
-     		if LastKey() == K_ESC
-			return DE_CONT
+		// brisi ugovor
+		if br_ugovor() == 1
+			return DE_REFRESH
 		endif
-
-		if cDN=="D"
-      			set relation to id into ugov
-     		endif
-
-     		do while !eof()
-       			skip
-			nTrec:=recno()
-			skip -1
-        		if cDN=="D" .and. ugov->aktivan=="D" .and. cArtikalOld==idroba .or. cDN=="N" .and. cArtikalOld==idroba
-          			Scatter()
-          			append blank
-          			_idroba := cArtikal
-          			Gather()
-          			@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
-          			go nTrec
-        		else
-          			go nTrec
-        		endif
-     		enddo
-     		set relation to
-     		select ugov
-  	    endif
+		return DE_CONT
+		
+	case ( Ch == K_CTRL_G )
+	   	
+		// automatsko generisanje novih ugovora 
+		// za sve partnere sa podacima
+		// prethodnog ugovora
+	   	gen_ug_part()
 	    
-	case (Ch == K_F2) .or. (Ch == K_CTRL_N)
-	   if Ch==K_F2 .and. Pitanje(,"Promjena broja ugovora ?","N")=="D"
-     		cIdOld:=id
-     		cId:=Id
-     		Box(,2,50)
-      		@ m_x+1, m_y+2 SAY "Broj ugovora" GET cID  valid !empty(cid) .and. cid<>cidold
-      		read
-     		BoxC()
-     		if lastkey()==K_ESC; return DE_CONT; endif
-     			select rugov
-     			seek cidOld
-     			do while !eof() .and. cidold==id
-       				skip; nTrec:=recno(); skip -1
-       				replace id with cid
-       				go nTrec
-     			enddo
-     			select ugov
-     			replace id with cid
- 		endif
-
- 		if (Ch == K_CTRL_N)
-   			nRec:=RECNO()
-   			GO BOTTOM
-   			SKIP 1
- 		endif
- 		Scatter()
- 		if Ch==K_CTRL_N
-   			_datod:=DATE()
-   			_datdo:=CTOD("31.12.2059")
-   			_aktivan:="D"
-   			_dindem   := DFTdindem
-   			_idtipdok := DFTidtipdok
-   			_zaokr    := DFTzaokr
-   			_vrsta    := DFTvrsta
-   			_idtxt    := DFTidtxt
-   			_iddodtxt := DFTiddodtxt
- 		endif
-     		Box(,15,75,.f.)
-       		@ m_x+ 1,m_y+2 SAY "Ugovor            " GET _ID        PICT "@!"
-       		@ m_x+ 2,m_y+2 SAY "Partner           " GET _IDPARTNER VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35,Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) ,x } PICT "@!"
-       		@ m_x+ 3,m_y+2 SAY "Opis ugovora      " GET _naz       PICT "@!"
-       		@ m_x+ 4,m_y+2 SAY "Datum ugovora     " GET _datod
-       		@ m_x+ 5,m_y+2 SAY "Datum kraja ugov. " GET _datdo
-        	@ m_x+ 6,m_y+2 SAY "Aktivan (D/N)     " GET _aktivan VALID _aktivan $ "DN"  PICT "@!"
-          	@ m_x+ 7,m_y+2 SAY "Tip dokumenta     " GET _idtipdok PICT "@!"
-          	@ m_x+ 8,m_y+2 SAY "Vrsta             " GET _vrsta    PICT "@!"
-           	@ m_x+ 9,m_y+2 SAY "TXT na kraju dok. " GET _idtxt  VALID P_FTxt(@_IdTxt) PICT "@!"
-          	@ m_x+10,m_y+2 SAY "Valuta (KM/DEM)   " GET _dindem PICT "@!"
-        	if ugov->(fieldpos("IDDODTXT"))<>0
-         	   @ m_x+11,m_y+2 SAY "Dodatni txt       " GET _iddodtxt VALID P_FTxt(@_IdDodTxt) PICT "@!"
-        	endif
-       		if ugov->(fieldpos("A1"))<>0
-         	     @ m_x+12,m_y+2 SAY "A1                " GET _a1
-         	     @ m_x+13,m_y+2 SAY "A2                " GET _a2
-         	     @ m_x+14,m_y+2 SAY "B1                " GET _b1
-         	     @ m_x+15,m_y+2 SAY "B2                " GET _b2
-       		endif
-       		read
-     		BoxC()
-     		if Ch==K_CTRL_N .and. lastkey()<>K_ESC
-        		append blank
-     		endif
-     		if lastkey()<>K_ESC
-       			Gather()
-     		elseif Ch==K_CTRL_N
-       			GO (nRec)
-    		endif
- 		return 7
-
+	case (Ch == K_F2)
+	
+		// ispravka ugovora
+		edit_ugovor(.f.)
+		return 7
+		
+	case (Ch == K_CTRL_N)
+		
+		// novi ugovor
+	   	edit_ugovor(.t.)
+	  	return 7
+	  
 	case ( Ch == K_F5 )
-    		V_RUgov(ugov->id)
+    		
+		V_RUgov(ugov->id)
  		return 6 
 		// DE_CONT2
 
@@ -300,6 +185,179 @@ do case
 endcase
 
 return DE_CONT
+
+
+// -----------------------------------------------------------
+// generacija novog ugovora za partnera na osnovu prethodnog
+// -----------------------------------------------------------
+function gen_ug_part()
+local cArtikal
+local cArtikalOld
+local cDN
+local nTRec
+
+if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
+	select rugov
+     	cArtikal:=idroba
+     	cArtikalOld:=idroba
+     	cDN:="N"
+	Box(,3,50)
+      	@ m_x+1, m_y+5 SAY "Generisi ugovore za artikal: " GET cArtikal
+      	@ m_x+2, m_y+5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
+      	@ m_x+3, m_y+5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN valid cDN $ "DN"
+      	read
+     	BoxC()
+
+     	if LastKey() == K_ESC
+		return DE_CONT
+	endif
+
+	if cDN=="D"
+      		set relation to id into ugov
+     	endif
+
+     	do while !eof()
+       		skip
+		nTrec:=recno()
+		skip -1
+        	if cDN=="D" .and. ugov->aktivan=="D" .and. cArtikalOld==idroba .or. cDN=="N" .and. cArtikalOld==idroba
+        		Scatter()
+        		append blank
+        		_idroba := cArtikal
+        		Gather()
+        		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
+        		go nTrec
+        	else
+        		go nTrec
+        	endif
+     	enddo
+     	set relation to
+     	select ugov
+endif
+
+return DE_CONT
+
+
+
+// ------------------------------------
+// brisanje ugovora 
+// ------------------------------------
+function br_ugovor()
+local cId
+local nTRec
+if Pitanje(,"Izbrisati ugovor sa pripadajucim stavkama ?","N")=="D"
+	cId:=id
+    	select rugov
+    	seek cid
+    	do while !eof() .and. cId==id
+       		skip
+		nTrec := RecNo()
+		skip -1
+       		delete
+       		go nTrec
+    	enddo
+    	select ugov
+    	delete
+	return 1
+endif
+
+return 0
+
+
+
+// -----------------------------------
+// promjena broja ugovora
+// -----------------------------------
+function edit_ugovor(lNovi)
+local cIdOld
+local cId
+local nTRec
+
+if !lNovi .and. Pitanje(,"Promjena broja ugovora ?","N")=="D"
+	
+	cIdOld:=id
+	cId:=Id
+     	Box(,2,50)
+      	@ m_x+1, m_y+2 SAY "Broj ugovora" GET cID VALID !Empty(cId) .and. cId<>cIdOld
+      	read
+     	BoxC()
+     	
+	if Lastkey() == K_ESC
+		return DE_CONT
+	endif
+     	
+	select rugov
+     	seek cIdOld
+     	
+	do while !eof() .and. ( cIdOld == id )
+       		skip
+		nTrec:=recno()
+		skip -1
+       		replace id with cid
+       		go nTrec
+     	enddo
+     	select ugov
+     	replace id with cid
+endif
+
+if lNovi
+	nRec:=RECNO()
+	GO BOTTOM
+	SKIP 1
+endif
+ 	    
+Scatter()
+ 	    
+if lNovi
+	_datod:=DATE()
+   	_datdo:=CTOD("31.12.2059")
+   	_aktivan:="D"
+   	_dindem:=DFTdindem
+   	_idtipdok:=DFTidtipdok
+   	_zaokr:=DFTzaokr
+   	_vrsta:=DFTvrsta
+   	_idtxt:=DFTidtxt
+   	_iddodtxt:=DFTiddodtxt
+endif
+
+Box(,15,75,.f.)
+@ m_x+ 1,m_y+2 SAY "Ugovor            " GET _ID        PICT "@!"
+@ m_x+ 2,m_y+2 SAY "Partner           " GET _IDPARTNER VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35,Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) ,x } PICT "@!"
+@ m_x+ 3,m_y+2 SAY "Opis ugovora      " GET _naz       PICT "@!"
+@ m_x+ 4,m_y+2 SAY "Datum ugovora     " GET _datod
+@ m_x+ 5,m_y+2 SAY "Datum kraja ugov. " GET _datdo
+@ m_x+ 6,m_y+2 SAY "Aktivan (D/N)     " GET _aktivan VALID _aktivan $ "DN"  PICT "@!"
+@ m_x+ 7,m_y+2 SAY "Tip dokumenta     " GET _idtipdok PICT "@!"
+@ m_x+ 8,m_y+2 SAY "Vrsta             " GET _vrsta    PICT "@!"
+@ m_x+ 9,m_y+2 SAY "TXT na kraju dok. " GET _idtxt  VALID P_FTxt(@_IdTxt) PICT "@!"
+@ m_x+10,m_y+2 SAY "Valuta (KM/DEM)   " GET _dindem PICT "@!"
+if ugov->(fieldpos("IDDODTXT"))<>0
+	@ m_x+11,m_y+2 SAY "Dodatni txt       " GET _iddodtxt VALID P_FTxt(@_IdDodTxt) PICT "@!"
+endif
+if ugov->(fieldpos("A1"))<>0
+	@ m_x+12,m_y+2 SAY "A1                " GET _a1
+        @ m_x+13,m_y+2 SAY "A2                " GET _a2
+        @ m_x+14,m_y+2 SAY "B1                " GET _b1
+        @ m_x+15,m_y+2 SAY "B2                " GET _b2
+endif
+read
+BoxC()
+
+if LastKey() == K_ESC
+	return DE_CONT
+endif
+
+if lNovi 
+	append blank
+endif
+
+Gather()
+
+if lNovi
+	GO (nRec)
+endif
+
+return 7
 
 
 
@@ -683,30 +741,6 @@ ENDIF
 SELECT (nArr)
 RETURN (IF(lRefresh,DE_REFRESH,DE_CONT))
 
-
-
-// -------------------------------------------------------
-// vraca naziv partnera
-// -------------------------------------------------------
-function NazPartn()
-local cVrati
-local cPom
-
-cPom:=UPPER(ALLTRIM(mjesto))
-if cPom$UPPER(naz) .or. cPom$UPPER(naz2)
-	cVrati:=TRIM(naz)+" "+TRIM(naz2)
-else
-	cVrati:=TRIM(naz)+" "+TRIM(naz2)+" "+TRIM(mjesto)
-endif
-
-return PADR(cVrati,40)
-
-
-// -----------------------------------
-// -----------------------------------
-static function MSAY2(x, y, c)
-@ x,y SAY c
-return .t.
 
 
 // -----------------------------------

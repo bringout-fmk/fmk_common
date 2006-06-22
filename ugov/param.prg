@@ -45,7 +45,7 @@ if !lIni
      	@ m_x+ 3,m_y+ 2 SAY PADL("Kolicina", 20) GET DFTkolicina PICT pickol
      	@ m_x+ 4,m_y+ 2 SAY PADL("Tip ug.(1/2/G)", 20) GET DFTvrsta VALID DFTvrsta$"12G"
      	@ m_x+ 5,m_y+ 2 SAY PADL("Tip dokumenta", 20) GET DFTidtipdok
-     	@ m_x+ 6,m_y+ 2 SAY PADL("Valuta", 15) GET DFTdindem PICT "@!"
+     	@ m_x+ 6,m_y+ 2 SAY PADL("Valuta", 20) GET DFTdindem PICT "@!"
      	@ m_x+ 7,m_y+ 2 SAY PADL("Napomena 1", 20) GET DFTidtxt VALID P_FTXT(@DFTidtxt)
      	@ m_x+ 8,m_y+ 2 SAY PADL("Napomena 2", 20) GET DFTiddodtxt VALID P_FTXT(@DFTiddodtxt)
      	@ m_x+ 9,m_y+ 2 SAY PADL("Zaokruzenje", 20) GET DFTzaokr PICT "9"
