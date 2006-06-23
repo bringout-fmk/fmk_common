@@ -4,8 +4,8 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatGen, dDatLUpl, cKtoDug, cKtoPot, cOpis)
-local nX := 1
+static function g_ug_params(dDatGen, nMjesec, nGodina, dDatLUpl, cKtoDug, cKtoPot, cOpis)
+local nX := 2
 local nBoxLen := 20
 
 // datum generisanja
@@ -18,10 +18,19 @@ cKtoDug := PADR("2120", 7)
 cKtoPot := PADR("5430", 7)
 // opis
 cOpis := PADR("", 100)
+// mjesec na koji se odnosi fakturisanje
+nMjesec := MONTH(DATE())
+// godina na koju se odnosi fakturisanje
+nGodina := YEAR(DATE())
 
-Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2",10,70)
+Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2",12,70)
 
 @ m_x + nX, m_y + 2 SAY PADL("Datum generisanja", nBoxLen) GET dDatGen
+
+nX += 2
+
+@ m_x + nX, m_y + 2 SAY PADL("Fakt.za mjesec", nBoxLen) GET nMjesec PICT "99" VALID nMjesec >= 1 .or. nMjesec <= 12
+@ m_x + nX, col() + 2 SAY "godinu" GET nGodina PICT "9999"
 
 nX += 2
 @ m_x + nX, m_y + 2 SAY PADL("Konto duguje", nBoxLen) GET cKtoDug VALID P_Konto(@cKtoDug)
@@ -60,6 +69,8 @@ local nSaldo
 local nSaldoPDV
 local cNBrDok
 local nFaktBr
+local nMjesec
+local nGodina
 
 // otvori tabele
 o_ugov()
@@ -83,12 +94,14 @@ else
 			dDatlUpl := field->dat_u_fin
 			cKtoDug := field->kto_kup
 			cKtoPot := field->kto_dob
+			nMjesec := field->mjesec
+			nGodina := field->godina
 			cOpis := ALLTRIM(field->opis)
 		endif
 	endif
 endif
 
-if lSetParams .and. g_ug_params(@dDatGen, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis) == 0
+if lSetParams .and. g_ug_params(@dDatGen, @nMjesec, @nGodina, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis) == 0
 	return
 endif
 
@@ -119,6 +132,8 @@ if lSetParams
 	replace kto_kup with cKtoDug
 	replace kto_dob with cKtoPot
 	replace opis with cOpis
+	replace mjesec with nMjesec
+	replace godina with nGodina
 endif
 
 // filter na samo aktivne ugovore
@@ -149,7 +164,7 @@ do while !EOF()
 	select ugov
 	
 	// provjeri da li treba fakturisati ???
-	if !treba_generisati(dDatGen, ugov->dat_l_fakt, ugov->f_nivo, ugov->f_p_d_nivo)
+	if !treba_generisati(nMjesec, nGodina, ugov->dat_l_fakt, ugov->f_nivo, ugov->f_p_d_nivo)
 		skip
 		loop
 	endif
@@ -169,7 +184,7 @@ do while !EOF()
 	@ m_x + 2, m_y + 2 SAY "Partner -> " + cUPartner
 	
 	// generisi ugovor za partnera
-	g_ug_f_partner(cUPartner, dDatGen, dDatLUpl, cKtoDug, cKtoPot, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
+	g_ug_f_partner(cUPartner, dDatGen, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
 	
 	select ugov
 	
@@ -206,17 +221,19 @@ return
 // ------------------------------------------
 // da li partnera treba generisati
 // ------------------------------------------
-static function treba_generisati(dDatGen, dDatLFakt, cNivo, nPNivo)
+static function treba_generisati(nMjesec, nGodina, dDatLFakt, cNivo, nPNivo)
+local dPom
 
 // datum zadnjeg fakturisanja
-if dDatLFakt > dDatGen
+if STR(YEAR(dDatLFakt), 4) + STR(MONTH(dDatLFakt), 2) >= STR(nGodina, 4) + STR(nMjesec, 2)
 	// ne treba generisati
 	return .f.
 endif
 
 // godisnji nivo generisanja
 if cNivo == "G"
-	if (dDatLFakt + 365) > dDatGen
+	dPom := (dDatLFakt + 365)
+	if STR(YEAR(dPom), 4) + STR(MONTH(dPom), 2) > STR(nGodina, 4) + STR(nMjesec, 2)
 		// ne generisi
 		return .f.
 	endif
@@ -224,7 +241,7 @@ endif
 
 // mjesecni nivo generisanja
 if cNivo == "M"
-	if MONTH(dDatGen) + YEAR(dDatGen) < MONTH(dDatLFakt) + YEAR(dDatLFakt)
+	if STR(nGodina, 4) + STR(nMjesec, 2) <= STR(YEAR(dDatLFakt), 4) + STR(MONTH(dDatLFakt), 2) 
 		// ne generisi
 		return .f.
 	endif
@@ -232,7 +249,8 @@ endif
 
 // proizvoljni nivo generisanja
 if cNivo == "P"
-	if (dDatLFakt + nPNivo) > dDatGen
+	dPom := dDatLFakt + nPNivo
+	if STR(YEAR(dPom), 4) + STR(MONTH(dPom), 2) > STR(nGodina, 4) + STR(nMjesec, 2)
 		return .f.
 	endif
 endif
@@ -310,9 +328,7 @@ return
 // --------------------------------------------------
 // generacija ugovora za jednog partnera
 // --------------------------------------------------
-static function g_ug_f_partner(cUPartn, dDatGen, ;
-				dDatLUpl, cKtoDug, cKtoPot, ;
-				nGSaldo, nGSaldoPDV, nFaktBr, cBrDok)
+static function g_ug_f_partner(cUPartn, dDatGen, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok)
 
 local cFTipDok
 local cIdUgov
@@ -332,6 +348,20 @@ local dPPromKup:=CTOD("")
 local dPPRomDob:=CTOD("")
 local cPom
 local nCount
+local nPorez
+local cKtoPot
+local cKtoDug
+local dDatLFakt
+
+select gen_ug
+set order to tag "dat_gen"
+seek DTOS(dDatGen)
+
+cKtoPot := field->kto_dob
+cKtoDug := field->kto_kup
+dDatLUpl := field->dat_u_fin
+nMjesec := field->mjesec
+nGodina := field->godina
 
 // nastimaj PARTN na partnera
 n_partner(cUPartn)
@@ -353,6 +383,7 @@ do while !EOF() .and. (id == cIdUgov)
 	nCijena := field->cijena
 	nKolicina := field->kolicina
 	nRabat := field->rabat
+	nPorez := field->porez
 	
 	// nastimaj roba na rugov-idroba
 	n_roba(rugov->idroba)
@@ -368,7 +399,7 @@ do while !EOF() .and. (id == cIdUgov)
 	if roba->tip == "U"
 		
 		// pronadji djoker #ZA_MJ#
-		cPom := str_za_mj(roba->naz, dDatGen)
+		cPom := str_za_mj(roba->naz, nMjesec, nGodina)
 		
 		// dodaj ovo u _txt
 		a_to_txt(cPom)
@@ -446,7 +477,7 @@ do while !EOF() .and. (id == cIdUgov)
    	_dindem := ugov->dindem
    		
 	nFaktIzn += nKolicina * nCijena
-	nFaktPDV += nFaktIzn * (17/100)
+	nFaktPDV += nFaktIzn * (nPorez/100)
 	
 	nGSaldo += nFaktIzn
 	nGSaldoPDV += nFaktPDV

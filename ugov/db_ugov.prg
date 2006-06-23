@@ -135,6 +135,10 @@ AADD(aDBf, { 'FAKT_BR'  , 'N' ,   5,  0 })
 AADD(aDBf, { 'SALDO'    , 'N' ,  15,  5 })
 // saldo pdv-a
 AADD(aDBf, { 'SALDO_PDV', 'N' ,  15,  5 })
+// mjesec
+AADD(aDBf, { 'MJESEC',    'N' ,   2,  0 })
+// godina
+AADD(aDBf, { 'GODINA',    'N' ,   4,  0 })
 
 return aDbf
 

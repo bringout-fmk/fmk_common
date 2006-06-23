@@ -11,9 +11,7 @@ if EMPTY(gFinKPath)
 	return 0
 endif
 
-AddBS(@gFinKPath)
-
-cUse := gFinKPath + "SUBAN.DBF"
+cUse := ALLTRIM(gFinKPath) + "SUBAN.DBF"
 
 select 130
 use (cUse) alias ug_suban

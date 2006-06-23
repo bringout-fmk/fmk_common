@@ -2,7 +2,7 @@
 
 
 // --------------------------------------
-// meni ugovori
+// meni sifrarnik ugovora
 // --------------------------------------
 function SifUgovori()
 private Opc:={}
@@ -17,10 +17,6 @@ private Izbor:=1
 Menu_SC("mugo")
 CLOSERET
 return
-
-
-
-
 
 
 
