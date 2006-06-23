@@ -101,10 +101,19 @@ if RecCount2() <> 0
 	closeret
 endif
 
+// ako postoji vec generisano za datum sta izadji ili nastavi
+if lSetParams .and. postoji_generacija(dDatGen) == 0
+	return
+endif
+
 // dodaj u gen_ug novu generaciju
 if lSetParams
 	select gen_ug
-	append blank
+	set order to tag "dat_gen"
+	seek DTOS(dDatGen)
+	if !FOUND()
+		append blank
+	endif
 	replace dat_gen with dDatGen
 	replace dat_u_fin with dDatLUpl
 	replace kto_kup with cKtoDug
@@ -159,7 +168,7 @@ do while !EOF()
 	@ m_x + 2, m_y + 2 SAY "Partner -> " + cUPartner
 	
 	// generisi ugovor za partnera
-	g_ug_f_partner(cUPartner, dDatGen, dDatLUpl, cKtoDug, cKtoPot, cOpis, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
+	g_ug_f_partner(cUPartner, dDatGen, dDatLUpl, cKtoDug, cKtoPot, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
 	
 	select ugov
 	skip
@@ -264,8 +273,7 @@ return
 // generacija ugovora za jednog partnera
 // --------------------------------------------------
 static function g_ug_f_partner(cUPartn, dDatGen, ;
-				dDatLUpl, cKtoDug, ;
-				cKtoPot, cOpis, ;
+				dDatLUpl, cKtoDug, cKtoPot, ;
 				nGSaldo, nGSaldoPDV, nFaktBr, cBrDok)
 
 local cFTipDok
@@ -285,6 +293,7 @@ local dPUplKup:=CTOD("")
 local dPPromKup:=CTOD("")
 local dPPRomDob:=CTOD("")
 local cPom
+local nCount
 
 // nastimaj PARTN na partnera
 n_partner(cUPartn)
@@ -298,6 +307,8 @@ cIdUgov := field->id
 select rugov
 seek cIdUgov
 
+nCount := 0
+
 // prodji kroz rugov
 do while !EOF() .and. (id == cIdUgov)
 
@@ -310,6 +321,9 @@ do while !EOF() .and. (id == cIdUgov)
 	
 	select pripr
 	append blank
+	
+	++ nCount
+	
 	Scatter()
 
 	// ako je roba tip U
@@ -371,6 +385,7 @@ do while !EOF() .and. (id == cIdUgov)
 	select pripr
 	
    	_idfirma := gFirma
+   	_idpartner := cUPartn
   	_zaokr := ugov->zaokr
    	_rbr := STR(++nRbr, 3)
    	_idtipdok := cFTipDok
@@ -392,8 +407,11 @@ do while !EOF() .and. (id == cIdUgov)
    	_porez := rugov->porez
    	_dindem := ugov->dindem
    		
-	nGSaldo += nKolicina * nCijena
-	nGSaldoPDV += nGSaldo * 1.17
+	nFaktIzn += nKolicina * nCijena
+	nFaktPDV += nFaktIzn * (17/100)
+	
+	nGSaldo += nFaktIzn
+	nGSaldoPDV += nFaktPDV
 	
 	Gather()
 	
@@ -401,10 +419,16 @@ do while !EOF() .and. (id == cIdUgov)
    	skip
 enddo
 
-// nadji saldo partnera u fin-u
-// g_p_saldo(cUPartn, cKtoDug, cKtoPot)
-// get_d_p_upl(cUPartn, cKto)
-// get_d_p_prom(cUPartn, cKto)
+// saldo kupca
+nSaldoKup := g_p_saldo(cUPartn, cKtoDug)
+// saldo dobavljaca
+nSaldoDob := g_p_saldo(cUPartn, cKtoPot)
+// datum zadnje uplate kupca
+dPUplKup := g_dpupl_part(cUPartn, cKtoDug)
+// datum zadnje promjene kupac
+dPPromKup := g_dpprom_part(cUPartn, cKtoDug)
+// datum zadnje promjene dobavljac
+dPPromDob := g_dpprom_part(cUPartn, cKtoPot)
 
 // dodaj stavku u gen_ug_p
 a_to_gen_p(dDatGen, cUPartn, cIdUgov, nSaldoKup,;
@@ -430,42 +454,37 @@ endif
 select pripr
 nTRec := RecNo()
 
-// djokeri na txt replace .....
+skip -(nCount - 1)
+
+Scatter()
+
+txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob)
+
+Gather()
 
 go (nTRec)
 
 return
 
 
-// ----------------------------------------
-// pronadji i vrati tekst iz FTXT
-// ----------------------------------------
-static function f_ftxt(cId)
-local xRet := ""
-select ftxt
-hseek cId
-xRet := TRIM(naz)
-return xRet
 
 
-// -----------------------------------
-// dodaj u polje txt tekst
-// lVise - vise tekstova
-// -----------------------------------
-static function a_to_txt(cVal, lEmpty)
-local nTArr
-nTArr := SELECT()
+// --------------------------------------------
+// provjerava da li postoji generacija u GEN_UG
+// --------------------------------------------
+static function postoji_generacija(dDatGen)
 
-if lEmpty == nil
-	lEmpty := .f.
+select gen_ug
+set order to tag "dat_gen"
+seek DTOS(dDatGen)
+if !FOUND()
+	return 1
 endif
-// ako je prazno nemoj dodavati
-if !lEmpty .and. EMPTY(cVal)
-	return
-endif
-_txt += CHR(16) + cVal + CHR(17)
 
-select (nTArr)
-return
+if Pitanje(,"Generacija za ovaj datum postoji, prepisati je (D/N)?", "N") == "D"
+	return 1
+endif
+
+return 0
 
 

@@ -68,6 +68,7 @@ private DFTidtxt:="10"
 private DFTzaokr:=2
 private DFTiddodtxt:="  "
 private gGenUgV2:="1"
+private gFinKPath:=SPACE(50)
 
 DFTParUg(.t.)
 

@@ -19,6 +19,7 @@ private DFTidtxt:="10"
 private DFTzaokr:=2
 private DFTiddodtxt:=SPACE(2)
 private gGenUgV2:="1"
+private gFinKPath:=SPACE(50)
 private ImeKol
 private Kol
 

@@ -26,6 +26,7 @@ if !lIni
     	private DFTzaokr:=2
     	private DFTiddodtxt:="  "
 	private gGenUgV2:="1"
+	private gFinKPath:=SPACE(50)
 endif
 
 RPar("01", @DFTkolicina)
@@ -37,6 +38,7 @@ RPar("06", @DFTidtxt)
 RPar("07", @DFTzaokr)
 RPar("08", @DFTiddodtxt)
 RPar("09", @gGenUgV2)
+RPar("10", @gFinKPath)
 
 if !lIni
 	Box(,11,75)
@@ -50,6 +52,7 @@ if !lIni
      	@ m_x+ 8,m_y+ 2 SAY PADL("Napomena 2", 20) GET DFTiddodtxt VALID P_FTXT(@DFTiddodtxt)
      	@ m_x+ 9,m_y+ 2 SAY PADL("Zaokruzenje", 20) GET DFTzaokr PICT "9"
      	@ m_x+10,m_y+ 2 SAY PADL("gen.ug. ver 1/2", 20) GET gGenUgV2 PICT "@!" VALID gGenUgV2 $ "12"
+     	@ m_x+11,m_y+ 2 SAY PADL("Fin KUMPATH", 20) GET gFinKPath PICT "@!"
      	READ
     	BoxC()
 
@@ -64,6 +67,7 @@ if !lIni
       		WPar("07", DFTzaokr)
       		WPar("08", DFTiddodtxt)
 		WPar("09", gGenUgV2)
+		WPar("10", gFinKPath)
     	endif
     
 endif
