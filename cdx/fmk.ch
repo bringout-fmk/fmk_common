@@ -29,6 +29,10 @@
 
 #xcommand O_RUGOV    => select(F_RUGOV);  use  (KUMPATH+"RUGOV")   ; set order to tag "ID"
 
+#xcommand O_GEN_UG   => select(F_GEN_UG);  use  (KUMPATH+"GEN_UG")  ; set order to tag "DAT_GEN"
+
+#xcommand O_G_UG_P  => select(F_G_UG_P);  use  (KUMPATH+"GEN_UG_P")   ; set order to tag "DAT_GEN"
+
 // KALK
 
 #xcommand O_PRIPR   => select(F_PRIPR); usex (PRIVPATH+"PRIPR") ; set order to 1
