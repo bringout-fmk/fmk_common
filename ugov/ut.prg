@@ -52,41 +52,40 @@ return cRet
 // _txt djokeri, obrada 
 // ----------------------------------------
 function txt_djokeri(nSaldoKup, nSaldoDob, ;
-                     dPUplKup, dPPromKup, dPPromDob)
+                     dPUplKup, dPPromKup, dPPromDob, dLUplata)
 
 local cPom
 
 // saldo
-cPom := " ( Saldo kupca: "
+cPom := " Vas trenutni saldo je: "
 cPom += ALLTRIM(STR(nSaldoKup))
-cPom += " "
-cPom += "saldo dobavljaca: "
-cPom += ALLTRIM(STR(nSaldoDob))
-cPom += " ) "
+cPom += "."
+cPom += " U obzir uzete uplate do "
+cPom += DToC(dLUplata)
+cPom += ". "
 
 _txt := STRTRAN(_txt, "#SALDO_KUP_DOB#", cPom)
 
 // datum posljednje uplate kupca
-cPom := " ( Datum posljednje uplate kupca: "
+cPom := " Datum posljednje uplate: "
 cPom += DToC(dPUplKup)
-cPom += " ) "
+cPom += ". "
 
 _txt := STRTRAN(_txt, "#D_P_UPLATA_KUP#", cPom)
 
 // datum posljednje promjene kupac
-cPom := " ( Datum posljednje promjene na kontu kupca: "
+cPom := " Datum posljednje promjene na kontu: "
 cPom += DToC(dPPromKup)
-cPom += " ) "
+cPom += ". "
 
 _txt := STRTRAN(_txt, "#D_P_PROMJENA_KUP#", cPom)
 
 // datum posljednje promjene dobavljac
-cPom := " ( Datum posljednje promjene na kontu dobavljaca: "
+cPom := " Datum posljednje promjene na kontu: "
 cPom += DToC(dPPromDob)
-cPom += " ) "
+cPom += ". "
 
 _txt := STRTRAN(_txt, "#D_P_PROMJENA_DOB#", cPom)
-
 
 return
 

@@ -147,6 +147,7 @@ do while !EOF()
 	endif
 	
 	select ugov
+	
 	// provjeri da li treba fakturisati ???
 	if !treba_generisati(dDatGen, ugov->dat_l_fakt, ugov->f_nivo, ugov->f_p_d_nivo)
 		skip
@@ -171,6 +172,14 @@ do while !EOF()
 	g_ug_f_partner(cUPartner, dDatGen, dDatLUpl, cKtoDug, cKtoPot, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
 	
 	select ugov
+	
+	// upisi podatak o ovom generisanju ako je datum manji od datuma
+	// generisanja
+	
+	if field->dat_l_fakt < dDatGen
+		replace field->dat_l_fakt with dDatGen
+	endif
+	
 	skip
 
 enddo
@@ -198,6 +207,35 @@ return
 // da li partnera treba generisati
 // ------------------------------------------
 static function treba_generisati(dDatGen, dDatLFakt, cNivo, nPNivo)
+
+// datum zadnjeg fakturisanja
+if dDatLFakt > dDatGen
+	// ne treba generisati
+	return .f.
+endif
+
+// godisnji nivo generisanja
+if cNivo == "G"
+	if (dDatLFakt + 365) > dDatGen
+		// ne generisi
+		return .f.
+	endif
+endif
+
+// mjesecni nivo generisanja
+if cNivo == "M"
+	if MONTH(dDatGen) + YEAR(dDatGen) < MONTH(dDatLFakt) + YEAR(dDatLFakt)
+		// ne generisi
+		return .f.
+	endif
+endif
+
+// proizvoljni nivo generisanja
+if cNivo == "P"
+	if (dDatLFakt + nPNivo) > dDatGen
+		return .f.
+	endif
+endif
 
 return .t.
 
@@ -454,11 +492,13 @@ endif
 select pripr
 nTRec := RecNo()
 
+// vrati se na prvu stavku ove fakture
 skip -(nCount - 1)
 
 Scatter()
 
-txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob)
+// obradi djokere
+txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl)
 
 Gather()
 
