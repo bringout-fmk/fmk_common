@@ -69,8 +69,8 @@
 #define F_FIDOKS2  47
 #define F_UGOV     50
 #define F_RUGOV    51
-//#define F_KUF      53
-//#define F_KIF      54
+#define F_GEN_UG   53
+#define F_G_UG_P   54
 #define F_VPRIH    55
 
 //FMK ROBA
