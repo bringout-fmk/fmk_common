@@ -54,23 +54,40 @@
 *string FmkIni_ExePath_Fakt_Ugovori_UNapomenuSamoBrUgovora;
 
 
+// ----------------------------------------------
+// funkcija za poziv generacije ugovora
+// ----------------------------------------------
+function m_gen_ug()
 
-/*! \fn GenUg()
- *  \brief Generacija ugovora
- */
- 
-function GenUg()
-*{
-O_FTXT
-O_SIFK
-O_SIFV
-O_ROBA
-O_PARTN
-O_UGOV
-O_RUGOV
+private DFTkolicina:=1
+private DFTidroba:=PADR("",10)
+private DFTvrsta:="1"
+private DFTidtipdok:="10"
+private DFTdindem:="KM "
+private DFTidtxt:="10"
+private DFTzaokr:=2
+private DFTiddodtxt:="  "
+private gGenUgV2:="1"
+
+DFTParUg(.t.)
+
+if gGenUgV2 == "1"
+	gen_ug()
+else
+	// nova varijanta generisanja ugovora
+	gen_ug_2()
+endif
+
+return
 
 
-// browsaj ugovor
+// -----------------------------------------
+// generacija ugovora varijanta 1
+// -----------------------------------------
+function gen_ug()
+
+// otvori tabele
+o_ugov()
 
 nN1:=0
 nN2:=0
@@ -131,8 +148,6 @@ endif
 GO TOP
 
 for nTekUg:=1 to nDokGen
-//****************** izgenerisati n dokumenata ***********
-
 
 SELECT UGOV
 

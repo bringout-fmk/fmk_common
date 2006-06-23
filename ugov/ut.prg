@@ -26,6 +26,26 @@ function MSAY2(x, y, c)
 return .t.
 
 
+// --------------------------------
+// konvertuj string #ZA_MJ#
+// --------------------------------
+function str_za_mj(cStr, dDat)
+local cRet
+local cPom
+local cSrc := "#ZA_MJ#"
+local cMjesec
+local cGodina
 
+cMjesec := ALLTRIM(STR(MONTH(dDat)))
+cGodina := ALLTRIM(STR(YEAR(dDat)))
+
+cPom := "Za mjesec "
+cPom += cMjesec
+cPom += "/"
+cPom += cGodina
+
+cRet := STRTRAN(cStr, cSrc, cPom )
+
+return cRet
 
 

@@ -9,10 +9,11 @@ function P_Ugov(cId,dx,dy)
 local i
 local cHeader:=""
 local cFieldId
+
 private DFTkolicina:=1
-private DFTidroba:=PADR("ZIPS",10)
+private DFTidroba:=PADR("",10)
 private DFTvrsta:="1"
-private DFTidtipdok:="20"
+private DFTidtipdok:="10"
 private DFTdindem:="KM "
 private DFTidtxt:="10"
 private DFTzaokr:=2
@@ -51,9 +52,7 @@ cVal := "ID"
 
 if lTrznica
 	cVal := "NAZ2"
-elseif ( gVFU == "1" )
-	cVal := "ID"
-elseif ( cId == nil )
+elseif ( gVFU == "1" ) .or. ( cId == nil )
 	cVal := "ID"
 else
 	cVal := "NAZ2"
@@ -71,46 +70,33 @@ aKol := {}
 
 AADD(aImeKol, { "Ugovor", {|| id}, "id", {|| .t.}, {|| vpsifra(wid)}})
 AADD(aImeKol, { "Partner",{|| IdPartner}, "Idpartner", {|| .t.}, {|| P_Firma(@wIdPartner)}})
-
-// polje OPIS
-if ( IzFmkIni("Fakt_Ugovori", "Opis", "D") == "D" )
-	AADD(aImeKol, { "Opis", {|| naz}, "Naz" })
-endif
-
-// polje DATUM
-if ( IzFmkIni("Fakt_Ugovori", "Datumi", "D") == "D" )
-	// datumi bitni za obracun
-  	AADD(aImeKol, { "DatumOd", {|| DatOd}, "DatOd" })
-  	AADD(aImeKol, { "DatumDo", {|| DatDo}, "DatDo" })
-endif
-
+AADD(aImeKol, { "Opis", {|| naz}, "Naz" })
+AADD(aImeKol, { "DatumOd", {|| DatOd}, "DatOd" })
+AADD(aImeKol, { "DatumDo", {|| DatDo}, "DatDo" })
 AADD(aImeKol, { "Aktivan", {|| Aktivan}, "Aktivan", {|| .t.}, {|| wAKtivan $ "DN"}})
 AADD(aImeKol, { "TipDok", {|| IdTipdok}, "IdTipDok" })
+AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
 
-// polje VRSTA
-if ( IzFmkIni("Fakt_Ugovori", "Vrsta", "D") == "D" )
-	AADD(aImeKol,{ "Vrsta", {|| Vrsta}, "Vrsta" })
+if ugov->(fieldpos("F_NIVO")) <> 0
+	AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
+	AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
+	AADD(aImeKol, { "Dat.poslj.f", {|| dat_l_fakt}, "dat_l_fakt" })
 endif
 
-// polje TXT
-if ( IzFmkIni("Fakt_Ugovori", "TXT", "D") == "D" )
-	AADD(aImeKol,{ "TXT", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
-endif
+AADD(aImeKol, { "TXT 1", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
 
-// polje DINDEM
-if IzFMkIni('Fakt_Ugovori',"DINDEM",'D')=="D"
-  AADD(aImeKol,{ "DINDEM" , {|| DINDEM},    "DINDEM"                                   } )
-endif
-
-// polje ZAOKRUZENJE
-if IzFMkIni('Fakt_Ugovori',"Zaokruzenja",'D')=="D"
-	AADD(aImeKol,{ "ZAOKR", {|| ZAOKR}, "ZAOKR"})
-endif
-
-// polje IDDODTXT
 if ugov->(fieldpos("IDDODTXT")) <> 0
-	AADD(aImeKol,{ "DodatniTXT", {|| IdDodTxt}, "IdDodTxt", {|| .t.}, {|| P_FTxt(@wIdDodTxt) } } )
+	AADD(aImeKol,{ "TXT 2", {|| IdDodTxt}, "IdDodTxt", {|| .t.}, {|| P_FTxt(@wIdDodTxt) } } )
 endif
+
+if ugov->(fieldpos("TXT2")) <> 0
+	AADD(aImeKol,{ "TXT 3", {|| txt2}, "txt2", {|| .t.}, {|| P_FTxt(@wTxt2) } } )
+	AADD(aImeKol,{ "TXT 4", {|| txt3}, "txt3", {|| .t.}, {|| P_FTxt(@wTxt3) } } )
+	AADD(aImeKol,{ "TXT 5", {|| txt4}, "txt4", {|| .t.}, {|| P_FTxt(@wTxt4) } } )
+endif
+
+AADD(aImeKol,{ "DINDEM" , {|| DINDEM}, "DINDEM" })
+AADD(aImeKol,{ "ZAOKR", {|| ZAOKR}, "ZAOKR"})
 
 if ( ugov->(fieldpos("A1")) <> 0 )
 	if IzFMkIni('Fakt_Ugovori',"A1",'D')=="D"
@@ -272,6 +258,8 @@ function edit_ugovor(lNovi)
 local cIdOld
 local cId
 local nTRec
+local nBoxLen:=20
+local nX:=1
 
 if !lNovi .and. Pitanje(,"Promjena broja ugovora ?","N")=="D"
 	
@@ -318,27 +306,103 @@ if lNovi
    	_vrsta:=DFTvrsta
    	_idtxt:=DFTidtxt
    	_iddodtxt:=DFTiddodtxt
+	
+	if ugov->(fieldpos("F_NIVO")) <> 0
+		_f_nivo := "M"
+		_f_p_d_nivo := 0
+		_dat_l_fakt := CToD("")
+	endif
+	
 endif
 
-Box(,15,75,.f.)
-@ m_x+ 1,m_y+2 SAY "Ugovor            " GET _ID        PICT "@!"
-@ m_x+ 2,m_y+2 SAY "Partner           " GET _IDPARTNER VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35,Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) ,x } PICT "@!"
-@ m_x+ 3,m_y+2 SAY "Opis ugovora      " GET _naz       PICT "@!"
-@ m_x+ 4,m_y+2 SAY "Datum ugovora     " GET _datod
-@ m_x+ 5,m_y+2 SAY "Datum kraja ugov. " GET _datdo
-@ m_x+ 6,m_y+2 SAY "Aktivan (D/N)     " GET _aktivan VALID _aktivan $ "DN"  PICT "@!"
-@ m_x+ 7,m_y+2 SAY "Tip dokumenta     " GET _idtipdok PICT "@!"
-@ m_x+ 8,m_y+2 SAY "Vrsta             " GET _vrsta    PICT "@!"
-@ m_x+ 9,m_y+2 SAY "TXT na kraju dok. " GET _idtxt  VALID P_FTxt(@_IdTxt) PICT "@!"
-@ m_x+10,m_y+2 SAY "Valuta (KM/DEM)   " GET _dindem PICT "@!"
-if ugov->(fieldpos("IDDODTXT"))<>0
-	@ m_x+11,m_y+2 SAY "Dodatni txt       " GET _iddodtxt VALID P_FTxt(@_IdDodTxt) PICT "@!"
+Box(, 20,75,.f.)
+
+@ m_x + nX, m_y + 2 SAY PADL("Ugovor", nBoxLen) GET _id PICT "@!"
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Partner", nBoxLen) GET _idpartner VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35, Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) , x } PICT "@!"
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Opis ugovora", nBoxLen) GET _naz PICT "@!"
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Datum ugovora", nBoxLen) GET _datod
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Datum kraja ugov.", nBoxLen) GET _datdo
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Aktivan (D/N)", nBoxLen) GET _aktivan VALID _aktivan $ "DN"  PICT "@!"
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Tip dokumenta", nBoxLen) GET _idtipdok PICT "@!"
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Vrsta", nBoxLen) GET _vrsta PICT "@!"
+
+
+if ugov->(fieldpos("F_NIVO")) <> 0
+	
+	++ nX
+	
+	@ m_x + nX, m_y + 2 SAY PADL("Nivo fakt.", nBoxLen) GET _f_nivo PICT "@!" VALID _f_nivo $ "MPG"
+
+	++ nX
+	
+	@ m_x + nX, m_y + 2 SAY PADL("Pr.nivo dana", nBoxLen) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
+
+	++ nX
+	
+	@ m_x + nX, m_y + 2 SAY PADL("Dat.poslj.fakt", nBoxLen) GET _dat_l_fakt
+
 endif
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Valuta (KM/DEM)", nBoxLen) GET _dindem PICT "@!"
+
+++ nX
+
+@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 1", nBoxLen) GET _idtxt VALID P_FTxt(@_IdTxt) PICT "@!"
+
+if ugov->(fieldpos("IDDODTXT"))<>0
+	
+	++ nX
+
+	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 2", nBoxLen) GET _iddodtxt VALID P_FTxt(@_IdDodTxt) PICT "@!"
+endif
+
+if ugov->(fieldpos("TXT2"))<>0
+	
+	++ nX
+
+	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 3", nBoxLen) GET _txt2 VALID P_FTxt(@_Txt2) PICT "@!"
+
+	++ nX
+
+	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 4", nBoxLen) GET _txt3 VALID P_FTxt(@_Txt3) PICT "@!"
+	
+	++ nX
+
+	@ m_x + nX, m_y + 2 SAY PADL("Dod.txt 5", nBoxLen) GET _txt4 VALID P_FTxt(@_Txt4) PICT "@!"
+
+
+endif
+
 if ugov->(fieldpos("A1"))<>0
-	@ m_x+12,m_y+2 SAY "A1                " GET _a1
-        @ m_x+13,m_y+2 SAY "A2                " GET _a2
-        @ m_x+14,m_y+2 SAY "B1                " GET _b1
-        @ m_x+15,m_y+2 SAY "B2                " GET _b2
+	++ nX
+	@ m_x + nX, m_y + 2 SAY PADL("A1", nBoxLen) GET _a1
+	@ m_x + nX, col() + 2 SAY PADL("A2", nBoxLen) GET _a2
+        ++ nX
+	@ m_x + nX, m_y + 2 SAY PADL("B1", nBoxLen) GET _b1
+	@ m_x + nX, col() + 2 SAY PADL("B2", nBoxLen) GET _b2
 endif
 read
 BoxC()
@@ -405,7 +469,6 @@ if rugov->(fieldpos("K1"))<>0
     AADD (ImeKol,{ "K2",  {|| K2},    "K2"  , {|| .t.}, {|| .t.}, ">"  } )
   endif
 endif
-//AADD (ImeKol,{ "DESTINACIJA",  {|| DESTIN},    "DESTIN"  , {|| .t.}, {|| EMPTY(wdestin).or.P_Destin(@wdestin)}, "V0"  } )
 
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 
