@@ -244,13 +244,16 @@ for :=1 to 6
 	if found()
   		lNasaoObracun :=.t.
 		exit
+	else
+		// nisam nasao ovaj obracun, pokusaj ponovo mjesec ispred ...
+		dPom := dPObr
 	endif
 
 endif
 
 if !lNasaoObracun
 	// nisam nasao obracun, ovo je prva generacija
-	// ovo je predhodni obracun
+	// pa je u ugov upisan datum posljednjeg obracuna
 	dPObr := ugov->dat_l_fakt
 
 else
@@ -260,9 +263,6 @@ else
 		dPObr := ugov->dat_l_fakt
 	endif
 endif
-
-local nFaDoMj := MONTH(dDatLFakt)
-local nFaDoGo := YEAR(dDatLFakt)
 
 if dDatObr > dPObr
 	return .t.
