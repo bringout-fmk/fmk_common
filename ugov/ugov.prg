@@ -24,9 +24,9 @@ private ImeKol
 private Kol
 
 cHeader += "Ugovori: " 
-cHeader += "<F3> - ispravka ugov id-a, "
-cHeader += "<F5> - stavke ugovora, "
-cHeader += "<F6> - lista za K1='G'"
+cHeader += "<F3> ispravka ugov id-a, "
+cHeader += "<F5> stavke ugovora, "
+cHeader += "<F6> lista za K1='G'"
 
 DFTParUg(.t.)
 
@@ -84,7 +84,7 @@ AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
 if ugov->(fieldpos("F_NIVO")) <> 0
 	AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
 	AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
-	AADD(aImeKol, { "Dat.poslj.fakt", {|| dat_l_fakt}, "dat_l_fakt" })
+	AADD(aImeKol, { "Fakturisano do", {|| fakt_do() }  })
 endif
 
 AADD(aImeKol, { "TXT 1", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
@@ -271,7 +271,8 @@ local cId
 local nTRec
 local nBoxLen:=20
 local nX:=1
-
+local _fakt_do_mj := 0
+local _fakt_do_go := 0
 
 if lNovi
 	nRec:=RECNO()
@@ -280,7 +281,8 @@ if lNovi
 endif
  	    
 Scatter()
- 	    
+ 	   
+	   
 if lNovi
 	_datod:=DATE()
    	_datdo:=CTOD("31.12.2059")
@@ -303,7 +305,7 @@ endif
 Box(, 20,75,.f.)
 
 @ m_x + nX, m_y + 2 SAY PADL("Ugovor", nBoxLen) GET _id ;
-      WHEN .f. ;
+      WHEN lNovi ;
       PICT "@!"
 
 ++ nX
@@ -346,14 +348,23 @@ if ugov->(fieldpos("F_NIVO")) <> 0
 	@ m_x + nX, m_y + 2 SAY PADL("Pr.nivo dana", nBoxLen) GET _f_p_d_nivo PICT "99999" WHEN _f_nivo == "P"
 
 	++ nX
-	
-	@ m_x + nX, m_y + 2 SAY PADL("Dat.poslj.fakt", nBoxLen) GET _dat_l_fakt
+
+	// mjesec 
+	@ m_x + nX, m_y + 2 SAY PADL("Fakturisano do", nBoxLen) GET _fakt_do_mj ;
+		WHEN  { ||  _fakt_do_mj := month(dat_l_fakt), .t. } ;
+	        PICT "99"
+		
+	// godina
+	@ m_x + nX, m_y + 2 + 28  SAY "/" GET _fakt_do_go ;
+		WHEN { ||  _fakt_do_go := year(dat_l_fakt), .t. } ;
+		VALID { ||   _dat_l_fakt := mo_ye(_fakt_do_mj, _fakt_do_go), .t. } ;
+	        PICT "9999"
 
 endif
 
 ++ nX
 
-@ m_x + nX, m_y + 2 SAY PADL("Valuta (KM/DEM)", nBoxLen) GET _dindem PICT "@!"
+@ m_x + nX, m_y + 2 SAY PADL("Valuta (KM/EUR)", nBoxLen) GET _dindem PICT "@!"
 
 ++ nX
 
@@ -411,18 +422,31 @@ endif
 return 7
 
 // ---------------------------------------------
+// promjeni broj ugovora
 // ---------------------------------------------
 static function chg_ug_id(cId)
+local nRecno
 
 cIdOld:=cId
 Box(,2,50)
  @ m_x+1, m_y+2 SAY "Broj ugovora" GET cID VALID !Empty(cId) .and. cId<>cIdOld
  read
 BoxC()
-     	
+
 if Lastkey() == K_ESC
 	return DE_CONT
 endif
+    
+nRecno:=RECNO()
+SEEK cId
+if found() .and. (cId<>cIdOld)
+  MsgBeep("Ugovor " + cId + " vec postoji##promjena nije moguca !")
+  GO nRecno
+  return DE_CONT
+else
+  GO nRecno
+endif
+  
      	
 select rugov
 seek cIdOld
@@ -574,7 +598,9 @@ do case
       IF !EMPTY(DFTidroba)
         APPEND BLANK
         Scatter()
-         _id:=cIdUg; _idroba:=DFTidroba; _kolicina:=DFTkolicina
+         _id:=cIdUg
+	 _idroba:=DFTidroba
+	 _kolicina:=DFTkolicina
         Gather()
       ENDIF
       SET FILTER TO ID==cIdUg; GO TOP
@@ -604,7 +630,11 @@ do case
     endif
 
     cIdUg:=ID
-    SELECT (nArr); SET FILTER TO; SET FILTER TO ID==cIdUg; GO TOP
+    SELECT (nArr)
+    SET FILTER TO
+    SET FILTER TO ID==cIdUg
+    GO TOP
+
     OsvjeziPrikUg(.f.)
     nRet:=DE_REFRESH
 
@@ -774,8 +804,8 @@ if cPom <> "_NIL_"
     	cPom:= TempIni('Fakt_Ugovori_Novi','Partner','_NIL_',"WRITE")
 endif
 
-@ m_x+1, m_y+ 1 SAY "UGOVOR BROJ    :" GET wid WHEN lWhen VALID !lWhen .or. !EMPTY(wid) .and. VPSifra(wid)
-@ m_x+1, m_y+30 SAY "OPIS UGOVORA   :" GET wnaz WHEN lWhen
+@ m_x+1, m_y+ 1 SAY "Ugovor broj    :" GET wid WHEN lWhen VALID !lWhen .or. !EMPTY(wid) .and. VPSifra(wid)
+@ m_x+1, m_y+30 SAY "Opis ugovora   :" GET wnaz WHEN lWhen
 @ m_x+2, m_y+ 1 SAY "PARTNER        :" GET widpartner ;
         WHEN lWhen ;
 	VALID !lWhen .or. P_Firma(@widpartner) .and. MSAY2(m_x+2,30, Ocitaj(F_PARTN,wIdPartner,"NazPartn()")) PICT "@!"
@@ -1038,4 +1068,46 @@ endif
 return .t.
 
 
+// ----------------------------------
+// uzima prikaz .. 06/2005
+// ----------------------------------
+static function fakt_do(dDat)
+local cRet:=""
+
+if dDat == nil
+	dDat := dat_l_fakt
+endif
+
+cRet := STR(month(dDat),2) + "/" + STR(year(dDat))
+
+return cRet
+
+
+//-------------------------------
+// mo_ye(5,2006) => 01.05.06
+//-------------------------------
+function mo_ye(nm, ny)
+local cPom, cPom2
+
+
+// nm = 2, ny = 2006
+
+cPom2:=""
+
+// 2006
+cPom:=ALLTRIM(STR(ny,4))
+cPom:=PADL(cPom, 4, "0")
+cPom2 += cPom
+
+// 2
+cPom:=ALLTRIM(STR(nm, 2))
+// 02
+cPom:=PADL(cPom, 2, "0")
+cPom2 += cPom
+
+
+// cPom2 = 200602
+cPom2 += "01"
+
+return STOD(cPom2)
 

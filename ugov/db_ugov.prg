@@ -44,13 +44,17 @@ do case
 		CREATE_INDEX("NAZ2"    ,"naz"          ,KUMPATH+"UGOV")
 		CREATE_INDEX("PARTNER" ,"IDPARTNER"    ,KUMPATH+"UGOV")
 		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,KUMPATH+"UGOV")
+
 	case cTbl == "RUGOV"
 		CREATE_INDEX("ID","id+IdRoba",KUMPATH+"RUGOV")
 		CREATE_INDEX("IDROBA","IdRoba",KUMPATH+"RUGOV")
+
 	case cTbl == "GEN_UG"
-		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)",KUMPATH+"GEN_UG")
+		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)", KUMPATH+"GEN_UG")
+		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)", KUMPATH+"GEN_UG")
+
 	case cTbl == "GEN_UG_P"
-		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)+IDPARTNER",KUMPATH+"GEN_UG_P")
+		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", KUMPATH+"GEN_UG_P")
 endcase 
 
 return
@@ -115,8 +119,16 @@ return aDbf
 static function a_genug()
 aDbf:={}
 
-// datum generacije
+/// datum obracuna je kljucni datum - 
+// on nam govori na koji se mjesec generacija 
+// odnosi
+AADD(aDBF, { "DAT_OBR"  , "D" ,   8,  0 })
+
+// datum generacije govori kada je 
+// obracun napravljen
 AADD(aDBF, { "DAT_GEN"  , "D" ,   8,  0 })
+
+
 // datum posljednje uplate
 AADD(aDBF, { "DAT_U_FIN", "D" ,   8,  0 })
 // konto kupac
@@ -135,10 +147,6 @@ AADD(aDBf, { 'FAKT_BR'  , 'N' ,   5,  0 })
 AADD(aDBf, { 'SALDO'    , 'N' ,  15,  5 })
 // saldo pdv-a
 AADD(aDBf, { 'SALDO_PDV', 'N' ,  15,  5 })
-// mjesec
-AADD(aDBf, { 'MJESEC',    'N' ,   2,  0 })
-// godina
-AADD(aDBf, { 'GODINA',    'N' ,   4,  0 })
 
 return aDbf
 
@@ -149,12 +157,13 @@ return aDbf
 static function a_gug_p()
 aDbf:={}
 
-// datum generacije
-AADD(aDBF, { "DAT_GEN"  , "D" ,   8,  0 })
+// datum obracuna
+AADD(aDBF, { "DAT_OBR"  , "D" ,   8,  0 })
+
 // partner
 AADD(aDBF, { "IDPARTNER", "C" ,   6,  0 })
 // id ugovora
-AADD(aDBF, { "UG_ID"    , "C" ,  10,  0 })
+AADD(aDBF, { "ID_UGOV"    , "C" ,  10,  0 })
 // saldo kupca
 AADD(aDBF, { "SALDO_KUP", "N" ,  15,  5 })
 // saldo dobavljaci
@@ -197,19 +206,19 @@ return
 // --------------------------------------
 // dodaj stavku u gen_ug_p
 // --------------------------------------
-function a_to_gen_p(dDatGen, cUPartner, cIdUgov,;
+function a_to_gen_p(dDatObr, cUPartner, cIdUgov, ;
                     nSaldoKup, nSaldoDob, dPUplKup,;
 		    dPPromKup, dPPromDob, nFaktIzn, nFaktPdv)
 
 select gen_ug_p
-set order to tag "dat_gen"
-seek DTOS(dDatGen) + cUPartner
+set order to tag "dat_obr"
+seek DTOS(dDatObr) + cIdUgov + cUPartner
 if !FOUND()
 	append blank
 endif
-replace dat_gen with dDatGen
+replace dat_gen with dDatObr
+replace id_ugov with cIdUgov
 replace idpartner with cUPartner
-replace ug_id with cIdUgov
 replace saldo_kup with nSaldoKup
 replace saldo_dob with nSaldoDob
 replace d_p_upl_kup with dPUplKup
