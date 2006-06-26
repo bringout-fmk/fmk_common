@@ -23,10 +23,10 @@ private gFinKPath:=SPACE(50)
 private ImeKol
 private Kol
 
-cHeader += "Lista Ugovora " 
-cHeader += "<F5> - definisi ugovor"
-cHeader += "ÍÍÍÍ"
-cHeader += "<F6> - izvjestaj/lista za K1='G'"
+cHeader += "Ugovori: " 
+cHeader += "<F3> - ispravka ugov id-a, "
+cHeader += "<F5> - stavke ugovora, "
+cHeader += "<F6> - lista za K1='G'"
 
 DFTParUg(.t.)
 
@@ -69,19 +69,22 @@ static function set_a_kol(aImeKol, aKol)
 aImeKol := {}
 aKol := {}
 
-AADD(aImeKol, { "Ugovor", {|| id}, "id", {|| .t.}, {|| vpsifra(wid)}})
-AADD(aImeKol, { "Partner",{|| IdPartner}, "Idpartner", {|| .t.}, {|| P_Firma(@wIdPartner)}})
-AADD(aImeKol, { "Opis", {|| naz}, "Naz" })
+
+AADD(aImeKol, { "Ugovor", {|| PADR( trim(id) + "/" + trim(IdPartner) + ":" + g_part_name(IdPartner), 34) }, "Idpartner", {|| vpsifra(wid), .t.}, {|| P_Firma(@wIdPartner)}})
+
+AADD(aImeKol, { "Opis", {|| PADR( trim(naz) + ": " + g_rugov_opis(id) , 30)  } })
 AADD(aImeKol, { "DatumOd", {|| DatOd}, "DatOd" })
 AADD(aImeKol, { "DatumDo", {|| DatDo}, "DatDo" })
 AADD(aImeKol, { "Aktivan", {|| Aktivan}, "Aktivan", {|| .t.}, {|| wAKtivan $ "DN"}})
+
 AADD(aImeKol, { "TipDok", {|| IdTipdok}, "IdTipDok" })
 AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
+
 
 if ugov->(fieldpos("F_NIVO")) <> 0
 	AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
 	AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
-	AADD(aImeKol, { "Dat.poslj.f", {|| dat_l_fakt}, "dat_l_fakt" })
+	AADD(aImeKol, { "Dat.poslj.fakt", {|| dat_l_fakt}, "dat_l_fakt" })
 endif
 
 AADD(aImeKol, { "TXT 1", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
@@ -96,7 +99,8 @@ if ugov->(fieldpos("TXT2")) <> 0
 	AADD(aImeKol,{ "TXT 5", {|| txt4}, "txt4", {|| .t.}, {|| P_FTxt(@wTxt4) } } )
 endif
 
-AADD(aImeKol,{ "DINDEM" , {|| DINDEM}, "DINDEM" })
+AADD(aImeKol,{ "KM/EUR" , {|| DINDEM}, "DINDEM" })
+
 AADD(aImeKol,{ "ZAOKR", {|| ZAOKR}, "ZAOKR"})
 
 if ( ugov->(fieldpos("A1")) <> 0 )
@@ -146,11 +150,17 @@ do case
 	   	gen_ug_part()
 	    
 	case (Ch == K_F2)
-	
 		// ispravka ugovora
 		edit_ugovor(.f.)
 		return 7
-		
+	
+	case (Ch == K_F3)
+		if Pitanje(, "Promjena broja ugovora ?", "N") == "D"
+		        chg_ug_id(id)
+		endif
+		return DE_REFRESH
+
+
 	case (Ch == K_CTRL_N)
 		
 		// novi ugovor
@@ -262,32 +272,6 @@ local nTRec
 local nBoxLen:=20
 local nX:=1
 
-if !lNovi .and. Pitanje(,"Promjena broja ugovora ?","N")=="D"
-	
-	cIdOld:=id
-	cId:=Id
-     	Box(,2,50)
-      	@ m_x+1, m_y+2 SAY "Broj ugovora" GET cID VALID !Empty(cId) .and. cId<>cIdOld
-      	read
-     	BoxC()
-     	
-	if Lastkey() == K_ESC
-		return DE_CONT
-	endif
-     	
-	select rugov
-     	seek cIdOld
-     	
-	do while !eof() .and. ( cIdOld == id )
-       		skip
-		nTrec:=recno()
-		skip -1
-       		replace id with cid
-       		go nTrec
-     	enddo
-     	select ugov
-     	replace id with cid
-endif
 
 if lNovi
 	nRec:=RECNO()
@@ -318,7 +302,9 @@ endif
 
 Box(, 20,75,.f.)
 
-@ m_x + nX, m_y + 2 SAY PADL("Ugovor", nBoxLen) GET _id PICT "@!"
+@ m_x + nX, m_y + 2 SAY PADL("Ugovor", nBoxLen) GET _id ;
+      WHEN .f. ;
+      PICT "@!"
 
 ++ nX
 
@@ -424,6 +410,33 @@ endif
 
 return 7
 
+// ---------------------------------------------
+// ---------------------------------------------
+static function chg_ug_id(cId)
+
+cIdOld:=cId
+Box(,2,50)
+ @ m_x+1, m_y+2 SAY "Broj ugovora" GET cID VALID !Empty(cId) .and. cId<>cIdOld
+ read
+BoxC()
+     	
+if Lastkey() == K_ESC
+	return DE_CONT
+endif
+     	
+select rugov
+seek cIdOld
+     	
+do while !eof() .and. ( cIdOld == id )
+       		skip
+		nTrec:=recno()
+		skip -1
+       		replace id with cid
+       		go nTrec
+enddo
+select ugov
+replace id with cid
+return
 
 
 // ----------------------------------------
@@ -432,9 +445,11 @@ function P_Ugov2(cIdPartner)
 *  cidpartner - proslijediti partnera
 *               iz sifrarnika partnera
 
+private Imekol
+private Kol 
+private lIzSifPArtn
 
-private Imekol, Kol , lIzSifPArtn
-
+private cFilter := ""
 
 if alias()="PARTN"
   lIzSifPartn:=.t.
@@ -449,15 +464,22 @@ PRIVATE cIdUg:=ID
 
 SELECT (F_RUGOV)
 SET ORDER TO TAG "ID"
+
+cFilt := "ID = " + cm2str(cIdUg)
 SET FILTER TO
-SET FILTER TO ID=cIdUg
+SET FILTER TO &cFilt
 GO TOP
 
 PRIVATE gTBDir:="D"
+
 ImeKol:={}; Kol:={}
+
 AADD(ImeKol,{ "IDRoba",   {|| IdRoba}  , "IDROBA"  , {|| .t.}, {|| glDistrib.and.RIGHT(TRIM(widroba),1)==";".or.P_Roba(@widroba)}, ">" })
-AADD(ImeKol,{ "Kolicina", {|| Kolicina}, "KOLICINA", {|| .t.}, {|| .t.}, ">" })
-if IzFMkIni('Fakt_Ugovori',"Rabat_Porez",'D')=="D"
+
+AADD(ImeKol,{ PADC("Kol.", LEN(pickol)), {|| TRANSFORM(kolicina, pickol)}, "KOLICINA", {|| .t.}, {|| .t.}, ">" })
+
+
+if IzFMkIni("Fakt_Ugovori","Rabat_Porez","N")=="D"
   AADD(ImeKol,{ "Rabat",    {|| Rabat}   , "RABAT"   , {|| .t.}, {|| .t.}, ">" })
   AADD(ImeKol,{ "Porez",    {|| Porez}   , "POREZ"   , {|| .t.}, {|| .t.}, ">" })
 endif
@@ -495,13 +517,19 @@ Box(,20,72)
  // zaglavlje se edituje kada je kursor u prvoj koloni
  // prvog reda
  private  TBSkipBlock:={|nSkip| SkipDB(nSkip, @nTBLine)}
- private  nTBLine:=1      // tekuca linija-kod viselinijskog browsa
- private  nTBLastLine:=1  // broj linija kod viselinijskog browsa
- private  TBPomjerise:="" // ako je ">2" pomjeri se lijevo dva
-                         // ovo se mo§e setovati u when/valid fjama
-
- private  TBScatter:="N"  // uzmi samo teku†e polje
+ // tekuca linija-kod viselinijskog browsa
+ private  nTBLine:=1    
+ // broj linija kod viselinijskog browsa
+ private  nTBLastLine:=1
+ // ako je ">2" pomjeri se lijevo dva
+ // ovo se moze setovati u when/valid fjama
+ private  TBPomjerise:="" 
+                        
+ 
+ // uzmi samo tekuce polje
+ private  TBScatter:="N"  
  private lTrebaOsvUg:=.t.
+
  adImeKol:={}; for i:=1 TO LEN(ImeKol); AADD(adImeKol,ImeKol[i]); next
  adKol:={}; for i:=1 to len(adImeKol); AADD(adKol,i); next
 
@@ -537,10 +565,12 @@ do case
     OsvjeziPrikUg(.t.)
 
   case Ch==K_CTRL_L
+
     nRet:=OsvjeziPrikUg(.t.,.t.)
     IF nRet==DE_REFRESH
       cIdUg:=UGOV->ID
-      SELECT (nArr); SET FILTER TO
+      SELECT (nArr)
+      SET FILTER TO
       IF !EMPTY(DFTidroba)
         APPEND BLANK
         Scatter()
@@ -598,11 +628,22 @@ do case
 
     else  
      // vrti se iz liste ugovora
-     SELECT UGOV; SKIP -1
-     IF BOF(); SELECT (nArr); RETURN (nRet); ENDIF
+     SELECT UGOV
+     SKIP -1
+     IF BOF()
+     	SELECT (nArr)
+	RETURN (nRet)
+     ENDIF
+
     endif
     cIdUg:=ID
-    SELECT (nArr); SET FILTER TO; SET FILTER TO ID==cIdUg; GO TOP
+    SELECT (nArr)
+    
+    private cFilt:="ID=="+cm2str(cIdUg)
+    SET FILTER TO
+    SET FILTER TO &cFilt
+    GO TOP
+
     OsvjeziPrikUg(.f.)
     nRet:=DE_REFRESH
 
@@ -621,7 +662,8 @@ do case
 	PICT "@!"
      @ m_x+3, m_y+2 SAY "Kolicina      " GET _Kolicina  ;
         pict "99999999.999"
-     if IzFMkIni('Fakt_Ugovori',"Rabat_Porez",'D')=="D"
+	
+     if IzFMkIni('Fakt_Ugovori',"Rabat_Porez",'N')=="D"
        @ m_x+4, m_y+2 SAY "Rabat         " GET _Rabat ;
              pict "99.999"
        @ m_x+5, m_y+2 SAY "Porez         " GET _Porez ;
@@ -953,8 +995,8 @@ private DFTiddodtxt :="  "
 DFTParUg(.t.)
 
 select ugov
-private cFilter:="Idpartner=="+cm2str(partn->id)
-set filter to &cFilter
+private cFiltP:="Idpartner==" + cm2str(partn->id)
+set filter to &cFilP
 go top
 if eof()
   MsgBeep("Ne postoje definisani ugovori za korisnika")

@@ -5,6 +5,8 @@
 // otvara stavke ugovora - robu iz RUGOV
 // --------------------------------------
 function V_Rugov( cId )
+local nLenTbl := 10
+local nWidthTbl := 65
 private cIdUgov
 private GetList:={}
 private ImeKol
@@ -12,7 +14,7 @@ private Kol
 
 cIdUgov := cId
 
-Box(,15,50)
+Box(, nLenTbl, nWidthTbl)
 
 select rugov
 
@@ -24,8 +26,10 @@ set cursor on
 
 ?? "Ugovor:", ugov->id, ugov->naz, ugov->DatOd
 
-BrowseKey(m_x+3, m_y+1, m_x+14, m_y+50, ImeKol, {|Ch| key_handler(Ch, cIdUgov)}, ;
-          "id+brisano==cIdUgov+' '", cIdUgov, 2,,,{|| .f.})
+BrowseKey(m_x+3, m_y+1, m_x+ nLenTbl - 1, m_y+ nWidthTbl, ;
+    ImeKol, {|Ch| key_handler(Ch, cIdUgov)}, ;
+    "id+brisano==cIdUgov + ' '", ;
+    cIdUgov, 2,,,{|| .f.})
 
 select ugov
 BoxC()
@@ -41,13 +45,16 @@ aImeKol := {}
 aKol := {}
 
 AADD(aImeKol, { "ID roba",   {|| IdRoba} })
-AADD(aImeKol, { "Kolicina", {|| Kolicina} })
-AADD(aImeKol, { "Rabat",   {|| Rabat}  })
-AADD(aImeKol, { "Porez",   {|| Porez}  })
+
+AADD(aImeKol, { PADC("Kol.", LEN(pickol)), {|| transform(Kolicina, pickol)} })
 
 if rugov->(fieldpos("cijena"))<>0
-  	AADD(aImeKol, { "Cijena", {|| cijena},  "cijena"    } )
+  	AADD(aImeKol, { "Cijena", {|| transform(cijena, picdem) },  "cijena"    } )
 endif
+
+
+AADD(aImeKol, { "Rabat",   {|| Rabat}  })
+AADD(aImeKol, { "Porez",   {|| Porez}  })
 
 if rugov->(fieldpos("K1"))<>0
 	AADD(aImeKol, { "K1", {|| K1},    "K1"    } )
@@ -171,4 +178,16 @@ endif
 return DE_REFRESH
 
 
+// ----------------------------------------
+// vecina ugovora ima samo jednu stavku
+// koja najcesce govi sta ugovor sadrzi
+// -----------------------------------------
+function g_rugov_opis(cIdUgov)
+local cOpis:=""
+PushWa()
+SELECT RUGOV
+seek cIdUgov
+cOpis += trim(idroba)+ " " + alltrim(transform(kolicina, pickol)) + " x " + alltrim(transform(cijena, picdem))
 
+PopWa()
+return cOpis
