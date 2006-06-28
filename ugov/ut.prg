@@ -126,10 +126,10 @@ return
 // ---------------------------------------------
 // stampa dokumenta od do - iscitaj iz GEN_UG
 // ---------------------------------------------
-function ug_st_od_do()
-local dDatGen:=DATE()
-local cBrDokOd := SPACE(8)
-local cBrDokDo := SPACE(8)
+function ug_st_od_do(cBrOd, cBrDo)
+dDatGen:=DATE()
+cBrOd := SPACE(8)
+cBrDo := SPACE(8)
 
 Box(, 5, 60)
 	
@@ -145,27 +145,21 @@ Box(, 5, 60)
 		go bottom
 	endif
 	
-	cBrDokOd := field->brdok_od
-	cBrDokDo := field->brdok_do
+	cBrOd := field->brdok_od
+	cBrDo := field->brdok_do
 	
-	@ m_x + 4, m_y + 2 SAY "FAKTURE OD BROJA" GET cBrDokOd
-	@ m_x + 4, COL() + 2 SAY "DO BROJA" GET cBrDokDo
+	@ m_x + 4, m_y + 2 SAY "FAKTURE OD BROJA" GET cBrOd
+	@ m_x + 4, COL() + 2 SAY "DO BROJA" GET cBrDo
 
 	read
 	
 BoxC()
 
 if LastKey() == K_ESC
-	return
+	return 0
 endif
 
-// pozovi stampu...
-
-cTipDok := "10"
-
-StAzPeriod( gFirma, cTipDok, cBrDokOd, cBrDokDo )
-
-return
+return 1
 
 
 
