@@ -232,13 +232,13 @@ SET ORDER TO TAG "DAT_OBR"
 
 lNasaoObracun := .f.
 // gledamo obracune u predhodnih 6 mjeseci
-for :=1 to 6
+for i:=1 to 6
 
 	// predhodni mjesec (datum) u odnosu na dPom
 	dPObr := pr_mjesec(dPom)
 
 	// ima li ovaj obracun pohranjen
-	SELEC T gen_ug_p
+	SELECT gen_ug_p
 	SEEK DTOS(dPObr) + cUgovId + ugov->IdPartner
 
 	if found()
@@ -249,7 +249,7 @@ for :=1 to 6
 		dPom := dPObr
 	endif
 
-endif
+next
 
 if !lNasaoObracun
 	// nisam nasao obracun, ovo je prva generacija
