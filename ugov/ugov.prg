@@ -1071,7 +1071,7 @@ return .t.
 // ----------------------------------
 // uzima prikaz .. 06/2005
 // ----------------------------------
-static function fakt_do(dDat)
+function fakt_do(dDat)
 local cRet:=""
 
 if dDat == nil
