@@ -4,9 +4,12 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatObr, dDatLUpl, cKtoDug, cKtoPot, cOpis)
+static function g_ug_params(dDatObr, dDatGen, dDatLUpl, cKtoDug, cKtoPot, cOpis)
+local dPom
 local nX := 2
 local nBoxLen := 20
+
+dDatGen := DATE()
 
 // datum posljenje uplate u fin
 dDatLUpl := CToD("")
@@ -16,12 +19,22 @@ cKtoDug := PADR("2120", 7)
 cKtoPot := PADR("5430", 7)
 // opis
 cOpis := PADR("", 100)
-// mjesec na koji se odnosi fakturisanje
-nMjesec := MONTH(dDatObr)
-// godina na koju se odnosi fakturisanje
-nGodina := YEAR(dDatObr)
 
-Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2",12,70)
+if dDatObr == nil
+	dPom := DATE()
+else
+	dPom := dDatObr
+endif
+
+// mjesec na koji se odnosi fakturisanje
+nMjesec := MONTH(dPom)
+// godina na koju se odnosi fakturisanje
+nGodina := YEAR(dPom)
+
+Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 12, 70)
+
+@ m_x + nX, m_y + 2 SAY PADL("Datum fakturisanja", nBoxLen) GET dDatGen 
+nX += 2
 
 @ m_x + nX, m_y + 2 SAY PADL("Fakt.za mjesec", nBoxLen) GET nMjesec PICT "99" VALID nMjesec >= 1 .or. nMjesec <= 12
 @ m_x + nX, col() + 2 SAY "godinu" GET nGodina PICT "9999"
@@ -53,7 +66,7 @@ return 1
 // generacija ugovora - varijanta 2
 // -------------------------------------------
 function gen_ug_2()
-local dDatGen
+local dDatObr
 local dDatLUpl
 local cKtoDug
 local cKtoPot
@@ -67,11 +80,14 @@ local cNBrDok
 local nFaktBr
 local nMjesec
 local nGodina
+local dDatGen := DATE()
 
+local cFaktOd
+local cFaktDo
 // otvori tabele
 o_ugov()
 
-if Pitanje(, "Nova generacija ugovora (D), ponovi posljednju (N)", "D") == "D"
+if Pitanje(, "Nova obracun (D), ponovi posljednji (N)", "D") == "D"
 	// otvori parametre generacije
 	lSetParams := .t.
 else
@@ -86,7 +102,7 @@ else
 	else
 		go bottom
 		if !EOF()
-			dDatGen := gen_ug->dat_obr
+			dDatObr := gen_ug->dat_obr
 			dDatlUpl := gen_ug->dat_u_fin
 			cKtoDug := gen_ug->kto_kup
 			cKtoPot := gen_ug->kto_dob
@@ -95,7 +111,7 @@ else
 	endif
 endif
 
-if lSetParams .and. g_ug_params(@dDatObr, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis) == 0
+if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis) == 0
 	return
 endif
 
@@ -109,7 +125,7 @@ if RecCount2() <> 0
 endif
 
 // ako postoji vec generisano za datum sta izadji ili nastavi
-if lSetParams .and. postoji_generacija(dDatGen) == 0
+if lSetParams .and. postoji_generacija(dDatObr) == 0
 	return
 endif
 
@@ -129,20 +145,26 @@ if lSetParams
 endif
 
 // filter na samo aktivne ugovore
-cFilter := "aktivan == " + Cm2Str("D")
+cFilter := "aktivan == 'D'"
 
 select ugov
+set order to tag "ID"
 set filter to &cFilter
 go top
 
 nSaldo := 0
 nSaldoPDV := 0
 nNBrDok := ""
+
+// ukupni broj faktura
 nFaktBr := 0
 
 Box(,3, 60)
 
 @ m_x + 1, m_y + 2 SAY "Generacija ugovora u toku..."
+
+cFaktOd := ""
+cFaktDo := ""
 
 // precesljaj ugovore u UGOV
 do while !EOF()
@@ -156,7 +178,7 @@ do while !EOF()
 	select ugov
 	
 	// provjeri da li treba fakturisati ???
-	if !treba_generisati(ugov->id, datObr)
+	if !treba_generisati(ugov->id, dDatObr)
 		skip
 		loop
 	endif
@@ -164,49 +186,46 @@ do while !EOF()
 	// nadji novi broj dokumenta
 	if EMPTY(cNBrDok)
 		cNBrDok := FaNoviBroj( gFirma, ugov->idtipdok)
+		cFaktOd := cNBrDok
 	else
 		// uvecaj stari
 		cNBrDok := UBrojDok( VAL(LEFT(cNBrDok, gNumDio))+1, gNumDio, RIGHT(cNBrDok, LEN(cNBrDok) - gNumDio))
 	endif
+
 	
-	select ugov
 	
-	cUPartner := field->idpartner
+	cUPartner := ugov->idpartner
 	
 	@ m_x + 2, m_y + 2 SAY "Partner -> " + cUPartner
 	
 	// generisi ugovor za partnera
-	g_ug_f_partner(cUPartner, dDatGen, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
-	
-	select gen_ug_p
-	
-	// upisi podatak o ovom generisanju ako je datum manji od datuma
-	// generisanja
-	
-	if field->dat_l_fakt < dDatGen
-		replace field->dat_l_fakt with dDatGen
-	endif
-	
+	g_ug_f_partner(cUPartner, dDatObr, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
+	select ugov
 	skip
 
 enddo
+cFaktDo := cNBrDok
 
 // upisi u gen_ug salda
 select gen_ug
-set order to tag "dat_gen"
+set order to tag "dat_obr"
 go top
-seek DTOS(dDatGen)
+seek DTOS(dDatObr)
 if Found()
 	replace fakt_br with nFaktBr
 	replace saldo with nSaldo
 	replace saldo_pdv with nSaldoPDV
+	replace dat_gen with dDatGen
+	replace brdok_od with cFaktOd
+	replace brdok_do with cFaktDo
 endif
 
 BoxC()
 
 // prikazi info generacije
-s_gen_info(dDatGen)
+s_gen_info(dDatObr)
 
+Azur(.f.)
 return
 
 
@@ -218,9 +237,10 @@ local nPMonth
 local nPYear
 local i
 local lNasaoObracun
-
 // predhodni obracun
 local dPObr
+
+PushWa()
 
 dPom := dDatObr
 
@@ -263,6 +283,8 @@ else
 		dPObr := ugov->dat_l_fakt
 	endif
 endif
+
+PopWa()
 
 if dDatObr > dPObr
 	return .t.
@@ -311,7 +333,7 @@ static function s_gen_info(dDat)
 local cPom
 
 select gen_ug
-set order to tag "dat_gen"
+set order to tag "dat_obr"
 go top
 seek DTOS(dDat)
 
@@ -324,7 +346,9 @@ if Found()
 	cPom += "Saldo: " + ALLTRIM(STR(field->saldo))
 	cPom += "#"
 	cPom += "PDV: " + ALLTRIM(STR(field->saldo_pdv))
-	
+	cPom += "#"
+	cPom += "Fakture od: " + gen_ug->brdok_od + " - " + gen_ug->brdok_do
+
 	MsgBeep(cPom)
 endif
 
@@ -358,7 +382,7 @@ return
 // generacija ugovora za jednog partnera
 // --------------------------------------------------
 static function g_ug_f_partner(cUPartn, dDatObr, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok)
-
+local dDatGen
 local cFTipDok
 local cIdUgov
 local nRbr
@@ -381,16 +405,19 @@ local nPorez
 local cKtoPot
 local cKtoDug
 local dDatLFakt
+local nMjesec
+local nGodina
 
 select gen_ug
 set order to tag "dat_obr"
 seek DTOS(dDatObr)
 
-cKtoPot := field->kto_dob
-cKtoDug := field->kto_kup
-dDatLUpl := field->dat_u_fin
-nMjesec := field->mjesec
-nGodina := field->godina
+cKtoPot := gen_ug->kto_dob
+cKtoDug := gen_ug->kto_kup
+dDatLUpl := gen_ug->dat_u_fin
+dDatGen := gen_ug->dat_gen
+nMjesec := gen_ug->(MONTH(dat_obr))
+nGodina := gen_ug->(YEAR(dat_obr))
 
 // nastimaj PARTN na partnera
 n_partner(cUPartn)
@@ -581,7 +608,7 @@ if !FOUND()
 	return 1
 endif
 
-if Pitanje(,"Generacija " + fakt_do(dDatGen) + " postoji, ponoviti (D/N)?", "D") == "D"
+if Pitanje(,"Obracun " + fakt_do(dDatGen) + " postoji, ponoviti (D/N)?", "D") == "D"
 	return 1
 endif
 

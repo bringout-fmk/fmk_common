@@ -78,18 +78,22 @@ AADD(aDBf, { 'DINDEM'    , 'C' ,  3,  0 })
 AADD(aDBf, { 'IDTXT'     , 'C' ,  2,  0 })
 AADD(aDBf, { 'ZAOKR'     , 'N' ,  1,  0 })
 AADD(aDBf, { 'IDDODTXT'  , 'C' ,  2,  0 })
+
 AADD(aDBf, { 'A1'        , 'N' , 12,  2 })
 AADD(aDBf, { 'A2'        , 'N' , 12,  2 })
+
 AADD(aDBf, { 'B1'        , 'N' , 12,  2 })
 AADD(aDBf, { 'B2'        , 'N' , 12,  2 })
+
 AADD(aDBf, { 'TXT2'      , 'C' ,  2,  0 })
 AADD(aDBf, { 'TXT3'      , 'C' ,  2,  0 })
 AADD(aDBf, { 'TXT4'      , 'C' ,  2,  0 })
+
 // nivo fakturisanja
 AADD(aDBf, { 'F_NIVO'    , 'C' ,  1,  0 })
 // proizvoljni nivo
 AADD(aDBf, { 'F_P_D_NIVO', 'N' ,  5,  0 })
-// datum zadnjeg fakturisanja
+// datum zadnjeg obracuna    
 AADD(aDBf, { 'DAT_L_FAKT', 'D' ,  8,  0 })
 
 return aDbf
@@ -216,7 +220,7 @@ seek DTOS(dDatObr) + cIdUgov + cUPartner
 if !FOUND()
 	append blank
 endif
-replace dat_gen with dDatObr
+replace dat_obr with dDatObr
 replace id_ugov with cIdUgov
 replace idpartner with cUPartner
 replace saldo_kup with nSaldoKup

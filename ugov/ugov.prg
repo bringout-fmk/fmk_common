@@ -20,6 +20,7 @@ private DFTzaokr:=2
 private DFTiddodtxt:=SPACE(2)
 private gGenUgV2:="1"
 private gFinKPath:=SPACE(50)
+
 private ImeKol
 private Kol
 
@@ -72,7 +73,7 @@ aKol := {}
 
 AADD(aImeKol, { "Ugovor", {|| PADR( trim(id) + "/" + trim(IdPartner) + ":" + g_part_name(IdPartner), 34) }, "Idpartner", {|| vpsifra(wid), .t.}, {|| P_Firma(@wIdPartner)}})
 
-AADD(aImeKol, { "Opis", {|| PADR( trim(naz) + ": " + g_rugov_opis(id) , 30)  } })
+AADD(aImeKol, { "Opis", {|| PADR( trim(naz) + ": " + g_rugov_opis(id) , 30)  }, "naz" })
 AADD(aImeKol, { "DatumOd", {|| DatOd}, "DatOd" })
 AADD(aImeKol, { "DatumDo", {|| DatDo}, "DatDo" })
 AADD(aImeKol, { "Aktivan", {|| Aktivan}, "Aktivan", {|| .t.}, {|| wAKtivan $ "DN"}})
@@ -84,7 +85,7 @@ AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
 if ugov->(fieldpos("F_NIVO")) <> 0
 	AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
 	AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
-	AADD(aImeKol, { "Fakturisano do", {|| fakt_do() }  })
+	AADD(aImeKol, { "Fakturisano do", {|| fakt_do() }, "zaokr"  })
 endif
 
 AADD(aImeKol, { "TXT 1", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
@@ -100,8 +101,6 @@ if ugov->(fieldpos("TXT2")) <> 0
 endif
 
 AADD(aImeKol,{ "KM/EUR" , {|| DINDEM}, "DINDEM" })
-
-AADD(aImeKol,{ "ZAOKR", {|| ZAOKR}, "ZAOKR"})
 
 if ( ugov->(fieldpos("A1")) <> 0 )
 	if IzFMkIni('Fakt_Ugovori',"A1",'D')=="D"
