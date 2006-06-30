@@ -381,8 +381,6 @@ do while !eof() .and. id==cidugov
    _idroba:=rugov->idroba
    select roba; hseek _idroba
 
-   Odredi_IDROBA()
-
    SELECT PRIPR
    setujcijenu()
    if ncijena<>0

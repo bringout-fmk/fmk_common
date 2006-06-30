@@ -132,6 +132,9 @@ AADD(aDBF, { "DAT_OBR"  , "D" ,   8,  0 })
 // obracun napravljen
 AADD(aDBF, { "DAT_GEN"  , "D" ,   8,  0 })
 
+// datum valute za izgenerisane dokumente
+AADD(aDBF, { "DAT_VAL"  , "D" ,   8,  0 })
+
 
 // datum posljednje uplate
 AADD(aDBF, { "DAT_U_FIN", "D" ,   8,  0 })
@@ -210,7 +213,7 @@ return
 // --------------------------------------
 // dodaj stavku u gen_ug_p
 // --------------------------------------
-function a_to_gen_p(dDatObr, cUPartner, cIdUgov, ;
+function a_to_gen_p(dDatObr, cIdUgov, cUPartner,  ;
                     nSaldoKup, nSaldoDob, dPUplKup,;
 		    dPPromKup, dPPromDob, nFaktIzn, nFaktPdv)
 
