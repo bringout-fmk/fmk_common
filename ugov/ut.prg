@@ -58,34 +58,19 @@ function txt_djokeri(nSaldoKup, nSaldoDob, ;
 local cPom
 
 // saldo
-cPom := " Vas trenutni saldo je: "
-cPom += ALLTRIM(STR(nSaldoKup))
-cPom += "."
-cPom += " U obzir uzete uplate do "
-cPom += DToC(dLUplata)
-cPom += ". "
-
+cPom := ALLTRIM(STR(nSaldoKup))
 _txt := STRTRAN(_txt, "#SALDO_KUP_DOB#", cPom)
 
 // datum posljednje uplate kupca
-cPom := " Datum posljednje uplate: "
-cPom += DToC(dPUplKup)
-cPom += ". "
-
+cPom := DToC(dPUplKup)
 _txt := STRTRAN(_txt, "#D_P_UPLATA_KUP#", cPom)
 
 // datum posljednje promjene kupac
-cPom := " Datum posljednje promjene na kontu: "
-cPom += DToC(dPPromKup)
-cPom += ". "
-
+cPom := DToC(dPPromKup)
 _txt := STRTRAN(_txt, "#D_P_PROMJENA_KUP#", cPom)
 
 // datum posljednje promjene dobavljac
-cPom := " Datum posljednje promjene na kontu: "
-cPom += DToC(dPPromDob)
-cPom += ". "
-
+cPom := DToC(dPPromDob)
 _txt := STRTRAN(_txt, "#D_P_PROMJENA_DOB#", cPom)
 
 return
