@@ -155,7 +155,6 @@ if (cVarObracuna=="Z")
 	nKKam:=((1+ks->stkam/100)^(nPeriod/nExp) - 1.00000)
 	nIznKam:=nKKam*nGlavn
 else
-	altd()
 	nKStopa:=ks->stkam/100
 	cPom777:=IzFmkIni("KAM","FormulaZaProstuKamatu","nGlavn*nKStopa*nPeriod/nExp",KUMPATH)
 	nIznKam:=&(cPom777)

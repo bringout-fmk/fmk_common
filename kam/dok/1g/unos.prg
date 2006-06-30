@@ -376,7 +376,6 @@ if !empty(partn->telefon)
 endif
 cPom:=padr(cPom,42)
 dDatPom:=gDatObr
-altd()
 Stzaglavlje(gVlZagl,PRIVPATH, ;
              dtoc(gDatObr), ;
              padr(cidpartner+"-"+partn->naz,42),;

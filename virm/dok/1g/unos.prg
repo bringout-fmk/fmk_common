@@ -289,7 +289,6 @@ if vrprim->Idpartner="JP" // javni prihod
 
   // setovanje varijabli: _kome_zr , _kome_txt, _budzorg
   // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
-  altd()
   SetJPVar()
   _kome_txt:=vrprim->naz
 
@@ -875,7 +874,6 @@ select pripr
 go top
 do while !eof()
   select vrprim; seek pripr->svrha_pl; select  pripr
-  altd()
   Scatter()
   if vrprim->Idpartner="JP" // javni prihod
     SetJPVar()

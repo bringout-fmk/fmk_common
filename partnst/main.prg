@@ -12,7 +12,6 @@ local GetList:={}
 local cModName:=""
 local cDN:="D"
 
-altd()
 if cPosId == nil
 	cPosId := ""
 else

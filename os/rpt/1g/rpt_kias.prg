@@ -117,7 +117,6 @@ elseif   con==" "
 endif
 
 private nRbr:=0
-altd()
 aKol:={}
 nKol:=0
 nPI:=LEN(gPicI)

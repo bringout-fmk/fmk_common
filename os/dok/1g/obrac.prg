@@ -285,7 +285,6 @@ local nMjesOD,nMjesDo,nIzn, fStorno
   endif
 
   if fStorno
-    altd()
     _nabvr:=-_nabvr
     _optvr:=-_otpvr
     _AmP:=-_AmP

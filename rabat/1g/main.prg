@@ -179,7 +179,6 @@ return nRet
 function CheckMemo(aMemo)
 *{
 // ako je prazan
-altd()
 if (LEN(aMemo) < 9)
 	aMemo := {}
 	for i=1 to 12

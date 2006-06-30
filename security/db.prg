@@ -226,7 +226,6 @@ return PostojiSifra(F_RULES,1,10,70,"Rules - pravila za definisanje korisnika i 
 static function IncID(wId)
 *{
 local nRet:=.t.
-altd()
 if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
 	if (LastKey()==K_ESC)
 		return nRet:=.f.

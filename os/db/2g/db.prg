@@ -763,7 +763,6 @@ function Unifid()
 *{
 local nTrec, nTSRec
 local nIsti
-altd()
 O_OS
 set order to tag "1"
 do while !eof()

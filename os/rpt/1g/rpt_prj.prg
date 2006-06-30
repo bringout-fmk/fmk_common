@@ -157,7 +157,6 @@ do while !eof() .and. ( idrj=cidrj .or. lPoKontima)
 
  if prow()>62; FF; ZglPrj(); endif
  
- altd()
  
  if lBrojSobe .and. EMPTY(cBrojSobe)
    ? str(++nrbr,4)+".",brsoba,id,naz

@@ -1,5 +1,11 @@
 #include "sc.ch"
 
+// ---------------------------------------------
+// Generacija faktura po ugovorima, v2 
+// radjedno prvenstevno za potrebe sc-a
+// ernad.husremovic@sigma-com.net, 2006
+// ---------------------------------------------
+
 
 // ------------------------------
 // parametri generacije ugovora

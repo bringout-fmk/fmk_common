@@ -11,7 +11,6 @@ O_EVENTS
 O_EVENTLOG
 
 select eventlog
-altd()
 private dDatumOd:=Date()-1
 private dDatumDo:=Date()
 private cModul:=PADR(goModul:oDataBase:cName,10)

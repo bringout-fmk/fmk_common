@@ -124,7 +124,6 @@ return PostojiSifra(F_EVENTS,1,10,60,"Events - dogadjaji koji se logiraju",@cId,
 static function IncID(wId)
 *{
 local nRet:=.t.
-altd()
 if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
 	if (LastKey()==K_ESC)
 		return nRet:=.f.

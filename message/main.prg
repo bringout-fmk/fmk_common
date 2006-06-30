@@ -413,7 +413,6 @@ function GetMsgFromClipboard(idMsg)
 *{
 O_TMPMSG
 O_MESSAGE
-altd()
 CreTempDBMsg()
 
 lPronasao:=.f.

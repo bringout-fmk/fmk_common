@@ -11,7 +11,6 @@ qqIDVD:="42;"
 dDatOd:=Date()
 dDatDo:=Date()
 dDatVir:=Date()
-altd()
 O_PARTN
 O_SIFK
 O_SIFV

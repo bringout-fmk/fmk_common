@@ -140,7 +140,6 @@ Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA",7,70)
   read
 BoxC()
 
-altd()
 lSamoAktivni := (cSamoAktivni=="D")
 SELECT UGOV
 if lSamoAktivni

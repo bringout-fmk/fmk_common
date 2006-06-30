@@ -63,11 +63,9 @@ function O_PrenHH(cPosID)
 *{
 local nArr
 nArr:=SELECT()
-altd()
 
 if cPosID <> nil
 	O_KONCIJ
-	altd()
 
 	cTKPath:=addbs(GetTopsKumPathFromKoncij())
 
@@ -100,7 +98,6 @@ return
  */
 function GetTopsKumPathFromKoncij()
 *{
-altd()
 cTKPath:=""
 O_KONCIJ
 select koncij
