@@ -156,6 +156,7 @@ CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"trfp")
 if !file(SIFPATH+"SAST.DBF")
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
+   AADD(aDBf,{ 'R_BR'                , 'C' ,    4 ,  0 })
    AADD(aDBf,{ 'ID2'                 , 'C' ,   10 ,  0 })
    AADD(aDBf,{ 'KOLICINA'            , 'N' ,   20 ,  5 })
    AADD(aDBf,{ 'K1'                  , 'C' ,    1 ,  0 })
@@ -165,8 +166,9 @@ if !file(SIFPATH+"SAST.DBF")
    dbcreate2(SIFPATH+'SAST.DBF',aDbf)
 endif
 
-CREATE_INDEX("ID","id+ID2",SIFPATH+"SAST")
-CREATE_INDEX("NAZ","id2+ID",SIFPATH+"SAST")
+CREATE_INDEX("ID", "ID+ID2", SIFPATH + "SAST")
+CREATE_INDEX("ID_RBR", "ID+STR(R_BR,4,0)+ID2", SIFPATH + "SAST")
+CREATE_INDEX("NAZ", "ID2+ID", SIFPATH + "SAST")
 
 
 if !file(PRIVPATH+"BARKOD.DBF")
