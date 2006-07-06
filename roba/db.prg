@@ -178,7 +178,7 @@ if !file(PRIVPATH+"BARKOD.DBF")
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
    AADD(aDBf,{ 'BARKOD'              , 'C' ,   13 ,  0 })
-   AADD(aDBf,{ 'NAZIV'               , 'C' ,   40 ,  0 })
+   AADD(aDBf,{ 'NAZIV'               , 'C' ,  250 ,  0 })
    AADD(aDBf,{ 'L1'                  , 'C' ,   40,   0 })
    AADD(aDBf,{ 'L2'                  , 'C' ,   40,   0 })
    AADD(aDBf,{ 'L3'                  , 'C' ,   40 ,  0})
@@ -187,8 +187,8 @@ if !file(PRIVPATH+"BARKOD.DBF")
    dbcreate2(PRIVPATH+'BARKOD.DBF',aDbf)
 endif
 CREATE_INDEX("1","barkod+id",PRIVPATH+"BARKOD")
-CREATE_INDEX("ID","id+naziv",PRIVPATH+"BARKOD")
-CREATE_INDEX("Naziv","Naziv+id",PRIVPATH+"BARKOD")
+CREATE_INDEX("ID","id+LEFT(naziv,40)",PRIVPATH+"BARKOD")
+CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
 
 return
-*}
+

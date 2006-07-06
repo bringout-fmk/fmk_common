@@ -251,7 +251,7 @@ ENDIF
 BoxC()
 
 Box(,6,70)
-@ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(roba->naz)
+@ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(LEFT(roba->naz, 40))
 @ m_X+2, m_y+2 SAY "TARIFA"
 @ m_X+2, col()+2 SAY _idtarifa
 @ m_X+3, m_y+2 SAY "VPC"+cVPC

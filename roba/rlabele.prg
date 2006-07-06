@@ -241,7 +241,7 @@ do while (!eof() .and. cDok==field->idFirma+field->idVd+field->brDok)
 		append blank
 		Scatter()
 		_idRoba:=pripr->idRoba
-		_naz:=roba->naz
+		_naz:=LEFT(roba->naz, 40)
 		_idTarifa:=pripr->idTarifa
 		_evBr:=pripr->brDok
 		if (pripr->idVd=="19")

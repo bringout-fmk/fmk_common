@@ -1,8 +1,9 @@
 #include "sc.ch"
 
-
+// ------------------------------------------
+// brisanje sifri koje se ne nalaze u prometu
+// ------------------------------------------
 function Mnu_BrisiSifre()
-*{
 Box(,6,60)
 	@ 1+m_x,2+m_y SAY "Brisanje artikala koji se ne nalaze u prometu"
 	@ 2+m_x,2+m_y SAY "---------------------------------------------"
@@ -16,11 +17,11 @@ if Pitanje(,"Sigurno zelite obrisati sifre (D/N) ?","N")=="D"
 endif
 
 return
-*}
 
-
+// --------------------------
+// brise duple sifre
+// --------------------------
 function BrisiVisakSifri()
-*{
 private nNextRobaRec
 private nRobaRec
 cIdRoba:=""
@@ -69,11 +70,10 @@ BoxC()
 MsgBeep("Skenirano " + STR(nBrojac) + " zapisa##Obrisano " + STR(nDeleted) + " zapisa")
 MsgBeep("Sada obavezno treba izvrsiti##pakovanje i reindex tabela !!!")
 return
-*}
+
 
 
 function OpenDB()
-*{
 O_ROBA
 if (goModul:oDataBase:cName=="KALK")
 	O_KALK
@@ -82,5 +82,4 @@ if (goModul:oDataBase:cName=="FAKT")
 	O_FAKT
 endif
 return
-*}
 

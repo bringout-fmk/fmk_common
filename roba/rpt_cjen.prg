@@ -55,7 +55,7 @@ do while !EOF()
   SELECT BARKOD
   APPEND BLANK
   REPLACE ID       WITH  roba->id ,;
-          NAZIV    WITH  TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")" ,;
+          NAZIV    WITH  TRIM(LEFT(ROBA->naz, 40))+" ("+TRIM(ROBA->jmj)+")" ,;
           VPC      WITH  ROBA->vpc,;
           MPC      WITH  ROBA->mpc
   select roba

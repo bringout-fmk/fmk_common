@@ -206,7 +206,7 @@ do while !EOF()
 	for i:=1 to pripr->kolicina+IF(pripr->kolicina>0, nRezerva, 0)
 		APPEND BLANK
 		REPLACE id WITH pripr->idRoba
-		REPLACE naziv WITH TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")"
+		REPLACE naziv WITH TRIM(LEFT(ROBA->naz, 40))+" ("+TRIM(ROBA->jmj)+")"
 		REPLACE l1 WITH DTOC(PRIPR->datdok)+", "+TRIM(PRIPR->(idfirma+"-"+idvd+"-"+brdok))
 		REPLACE l2 WITH cLinija2
 		REPLACE vpc WITH ROBA->vpc
@@ -363,10 +363,12 @@ for  i:=1  to  PRIPR->kolicina + IF( PRIPR->kolicina > 0 , nRezerva , 0 )
 
 	REPLACE L2 WITH KonvZnWin(cLinija2), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
 
+	nRobNazLen := LEN(roba->naz)
+	
 	if IzFmkIni("BarKod","JMJ","D",SIFPATH)=="N"
-		replace NAZIV    WITH  KonvZnWin(TRIM(ROBA->naz))
+		replace NAZIV WITH KonvZnWin(TRIM(LEFT(ROBA->naz, nRobNazLen)))
 	else
-		replace NAZIV    WITH  KonvZnWin(TRIM(ROBA->naz)+" ("+TRIM(ROBA->jmj)+")")
+		replace NAZIV WITH KonvZnWin(TRIM(LEFT(ROBA->naz, nRobNazLen))+" ("+TRIM(ROBA->jmj)+")")
 	endif
 
 next

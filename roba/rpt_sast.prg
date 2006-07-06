@@ -106,7 +106,7 @@ if cSamoBezSast=="D"
     SELECT SAST; HSEEK ROBA->ID
     IF !FOUND()
       if prow()>62+gPStranica; FF; endif
-      ? STR(++nRBr,3)+".", roba->id, roba->naz, roba->jmj
+      ? STR(++nRBr,3)+".", roba->id, LEFT(roba->naz, 40), roba->jmj
     ENDIF
     SELECT ROBA
     SKIP 1
@@ -140,7 +140,7 @@ else
     select roba; hseek sast->id; select sast
     AADD(aPom,"")
     AADD(aPom,m)
-    AADD(aPom,roba->id + " " + roba->naz + " " + roba->jmj)
+    AADD(aPom,roba->id + " " + LEFT(roba->naz, 40) + " " + roba->jmj)
     AADD(aPom,m)
     AADD(aPom,z)
     AADD(aPom,m)
@@ -151,7 +151,7 @@ else
       SELECT ROBA; HSEEK SAST->ID2; SELECT SAST
       AADD( aPom , str(++nrbr,5)+". "+;
                    roba->id+" "+;
-                   roba->naz+" "+;
+                   LEFT(roba->naz, 40)+" "+;
                    TRANSFORM(kolicina,"999999.9999")+" "+;
                    IF(cNCVPC=="D",TRANSFORM(roba->nc*kolicina ,picdem)+" "+;
                    TRANSFORM(roba->vpc*kolicina,picdem),"");
