@@ -26,15 +26,13 @@ function CreRoba()
 
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
-
-AADD(aDBf,{ 'NAZ'                 , 'C' ,  40 ,  0 })
+AADD(aDBf,{ 'MATCH_CODE'          , 'C' ,  10 ,  0 })
+AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
 AADD(aDBf,{ 'JMJ'                 , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'NC'                  , 'N' ,  18 ,  8 })
 AADD(aDBf,{ 'VPC'                 , 'N' ,  18 ,  8 })
-
 AADD(aDBf,{ 'VPC2'                , 'N' ,  18 ,  8 })
-
 AADD(aDBf,{ 'PLC'                 , 'N' ,  18 ,  8 })
 // plc - mislim da ni ovo bas niko ne koristi treba analizirati
 //       vidjeti kod korisnika
@@ -78,9 +76,16 @@ endif
 DBT2FPT(SIFPATH+"ROBA")
 DBT2FPT(PRIVPATH+"_ROBA")
 
-CREATE_INDEX("ID","id",SIFPATH+"ROBA") // roba, artikli
-CREATE_INDEX("NAZ","Naz",SIFPATH+"ROBA")
-CREATE_INDEX("ID","id",PRIVPATH+"_ROBA") // roba, artikli
+CREATE_INDEX("ID","id",SIFPATH+"ROBA") 
+
+// match kod
+if fieldpos("MATCH_CODE")<>0
+	CREATE_INDEX("M_CODE", "match_code", SIFPATH+"ROBA")
+endif
+
+CREATE_INDEX("NAZ","LEFT(Naz,40)", SIFPATH+"ROBA")
+CREATE_INDEX("ID","id", PRIVPATH+"_ROBA") 
+
 O_ROBA
 
 if fieldpos("KATBR")<>0
@@ -102,8 +107,6 @@ endif
 if IsVindija()
 	select (F_ROBA)
   	use
-	//CREATE_INDEX("ID_V4","SUBSTR(RTRIM(ID), -4)",SIFPATH+"ROBA") // roba, artikli
-  	//CREATE_INDEX("ID_V5","SUBSTR(RTRIM(ID), -5)",SIFPATH+"ROBA") // roba, artikli
   	CREATE_INDEX("ID_VSD","SIFRADOB",SIFPATH+"ROBA") // sifra dobavljaca
 endif
 

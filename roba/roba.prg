@@ -6,9 +6,11 @@
  * ----------------------------------------------------------------
  *
  */
- 
-function P_Roba(CId,dx,dy)
-*{
+
+// -----------------------------------------
+// otvaranje tabele roba - sifrarnik
+// -----------------------------------------
+function P_Roba(cId, dx, dy)
 local cRet
 local bRoba
 private ImeKol:={}
@@ -16,50 +18,57 @@ private Kol:={}
 
 PushWa()
 
-ImeKol:={ }
+ImeKol:={}
 
-if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.  (IzFmkIni("SifRoba","ID","D", SIFPATH)=="D")
-	AADD (ImeKol,{ padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
+if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.;
+   (IzFmkIni("SifRoba","ID","D", SIFPATH)=="D")
+	AADD(ImeKol, {padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
 endif
 
-//if (IzFmkIni("SifRoba","ID_J","N", SIFPATH)=="D")
-//	AADD (ImeKol,{ padc("ID_J",10 ), {|| id_j}, ""   })
-//endif
+// match_code
+if roba->(fieldpos("MATCH_CODE"))<>0
+	AADD(ImeKol, {padc("MATCH CODE",14 ), {|| match_code}, "match_code"   })
+endif
 
+// kataloski broj
 if roba->(fieldpos("KATBR"))<>0
-	AADD (ImeKol,{ padc("KATBR",14 ), {|| katBr}, "katBr"   })
+	AADD(ImeKol, {padc("KATBR",14 ), {|| katBr}, "katBr"   })
 endif
 
+// sifra dobavljaca
 if roba->(fieldpos("SIFRADOB"))<>0
-	AADD (ImeKol,{ padc("S.dobav.",13 ), {|| sifraDob}, "sifraDob"   })
+	AADD(ImeKol, {padc("S.dobav.",13 ), {|| sifraDob}, "sifraDob"   })
 endif
 
+// naziv
 if glProvNazRobe
-	AADD (ImeKol,{ padc("Naziv",40), {|| naz},"naz",{|| .t.}, {|| VpNaziv(wNaz)}})
+	AADD(ImeKol, {padc("Naziv",40), {|| LEFT(naz, 40)},"naz",{|| .t.}, {|| VpNaziv(wNaz)}})
 else
-	AADD (ImeKol,{ padc("Naziv",40), {|| naz},"naz",{|| .t.}, {|| .t.}})
+	AADD(ImeKol, {padc("Naziv",40), {|| LEFT(naz, 40)},"naz",{|| .t.}, {|| .t.}})
 endif
-AADD (ImeKol,{ padc("JMJ",3), {|| jmj},       "jmj"    })
 
+// jedinica mjere
+AADD(ImeKol, {padc("JMJ",3), {|| jmj},       "jmj"    })
+
+// VPC
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC"))
-	AADD (ImeKol,{ padc("VPC",10 ), {|| transform(VPC,"999999.999")}, "vpc" , nil, nil, nil, gPicCDEM  })
+	AADD(ImeKol, {padc("VPC",10 ), {|| transform(VPC,"999999.999")}, "vpc" , nil, nil, nil, gPicCDEM  })
 endif
 
+// VPC2
 if roba->(fieldpos("vpc2"))<>0
 	if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC2"))
 		if IzFMkIni('SifRoba',"VPC2",'D', SIFPATH)=="D"
-			AADD (ImeKol,{ padc("VPC2",10 ), {|| transform(VPC2,"999999.999")}, "vpc2", NIL, NIL,NIL, gPicCDEM   })
+			AADD(ImeKol, {padc("VPC2",10 ), {|| transform(VPC2,"999999.999")}, "vpc2", NIL, NIL,NIL, gPicCDEM   })
  		endif
 	endif
 endif
 
-AADD (ImeKol,{ padc("MPC",10 ), {|| transform(MPC,"999999.999")}, "mpc", NIL, NIL,NIL, gPicCDEM  })
-
+AADD(ImeKol, {padc("MPC",10 ), {|| transform(MPC,"999999.999")}, "mpc", NIL, NIL,NIL, gPicCDEM  })
 
 if roba->(fieldpos("PLC"))<>0  .and. IzFMkIni("SifRoba","PlanC","N", SIFPATH)=="D"
-	AADD (ImeKol,{ padc("Plan.C",10 ), {|| transform(PLC,"999999.999")}, "PLC", NIL, NIL,NIL, gPicCDEM    })
+	AADD(ImeKol, {padc("Plan.C",10 ), {|| transform(PLC,"999999.999")}, "PLC", NIL, NIL,NIL, gPicCDEM    })
 endif
-
 
 for i:=2 to 10
 	cPom:="MPC"+ALLTRIM(STR(i))
@@ -72,18 +81,18 @@ for i:=2 to 10
 		endif
 
 		if cPrikazi=="D"
-			AADD (ImeKol,{ padc(cPom,10 ), &(cPom2) , cPom , nil, nil, nil, gPicCDEM })
+			AADD(ImeKol, {padc(cPom,10 ), &(cPom2) , cPom , nil, nil, nil, gPicCDEM })
 		endif
 	endif
 next
 
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWNC"))
-	AADD (ImeKol,{ padc("NC",10 ), {|| transform(NC,gPicCDEM)}, "NC", NIL, NIL, NIL, gPicCDEM  })
+	AADD(ImeKol, {padc("NC",10 ), {|| transform(NC,gPicCDEM)}, "NC", NIL, NIL, NIL, gPicCDEM  })
 endif
 
-AADD (ImeKol,{ "Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), EditOpis() }   })
+AADD(ImeKol, {"Tarifa",{|| IdTarifa}, "IdTarifa", {|| .t. }, {|| P_Tarifa(@wIdTarifa), EditOpis() }   })
 
-AADD (ImeKol,{ "Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| wTip $ " TUCKVPSXY" } ,NIL,NIL,NIL,NIL, 27 } )
+AADD(ImeKol, {"Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| wTip $ " TUCKVPSXY" } ,NIL,NIL,NIL,NIL, 27 } )
 
 if roba->(fieldpos("BARKOD"))<>0
 	if glAutoFillBK
@@ -189,93 +198,100 @@ cRet:=PostojiSifra(F_ROBA,(cPomTag),15,77,"Lista artikala - robe", @cId, dx, dy,
 PopWa()
 return cRet
 
-/*! \fn EditOpis()
- *  \brief Unos opisa u sifrarnik robe
- *  \sa IzFMkIni_SifPath_SifRoba_PitanjeOpis
- *
- */
 
-
+// Unos opisa u sifrarnik robe
 function EditOpis()
-*{
 local cOp:="N"
 private GetList:={}
 if IzFMkIni('SifRoba',"PitanjeOpis",'N',SIFPATH)=="D"
- @ m_x+7, m_y+43 SAY "Unijeti opis D/N ?" get cOp pict "@!" valid cop $ "DN"
- read
+	@ m_x+7, m_y+43 SAY "Unijeti opis D/N ?" get cOp pict "@!" valid cop $ "DN"
+ 	read
 endif
 UsTipke()
 if cOp=="D"
- Box(,14,55)
-   @ m_x+1,m_y+2 SAY "** <c-W> za kraj unosa opisa **"
-   wOpis:=MemoEdit(wOpis,m_x+3,m_y+1,m_x+14,m_y+55)
-   wOpis:=OdsjPLK(wOpis)
- BoxC()
+ 	Box(,14,55)
+   	@ m_x+1,m_y+2 SAY "** <c-W> za kraj unosa opisa **"
+  	wOpis:=MemoEdit(wOpis,m_x+3,m_y+1,m_x+14,m_y+55)
+   	wOpis:=OdsjPLK(wOpis)
+ 	BoxC()
 endif
 BosTipke()
 return .t.
-*}
 
+
+// ------------------------------------
+// formiranje MPC na osnovu VPC
+// ------------------------------------
 function MpcIzVpc()
-*{
+
 if pitanje(,"Formirati MPC na osnovu VPC ? (D/N)","N")=="N"
-  return DE_CONT
+	return DE_CONT
 endif
 
-private GetList:={}, nZaokNa:=1, cMPC:=" ", cVPC:=" "
-      Scatter()
-      select tarifa; hseek _idtarifa; select roba
+private GetList:={}
+private nZaokNa:=1
+private cMPC:=" "
+private cVPC:=" "
 
-      Box(,4,70)
-        @ m_x+2, m_y+2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC$" 2"
-        @ m_x+3, m_y+2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC$" 23"
-        READ
-        IF EMPTY(cVPC); cVPC:=""; ENDIF
-        IF EMPTY(cMPC); cMPC:=""; ENDIF
-      BoxC()
+Scatter()
+select tarifa
+hseek _idtarifa
+select roba
 
-      Box(,6,70)
-        @ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(roba->naz)
-        @ m_X+2, m_y+2 SAY "TARIFA"
-        @ m_X+2, col()+2 SAY _idtarifa
-        @ m_X+3, m_y+2 SAY "VPC"+cVPC
-        @ m_X+3, col()+1 SAY _VPC&cVPC pict gPicDem
-        @ m_X+4, m_y+2 SAY "Postojeca MPC"+cMPC
-        @ m_X+4, col()+1 SAY roba->MPC&cMPC pict gPicDem
-        @ m_X+5, m_y+2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict "9"
-        @ m_X+6, m_y+2 SAY "MPC"+cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict gPicDem
-        read
-      BoxC()
-      if lastkey()<>K_ESC
-         Gather()
-         IF Pitanje(,"Zelite li isto uraditi za sve artikle kod kojih je MPC"+cMPC+"=0 ? (D/N)","N")=="D"
-           nRecAM:=RECNO()
-           Postotak(1,RECCOUNT2(),"Formiranje cijena")
-           nStigaoDo:=0
-           GO TOP
-           DO WHILE !EOF()
-             IF ROBA->MPC&cMPC == 0
-               Scatter()
-                select tarifa
-		hseek _idtarifa
-		select roba
-                _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa)
-               Gather()
-             ENDIF
-             Postotak(2,++nStigaoDo)
-             SKIP 1
-           ENDDO
-           Postotak(0)
-           GO (nRecAM)
-         ENDIF
-         return DE_REFRESH
-      endif
+Box(,4,70)
+@ m_x+2, m_y+2 SAY "Set cijena VPC ( /2)  :" GET cVPC VALID cVPC$" 2"
+@ m_x+3, m_y+2 SAY "Set cijena MPC ( /2/3):" GET cMPC VALID cMPC$" 23"
+READ
+IF EMPTY(cVPC)
+	cVPC:=""
+ENDIF
+IF EMPTY(cMPC)
+	cMPC:=""
+ENDIF
+BoxC()
 
+Box(,6,70)
+@ m_X+1, m_y+2 SAY trim(roba->id)+"-"+trim(roba->naz)
+@ m_X+2, m_y+2 SAY "TARIFA"
+@ m_X+2, col()+2 SAY _idtarifa
+@ m_X+3, m_y+2 SAY "VPC"+cVPC
+@ m_X+3, col()+1 SAY _VPC&cVPC pict gPicDem
+@ m_X+4, m_y+2 SAY "Postojeca MPC"+cMPC
+@ m_X+4, col()+1 SAY roba->MPC&cMPC pict gPicDem
+@ m_X+5, m_y+2 SAY "Zaokruziti cijenu na (broj decimala):" GET nZaokNa VALID {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict "9"
+@ m_X+6, m_y+2 SAY "MPC"+cMPC GET _MPC&cMPC WHEN {|| _MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa),.t.} pict gPicDem
+read
+BoxC()
+if lastkey()<>K_ESC
+	Gather()
+        IF Pitanje(,"Zelite li isto uraditi za sve artikle kod kojih je MPC"+cMPC+"=0 ? (D/N)","N")=="D"
+        	nRecAM:=RECNO()
+           	Postotak(1,RECCOUNT2(),"Formiranje cijena")
+           	nStigaoDo:=0
+           	GO TOP
+           	DO WHILE !EOF()
+             		IF ROBA->MPC&cMPC == 0
+               			Scatter()
+                		select tarifa
+				hseek _idtarifa
+				select roba
+                		_MPC&cMPC:=round(_VPC&cVPC * (1+ tarifa->opp/100) * (1+tarifa->ppp/100+tarifa->zpp/100),nZaokNa)
+               			Gather()
+             		ENDIF
+             		Postotak(2,++nStigaoDo)
+             		SKIP 1
+           	ENDDO
+           	Postotak(0)
+           	GO (nRecAM)
+        ENDIF
+        return DE_REFRESH
+endif
 return DE_CONT
-*}
 
 
+// -------------------------------------------------------
 // setovanje tarife 2 i 3 u sifrarniku na osnovu idtarifa
+// -------------------------------------------------------
 function set_tar_rs(cId1, cId2)
 if EMPTY(cId1)
 	cId1 := cId2
@@ -284,25 +300,21 @@ return .t.
 
 
 function WhenBK()
-*{
 if empty(wBarKod)
 	wBarKod:=PADR(wId,LEN(wBarKod))
 	AEVAL(GetList,{|o| o:display()})
 endif
 return .t.
-*}
 
 
 // roba ima zasticenu cijenu
 // sto znaci da krajnji kupac uvijek placa fixan iznos pdv-a 
 // bez obzira po koliko se roba prodaje
 function RobaZastCijena( cIdTarifa )
-*{
 lZasticena := .f.
 lZasticena := lZasticena .or.  (PADR(cIdTarifa, 6) == PADR("PDVZ",6))
 lZasticena := lZasticena .or.  (PADR(cIdTarifa, 6) == PADR("PDV17Z",6))
 lZasticena := lZasticena .or.  (PADR(cIdTarifa, 6) == PADR("CIGA05",6))
 
 return lZasticena
-*}
 
