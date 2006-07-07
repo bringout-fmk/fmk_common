@@ -50,6 +50,13 @@ endif
 // jedinica mjere
 AADD(ImeKol, {padc("JMJ",3), {|| jmj},       "jmj"    })
 
+// DEBLJINA i TIP
+if roba->(fieldpos("DEBLJINA")) <> 0
+	AADD(ImeKol, {padc("Debljina",10 ), {|| transform(debljina, "999999.99")}, "debljina", nil, nil, "999999.99" })
+
+	//AADD(ImeKol, {padc("Tip art.",10 ), {|| tip_art}, "tip_art", {|| .t.}, {|| g_tip_art(@wTip_art) }})
+endif
+
 // VPC
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC"))
 	AADD(ImeKol, {padc("VPC",10 ), {|| transform(VPC,"999999.999")}, "vpc" , nil, nil, nil, gPicCDEM  })
