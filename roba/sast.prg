@@ -110,35 +110,10 @@ do case
 	return 7
 
     case Ch == K_ENTER 
-	
-	// pregled sastavnice
-	nTRobaRec := RecNo()
- 	
-	private cIdTek := id
-	private ImeKol
-	private Kol
-	
-	select sast
- 	set filter to id=cIdTek
- 	set order to tag "id_rbr"
-	go top
-	
-	//set scope to cIdTek
-	
-	// setuj kolone sastavnice tabele
-	sast_a_kol(@ImeKol, @Kol)
-	
-	PostojiSifra(F_SAST, 1, 10, 70, cIdTek + "-" + LEFT(roba->naz,40), , , ,{|Char| EdSastBlok(Char)},,,,.f.)
-	
-	set filter to
- 	// set scope to
-	
-	// samo lista robe
-	select roba
-	set order to tag "idun"
- 	
-	go nTrobaRec
- 	return DE_REFRESH
+    
+	// prikazi sastavnicu
+	show_sast()
+	return DE_REFRESH
 	
     case Ch == K_CTRL_F4
 
@@ -156,7 +131,7 @@ do case
      		
 		if lastkey()<>K_ESC
        			select sast
-			set order to tag "id_rbr"
+			set order to tag "idrbr"
 			seek cIdTek
        			do while !eof() .and. id==cIdTek
           			nTRec:=recno()
@@ -214,7 +189,7 @@ do case
                     				endif
                     				skip
                   			enddo
-                  			set order to tag "id_rbr"
+                  			set order to tag "idrbr"
                 		endif
             		case izbor == 2
                 		cOldS:=space(10)
@@ -239,7 +214,7 @@ do case
                     				endif
                     				skip
                   			enddo
-                  			set order to tag "id_rbr"
+                  			set order to tag "idrbr"
                 		endif
 		endcase
        		
@@ -251,6 +226,39 @@ do case
 endcase
 
 return DE_CONT
+
+// ---------------------------
+// prikaz sastavnice
+// ---------------------------
+static function show_sast()
+local nTRobaRec
+private cIdTek
+private ImeKol
+private Kol
+	
+// roba->id
+cIdTek := field->id
+nTRobaRec := RecNo()
+
+select sast
+set order to tag "idrbr"
+set filter to id = cIdTek
+go top
+
+// setuj kolone sastavnice tabele
+sast_a_kol(@ImeKol, @Kol)
+	
+PostojiSifra(F_SAST, "IDRBR", 10, 70, cIdTek + "-" + LEFT(roba->naz, 40),,,,{|Char| EdSastBlok(Char)},,,,.f.)
+
+// ukini filter
+set filter to
+	
+select roba
+set order to tag "idun"
+ 	
+go nTrobaRec
+return
+
 
 
 // ------------------------------------
