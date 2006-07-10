@@ -8,7 +8,6 @@
  
 
 function OFmkRoba()
-*{
 O_SIFK
 O_SIFV
 O_KONTO
@@ -18,15 +17,13 @@ O_TARIFA
 O_ROBA
 O_SAST
 return
-*}
 
 
 function CreRoba()
-*{
 
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
-AADD(aDBf,{ 'MATCH_CODE'          , 'C' ,  10 ,  0 })
+add_f_mcode(@aDbf)
 AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
 AADD(aDBf,{ 'JMJ'                 , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
@@ -77,31 +74,26 @@ DBT2FPT(SIFPATH+"ROBA")
 DBT2FPT(PRIVPATH+"_ROBA")
 
 CREATE_INDEX("ID","id",SIFPATH+"ROBA") 
-
-// match kod
-if fieldpos("MATCH_CODE")<>0
-	CREATE_INDEX("M_CODE", "match_code", SIFPATH+"ROBA")
-endif
-
+index_mcode(SIFPATH, "ROBA")
 CREATE_INDEX("NAZ","LEFT(Naz,40)", SIFPATH+"ROBA")
 CREATE_INDEX("ID","id", PRIVPATH+"_ROBA") 
-
 O_ROBA
-
 if fieldpos("KATBR")<>0
-  select (F_ROBA); use
+  select (F_ROBA)
+  use
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"ROBA") // roba, artikli
 endif
-
 if fieldpos("BARKOD")<>0
-  select (F_ROBA); use
+  select (F_ROBA)
+  use
   CREATE_INDEX("BARKOD","BARKOD",SIFPATH+"ROBA") // roba, artikli
 endif
 
 if IzFMKINI("ROBA","Planika","N",SIFPATH)=="D"
 	select (F_ROBA)
 	use
-  	CREATE_INDEX("BROBA", IzFMKINI("ROBA","Sort","K1+SUBSTR(id,7,3)",SIFPATH), SIFPATH+"ROBA") // roba, artikli
+  	CREATE_INDEX("BROBA", IzFMKINI("ROBA","Sort","K1+SUBSTR(id,7,3)",SIFPATH), SIFPATH+"ROBA") 
+	// roba, artikli
 endif
 
 if IsVindija()
@@ -110,10 +102,13 @@ if IsVindija()
   	CREATE_INDEX("ID_VSD","SIFRADOB",SIFPATH+"ROBA") // sifra dobavljaca
 endif
 
+
+// TARIFA
 if !file(SIFPATH+"TARIFA.dbf")
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
-        AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
+        add_f_mcode(@aDbf)
+	AADD(aDBf,{ 'NAZ'                 , 'C' ,  50 ,  0 })
         AADD(aDBf,{ 'OPP'                 , 'N' ,   6 ,  2 })  // ppp
         AADD(aDBf,{ 'PPP'                 , 'N' ,   6 ,  2 })  // ppu
         AADD(aDBf,{ 'ZPP'                 , 'N' ,   6 ,  2 })  //nista
@@ -124,11 +119,13 @@ if !file(SIFPATH+"TARIFA.dbf")
 endif
 CREATE_INDEX("ID","id", SIFPATH+"TARIFA")
 CREATE_INDEX("naz","naz", SIFPATH+"TARIFA")
+index_mcode(SIFPATH, "TARIFA")
 
-
+// KONCIJ
 if !file(SIFPATH+"KONCIJ.dbf")
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   7 ,  0 })
+   add_f_mcode(@aDbf)
    AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'IDPRODMJES'          , 'C' ,   2 ,  0 })
@@ -136,11 +133,14 @@ if !file(SIFPATH+"KONCIJ.dbf")
    dbcreate2(SIFPATH+'KONCIJ.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"KONCIJ") // konta
+index_mcode(SIFPATH, "KONCIJ")
 
+// TRFP
 if !file(SIFPATH+"trfp.dbf")
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  60 ,  0 })
-        AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
+        add_f_mcode(@aDbf)
+	AADD(aDBf,{ 'SHEMA'               , 'C' ,   1 ,  0 })
         AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
         AADD(aDBf,{ 'IDKONTO'             , 'C' ,   7 ,  0 })
         AADD(aDBf,{ 'DOKUMENT'            , 'C' ,   1 ,  0 })
@@ -152,10 +152,11 @@ if !file(SIFPATH+"trfp.dbf")
         AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
         dbcreate2(SIFPATH+"trfp.dbf",aDbf)
 endif
-
 CREATE_INDEX("ID","idvd+shema+Idkonto",SIFPATH+"trfp")
+index_mcode(SIFPATH, "TRFP")
 
 
+// SAST
 if !file(SIFPATH+"SAST.DBF")
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
@@ -168,7 +169,6 @@ if !file(SIFPATH+"SAST.DBF")
    AADD(aDBf,{ 'N2'                  , 'N' ,   20 ,  5 })
    dbcreate2(SIFPATH+'SAST.DBF',aDbf)
 endif
-
 CREATE_INDEX("ID", "ID+ID2", SIFPATH + "SAST")
 CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2", SIFPATH + "SAST")
 CREATE_INDEX("NAZ", "ID2+ID", SIFPATH + "SAST")
@@ -191,4 +191,5 @@ CREATE_INDEX("ID","id+LEFT(naziv,40)",PRIVPATH+"BARKOD")
 CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
 
 return
+
 
