@@ -163,13 +163,11 @@ index_mcode(SIFPATH, "VALUTE")
 if !file(SIFPATH+'TOKVAL.dbf')
         aDbf:={}
         AADD(aDBf,{ 'ID'                  , 'C' ,  8  ,  2 })
-        add_f_mcode(@aDbf)
 	AADD(aDBf,{ 'NAZ'                 , 'N' ,  8 ,   2 })
         AADD(aDBf,{ 'NAZ2'                , 'N' ,  8 ,   2 })
         dbcreate2(SIFPATH+'TOKVAL.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"tokval")
-index_mcode(SIFPATH, "TOKVAL")
 
 // SIFK
 if !file(SIFPATH+"SIFK.dbf")

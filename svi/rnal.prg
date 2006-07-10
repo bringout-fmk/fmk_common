@@ -1,46 +1,34 @@
 #include "sc.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/svi/rnal.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.2 $
- * $Log: rnal.prg,v $
- * Revision 1.2  2004/03/18 09:18:59  sasavranic
- * Dodao funkciju GetNameRNal() koja daje vijednost polja naz iz tabele rnal
- *
- * Revision 1.1  2003/01/08 03:17:59  mirsad
- * ubacen RNAL.DBF za rama glas i varijanta rama glas
- *
- * Revision 1.2  2002/06/16 11:44:53  ernad
- * unos header-a
- *
- *
- */
- 
-/*! \fn P_RNal(cId,dx,dy)
- */
+
+// otvaranje tabele RNAL
 function P_RNal(cId,dx,dy)
-*{
-private imekol,kol
-ImeKol:={ { padc("Id",10), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padc("Naziv",60), {||  naz}, "naz" }                       ;
-       }
+local nTArea
+private ImeKol
+private Kol
 
-Kol:={}
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+ImeKol := {}
+Kol := {}
+
+nTArea := SELECT()
+O_RNAL
+
+AADD(ImeKol, { PADC("Id",10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
+add_mcode(@ImeKol)
+AADD(ImeKol, { PADC("Naziv",60), {|| naz}, "naz" })
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
+select (nTArea)
+
 return PostojiSifra(F_RNAL,1,10,65,"Lista radnih naloga",@cId,dx,dy)
-*}
 
 
-/*! \fn GetNameFromRNal(cIdRnal)
- *  \brief Vraca naziv radnog naloga za trazeni cIdRnal
- *  \param cIdRnal - id radnog naloga
- */
+
+// Vraca naziv radnog naloga za trazeni cIdRnal
 function GetNameRNal(cIdRnal)
-*{
 local nArr
 nArr:=SELECT()
 O_RNAL
@@ -50,5 +38,5 @@ seek cIdRnal
 cRet:=ALLTRIM(field->naz)
 select (nArr)
 return cRet
-*}
+
 

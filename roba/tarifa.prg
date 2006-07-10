@@ -15,35 +15,36 @@
  */
 
 function P_Tarifa(cid,dx,dy)
-*{
-private ImeKol,Kol:={}
+private ImeKol
+private Kol
 
-ImeKol:={ { "ID ",  {|| id },       "id"  , {|| .t.}, {|| vpsifra(wId)}      },;
-          { PADC("Naziv", 35), {|| left(naz, 35)},   "naz"   } ;
-	}
+ImeKol := {}
+Kol := {}
+
+O_TARIFA
+
+AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}  })
+add_mcode(@ImeKol)
+AADD(ImeKol, { PADC("Naziv",35), {|| LEFT(naz, 35)}, "naz" })
 
 if (gPDV=="D")
-  
-  AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
-  
-  if glUgost
-     AADD(ImeKol,  { "Por.potr", {|| zpp},  "zpp"  } ) 
-  endif
-  
+	AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
+  	if glUgost
+     		AADD(ImeKol,  { "Por.potr", {|| zpp},  "zpp"  } ) 
+  	endif
 endif
 
 if (gPDV=="N")
-  AADD(ImeKol, { "PPP ", {|| opp},     "opp"   } )
-  AADD(ImeKol, { "PPU ", {|| ppp},     "ppp"   } )
-  AADD(ImeKol,  { "PP  ", {|| zpp},  "zpp"      } )
-  AADD(ImeKol,  { "P.na Marzu", {|| vpp},  "vpp"} )
-
- IF TARIFA->(FIELDPOS("MPP"))<>0
-  AADD (ImeKol,{ PADC("Por.RUC MP",10) , {|| MPP} , "MPP" })
- ENDIF
- IF TARIFA->(FIELDPOS("DLRUC"))<>0
-   AADD (ImeKol,{ PADC("Min.RUC(%)",10) , {|| DLRUC} , "DLRUC" })
- ENDIF
+	AADD(ImeKol, { "PPP ", {|| opp},     "opp"   } )
+  	AADD(ImeKol, { "PPU ", {|| ppp},     "ppp"   } )
+  	AADD(ImeKol,  { "PP  ", {|| zpp},  "zpp"      } )
+  	AADD(ImeKol,  { "P.na Marzu", {|| vpp},  "vpp"} )
+	IF TARIFA->(FIELDPOS("MPP"))<>0
+  		AADD (ImeKol,{ PADC("Por.RUC MP",10) , {|| MPP} , "MPP" })
+ 	ENDIF
+ 	IF TARIFA->(FIELDPOS("DLRUC"))<>0
+   		AADD (ImeKol,{ PADC("Min.RUC(%)",10) , {|| DLRUC} , "DLRUC" })
+ 	ENDIF
 endif
 
 FOR i:=1 TO LEN(ImeKol)

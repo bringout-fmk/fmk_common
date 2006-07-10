@@ -1,32 +1,22 @@
 #include "sc.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/koncij.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.3 $
- * $Log: koncij.prg,v $
- * Revision 1.3  2003/03/12 09:15:06  mirsad
- * uveden sufiks brojaca KALK dokumenata u KONCIJ
- *
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
- *
- */
  
 function P_KonCij(CId,dx,dy)
-*{
-PRIVATE ImeKol
+local nTArea
+private ImeKol
 private Kol
-private ImeKol:={ { "ID  ",  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wId)}    },;
-          { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
-          { "Tip", {|| naz},     "naz"      },;
-          { "PM", {|| idprodmjes},     "idprodmjes"      };
-        }
-Kol:={}
+
+ImeKol := {}
+Kol := {}
+
+nTArea := SELECT()
+O_KONCIJ
+
+AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
+add_mcode(@ImeKol)
+AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
+AADD(ImeKol, { "Tip", {|| naz}, "naz"})
+AADD(ImeKol, { "PM", {|| idprodmjes}, "idprodmjes"})
 
 IF KONCIJ->(FIELDPOS("IDRJ")<>0)
   AADD (ImeKol,{ "RJ"     , {|| idrj }, "IDRJ" , {|| .t.}, {|| .t.} })
@@ -76,22 +66,30 @@ if KONCIJ->(fieldpos("SUFIKS"))<>0
   AADD (ImeKol,{ "Sufiks BrKalk", {|| sufiks}, "sufiks", {|| .t.}, {|| .t.} })
 endif
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
 
+select (nTArea)
 return PostojiSifra(F_KONCIJ,1,10,60,"Lista: Konta - tipovi cijena",@cId,dx,dy)
-*}
+
 
 function P_KonCij2(CId,dx,dy)
-*{
-PRIVATE ImeKol
+local nTArea
+private ImeKol
 private Kol
 
-ImeKol:={ { "ID  ",  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wId)}    },;
-          { padc("Shema",5),    {|| padc(shema,5)},      "shema"                    },;
-          { "Tip", {|| naz},     "naz"      },;
-          { "PM", {|| idprodmjes},     "idprodmjes"      };
-        }
-Kol:={}
+ImeKol := {}
+Kol := {}
+
+nTArea := SELECT()
+O_KONCIJ
+
+AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
+add_mcode(@ImeKol)
+AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
+AADD(ImeKol, { "Tip", {|| naz}, "naz"})
+AADD(ImeKol, { "PM", {|| idprodmjes}, "idprodmjes"})
 
 if KONCIJ->(fieldpos("KPD"))<>0
   AADD (ImeKol,{ padc("KP6",7 ), {|| KP6}, "KP6", {|| .t.}, {|| empty(wKP6) .or. P_Konto(@wKP6)} })
@@ -133,8 +131,11 @@ if KONCIJ->(fieldpos("KOK"))<>0
   AADD (ImeKol,{ padc("KOK",7 ), {|| KOK}, "KOK", {|| .t.}, {|| empty(wKOK) .or. P_Konto(@wKOK)} })
 endif
 
-FOR i:=1 TO LEN(ImeKol); AADD(Kol,i); NEXT
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
 
+select (nTArea)
 return PostojiSifra(F_KONCIJ,1,10,60,"Lista: Konta / Atributi / 2 ",@cId,dx,dy)
-*}
+
 

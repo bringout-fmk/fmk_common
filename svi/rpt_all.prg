@@ -1,41 +1,5 @@
 #include "sc.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/svi/rpt_all.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.6 $
- * $Log: rpt_all.prg,v $
- * Revision 1.6  2003/11/11 14:06:46  sasavranic
- * Uvodjenje f-je IspisNaDan()
- *
- * Revision 1.5  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.4  2002/07/01 12:25:23  sasa
- * ispravka parametra u f-ji DokNovaStrana:
- * stari:  nSlijediRedova
- * novi: nSlijediRedovaZajedno
- *
- * Revision 1.3  2002/06/29 16:53:01  ernad
- *
- *
- * uvodjenje parametra -1, DokNovaStrana
- *
- * Revision 1.2  2002/06/28 08:40:10  ernad
- *
- *
- * Dokument inventure - primjer implementacije cl-sc build sistema
- *
- * Revision 1.1  2002/06/28 07:04:15  ernad
- *
- *
- * uveden rpt_all.prg : dijeljene report funkcije za izvjestaje
- *
- *
- */
  
 
 /*! \fn DokNovaStrana(nColumn, nStr, nSlijediRedovaZajedno)

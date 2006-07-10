@@ -13,22 +13,23 @@
 function P_Roba(cId, dx, dy)
 local cRet
 local bRoba
-private ImeKol:={}
-private Kol:={}
+local nTArea
+private ImeKol
+private Kol
 
 PushWa()
-
 ImeKol:={}
+
+nTArea := SELECT()
+
+O_ROBA
 
 if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.;
    (IzFmkIni("SifRoba","ID","D", SIFPATH)=="D")
 	AADD(ImeKol, {padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
 endif
 
-// match_code
-if roba->(fieldpos("MATCH_CODE"))<>0
-	AADD(ImeKol, {padc("MATCH CODE",14 ), {|| match_code}, "match_code"   })
-endif
+add_mcode(@ImeKol)
 
 // kataloski broj
 if roba->(fieldpos("KATBR"))<>0
@@ -148,6 +149,7 @@ if IsPlanika()
 	endif
 endif
 
+Kol := {}
 
 FOR i:=1 TO LEN(ImeKol)
 	AADD(Kol,i)
@@ -194,6 +196,8 @@ if IsPlanika()
 		O_RVRSTA
 	endif
 endif
+
+select (nTArea)
 
 private gTbDir:="N"
 bRoba:=gRobaBlock

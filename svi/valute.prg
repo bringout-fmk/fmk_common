@@ -141,11 +141,18 @@ return xRez
 // -----------------------------------
 // -----------------------------------
 function P_Valuta(cid,dx,dy)
-PRIVATE ImeKol,Kol
+local nTArea
+private ImeKol
+private Kol
 
-ImeKol:={}
+ImeKol := {}
+Kol := {}
+
+nTArea := SELECT()
+O_VALUTE
 
 AADD(ImeKol,   { "ID "       , {|| id }   , "id"        })
+add_mcode(@ImeKol)
 AADD(ImeKol,   { "Naziv"     , {|| naz}   , "naz"       })
 AADD(ImeKol,   { "Skrac."    , {|| naz2}  , "naz2"      })
 AADD(ImeKol,   { "Datum"     , {|| datum} , "datum"     })
@@ -154,7 +161,11 @@ AADD(ImeKol,   { "Tip(D/P/O)", {|| tip}   , "tip"    , ;
                  {|| .t.}, ;
 		 {|| wtip$"DPO"}})
 
-Kol:={1,2,3,4,5,6}
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
+select (nTArea)
 
 return PostojiSifra(F_VALUTE,2,10,77,"Valute",@cid,dx,dy)
 

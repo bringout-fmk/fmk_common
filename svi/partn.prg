@@ -8,14 +8,19 @@
  */
 
 function P_Firma(cId, dx, dy)
+local nTArea
 private ImeKol
 private Kol
 
 ImeKol:={}
 Kol:={}
 
+nTArea := SELECT()
+O_PARTN
+
 AADD(ImeKol,{PADR("ID",6),{|| id},"id",{|| .t.},{|| vpsifra(wid)}})
-AADD(ImeKol,{PADR("Naziv",25),{|| naz},"naz"})
+add_mcode(@ImeKol)
+AADD(ImeKol,{PADR("Naziv",25),{|| PADR(naz,25) } , "naz"})
 if IzFmkIni("Partn","Naziv2","N", SIFPATH)=="D"
 	AADD(ImeKol,{PADR("Naziv2",25),{|| naz2},"naz2"})
 endif
@@ -91,8 +96,9 @@ do while !eof() .and. ID="PARTN"
 enddo
 PopWa()
 
-PRIVATE gTBDir
+select (nTArea)
 
+private gTBDir
 gTBDir:="N"
 return PostojiSifra(F_PARTN,1,10,60,"Lista Partnera", @cId, dx, dy,;
        gPartnBlock)
