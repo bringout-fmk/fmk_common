@@ -8,6 +8,8 @@ function p_sast(cId, dx, dy)
 private ImeKol
 private Kol
 
+select roba
+
 set_a_kol(@ImeKol, @Kol)
 
 select roba

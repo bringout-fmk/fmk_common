@@ -67,7 +67,7 @@ return
 // ------------------------------------
 function index_mcode(cPath, cTable)
 if fieldpos("MATCH_CODE")<>0
-	CREATE_INDEX("MCODE", "match_code", cPath + cTable)
+	//CREATE_INDEX("MCODE", "match_code", cPath + cTable)
 endif
 return
 

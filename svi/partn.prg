@@ -234,7 +234,7 @@ SEEK cIdPartner
 if !found()
  cRet := "!NOPARTN!"
 else
- cRet := TRIM(naz) + " " + TRIM(mjesto)
+ cRet := TRIM(LEFT(naz,25)) + " " + TRIM(mjesto)
 endif
 
 PopWa()

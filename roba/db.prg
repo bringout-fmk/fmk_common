@@ -170,9 +170,12 @@ if !file(SIFPATH+"SAST.DBF")
    dbcreate2(SIFPATH+'SAST.DBF',aDbf)
 endif
 CREATE_INDEX("ID", "ID+ID2", SIFPATH + "SAST")
-if fieldpos("R_BR")<>0
+O_SAST
+if sast->(fieldpos("R_BR"))<>0
+	use
 	CREATE_INDEX("IDRBR", "ID+STR(R_BR,4,0)+ID2", SIFPATH + "SAST")
 endif
+use
 CREATE_INDEX("NAZ", "ID2+ID", SIFPATH + "SAST")
 
 

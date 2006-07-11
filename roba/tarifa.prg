@@ -15,11 +15,14 @@
  */
 
 function P_Tarifa(cid,dx,dy)
+local nTArea
 private ImeKol
 private Kol
 
 ImeKol := {}
 Kol := {}
+
+nTArea := SELECT()
 
 O_TARIFA
 
@@ -27,14 +30,14 @@ AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}  })
 add_mcode(@ImeKol)
 AADD(ImeKol, { PADC("Naziv",35), {|| LEFT(naz, 35)}, "naz" })
 
-if (gPDV=="D")
+if IsPDV()
 	AADD(ImeKol,  { "PDV ", {|| opp} ,  "opp"  } )
   	if glUgost
      		AADD(ImeKol,  { "Por.potr", {|| zpp},  "zpp"  } ) 
   	endif
 endif
 
-if (gPDV=="N")
+if !IsPDV()
 	AADD(ImeKol, { "PPP ", {|| opp},     "opp"   } )
   	AADD(ImeKol, { "PPU ", {|| ppp},     "ppp"   } )
   	AADD(ImeKol,  { "PP  ", {|| zpp},  "zpp"      } )
@@ -60,6 +63,9 @@ endif
 cRet := PostojiSifra(F_TARIFA, 1, 10, 65, "Tarifne grupe", @cid, dx, dy)
 
 PopWa()
+
+select (nTArea)
+
 return cRet
 
 
