@@ -55,7 +55,7 @@ AADD(ImeKol, {padc("JMJ",3), {|| jmj},       "jmj"    })
 if roba->(fieldpos("DEBLJINA")) <> 0
 	AADD(ImeKol, {padc("Debljina",10 ), {|| transform(debljina, "999999.99")}, "debljina", nil, nil, "999999.99" })
 
-	//AADD(ImeKol, {padc("Tip art.",10 ), {|| tip_art}, "tip_art", {|| .t.}, {|| g_tip_art(@wTip_art) }})
+	AADD(ImeKol, {padc("Roba tip",10 ), {|| roba_tip}, "roba_tip", {|| .t.}, {|| .t. }})
 endif
 
 // VPC

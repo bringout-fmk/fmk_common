@@ -35,7 +35,7 @@ AADD(aImeKol, {PADC("ID", 10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}})
 
 add_mcode(@aImeKol)
 
-AADD(aImeKol, {PADC("Naziv", 40), {|| naz}, "naz"})
+AADD(aImeKol, {PADC("Naziv", 20), {|| PADR(naz,20)}, "naz"})
 AADD(aImeKol, {PADC("JMJ", 3), {|| jmj}, "jmj"})
 
 // DEBLJINA i TIP
