@@ -106,30 +106,8 @@ local cFaktDo
 // otvori tabele
 o_ugov()
 
-if Pitanje(, "Novi obracun (D), ponovi posljednji (N)", "D") == "D"
-	// otvori parametre generacije
-	lSetParams := .t.
-else
-	// uzmi posljednju generaciju
-	select gen_ug
-	set order to tag "dat_obr"
-	if RecCount2() == 0
-		// nema zapisa
-		// setuj parametre
-		MsgBeep("Generacije ne postoje ipak setujem parametre!")
-		lSetParams := .t.
-	else
-		go bottom
-		if !EOF()
-			dDatObr := gen_ug->dat_obr
-			dDatVal := gen_ug->dat_val
-			dDatlUpl := gen_ug->dat_u_fin
-			cKtoDug := gen_ug->kto_kup
-			cKtoPot := gen_ug->kto_dob
-			cOpis := ALLTRIM(gen_ug->opis)
-		endif
-	endif
-endif
+// otvori parametre generacije
+lSetParams := .t.
 
 if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis) == 0
 	return
@@ -158,6 +136,7 @@ if lSetParams
 		append blank
 	endif
 	replace dat_obr with dDatObr
+	replace dat_gen with dDatGen
 	replace dat_u_fin with dDatLUpl
 	replace kto_kup with cKtoDug
 	replace kto_dob with cKtoPot
@@ -178,6 +157,9 @@ nNBrDok := ""
 
 // ukupni broj faktura
 nFaktBr := 0
+
+
+
 
 Box(,3, 60)
 
@@ -225,6 +207,7 @@ do while !EOF()
 
 enddo
 cFaktDo := cNBrDok
+
 
 // upisi u gen_ug salda
 select gen_ug
