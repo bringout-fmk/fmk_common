@@ -160,7 +160,7 @@ index_mcode(SIFPATH, "TRFP")
 if !file(SIFPATH+"SAST.DBF")
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   10 ,  0 })
-   AADD(aDBf,{ 'R_BR'                , 'C' ,    4 ,  0 })
+   AADD(aDBf,{ 'R_BR'                , 'N' ,    4 ,  0 })
    AADD(aDBf,{ 'ID2'                 , 'C' ,   10 ,  0 })
    AADD(aDBf,{ 'KOLICINA'            , 'N' ,   20 ,  5 })
    AADD(aDBf,{ 'K1'                  , 'C' ,    1 ,  0 })
