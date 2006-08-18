@@ -129,3 +129,13 @@
 #xcommand O_R_EXP => select (F_R_EXP); usex (PRIVPATH+"r_export")
 
 #xcommand O_LOKAL => select (F_LOKAL); usex (SIFPATH+"lokal")
+
+// tabele provjere integriteta
+#xcommand O_DINTEG1 => SELECT (F_DINTEG1); USEX (KUMPATH+"DINTEG1"); set order to tag "1"
+#xcommand O_DINTEG2 => SELECT (F_DINTEG2); USEX (KUMPATH+"DINTEG2"); set order to tag "1"
+#xcommand O_INTEG1 => SELECT (F_INTEG1); USEX (KUMPATH+"INTEG1"); set order to tag "1"
+#xcommand O_INTEG2 => SELECT (F_INTEG2); USEX (KUMPATH+"INTEG2"); set order to tag "1"
+#xcommand O_ERRORS => SELECT (F_ERRORS); USEX (PRIVPATH+"ERRORS"); set order to tag "1"
+
+
+
