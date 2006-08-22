@@ -320,7 +320,7 @@ return .f.
 
 
 // provjera tabele robe
-function roba_integ(cFmkSifPath, cPosSifPath, cPosKumPath)
+function roba_integ(cPKonto, cFmkSifPath, cPosSifPath, cPosKumPath)
 local cRobaName := "ROBA"
 local cPosName := "POS"
 
@@ -351,7 +351,7 @@ set order to tag "6"
 
 MsgO("integritet roba pos->fmk....")
 // provjeri u smijeru pos->fmk
-pos_fmk_roba()
+pos_fmk_roba(cPKonto)
 MsgC()
 
 // zatvori tabele
@@ -368,7 +368,7 @@ return
 
 
 // provjera u smijeru pos->fmk
-static function pos_fmk_roba()
+static function pos_fmk_roba(cPKonto)
 local cRTemp
 
 select p_roba
@@ -393,7 +393,7 @@ do while !EOF()
 	hseek cRTemp
 	
 	if !FOUND()
-		AddToErrors("C", cRTemp, "", "FMK, nepostojeca sifra artikla !!!")
+		AddToErrors("C", cRTemp, "", "Konto: " + ALLTRIM(cPKonto) + ", FMK, nepostojeca sifra artikla !!!")
 	endif
 	
 	select p_roba
