@@ -319,8 +319,99 @@ return .f.
 *}
 
 
+// provjera tabele robe
+function roba_integ(cFmkSifPath, cPosSifPath, cPosKumPath)
+local cRobaName := "ROBA"
+local cPosName := "POS"
+
+cFmkSifPath := ALLTRIM(cFmkSifPath)
+AddBS(@cFmkSifPath)
+
+cPosSifPath := ALLTRIM(cPosSifPath)
+AddBS(@cPosSifPath)
+
+cPosKumPath := ALLTRIM(cPosKumPath)
+AddBS(@cPosKumPath)
+
+// FMK roba
+select (F_ROBA)
+use (cFmkSifPath + cRobaName)
+set order to tag "ID"
+
+// POS roba
+select (0)
+use (cPosSifPath + cRobaName) alias P_ROBA
+set order to tag "ID"
+
+// POS kumulativ
+select (249)
+use (cPosKumPath + cPosName) alias P_POS
+// idroba
+set order to tag "6"
+
+MsgO("integritet roba pos->fmk....")
+// provjeri u smijeru pos->fmk
+pos_fmk_roba()
+MsgC()
+
+// zatvori tabele
+select roba
+use
+
+select p_roba
+use
+
+select p_pos
+use
+
+return
 
 
+// provjera u smijeru pos->fmk
+static function pos_fmk_roba()
+local cRTemp
 
+select p_roba
+go top
+
+do while !EOF() 
+
+	cRTemp := field->id
+
+	// provjeri da li se spominje u POS-u
+	select p_pos
+	hseek cRTemp
+	
+	// ako se ne spominje i preskoci ga, ovo je nebitna sifra...
+	if !FOUND()
+		select p_roba
+		skip
+		loop
+	endif
+	
+	select roba
+	hseek cRTemp
+	
+	if !FOUND()
+		AddToErrors("C", cRTemp, "", "FMK, nepostojeca sifra artikla !!!")
+	endif
+	
+	select p_roba
+	skip
+enddo
+
+return
+
+
+// provjera u smijeru fmk->pos
+static function fmk_pos_roba(cSifra)
+select p_roba
+go top
+seek cSifra
+
+if !Found()
+	AddToErrors("C", cSifra, "", "TOPSK, nepostojeca sifra artikla !!!")
+endif
+return
 
 
