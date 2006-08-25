@@ -1,35 +1,7 @@
 #include "sc.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/sifre.prg,v $
- * $Author: ernadhusremovic $ 
- * $Revision: 1.6 $
- * $Log: sifre.prg,v $
- * Revision 1.6  2003/11/04 02:13:30  ernadhusremovic
- * Planika Kranj - Robno poslovanje
- *
- * Revision 1.5  2003/10/04 12:34:51  sasavranic
- * uveden security sistem
- *
- * Revision 1.4  2002/07/04 19:04:08  ernad
- *
- *
- * ciscenje sifrarnik fakt
- *
- * Revision 1.3  2002/07/04 08:15:08  sasa
- * dodat sifrarnik fakt->txt
- *
- * Revision 1.2  2002/06/16 14:16:54  ernad
- * no message
- *
- *
- */
  
 function SifFmkRoba()
-*{
 private Opc:={}
 private opcexe:={}
 
@@ -86,6 +58,15 @@ if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SIFKOPEN"))
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
+
+AADD(opc,"9. roba - grupe i karakteristike")  
+if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","RGRUPOPEN"))
+	AADD(opcexe, {|| roba_grupe()} )
+else
+	AADD(opcexe, {|| MsgBeep(cZabrana)})
+endif
+
+
 CLOSE ALL
 OFmkRoba()
 

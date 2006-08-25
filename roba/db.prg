@@ -25,6 +25,7 @@ aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
 add_f_mcode(@aDbf)
 AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
+AADD(aDBf,{ 'ID_GRUPA'            , 'C' ,   5 ,  0 })
 AADD(aDBf,{ 'JMJ'                 , 'C' ,   3 ,  0 })
 AADD(aDBf,{ 'IDTARIFA'            , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'NC'                  , 'N' ,  18 ,  8 })
@@ -194,6 +195,10 @@ endif
 CREATE_INDEX("1","barkod+id",PRIVPATH+"BARKOD")
 CREATE_INDEX("ID","id+LEFT(naziv,40)",PRIVPATH+"BARKOD")
 CREATE_INDEX("Naziv","LEFT(Naziv,40)+id",PRIVPATH+"BARKOD")
+
+
+// grupe i karakteristike artikala
+cre_group()
 
 return
 

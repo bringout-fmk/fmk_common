@@ -58,6 +58,11 @@ if roba->(fieldpos("DEBLJINA")) <> 0
 	AADD(ImeKol, {padc("Roba tip",10 ), {|| roba_tip}, "roba_tip", {|| .t.}, {|| .t. }})
 endif
 
+// ID_GRUPA
+if roba->(fieldpos("ID_GRUPA")) <> 0
+	AADD(ImeKol, {padc("Grupacija", 10 ), {|| id_grupa}, "id_grupa", {|| .t.}, {|| p_grupe(@wId_grupa) }})
+endif
+
 // VPC
 if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","SHOWVPC"))
 	AADD(ImeKol, {padc("VPC",10 ), {|| transform(VPC,"999999.999")}, "vpc" , nil, nil, nil, gPicCDEM  })
