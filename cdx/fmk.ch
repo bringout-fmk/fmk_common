@@ -34,11 +34,7 @@
 #xcommand O_G_UG_P  => select(F_G_UG_P);  use  (KUMPATH+"GEN_UG_P")   ; set order to tag "DAT_GEN"
 
 // grupe i karakteristike
-#xcommand O_GRUPE  => select(F_GRUPE);  use  (SIFPATH + "GRUPE")   ; set order to tag "ID"
-#xcommand O_GR_DINFO  => select(F_GR_DINFO);  use  (SIFPATH + "GR_DINFO")   ; set order to tag "ID"
-#xcommand O_GR_PAR  => select(F_GR_PAR);  use  (SIFPATH + "GR_PAR")   ; set order to tag "1"
-#xcommand O_GR_D_VR  => select(F_GR_D_VR);  use  (SIFPATH + "GR_D_VR")   ; set order to tag "1"
-#xcommand O_GR_D_VAL  => select(F_GR_D_VAL);  use  (SIFPATH + "GR_D_VAL")   ; set order to tag "1"
+#xcommand O_STRINGS  => select(F_STRINGS);  use  (SIFPATH + "STRINGS")   ; set order to tag "1"
 
 
 // KALK

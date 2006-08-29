@@ -59,9 +59,9 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"9. roba - grupe i karakteristike")  
-if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","RGRUPOPEN"))
-	AADD(opcexe, {|| roba_grupe()} )
+AADD(opc,"9. strings ")  
+if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","STROPEN"))
+	AADD(opcexe, {|| p_strings()} )
 else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif

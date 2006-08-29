@@ -14,6 +14,7 @@ function P_Roba(cId, dx, dy)
 local cRet
 local bRoba
 local nTArea
+local lArtGroup := .f.
 private ImeKol
 private Kol
 
@@ -58,9 +59,9 @@ if roba->(fieldpos("DEBLJINA")) <> 0
 	AADD(ImeKol, {padc("Roba tip",10 ), {|| roba_tip}, "roba_tip", {|| .t.}, {|| .t. }})
 endif
 
-// ID_GRUPA
-if roba->(fieldpos("ID_GRUPA")) <> 0
-	AADD(ImeKol, {padc("Grupacija", 10 ), {|| id_grupa}, "id_grupa", {|| .t.}, {|| p_grupe(@wId_grupa) }})
+// STRINGS
+if roba->(fieldpos("STRINGS")) <> 0
+	AADD(ImeKol, {padc("Strings", 10 ), {|| strings}, "strings", {|| .t.}, {|| .t. }})
 endif
 
 // VPC
@@ -165,34 +166,30 @@ set order to tag "ID"
 seek "ROBA"
 
 do while !eof() .and. ID="ROBA"
+	AADD (ImeKol, {  IzSifKNaz("ROBA",SIFK->Oznaka) })
+ 	AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('ROBA','" + sifk->oznaka + "')) }" ) )
+ 	AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
+ 	if sifk->edkolona > 0
+   		for ii:=4 to 9
+    			AADD( ImeKol[Len(ImeKol)], NIL  )
+   		next
+   		AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
+ 	else
+   		for ii:=4 to 10
+    			AADD( ImeKol[Len(ImeKol)], NIL  )
+   		next
+ 	endif
 
- AADD (ImeKol, {  IzSifKNaz("ROBA",SIFK->Oznaka) })
- // AADD (ImeKol[Len(ImeKol)], &( "{|| padr(ToStr(IzSifk('ROBA','" + sifk->oznaka + "')),10) }" ) )
- AADD (ImeKol[Len(ImeKol)], &( "{|| ToStr(IzSifk('ROBA','" + sifk->oznaka + "')) }" ) )
- AADD (ImeKol[Len(ImeKol)], "SIFK->"+SIFK->Oznaka )
- if sifk->edkolona > 0
-   for ii:=4 to 9
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
-   AADD( ImeKol[Len(ImeKol)], sifk->edkolona  )
- else
-   for ii:=4 to 10
-    AADD( ImeKol[Len(ImeKol)], NIL  )
-   next
- endif
-
- // postavi picture za brojeve
- if sifk->Tip="N"
-   if decimal > 0
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina-sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
-   else
-     ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
-   endif
- endif
-
- AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
-
- skip
+	// postavi picture za brojeve
+ 	if sifk->Tip="N"
+   		if decimal > 0
+     			ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina-sifk->decimal-1 )+"."+replicate("9",sifk->decimal)
+   		else
+     			ImeKol [Len(ImeKol),7] := replicate("9", sifk->duzina )
+   		endif
+ 	endif
+	AADD  (Kol, iif( sifk->UBrowsu='1',++i, 0) )
+	skip
 enddo
 
 if IsPlanika()

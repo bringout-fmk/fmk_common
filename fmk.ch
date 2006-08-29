@@ -89,11 +89,7 @@
 #define F__VALUTE   72
 #define F_RJ        73
 #define F_OPS       74
-#define F_GRUPE    180
-#define F_GR_DINFO 181
-#define F_GR_PAR   182
-#define F_GR_D_VR  183
-#define F_GR_D_VAL 184
+#define F_STRINGS  180
 
 //KALK
 #define F_KPRIPR    85 
