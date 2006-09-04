@@ -61,7 +61,7 @@ endif
 
 // STRINGS
 if roba->(fieldpos("STRINGS")) <> 0
-	AADD(ImeKol, {padc("Strings", 10 ), {|| strings}, "strings", {|| .t.}, {|| .t. }})
+	AADD(ImeKol, {padc("Strings", 10 ), {|| strings}, "strings", {|| .t.}, {|| m_strings(@wStrings) }})
 endif
 
 // VPC

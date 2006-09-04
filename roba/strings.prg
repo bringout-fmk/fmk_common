@@ -82,7 +82,7 @@ return .t.
 // vraca matricu sa nazivima po uslovu "cOznaka"
 function get_strings(cOznaka, lAktivni)
 local cDbFilter := DBFilter()
-local nRecNo := RecNo()
+local nTRec := RecNo()
 local nTArea := SELECT()
 local aRet := {}
 
@@ -120,8 +120,8 @@ return aRet
 
 
 
-// vraca matricu sa stringovima po uslovu "cOznaka"
-function get_str_val(cOznaka)
+// vraca matricu sa stringovima po uslovu "nIdString"
+function get_str_val(nIdString)
 local cDbFilter := DBFilter()
 local nRecNo := RecNo()
 local nTArea := SELECT()
@@ -135,9 +135,9 @@ local i
 
 O_STRINGS
 select strings
-// oznaka + id
-set order to tag "2"
-seek cOznaka
+// id
+set order to tag "1"
+seek nIdString
 
 if FOUND()
 	// dakle, interesuje nas samo aktivni
@@ -249,59 +249,116 @@ return nAtribut
 
 
 
-// otvaranje sifrarnika strings
-function p_strings(cId, dx, dy)
-local nTArea := SELECT()
-private ImeKol
-private Kol
+// menij strings
+function m_strings(nIdString)
+local aStrings := {}
 
-O_STRINGS
-set_a_kol(@ImeKol, @Kol)
+if ( nIdString == 0 )
+	// generisi praznu matricu strings
+	g_emp_str(@aStrings)
+else
+	// daj strings
+	aStrings := get_str_val(nIdString) 
+endif
 
-select (nTArea)
+do while .t. 
+	if g_mnu_str(@aStrings) == 0
+		exit
+	endif
+enddo
 
-return PostojiSifra(F_STRINGS, "1", 10, 65, "Strings", @cId, dx, dy, {|Ch| key_handler(Ch)})
+return .t.
 
 
-// setovanje kolona tabele
-static function set_a_kol(aImeKol, aKol)
-aImeKol := {}
-aKol := {}
+// generisi prazan aStrings
+static function g_emp_str(aStrings)
+AADD(aStrings, { 1, 0, "R_GRUPE", "Grupa:", "nije setovano"})
+return
 
-AADD(aImeKol, {padc("ID", 10), {|| id }, "id", {|| inc_id(@wId), .f.}, {|| .t.} })
-AADD(aImeKol, {padc("Veza 1", 10), {|| veza_1}, "veza_1", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Veza 2", 10), {|| veza_2}, "veza_2", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Oznaka", 10), {|| oznaka}, "oznaka", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Aktivan", 7), {|| aktivan}, "aktivan", {|| .t.}, {|| .t.}})
-AADD(aImeKol, {padc("Naziv", 20), {|| PADR(naz, 20)}, "naz", {|| .t.}, {|| .t.}})
 
-for i:=1 to LEN(aImeKol)
-	AADD(aKol, i)
+// generisi menij sa aStrings
+function g_mnu_str(aStrings)
+local cPom
+private izbor := 1
+private opc := {}
+private opcexe := {}
+
+
+for i:=1 to LEN(aStrings)
+	
+	cPom := PADL(aStrings[i, 4], 15)
+	cPom += PADL(aStrings[i, 5], 15)
+	
+	AADD(opc, cPom )
+	AADD(opcexe, {|| key_strings(@aStrings, izbor) })
 next
+
+ESC_RETURN 0
+
+SETKEY(K_F3, {|| new_group() })
+Menu_SC("str", .f.)
+
+return 1
+
+
+// obrada dogadjaja na ENTER
+static function key_strings(aStrings, nIzbor)
+local aGrupe := {}
+local aAtributi := {}
+local aAtribVr := {}
+local nGrupa
+local cOznaka
+
+cOznaka := aStrings[nIzbor, 3]
+nGrupa := aStrings[nIzbor, 2]
+
+do case 
+	case cOznaka == "R_GRUPE"
+		
+		aGrupe := get_strings("R_GRUPE", .t.)
+		
+		if nGrupa == 0
+			nGrupa := m_grupe(aGrupe)
+		endif
+		
+endcase
 
 return
 
 
-// key handler
-static function key_handler()
-return DE_CONT
+// menij grupe...
+static function m_grupe(aGrupe)
+local cPom
+local nReturn := 1
 
-
-// uvecaj ID
-static function inc_id(wId)
-local lRet:=.t.
-
-if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
-	if (LastKey()==K_ESC)
-		return lRet:=.f.
-	endif
-	
-	nRecNo:=RecNo()
-	
-	str_new_id(@wId)
-	
-	AEVAL(GetList,{|o| o:display()})
+if LEN(aGrupe) == 0
+	AADD(aGrupe, "nema setovanih grupa")
 endif
-return lRet
 
+do while .t.
+	
+	nReturn := Menu("grupe", aGrupe, nReturn, .f.)
+	
+	if nReturn == 0
+		exit
+	endif
+
+	if ch == K_CTRL_N
+		msgbeep("c+n")
+	endif
+enddo
+
+return nReturn
+
+
+static function MenuFunc()
+if ch == K_CTRL_N
+msgbeep("ccccc+nnnnnn")
+endif
+return
+
+// obrada dogadjaja tastature...
+function new_group()
+msgbeep("dodajem grupu!")
+return
 
