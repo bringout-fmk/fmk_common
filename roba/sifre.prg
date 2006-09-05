@@ -59,6 +59,13 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
+AADD(opc,"9. strings - karakteristike ")  
+if (ImaPravoPristupa(goModul:oDataBase:cName,"SIF","STROPEN"))
+	AADD(opcexe, {|| p_strings()} )
+else
+	AADD(opcexe, {|| MsgBeep(cZabrana)})
+endif
+
 
 CLOSE ALL
 OFmkRoba()
