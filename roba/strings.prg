@@ -7,6 +7,11 @@ local nTArea := SELECT()
 private ImeKol
 private Kol
 
+if !SigmaSIF("STRING")
+	MsgBeep("Opcija nedostupna !!!")
+	return
+endif
+
 O_STRINGS
 set_a_kol(@ImeKol, @Kol)
 
@@ -58,6 +63,33 @@ return lRet
 // *******************************************
 // CHK funkcije ....
 // *******************************************
+
+// da li je definisana opcija strings
+function is_strings()
+local nTArea := SELECT()
+local lRet := .f.
+O_ROBA
+if roba->(fieldpos("STRINGS")) <> 0
+	lRet := .t.
+endif
+select (nTArea)
+return lRet
+
+
+// provjerava da li roba ima definisan string
+function is_roba_strings(cIDRoba)
+local lRet := .f.
+local nTArea := SELECT()
+O_ROBA
+set order to tag "ID"
+go top
+seek cIdRoba
+if FOUND() .and. field->strings <> 0
+	lRet := .t.
+endif
+select (nTArea)
+return lRet
+
 
 // uporedi nizove...
 static function arr_integ_ok(aModArr, aDefArr)
@@ -353,7 +385,7 @@ aMStrings := aStrings
 
 // non stop do izlaska regenerisi meni
 do while .t.
-	if gen_m_str(@aStrings) == -99
+	if gen_m_str(@aStrings) == 0
 		
 		if !arr_integ_ok(aStrings, aMStrings) .and. Pitanje(,"Snimiti promjene?","D") == "D"
 			// snimi promjene napravljene na nizu
@@ -391,11 +423,7 @@ next
 
 Menu_SC("str")
 
-if LastKey() == K_ESC .and. izbor <> 0
-	return 1
-else
-	return 0
-endif
+ESC_RETURN 0
 
 // test - debug / print matrice
 //pr_strings(aStrings)

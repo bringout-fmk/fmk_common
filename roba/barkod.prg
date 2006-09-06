@@ -1,31 +1,4 @@
 #include "sc.ch"
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/barkod.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.5 $
- * $Log: barkod.prg,v $
- * Revision 1.5  2003/09/08 08:41:43  ernad
- * porezi u ugostiteljstvu
- *
- * Revision 1.4  2003/08/22 11:13:39  mirsad
- * parametar konv.znakova win. koristi se sada i u labeliranju barkodova
- *
- * Revision 1.3  2002/07/10 08:44:19  ernad
- *
- *
- * barkod funkcije kalk, fakt -> fmk/roba/barkod.prg
- *
- * Revision 1.2  2002/06/17 13:05:16  ernad
- * barkod.prg
- *
- * Revision 1.1  2002/06/17 13:03:32  ernad
- * init
- *
- *
- */
 
 
 /*! \ingroup ini
@@ -103,31 +76,31 @@ if empty(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni
 endif
 return .t.
 
-*}
 
-
-/*! \fn KaLabelBKod()
- *  \brief Priprema i labeliranje bar-kodova
- */
-
+// funkcija za labeliranje barkodova...
 function KaLabelBKod()
-*{
 local cIBK
 local cPrefix
 local cSPrefix
-
+local cBoxHead
+local cBoxFoot
+local lStrings := .f.
+local lDelphi := .t.
 private cKomLin
+private Kol
+private ImeKol
 
 O_SIFK
 O_SIFV
+O_PARTN
 O_ROBA
 set order to tag "ID"
-
 O_BARKOD
 O_PRIPR
 
-SELECT PRIPR
+lStrings := is_strings()
 
+SELECT PRIPR
 private aStampati:=ARRAY(RECCOUNT())
 
 GO TOP
@@ -136,20 +109,43 @@ for i:=1 to LEN(aStampati)
 	aStampati[i]:="D"
 next
 
-ImeKol:={ {"IdRoba",{|| IdRoba}}, {"Kolicina",{|| transform(Kolicina,picv)}} ,{"Stampati?",{|| IF(aStampati[RECNO()]=="D","-> DA <-","      NE")}} }
+// setuj kolone za pripremu...
+set_a_kol(@ImeKol, @Kol)
 
-Kol:={}
-for i:=1 to len(ImeKol)
-	AADD(Kol,i)
-next
+cBoxHead := "<SPACE> markiranje Í <ESC> kraj"
+cBoxFoot := "Priprema za labeliranje bar-kodova..."
 
 Box(,20,50)
-ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranje             Í<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
+ObjDbedit("PLBK", 20, 50, {|| KaEdPrLBK()}, cBoxHead, cBoxFoot, .t. , , , ,0)
 BoxC()
 
-nRezerva:=0
+if lStrings
+	if Pitanje(,"Stampati deklaracije (D/N)?", "D") == "D"
+		lDelphi := .f.
+	endif
+endif
 
-cLinija2:=padr("Uvoznik:"+gNFirma,45)
+if lDelphi
+	// stampanje delphi labela... 
+	st_lab_delphi(aStampati)
+else
+	// stampanje deklaracija...
+	st_lab_deklar(aStampati)
+endif
+
+closeret
+return
+
+
+// labeliranje delphi...
+static function st_lab_delphi(aStampati)
+local nRezerva
+local cLinija2
+local cPrefix
+local cSPrefix
+
+nRezerva := 0
+cLinija2 := PADR("Uvoznik:" + gNFirma, 45)
 
 Box(,4,75)
 	@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
@@ -159,8 +155,8 @@ Box(,4,75)
 	ESC_BCR
 BoxC()
 
-cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
-cSPrefix:= pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
+cPrefix := IzFmkIni("Barkod","Prefix","",SIFPATH)
+cSPrefix := Pitanje(,"Stampati barkodove koji NE pocinju sa +'"+cPrefix+"' ?","N")
 
 SELECT BARKOD
 ZAP
@@ -172,14 +168,18 @@ do while !EOF()
 		SKIP 1
 		loop
 	endif
+	
 	SELECT ROBA
 	HSEEK PRIPR->idroba
 	if empty(barkod).and.(IzFmkIni("BarKod","Auto","N",SIFPATH)=="D")
+		
 		private cPom:=IzFmkIni("BarKod","AutoFormula","ID",SIFPATH)
+		
 		// kada je barkod prazan, onda formiraj sam interni barkod
-		cIBK:=IzFmkIni("BARKOD","Prefix","",SIFPATH)+&cPom
+		cIBK:=IzFmkIni("BARKOD","Prefix","",SIFPATH) + &cPom
+		
 		if IzFmkIni("BARKOD","EAN","",SIFPATH)=="13"
-			cIBK:=NoviBK_A()
+			cIBK := NoviBK_A()
 		endif
 		PushWa()
 		set order to tag "BARKOD"
@@ -193,6 +193,7 @@ do while !EOF()
 			replace barkod with cIBK
 		endif
 	endif
+	
 	if cSprefix=="N"
 		// ne stampaj koji nemaju isti prefix
 		if left(barkod,len(cPrefix))!=cPrefix
@@ -218,17 +219,185 @@ do while !EOF()
 enddo
 close all
 
-
 if Pitanje(,"Aktivirati Win Report ?","D")=="D"
-	cKomLin:="DelphiRB "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
+	cKomLin := "DelphiRB "+IzFmkIni("BARKOD","NazRTM","barkod", SIFPATH)+" "+PRIVPATH+"  barkod 1"
 	run &cKomLin
 endif
 
-
-CLOSERET
 return
 
-*}
+
+static function get_vars(lPrikBK) 
+local nX := 1
+local cPrikBK := "N"
+private GetList:={}
+
+Box(, 6, 60)
+	
+	@ m_x + nX, m_y + 2 SAY "USLOVI STAMPE:"
+	
+	nX := nX + 2
+	
+	@ m_x + nX, m_y + 2 SAY "Prikaz barkod-a (D/N)" GET cPrikBK VALID cPrikBK $ "DN" PICT "@!"
+	
+	read
+BoxC()
+
+if cPrikBK == "D"
+	lPrikBK := .t.
+else
+	lPrikBK := .f.
+endif
+
+ESC_RETURN 0
+
+return 1
+
+
+// labeliranje deklaracija...
+static function st_lab_deklar(aStampati)
+local cTxtOut
+local cRoba
+local nDKolicina
+local lPrikBK
+local nH
+local nIdString
+local aStrings:={}
+local cSep := ","
+// varijable stavki deklaracije
+local cUvozNaz
+local cUvozAdr
+local cRobaNaz
+local cServNaz
+local i
+
+// output fajl
+cTxtOut := PRIVPATH + "LABEL.TXT"
+
+// varijable reporta
+if get_vars(@lPrikBK) == 0
+	close all
+	return
+endif
+
+select pripr
+go top
+
+// kreiraj fajl
+create_file(cTxtOut, @nH)
+
+Beep(1)
+
+do while !EOF()
+	
+	// preskoci ako ne treba stampati
+	if aStampati[RECNO()] == "N"
+		skip 1
+		loop
+	endif
+	
+	cRoba := field->idroba
+	nDKolicina := field->kolicina
+	
+	// ako roba nema definisano strings - preskoci...
+	if !is_roba_strings(cRoba)
+		skip 1
+		loop
+	endif
+	
+	select partn
+	set order to tag "ID"
+	go top
+	seek "10"
+	
+	cUvozNaz := ALLTRIM(field->naz)
+	cUvozAdr := ALLTRIM(field->adresa)
+	cServNaz := cUvozNaz
+	
+	select roba
+	hseek cRoba
+	
+	// naziv robe
+	cRobaNaz := ALLTRIM(roba->naz)
+	nIdString := roba->strings
+	
+	// napuni matricu sa atributima...
+	aStrings := get_str_val(nIdString)
+
+	cFText := "DEKLARACIJA"
+	cFText += cSep
+	cFText += "Uvoznik: " + cUvozNaz 
+	cFText += cSep
+	cFText += cUvozAdr
+	cFText += cSep
+	cFText += cRobaNaz
+	cFText += cSep
+	
+	// uzmi i vrijednosti iz matrice...
+	if LEN(aStrings) > 0
+	
+		for i:=1 to LEN(aStrings)
+			if ALLTRIM(aStrings[i, 3]) == "R_G_ATTRIB" .and. ;
+			   ALLTRIM(aStrings[i, 5]) <> "-"
+				
+				cFText += ALLTRIM(aStrings[i, 4])
+				cFText += " "
+				cFText += ALLTRIM(aStrings[i, 5])
+				cFText += cSep
+				
+			endif
+		next
+	endif
+
+	cFText += "Serviser: " + cServNaz
+
+	// koliko kolicine ???
+	for i:=1 to nDKolicina
+		write_2_file(nH, cFText, .t.)
+	next
+	
+	select pripr
+	skip 1
+enddo
+
+// zatvori fajl
+close_file(nH)
+
+MsgBeep("Priprema deklaracija zavrsena !")
+
+close all
+
+return
+
+
+// setovanje kolone opcije pregleda labela....
+static function set_a_kol(aImeKol, aKol)
+aImeKol := {}
+aKol := {}
+
+AADD(aImeKol, {"IdRoba"    ,{|| IdRoba }} )
+AADD(aImeKol, {"Kolicina"  ,{|| transform( Kolicina, picv ) }} )
+AADD(aImeKol, {"Stampati?" ,{|| bk_stamp_dn( aStampati[RECNO()] ) }} )
+
+aKol:={}
+for i:=1 to LEN(aImeKol)
+	AADD(aKol, i)
+next
+
+return
+
+// prikaz stampati ili ne stampati
+static function bk_stamp_dn(cDN)
+local cRet := ""
+if cDN == "D"
+	cRet := "-> DA <-"
+else
+	cRet := "      NE"
+endif
+
+return cRet
+
+
 
 /*! \fn KaEdPrLBK()
  *  \brief Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
@@ -248,6 +417,7 @@ if Ch==ASC(' ')
 endif
 return DE_CONT
 *}
+
 
 /*! \fn FaLabelBKod()
  *  \brief Priprema za labeliranje barkodova
