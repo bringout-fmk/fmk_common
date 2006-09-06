@@ -335,6 +335,7 @@ return
 function m_strings(nIdString, cRoba)
 local aStrings := {}
 local aMStrings := {}
+local nRet := -99
 
 // aStrings { idstr, idatr, oznaka, naz_atributa, vrijednost }
 //              9  ,  6   , "R_G_ATTRIB", "proizvodjac", "proizvodjac 1"
@@ -352,9 +353,9 @@ aMStrings := aStrings
 
 // non stop do izlaska regenerisi meni
 do while .t.
-	if gen_m_str(@aStrings) == 0
+	if gen_m_str(@aStrings) == -99
 		
-		if !arr_integ_ok(aStrings, aMStrings) .and. Pitanje(,"Sacuvati promjene?","D") == "D"
+		if !arr_integ_ok(aStrings, aMStrings) .and. Pitanje(,"Snimiti promjene?","D") == "D"
 			// snimi promjene napravljene na nizu
 			save_str_state(aStrings, cRoba)
 		endif
@@ -390,7 +391,9 @@ next
 
 Menu_SC("str")
 
-if LastKey() == K_ESC
+if LastKey() == K_ESC .and. izbor <> 0
+	return 1
+else
 	return 0
 endif
 
@@ -748,6 +751,7 @@ Box(,1,60)
 BoxC()
 
 if LastKey() == K_ESC
+	cAttrVal := ""
 	return
 endif
 
@@ -846,12 +850,12 @@ endif
 // trazeni pojam ne postoji - dodaj ga!
 MsgBeep("Trazeni pojam ne postoji!")
 
-if Pitanje(, "Dodati novi pojam ? ", "D") == "D"
+if Pitanje(, "Dodati novi pojam ? ", "N") == "D"
 	private getlist:={}
 	// dodaj novi pojam....
 	Box(,4, 60)
 		cAttr := SPACE(200)
-		@ m_x+1, m_y+2 SAY "Unes novog pojma..." 
+		@ m_x+1, m_y+2 SAY "Unos novog pojma..." 
 		@ m_x+3, m_y+2 SAY "pojam->" GET cAttr PICT "@S40"
 		read
 	BoxC()
