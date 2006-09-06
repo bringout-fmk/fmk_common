@@ -120,7 +120,7 @@ ObjDbedit("PLBK", 20, 50, {|| KaEdPrLBK()}, cBoxHead, cBoxFoot, .t. , , , ,0)
 BoxC()
 
 if lStrings
-	if Pitanje(,"Stampati deklaracije (D/N)?", "D") == "D"
+	if Pitanje(,"Stampa deklaracije (D/N)?", "D") == "D"
 		lDelphi := .f.
 	endif
 endif
@@ -288,6 +288,8 @@ create_file(cTxtOut, @nH)
 
 Beep(1)
 
+MsgO("Priprema deklaracija u toku...")
+
 do while !EOF()
 	
 	// preskoci ako ne treba stampati
@@ -330,7 +332,7 @@ do while !EOF()
 	cFText += cSep
 	cFText += cUvozAdr
 	cFText += cSep
-	cFText += cRobaNaz
+	cFText += "Art: " + cRobaNaz
 	cFText += cSep
 	
 	// uzmi i vrijednosti iz matrice...
@@ -362,6 +364,8 @@ enddo
 
 // zatvori fajl
 close_file(nH)
+
+MsgC()
 
 MsgBeep("Priprema deklaracija zavrsena !")
 
