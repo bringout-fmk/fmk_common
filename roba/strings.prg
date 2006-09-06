@@ -55,7 +55,14 @@ endif
 return lRet
 
 
+// *******************************************
+// CHK funkcije ....
+// *******************************************
 
+// uporedi nizove...
+static function arr_integ_ok(aModArr, aDefArr)
+local lRet := .f.
+return lRet
 
 // *******************************************
 // GET funkcije.....
@@ -203,9 +210,12 @@ if FOUND()
 	if field->aktivan == "D" .and. field->veza_1 == -1
 		cStrings := TRIM(field->naz)
 	endif
+else
+	fill_strings(@aRet)
+	return aRet
 endif
 
-if !EMPTY(cStrings)
+if !EMPTY(ALLTRIM(cStrings))
 
 	// sada kada sam dobio strings napuni matricu aRet
 	aStrings := TokToNiz(cStrings, "#")
@@ -252,6 +262,8 @@ if !EMPTY(cStrings)
 			endif
 		next
 	endif
+else
+	fill_strings(@aRet)
 endif
 
 select (nTArea)
@@ -322,6 +334,7 @@ return
 // glavni meni strings
 function m_strings(nIdString, cRoba)
 local aStrings := {}
+local aMStrings := {}
 
 // aStrings { idstr, idatr, oznaka, naz_atributa, vrijednost }
 //              9  ,  6   , "R_G_ATTRIB", "proizvodjac", "proizvodjac 1"
@@ -334,11 +347,14 @@ else
 	aStrings := get_str_val(nIdString) 
 endif
 
+// uzmi za usporedbu matricu strings
+aMStrings := aStrings
+
 // non stop do izlaska regenerisi meni
 do while .t.
 	if gen_m_str(@aStrings) == 0
 		
-		if Pitanje(,"Sacuvati promjene?","D") == "D"
+		if !arr_integ_ok(aStrings, aMStrings) .and. Pitanje(,"Sacuvati promjene?","D") == "D"
 			// snimi promjene napravljene na nizu
 			save_str_state(aStrings, cRoba)
 		endif
@@ -372,9 +388,11 @@ for i:=1 to LEN(aStrings)
 	
 next
 
-ESC_RETURN 0
-
 Menu_SC("str")
+
+if LastKey() == K_ESC
+	return 0
+endif
 
 // test - debug / print matrice
 //pr_strings(aStrings)
@@ -385,6 +403,19 @@ return 1
 // obrada dogadjaja menija strings na ENTER
 static function key_strings(aStrings, nIzbor)
 local cOznaka
+local nTIzbor
+local cAkcija
+
+// 10001
+nTIzbor := nIzbor
+
+// "" - enter
+// "K_CTRL_N" - novi
+// "K_CTRL_T" - brisi ...
+cAkcija := what_action(nTIzbor)
+
+// 1
+nIzbor := retitem(nIzbor)
 
 cOznaka := aStrings[nIzbor, 3]
 
@@ -392,14 +423,27 @@ do case
 	// ako su grupe....
 	case ALLTRIM(cOznaka) == "R_GRUPE"
 		
-		// definisi grupu
-		def_group(@aStrings, nIzbor)
-	
+		// enter
+		if cAkcija == ""
+			// definisi grupu
+			def_group(@aStrings, nIzbor)
+		else
+			// ostale tipke....
+			// definisi attribute - veze
+			def_attveze(@aStrings, nIzbor, cAkcija)
+		endif
+
 	// ako su atributi veze
 	case ALLTRIM(cOznaka) == "R_G_ATTRIB"
 		
-		// definisi atribut
-		def_attrib(@aStrings, nIzbor)
+		if cAkcija == ""
+			// odabir atributa....
+			def_attrib(@aStrings, nIzbor)
+		else
+			// ostale tipke....
+			// definisi attribute - veze
+			def_attveze(@aStrings, nIzbor, cAkcija)
+		endif
 
 endcase
 
@@ -407,11 +451,11 @@ return
 
 
 // funkcij za iscrtavanje menija sa nizom aArr te citanjem odabira
-static function arr_menu(aArr)
+static function arr_menu(aArr, cGrupa, nGrId)
 local i
 local cPom
-local nReturn := 1
 local nArrRet := 0
+local nReturn := -99
 private izbor := 1
 private opc := {}
 private opcexe := {}
@@ -427,17 +471,186 @@ for i:=1 to len(aArr)
 		cPom := PADR(aArr[i, 2], 30)
 	endif
 	AADD(opc, cPom)
-	AADD(opcexe, {|| nArrRet := izbor, izbor := 0 })
+	AADD(opcexe, {|| key_array(@nArrRet, aArr, izbor, cGrupa, nGrId), izbor := 0 })
 next
 
 Menu_SC("arr")
 
-if nArrRet <> 0
+if nArrRet > 0
 	nReturn := aArr[nArrRet, 1]
+endif
+
+if nArrRet == 0
+	nReturn := 0
 endif
 
 return nReturn
 
+
+// obrada dogadjaja tipke na array menu
+static function key_array(nArrRet, aArr, nIzbor, cGrupa, nGrId)
+local nTIzbor := nIzbor
+local cAction
+
+nIzbor := retitem(nTIzbor)
+cAction := what_action(nTIzbor)
+
+if nGrId == nil
+	nGrId := aArr[nIzbor, 1]
+endif
+
+do case
+	case cAction == "K_CTRL_N"
+		add_s_item(aArr, cGrupa, nGrId, nIzbor)
+		nArrRet := -99
+		
+	case cAction == "K_F2"
+		edit_s_item(aArr, cGrupa, nGrId, nIzbor)
+		nArrRet := -99
+	case cAction == "K_CTRL_T"
+		del_s_item(aArr, cGrupa, nGrId, nIzbor)
+		nArrRet := -99
+	otherwise
+		nArrRet := nIzbor		
+endcase
+
+return
+
+
+// dodaje novi zapis u strings
+static function add_s_item(aArr, cGrupa, nGrId, nIzbor, nVeza_1)
+local cItNaz := SPACE(200)
+local nNStr1 := 0
+local nNStr2 := 0
+local nTArea := SELECT()
+private getlist:={}
+
+Box(,1,60)
+	@ m_x+1, m_y+2 SAY "Naziv:" GET cItNaz PICT "@S40"
+	read
+BoxC()
+
+if Pitanje(,"Dodati novu stavku (D/N)?", "D") == "N"
+	return
+endif
+
+O_STRINGS
+
+// daj novi id
+str_new_id(@nNStr1)
+
+select strings
+append blank
+replace id with nNStr1
+replace oznaka with cGrupa
+replace aktivan with "D"
+replace naz with cItNaz
+
+// ako nisu grupe.... dodaj odmah veze atributa
+if cGrupa <> "R_GRUPE"
+	add_att_veza(nGrId, nNStr1, cItNaz)
+endif
+
+select (nTArea)
+
+return
+
+
+// dodaje attribute - veze...
+static function add_att_veza(nVeza_1, nVeza_2, cNaz)
+local nNewId
+local nTArea := SELECT()
+local nRet := 0
+
+O_STRINGS
+select strings 
+set order to tag "5"
+go top
+seek PADR("R_G_ATTRIB", 10) + STR(nVeza_1, 10, 0) + STR(nVeza_2, 10, 0)
+
+if FOUND() .and. field->aktivan == "D"
+	
+	// vec postoji ova veza...
+	nRet := field->id
+	
+	return nRet
+endif
+
+// daj novi id
+str_new_id(@nNewId)
+
+select strings	
+append blank
+replace id with nNewId
+replace veza_1 with nVeza_1
+replace veza_2 with nVeza_2
+replace oznaka with "R_G_ATTRIB"
+replace aktivan with "D"
+replace naz with cNaz
+
+select (nTArea)
+
+nRet := nNewId
+
+return nRet
+
+
+// ispravka zapisa u strings
+static function edit_s_item(aArr, cGrupa, nGrId, nIzbor, nVeza_1)
+local cItNaz := SPACE(200)
+local nTArea := SELECT()
+local nStrId := aArr[nIzbor, 1]
+local cVal
+private getlist:={}
+
+if Pitanje(,"Ispraviti stavku (D/N)?", "D") == "N"
+	return
+endif
+
+O_STRINGS
+select strings
+set order to tag "1"
+go top
+seek STR(nStrId, 10, 0)
+
+if FOUND()
+	Scatter()
+	Box(,1,60)
+		@ m_x+1, m_y+2 SAY "Naziv:" GET _naz PICT "@S40"
+		read
+	BoxC()
+	Gather()
+endif
+
+select (nTArea)
+return
+
+
+// brisanje zapisa u strings
+static function del_s_item(aArr, cGrupa, nGrId, nIzbor, nVeza_1)
+local nNStrId := 0
+local nTArea := SELECT()
+local nStrId := aArr[nIzbor, 1]
+
+if Pitanje(,"Izbrisati stavku (D/N)?", "D") == "N"
+	return
+endif
+
+O_STRINGS
+select strings
+set order to tag "1"
+go top
+seek STR(nStrId, 10, 0)
+
+if FOUND()
+	Scatter()
+	_aktivan := "N"
+	Gather()
+endif
+
+select (nTArea)
+
+return
 
 
 // ********************************************
@@ -453,15 +666,24 @@ local cPom := ""
 
 nSelection := aStrings[nIzbor, 2]
 
-// generisi matricu sa grupama... (aktivnim)
-aGrupe := get_strings("R_GRUPE", .t.)
-
 // otvori meni sa dostupnim grupama...
 if (nSelection == 0) .or. (nSelection <> 0 .and. Pitanje(,"Promjeniti grupu artikla ?", "D") == "D")
-	
-	// otvori meni i vrati odabir
-	nSelection := arr_menu(aGrupe)
 
+	nSelection := -99
+
+	do while nSelection == -99
+		// generisi matricu sa grupama... (aktivnim)
+		aGrupe := get_strings("R_GRUPE", .t.)
+
+		// otvori meni i vrati odabir
+		nSelection := arr_menu(aGrupe, "R_GRUPE")
+		
+		if nSelection == 0
+			return
+		endif
+		
+	enddo
+	
 	// uzmi naziv grupe
 	cPom := g_naz_byid(nSelection)
 
@@ -472,6 +694,44 @@ if (nSelection == 0) .or. (nSelection <> 0 .and. Pitanje(,"Promjeniti grupu arti
 endif
 
 return
+
+
+// definisanje grupe
+static function def_attveze(aStrings, nIzbor, cAkcija)
+local nAttrib := {}
+local nSelection := -99
+// id grupe
+local nIdGrupa := aStrings[1, 2]
+local cAttNaz := ""
+local nScan
+
+do while nSelection == -99
+	
+	// izvuci u matricu sve atribute...
+	nAttrib := get_strings("R_D_ATTRIB", .t.)
+
+	nSelection := arr_menu(@nAttrib, "R_D_ATTRIB", nIdGrupa)
+
+	if nSelection == 0
+		return
+	endif
+
+	if nSelection > 1
+		// ako je nesto odabrano onda dodaj vezu sa grupom
+		cAttNaz := g_naz_byid(nSelection)
+		nAttVeza := add_att_veza(nIdGrupa, nSelection, cAttNaz)
+
+		nScan := ASCAN(aStrings, {|xVal| xVal[2] == nAttVeza })
+		
+		// napuni matricu sa atributima... ako ne postoji...
+		if nScan == 0
+			AADD(aStrings, { 0, nAttVeza, PADR("R_G_ATTRIB", 10), ALLTRIM(cAttNaz) + ":", "-" })
+		endif
+	endif
+enddo
+
+return
+
 
 
 // definisanje atributa...
@@ -656,6 +916,7 @@ CREATE_INDEX("1", "STR(ID,10,0)", SIFPATH + "STRINGS" )
 CREATE_INDEX("2", "OZNAKA+STR(ID,10,0)", SIFPATH + "STRINGS" )
 CREATE_INDEX("3", "OZNAKA+STR(VEZA_1,10,0)+STR(ID,10,0)", SIFPATH + "STRINGS" )
 CREATE_INDEX("4", "OZNAKA+STR(VEZA_1,10,0)+NAZ", SIFPATH + "STRINGS" )
+CREATE_INDEX("5", "OZNAKA+STR(VEZA_1,10,0)+STR(VEZA_2,10,0)", SIFPATH + "STRINGS" )
 
 return
 
