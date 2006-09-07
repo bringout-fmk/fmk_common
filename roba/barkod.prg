@@ -76,8 +76,9 @@ if empty(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni
 endif
 return .t.
 
-
+// -----------------------------------------
 // funkcija za labeliranje barkodova...
+// -----------------------------------------
 function KaLabelBKod()
 local cIBK
 local cPrefix
@@ -293,8 +294,9 @@ WPar("lG", @cGrupa)
 
 return 1
 
-
+// -----------------------------------------
 // labeliranje deklaracija...
+// -----------------------------------------
 static function st_lab_deklar(aStampati)
 local cTxtOut
 local cRoba
@@ -328,17 +330,20 @@ if !set_lab_dim(cLabDim, @aPrParams)
 	return
 endif
 
-// kreiraj fajl
-create_file(cTxtOut, @nH)
-
 Beep(1)
 
-MsgO("Priprema deklaracija u toku...")
+// kreiraj fajl
+//create_file(cTxtOut, @nH)
+epl2_start()
+
+
+//MsgO("Priprema deklaracija u toku...")
 
 // nastimaj se na partnera
 select partn
 set order to tag "ID"
 hseek cIdPartner
+
 
 select pripr
 
@@ -376,33 +381,37 @@ do while !EOF()
 	select pripr
 	
 	// print labele u txt
-	pr_label2(cTxtOut, nH, cRoba, nDKolicina, aPrParams)
+	pr_label2(cRoba, nDKolicina, aPrParams)
 	
 	select pripr
 	skip 1
 enddo
 
+
+
 // zatvori fajl
-close_file(nH)
+//close_file(nH)
 
-MsgC()
+epl2_end()
 
-MsgBeep("Priprema deklaracija zavrsena !")
 
 close all
 
 return
 
-
+// -----------------------------------------
 // setovanje dimenzija labele
+// -----------------------------------------
 static function set_lab_dim(cDim, aPrParams)
 local aDim := {}
 
 // aPrParams := {}
-// [1] = broj znakova
-// [2] = velicina fonta
-// [3] = lijeva margina mm
-// [4] = gornja margina mm
+// [1] = sirina
+// [2] = duzine
+// [3] = broj znakova
+// [4] = velicina fonta
+// [5] = lijeva margina mm
+// [6] = gornja margina mm
 // ...
 
 aPrParams:={}
@@ -416,10 +425,21 @@ endif
 
 do case
 	case cDim == "40x30"
+		//1 sirina u mm
+		AADD(aPrParams, 40 )
+		//2 duzina u mm
+		AADD(aPrParams, 30 )
+
+		//3 max znakova u redu
 		AADD(aPrParams, 32 )
+		//4 najmanji font
 		AADD(aPrParams,  1 )
-		AADD(aPrParams,  1 )
-		AADD(aPrParams,  1 )
+		//5 lijeva marg (nX)
+		AADD(aPrParams,  mm2dot(1.7) )
+		//6 gornja margina (nY)
+		AADD(aPrParams,  mm2dot(1.2) )
+		//7 velicina reda 
+		AADD(aPrParams,  mm2dot(1.65))
 		
 endcase
 
@@ -429,15 +449,15 @@ endif
 
 return .t.
 
+// -------------------------------------------------------------------
 // stampa labele: var 2
-// cTxtOut - out txt
-// nH - handle txt
 // cArtikal - id artikla
 // cPartner - id partnera
 // nKolicina - koliko komada labela
 // aPrParams - [] sa parametrima stampe
+// -------------------------------------------------------------------
 
-static function pr_label2(cTxtOut, nH, cArtikal, nKolicina, aPrParams)
+static function pr_label2(cArtikal, nKolicina, aPrParams)
 local cPom := ""
 local cFPom := ""
 local nIdString
@@ -449,9 +469,11 @@ local nLabLen
 local nBrRed
 local aText:={}
 local nText
+local nX
+local nY
 
 // duzina karaketera
-nLabLen := aPrParams[1]
+nLabLen := aPrParams[3]
 
 nIdString := roba->strings
 // napuni matricu sa atributima...
@@ -522,19 +544,38 @@ next
 
 // broj redova je ?
 nBrRed := LEN(aText)
-cFPom := "br_redova=" + ALLTRIM(STR(nBrRed, 20, 0))
-write_2_file(nH, cFPom, .t.)
 
+//cFPom := "br_redova=" + ALLTRIM(STR(nBrRed, 20, 0))
+//write_2_file(nH, cFPom, .t.)
+
+
+// start nove forme
+epl2_f_start()
+
+epl2_cp852()
+
+epl2_f_width(aPrParams[1])
+
+// lijeva, gornja margina
+epl2_f_init(aPrParams[5], aPrParams[6])
+
+// evo teksta etikete
+nX := 0
+nY := 0
 for nText:=1 to LEN(aText)
 	cFPom := aText[nText]
-	write_2_file(nH, cFPom, .t.)
+	// aPrParams[4] - nFontSize
+	epl2_string(nX, nY, TRIM(aText[nText]), .f. , aPrParams[4])
+	// aPrParams[7] - velicina reda 
+	nY := aPrParams[7]
 next
 
 // komada stampaj ?
-cFPom := "cnt=" + ALLTRIM(STR(nKolicina, 20, 0))
-write_2_file(nH, cFPom, .t.)
+//cFPom := "cnt=" + ALLTRIM(STR(nKolicina, 20, 0))
+epl2_f_print(nKolicina)
 
 return
+
 
 
 // setovanje kolone opcije pregleda labela....
