@@ -242,12 +242,13 @@ cGrupa := PADR("Obuca", 20)
 private cSection:="L"
 private cHistory:=" "
 private aHistory:={}
+
 O_PARAMS
 
-RPar("lD", PADR(@cLabDim, 8))
+RPar("lD", @cLabDim)
 RPar("lP", @cPartner)
 RPar("lB", @cPrikBK)
-RPar("lG", PADR(@cGrupa, 20))
+RPar("lG", @cGrupa)
 
 Box(, nBoxMax, 60)
 	
@@ -259,7 +260,7 @@ Box(, nBoxMax, 60)
 	
 	++ nX
 
-	@ m_x + nX, m_y + 2 SAY "Grupa artikala (prazno-sve):" GET cGrupa VALID EMPTY(cGrupa) .or. g_roba_grupe(PADR(@cGrupa, 20))
+	@ m_x + nX, m_y + 2 SAY "Grupa artikala (prazno-sve):" GET cGrupa VALID EMPTY(cGrupa) .or. g_roba_grupe(@cGrupa)
 	
 	++ nX
 	
@@ -280,12 +281,15 @@ endif
 
 ESC_RETURN 0
 
+cLabDim := PADR(cLabDim, 10)
+cGrupa  := PADR(cGrupa, 20)
+
 select params
 // snimi parametre...
-WPar("lD", PADR(@cLabDim, 8))
+WPar("lD", @cLabDim)
 WPar("lP", @cPartner)
 WPar("lB", @cPrikBK)
-WPar("lG", PADR(@cGrupa, 20))
+WPar("lG", @cGrupa)
 
 return 1
 
@@ -302,8 +306,7 @@ local nIdString
 local aStrings:={}
 local cIdPartner
 local nH
-local nLabSir :=0
-local nLabVis :=0
+local aPrParams
 
 // output fajl
 cTxtOut := PRIVPATH + "LABEL.TXT"
@@ -320,7 +323,7 @@ go top
 cLabDim := ALLTRIM(cLabDim)
 
 // setuj dimenzije labele na osnovu cLabDim
-if !set_lab_dim(cLabDim, @nLabSir, @nLabVis)
+if !set_lab_dim(cLabDim, @aPrParams)
 	MsgBeep("Postoji problem sa dimenzijama labele!!!#Prekidam operaciju!")
 	return
 endif
@@ -373,7 +376,7 @@ do while !EOF()
 	select pripr
 	
 	// print labele u txt
-	pr_label2(cTxtOut, nH, cRoba, nDKolicina, nLabSir, cLabDim)
+	pr_label2(cTxtOut, nH, cRoba, nDKolicina, aPrParams)
 	
 	select pripr
 	skip 1
@@ -392,17 +395,37 @@ return
 
 
 // setovanje dimenzija labele
-static function set_lab_dim(cDim, nSir, nVis)
+static function set_lab_dim(cDim, aPrParams)
 local aDim := {}
 
-aDim := TokToNiz( ALLTRIM(cDim), "x" )
+// aPrParams := {}
+// [1] = broj znakova
+// [2] = velicina fonta
+// [3] = lijeva margina mm
+// [4] = gornja margina mm
+// ...
+
+aPrParams:={}
+
+cDim := ALLTRIM(cDim)
+aDim := TokToNiz(cDim, "x")
 
 if LEN(aDim) <> 2
 	return .f.
 endif
 
-nVis := VAL(aDim[1])
-nSir := VAL(aDim[2])
+do case
+	case cDim == "40x30"
+		AADD(aPrParams, 32 )
+		AADD(aPrParams,  1 )
+		AADD(aPrParams,  1 )
+		AADD(aPrParams,  1 )
+		
+endcase
+
+if LEN(aPrParams) == 0
+	return .f.
+endif
 
 return .t.
 
@@ -412,10 +435,9 @@ return .t.
 // cArtikal - id artikla
 // cPartner - id partnera
 // nKolicina - koliko komada labela
-// nLabLen - sirina labele, npr: 30
-// cLabDim - dimenzija labele, npr: 40x30
+// aPrParams - [] sa parametrima stampe
 
-static function pr_label2(cTxtOut, nH, cArtikal, nKolicina, nLabLen, cLabDim)
+static function pr_label2(cTxtOut, nH, cArtikal, nKolicina, aPrParams)
 local cPom := ""
 local cFPom := ""
 local nIdString
@@ -423,41 +445,50 @@ local aStrings:={}
 local aPom := {}
 local nPom
 local i
+local nLabLen 
+local nBrRed
+local aText:={}
+local nText
+
+// duzina karaketera
+nLabLen := aPrParams[1]
 
 nIdString := roba->strings
-
 // napuni matricu sa atributima...
 aStrings := get_str_val(nIdString)
 
+
+// napuni u aText redove deklaracije.....
+
 cFPom := "DEKLARACIJA"
-write_2_file(nH, cFPom, .t.)
+AADD(aText, cFPom)
 
 cPom := "Uvoznik: " + ALLTRIM(partn->naz)
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
-	write_2_file(nH, cFPom, .t.)
+	AADD(aText, cFPom)
 next
 
 cPom := ALLTRIM(partn->adresa)
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
-	write_2_file(nH, cFPom, .t.)
+	AADD(aText, cFPom)
 next
 
 cPom := "Sifra: " + cArtikal
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
-	write_2_file(nH, cFPom, .t.)
+	AADD(aText, cFPom)
 next
 
 cPom := "Art: " + ALLTRIM(roba->naz)
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
-	write_2_file(nH, cFPom, .t.)
+	AADD(aText, cFPom)
 next
 
 // uzmi i vrijednosti iz matrice...
@@ -475,7 +506,7 @@ if LEN(aStrings) > 0
 			
 			for nPom:=1 to LEN(aPom)
 				cFPom := aPom[nPom]
-				write_2_file(nH, cFPom, .t.)
+				AADD(aText, cFPom)
 			next
 		endif
 	next
@@ -485,9 +516,21 @@ cPom := "Serviser: " + ALLTRIM(partn->naz)
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
+	AADD(aText, cFPom)
+next
+
+
+// broj redova je ?
+nBrRed := LEN(aText)
+cFPom := "br_redova=" + ALLTRIM(STR(nBrRed, 20, 0))
+write_2_file(nH, cFPom, .t.)
+
+for nText:=1 to LEN(aText)
+	cFPom := aText[nText]
 	write_2_file(nH, cFPom, .t.)
 next
 
+// komada stampaj ?
 cFPom := "cnt=" + ALLTRIM(STR(nKolicina, 20, 0))
 write_2_file(nH, cFPom, .t.)
 
