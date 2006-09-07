@@ -317,6 +317,8 @@ endif
 select pripr
 go top
 
+cLabDim := ALLTRIM(cLabDim)
+
 // setuj dimenzije labele na osnovu cLabDim
 if !set_lab_dim(cLabDim, @nLabSir, @nLabVis)
 	MsgBeep("Postoji problem sa dimenzijama labele!!!#Prekidam operaciju!")
