@@ -420,6 +420,7 @@ local nIdString
 local aStrings:={}
 local aPom := {}
 local nPom
+local i
 
 nIdString := roba->strings
 
@@ -460,6 +461,7 @@ next
 // uzmi i vrijednosti iz matrice...
 if LEN(aStrings) > 0
 	for i:=1 to LEN(aStrings)
+		
 		if ALLTRIM(aStrings[i, 3]) == "R_G_ATTRIB" .and. ;
 		   ALLTRIM(aStrings[i, 5]) <> "-"
 			
