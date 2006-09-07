@@ -228,13 +228,26 @@ return
 
 
 // setovanje varijabli stampe
-static function get_vars(cPartner, lPrikBK) 
+static function get_vars(cPartner, lPrikBK, cLabDim, cGrupa)
+local nTArea := SELECT()
 local nX := 1
 local nBoXMax := 10
 local cPrikBK := "N"
 private GetList:={}
 
 cPartner := SPACE(6)
+cLabDim := PADR("40x30", 10)
+cGrupa := PADR("Obuca", 20)
+
+private cSection:="L"
+private cHistory:=" "
+private aHistory:={}
+O_PARAMS
+
+RPar("lD", PADR(@cLabDim, 8))
+RPar("lP", @cPartner)
+RPar("lB", @cPrikBK)
+RPar("lG", PADR(@cGrupa, 20))
 
 Box(, nBoxMax, 60)
 	
@@ -243,6 +256,14 @@ Box(, nBoxMax, 60)
 	nX := nX + 2
 	
 	@ m_x + nX, m_y + 2 SAY "Uvoznik/serviser:" GET cPartner VALID !EMPTY(cPartner) .and. p_firma(@cPartner)
+	
+	++ nX
+
+	@ m_x + nX, m_y + 2 SAY "Grupa artikala (prazno-sve):" GET cGrupa VALID EMPTY(cGrupa) .or. g_roba_grupe(PADR(@cGrupa, 20))
+	
+	++ nX
+	
+	@ m_x + nX, m_y + 2 SAY "Dimenzije labele:" GET cLabDim VALID !EMPTY(cLabDim)
 	
 	++ nX
 	
@@ -259,6 +280,13 @@ endif
 
 ESC_RETURN 0
 
+select params
+// snimi parametre...
+WPar("lD", PADR(@cLabDim, 8))
+WPar("lP", @cPartner)
+WPar("lB", @cPrikBK)
+WPar("lG", PADR(@cGrupa, 20))
+
 return 1
 
 
@@ -268,23 +296,20 @@ local cTxtOut
 local cRoba
 local nDKolicina
 local lPrikBK
-local nH
+local cLabDim
+local cGrupa
 local nIdString
 local aStrings:={}
-local cSep := ","
-// varijable stavki deklaracije
 local cIdPartner
-local cUvozNaz
-local cUvozAdr
-local cRobaNaz
-local cServNaz
-local i
+local nH
+local nLabSir :=0
+local nLabVis :=0
 
 // output fajl
 cTxtOut := PRIVPATH + "LABEL.TXT"
 
 // varijable reporta
-if get_vars(@cIdPartner, @lPrikBK) == 0
+if get_vars(@cIdPartner, @lPrikBK, @cLabDim, @cGrupa) == 0
 	close all
 	return
 endif
@@ -292,12 +317,25 @@ endif
 select pripr
 go top
 
+// setuj dimenzije labele na osnovu cLabDim
+if !set_lab_dim(cLabDim, @nLabSir, @nLabVis)
+	MsgBeep("Postoji problem sa dimenzijama labele!!!#Prekidam operaciju!")
+	return
+endif
+
 // kreiraj fajl
 create_file(cTxtOut, @nH)
 
 Beep(1)
 
 MsgO("Priprema deklaracija u toku...")
+
+// nastimaj se na partnera
+select partn
+set order to tag "ID"
+hseek cIdPartner
+
+select pripr
 
 do while !EOF()
 	
@@ -310,64 +348,30 @@ do while !EOF()
 	cRoba := field->idroba
 	nDKolicina := field->kolicina
 	
+	
 	// ako roba nema definisano strings - preskoci...
 	if !is_roba_strings(cRoba)
 		skip 1
 		loop
 	endif
 	
-	select partn
-	set order to tag "ID"
-	go top
-	seek cIdPartner
-	
-	cUvozNaz := ALLTRIM(field->naz)
-	cUvozAdr := ALLTRIM(field->adresa)
-	cServNaz := cUvozNaz
-	
 	select roba
 	hseek cRoba
-	
-	// naziv robe
-	cRobaNaz := ALLTRIM(roba->naz)
-	nIdString := roba->strings
-	
-	// napuni matricu sa atributima...
+
+	nIdString := field->strings
 	aStrings := get_str_val(nIdString)
 
-	cFText := "DEKLARACIJA"
-	cFText += cSep
-	cFText += "Uvoznik: " + cUvozNaz 
-	cFText += cSep
-	cFText += cUvozAdr
-	cFText += cSep
-	cFText += "S.Art: " + cRoba
-	cFText += cSep
-	cFText += "Art: " + cRobaNaz
-	cFText += cSep
-	
-	// uzmi i vrijednosti iz matrice...
-	if LEN(aStrings) > 0
-	
-		for i:=1 to LEN(aStrings)
-			if ALLTRIM(aStrings[i, 3]) == "R_G_ATTRIB" .and. ;
-			   ALLTRIM(aStrings[i, 5]) <> "-"
-				
-				cFText += ALLTRIM(aStrings[i, 4])
-				cFText += " "
-				cFText += ALLTRIM(aStrings[i, 5])
-				cFText += cSep
-				
-			endif
-		next
+	// ako je selektovana grupa, vidi da li pripada grupi artikal
+	if !EMPTY( ALLTRIM(cGrupa) ) .and. ALLTRIM(aStrings[1, 5]) <> ALLTRIM(cGrupa)
+		select pripr
+		skip 1
+		loop
 	endif
-
-	cFText += "Serviser: " + cServNaz
-
-	// koliko je kolicina artikla, toliko dodaj deklaracija...
-	for i:=1 to nDKolicina
-		write_2_file(nH, cFText, .t.)
-	next
+	
+	select pripr
+	
+	// print labele u txt
+	pr_label2(cTxtOut, nH, cRoba, nDKolicina, nLabSir, cLabDim)
 	
 	select pripr
 	skip 1
@@ -381,6 +385,107 @@ MsgC()
 MsgBeep("Priprema deklaracija zavrsena !")
 
 close all
+
+return
+
+
+// setovanje dimenzija labele
+static function set_lab_dim(cDim, nSir, nVis)
+local aDim := {}
+
+aDim := TokToNiz( ALLTRIM(cDim), "x" )
+
+if LEN(aDim) <> 2
+	return .f.
+endif
+
+nVis := VAL(aDim[1])
+nSir := VAL(aDim[2])
+
+return .t.
+
+// stampa labele: var 2
+// cTxtOut - out txt
+// nH - handle txt
+// cArtikal - id artikla
+// cPartner - id partnera
+// nKolicina - koliko komada labela
+// nLabLen - sirina labele, npr: 30
+// cLabDim - dimenzija labele, npr: 40x30
+
+static function pr_label2(cTxtOut, nH, cArtikal, nKolicina, nLabLen, cLabDim)
+local cPom := ""
+local cFPom := ""
+local nIdString
+local aStrings:={}
+local aPom := {}
+local nPom
+
+nIdString := roba->strings
+
+// napuni matricu sa atributima...
+aStrings := get_str_val(nIdString)
+
+cFPom := "DEKLARACIJA"
+write_2_file(nH, cFPom, .t.)
+
+cPom := "Uvoznik: " + ALLTRIM(partn->naz)
+aPom := SjeciStr(cPom, nLabLen)
+for nPom:=1 to LEN(aPom)
+	cFPom := aPom[nPom]
+	write_2_file(nH, cFPom, .t.)
+next
+
+cPom := ALLTRIM(partn->adresa)
+aPom := SjeciStr(cPom, nLabLen)
+for nPom:=1 to LEN(aPom)
+	cFPom := aPom[nPom]
+	write_2_file(nH, cFPom, .t.)
+next
+
+cPom := "Sifra: " + cArtikal
+aPom := SjeciStr(cPom, nLabLen)
+for nPom:=1 to LEN(aPom)
+	cFPom := aPom[nPom]
+	write_2_file(nH, cFPom, .t.)
+next
+
+cPom := "Art: " + ALLTRIM(roba->naz)
+aPom := SjeciStr(cPom, nLabLen)
+for nPom:=1 to LEN(aPom)
+	cFPom := aPom[nPom]
+	write_2_file(nH, cFPom, .t.)
+next
+
+// uzmi i vrijednosti iz matrice...
+if LEN(aStrings) > 0
+	for i:=1 to LEN(aStrings)
+		if ALLTRIM(aStrings[i, 3]) == "R_G_ATTRIB" .and. ;
+		   ALLTRIM(aStrings[i, 5]) <> "-"
+			
+			cPom := ALLTRIM(aStrings[i, 4])
+			cPom += " "
+			cPom += ALLTRIM(aStrings[i, 5])
+			
+			aPom := SjeciStr(cPom, nLabLen)
+			
+			for nPom:=1 to LEN(aPom)
+				cFPom := aPom[nPom]
+				write_2_file(nH, cFPom, .t.)
+			next
+		endif
+	next
+endif
+
+cPom := "Serviser: " + ALLTRIM(partn->naz)
+aPom := SjeciStr(cPom, nLabLen)
+for nPom:=1 to LEN(aPom)
+	cFPom := aPom[nPom]
+	write_2_file(nH, cFPom, .t.)
+next
+
+cFPom := "cnt=" + ALLTRIM(STR(nKolicina, 20, 0))
+write_2_file(nH, cFPom, .t.)
 
 return
 

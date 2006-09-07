@@ -100,6 +100,22 @@ return lRet
 // GET funkcije.....
 // *******************************************
 
+
+// vraca naziv odabrane grupe...
+function g_roba_grupe(cGrupa)
+local nSelection := 0
+local aGrupe := {}
+
+aGrupe := get_strings("R_GRUPE", .t.)
+
+// otvori meni i vrati odabir
+nSelection := arr_menu(aGrupe, "R_GRUPE")
+		
+cGrupa := g_naz_byid(nSelection)
+
+return .t.
+
+
 // vraca polje strings->naz po id pretrazi
 static function g_naz_byid(nId)
 local cNaz := ""
