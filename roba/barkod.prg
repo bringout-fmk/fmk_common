@@ -227,16 +227,24 @@ endif
 return
 
 
-static function get_vars(lPrikBK) 
+// setovanje varijabli stampe
+static function get_vars(cPartner, lPrikBK) 
 local nX := 1
+local nBoXMax := 10
 local cPrikBK := "N"
 private GetList:={}
 
-Box(, 6, 60)
+cPartner := SPACE(6)
+
+Box(, nBoxMax, 60)
 	
 	@ m_x + nX, m_y + 2 SAY "USLOVI STAMPE:"
 	
 	nX := nX + 2
+	
+	@ m_x + nX, m_y + 2 SAY "Uvoznik/serviser:" GET cPartner VALID !EMPTY(cPartner) .and. p_firma(@cPartner)
+	
+	++ nX
 	
 	@ m_x + nX, m_y + 2 SAY "Prikaz barkod-a (D/N)" GET cPrikBK VALID cPrikBK $ "DN" PICT "@!"
 	
@@ -265,6 +273,7 @@ local nIdString
 local aStrings:={}
 local cSep := ","
 // varijable stavki deklaracije
+local cIdPartner
 local cUvozNaz
 local cUvozAdr
 local cRobaNaz
@@ -275,7 +284,7 @@ local i
 cTxtOut := PRIVPATH + "LABEL.TXT"
 
 // varijable reporta
-if get_vars(@lPrikBK) == 0
+if get_vars(@cIdPartner, @lPrikBK) == 0
 	close all
 	return
 endif
@@ -310,7 +319,7 @@ do while !EOF()
 	select partn
 	set order to tag "ID"
 	go top
-	seek "10"
+	seek cIdPartner
 	
 	cUvozNaz := ALLTRIM(field->naz)
 	cUvozAdr := ALLTRIM(field->adresa)
@@ -331,6 +340,8 @@ do while !EOF()
 	cFText += "Uvoznik: " + cUvozNaz 
 	cFText += cSep
 	cFText += cUvozAdr
+	cFText += cSep
+	cFText += "S.Art: " + cRoba
 	cFText += cSep
 	cFText += "Art: " + cRobaNaz
 	cFText += cSep
@@ -353,7 +364,7 @@ do while !EOF()
 
 	cFText += "Serviser: " + cServNaz
 
-	// koliko kolicine ???
+	// koliko je kolicina artikla, toliko dodaj deklaracija...
 	for i:=1 to nDKolicina
 		write_2_file(nH, cFText, .t.)
 	next
