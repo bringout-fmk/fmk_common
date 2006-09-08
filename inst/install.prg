@@ -1258,14 +1258,14 @@ function UnZipuj(cZip,cDir)
 *enddo
 **
 
-******************
+// -------------------
+// -------------------
 function Gproc()
-****************
 return
 
-***********************
+// ----------------------
+// ----------------------
 function Ucitajparams()
-***********************
 
 
 #ifdef C52
@@ -1279,9 +1279,6 @@ function SkloniSezonu()
 function SetScGVars()
 *{
 
-#ifdef CLIP
-	? "start SetScGVars"
-#endif
 public ZGwPoruka:=""
 public GW_STATUS:="-"
 
