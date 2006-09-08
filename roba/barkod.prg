@@ -425,21 +425,24 @@ endif
 
 do case
 	case cDim == "40x30"
-		//1 sirina u mm
+		//1 - sirina u mm
 		AADD(aPrParams, 40 )
-		//2 duzina u mm
+		//2 - duzina u mm
 		AADD(aPrParams, 30 )
 
-		//3 max znakova u redu
+		//3 - max znakova u redu
 		AADD(aPrParams, 32 )
-		//4 najmanji font
+		//4 - najmanji font
 		AADD(aPrParams,  1 )
-		//5 lijeva marg (nX)
+		//5 - lijeva marg (nX)
 		AADD(aPrParams,  mm2dot(1.7) )
-		//6 gornja margina (nY)
+
+		//6 - gornja margina (nY)
 		AADD(aPrParams,  mm2dot(1.2) )
-		//7 velicina reda 
+		//7 - velicina reda 
 		AADD(aPrParams,  mm2dot(1.65))
+		//8 - max redova na etiketi
+		AADD(aPrParams,  17)
 		
 endcase
 
@@ -471,6 +474,7 @@ local aText:={}
 local nText
 local nX
 local nY
+local nDodajRedova
 
 // duzina karaketera
 nLabLen := aPrParams[3]
@@ -559,9 +563,19 @@ epl2_f_width(aPrParams[1])
 // lijeva, gornja margina
 epl2_f_init(aPrParams[5], aPrParams[6])
 
-// evo teksta etikete
+altd()
+// aPrParams[8] - max redova na etiketi
+nDodajRedova := redova_za_centriranje(nBrRed, aPrParams[8])
+
 nX := 0
 nY := 0
+
+for nText:=1 to nDodajRedova
+	epl2_string(nX, nY, "", .f. , aPrParams[4])
+	nY := aPrParams[7]
+next
+
+// evo napokon teksta etikete
 for nText:=1 to LEN(aText)
 	cFPom := aText[nText]
 	// aPrParams[4] - nFontSize
@@ -577,8 +591,44 @@ epl2_f_print(nKolicina)
 return
 
 
+// -----------------------------------------------------
+// koliko treba dodati redova da etiketa bude centirana
+// -----------------------------------------------------
+static function redova_za_centriranje(nBrRed, nMaxRedova)
+local nPom
 
+local nGap
+nGap := nMaxRedova - nBrRed
+
+if nGap < 0
+	return -1
+endif
+// popolovi ga
+nGap := nGap/2
+
+// round(3.4) = 4
+nDodaj := ROUND(nGap, 0)
+if ROUND(nDodaj, 2) > ROUND(nGap, 2)
+	// preletice ako uzmemo ovoliko
+	nDodaj--
+endif
+
+if (nDodaj < 0.0)
+	nDodaj := 0
+endif
+
+// provjeri da ne preleti
+if ROUND((nDodaj*2 + nBrRed), 2) > ROUND(nMaxRedova, 2)
+	nDodaj := 0
+endif
+
+return nDodaj
+
+
+
+// -----------------------------------------------------
 // setovanje kolone opcije pregleda labela....
+// -----------------------------------------------------
 static function set_a_kol(aImeKol, aKol)
 aImeKol := {}
 aKol := {}
