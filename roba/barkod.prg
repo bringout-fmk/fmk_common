@@ -69,17 +69,18 @@
 *string FmkIni_SifPath_Barkod_Prefix;
 
 
-function DodajBK(cBK)
-*{
-if empty(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni("BARKOD","Svi","N",SIFPATH)=="D" .and. (Pitanje(,"Formirati Barkod ?","N")=="D")
+// dodavanje barkoda...
+function dodajBK(cBK)
+if EMPTY(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni("BARKOD","Svi","N",SIFPATH)=="D" .and. (Pitanje(,"Formirati Barkod ?","N")=="D")
 	cBK:=NoviBK_A()
 endif
 return .t.
 
+
 // -----------------------------------------
 // funkcija za labeliranje barkodova...
 // -----------------------------------------
-function KaLabelBKod()
+function label_bkod()
 local cIBK
 local cPrefix
 local cSPrefix
@@ -117,7 +118,7 @@ cBoxHead := "<SPACE> markiranje อ <ESC> kraj"
 cBoxFoot := "Priprema za labeliranje bar-kodova..."
 
 Box(,20,50)
-ObjDbedit("PLBK", 20, 50, {|| KaEdPrLBK()}, cBoxHead, cBoxFoot, .t. , , , ,0)
+ObjDbedit("PLBK", 20, 50, {|| key_handler()}, cBoxHead, cBoxFoot, .t. , , , ,0)
 BoxC()
 
 if lStrings
@@ -127,8 +128,14 @@ if lStrings
 endif
 
 if lDelphi
-	// stampanje delphi labela... 
-	st_lab_delphi(aStampati)
+	if goModul:oDataBase:cName == "KALK"
+		// labeliranje KALK 
+		lab_k_delphi(aStampati)
+	endif
+	if goModul:oDataBase:cName == "FAKT"
+		// labeliranje FAKT
+		lab_f_delphi(aStampati)
+	endif
 else
 	// stampanje deklaracija...
 	st_lab_deklar(aStampati)
@@ -139,7 +146,7 @@ return
 
 
 // labeliranje delphi...
-static function st_lab_delphi(aStampati)
+static function lab_k_delphi(aStampati)
 local nRezerva
 local cLinija2
 local cPrefix
@@ -229,11 +236,13 @@ return
 
 
 // setovanje varijabli stampe
-static function get_vars(cPartner, lPrikBK, cLabDim, cGrupa)
+static function get_vars(cPartner, lServRoba, lPrikBK, cLabDim, cGrupa)
 local nTArea := SELECT()
 local nX := 1
 local nBoXMax := 10
 local cPrikBK := "N"
+local cServRoba := "D"
+
 private GetList:={}
 
 cPartner := SPACE(6)
@@ -250,6 +259,7 @@ RPar("lD", @cLabDim)
 RPar("lP", @cPartner)
 RPar("lB", @cPrikBK)
 RPar("lG", @cGrupa)
+RPar("lR", @cServRoba)
 
 Box(, nBoxMax, 60)
 	
@@ -257,10 +267,14 @@ Box(, nBoxMax, 60)
 	
 	nX := nX + 2
 	
-	@ m_x + nX, m_y + 2 SAY "Uvoznik/serviser:" GET cPartner VALID !EMPTY(cPartner) .and. p_firma(@cPartner)
-	
+	@ m_x + nX, m_y + 2 SAY "Uvoznika prepoznati na osnovu sifre artikla (D/N)" GET cServRoba VALID cServRoba $ "DN" PICT "@!"
+
 	++ nX
 
+	@ m_x + nX, m_y + 2 SAY "Uvoznik/serviser:" GET cPartner VALID !EMPTY(cPartner) .and. p_firma(@cPartner) WHEN cServRoba == "N"
+
+	++ nX
+	
 	@ m_x + nX, m_y + 2 SAY "Grupa artikala (prazno-sve):" GET cGrupa VALID EMPTY(cGrupa) .or. g_roba_grupe(@cGrupa)
 	
 	++ nX
@@ -280,6 +294,12 @@ else
 	lPrikBK := .f.
 endif
 
+if cServRoba == "D"
+	lServRoba := .t.
+else
+	lServRoba := .f.
+endif
+
 ESC_RETURN 0
 
 cLabDim := PADR(cLabDim, 10)
@@ -291,8 +311,20 @@ WPar("lD", @cLabDim)
 WPar("lP", @cPartner)
 WPar("lB", @cPrikBK)
 WPar("lG", @cGrupa)
+WPar("lR", @cServRoba)
 
 return 1
+
+
+
+// nastimaj pointer na partnera...
+static function seek_partner(cPartner)
+select partn
+set order to tag "ID"
+hseek cPartner
+return
+
+
 
 // -----------------------------------------
 // labeliranje deklaracija...
@@ -302,6 +334,7 @@ local cTxtOut
 local cRoba
 local nDKolicina
 local lPrikBK
+local lServRoba
 local cLabDim
 local cGrupa
 local nIdString
@@ -314,7 +347,7 @@ local aPrParams
 cTxtOut := PRIVPATH + "LABEL.TXT"
 
 // varijable reporta
-if get_vars(@cIdPartner, @lPrikBK, @cLabDim, @cGrupa) == 0
+if get_vars(@cIdPartner, @lServRoba, @lPrikBK, @cLabDim, @cGrupa) == 0
 	close all
 	return
 endif
@@ -336,15 +369,6 @@ Beep(1)
 //create_file(cTxtOut, @nH)
 epl2_start()
 
-
-//MsgO("Priprema deklaracija u toku...")
-
-// nastimaj se na partnera
-select partn
-set order to tag "ID"
-hseek cIdPartner
-
-
 select pripr
 
 do while !EOF()
@@ -364,7 +388,23 @@ do while !EOF()
 		skip 1
 		loop
 	endif
-	
+
+	// serviser/uvoznik na osnovu robe...
+	if !lServRoba
+		// nastimaj se na partnera
+		seek_partner(cIdPartner)
+	else
+		cRobaUsl := LEFT(cRoba, 2)
+		
+		if cRobaUsl == "99"
+			// moa line....
+			seek_partner(PADR("11", 6))
+		else
+			// planika...
+			seek_partner(PADR("10", 6))
+		endif
+	endif
+
 	select roba
 	hseek cRoba
 
@@ -634,7 +674,7 @@ aImeKol := {}
 aKol := {}
 
 AADD(aImeKol, {"IdRoba"    ,{|| IdRoba }} )
-AADD(aImeKol, {"Kolicina"  ,{|| transform( Kolicina, picv ) }} )
+AADD(aImeKol, {"Kolicina"  ,{|| transform( Kolicina, "99999999.9" ) }} )
 AADD(aImeKol, {"Stampati?" ,{|| bk_stamp_dn( aStampati[RECNO()] ) }} )
 
 aKol:={}
@@ -657,14 +697,8 @@ return cRet
 
 
 
-/*! \fn KaEdPrLBK()
- *  \brief Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
- *  \sa KaLabelBKod()
- *  \todo spojiti KaLabelBKod i FaLabelBkod
- */
-
-function KaEdPrLBK()
-*{
+// Obrada dogadjaja u browse-u tabele "Priprema za labeliranje bar-kodova"
+static function key_handler()
 if Ch==ASC(' ')
 	if aStampati[recno()]=="N"
 		aStampati[recno()] := "D"
@@ -674,58 +708,28 @@ if Ch==ASC(' ')
 	return DE_REFRESH
 endif
 return DE_CONT
-*}
 
 
-/*! \fn FaLabelBKod()
- *  \brief Priprema za labeliranje barkodova
- *  \todo Spojiti
- */ 
-function FaLabelBKod()
-*{
-local cIBK , cPrefix, cSPrefix
-
-O_SIFK
-O_SIFV
-
-O_ROBA
-SET ORDER to TAG "ID"
-O_BARKOD
-O_PRIPR
-
-SELECT PRIPR
-
-private aStampati:=ARRAY(RECCOUNT())
-
-GO TOP
-
-for i:=1 to LEN(aStampati)
-  	aStampati[i]:="D"
-next
-
-ImeKol:={ {"IdRoba",      {|| IdRoba  }      } ,;
-    {"Kolicina",    {|| transform(Kolicina,Pickol) }     } ,;
-    {"Stampati?",   {|| IF(aStampati[RECNO()]=="D","-> DA <-","      NE") }      } ;
-  }
-
-Kol:={}; for i:=1 to len(ImeKol); AADD(Kol,i); next
-Box(,20,50)
-ObjDbedit("PLBK",20,50,{|| KaEdPrLBK()},"<SPACE> markiranjeออออออออออออออ<ESC> kraj","Priprema za labeliranje bar-kodova...", .t. , , , ,0)
-BoxC()
+// labeliranje barkodova iz fakta / delphi
+function lab_f_delphi()
+local cIBK
+local cPrefix
+local cSPrefix
 
 nRezerva:=0
 
 cLinija1:=padr("Proizvoljan tekst",45)
 cLinija2:=padr("Uvoznik:"+gNFirma,45)
+
 Box(,4,75)
-@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
-@ m_x+2, m_y+ 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva>=0 PICT "99"
-if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="N"
-@ m_x+3, m_y+ 2 SAY "Linija 1  :" GET cLinija1
-endif
-@ m_x+4, m_y+ 2 SAY "Linija 2  :" GET cLinija2
-READ
-ESC_BCR
+	@ m_x+0, m_y+25 SAY " LABELIRANJE BAR KODOVA "
+	@ m_x+2, m_y+ 2 SAY "Rezerva (broj komada):" GET nRezerva VALID nRezerva>=0 PICT "99"
+	if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="N"
+		@ m_x+3, m_y+ 2 SAY "Linija 1  :" GET cLinija1
+	endif
+	@ m_x+4, m_y+ 2 SAY "Linija 2  :" GET cLinija2
+	READ
+	ESC_BCR
 BoxC()
 
 cPrefix:=IzFmkIni("Barkod","Prefix","",SIFPATH)
@@ -737,74 +741,73 @@ SELECT PRIPR
 GO TOP
 do while !EOF()
 
+	if aStampati[RECNO()]=="N"
+		SKIP 1
+		loop
+	endif
+	SELECT ROBA
+	HSEEK PRIPR->idroba
+	if empty(barkod) .and. (  IzFmkIni("BarKod" , "Auto" , "N", SIFPATH) == "D")
+		private cPom:=IzFmkIni("BarKod","AutoFormula","ID", SIFPATH)
+  		// kada je barkod prazan, onda formiraj sam interni barkod
 
-if aStampati[RECNO()]=="N"; SKIP 1; loop; endif
-SELECT ROBA
-HSEEK PRIPR->idroba
-if empty(barkod) .and. (  IzFmkIni("BarKod" , "Auto" , "N", SIFPATH) == "D")
-private cPom:=IzFmkIni("BarKod","AutoFormula","ID", SIFPATH)
-  // kada je barkod prazan, onda formiraj sam interni barkod
+		cIBK:=IzFmkIni("BARKOD","Prefix","",SIFPATH) +&cPom
 
-cIBK:=IzFmkIni("BARKOD","Prefix","",SIFPATH) +&cPom
+		if IzFmkIni("BARKOD","EAN","",SIFPATH) == "13"
+   			cIBK:=NoviBK_A()
+		endif
 
-if IzFmkIni("BARKOD","EAN","",SIFPATH) == "13"
-   cIBK:=NoviBK_A()
-endif
-
-PushWa()
-set order to tag "BARKOD"
-seek cIBK
-if found()
-     PopWa()
-     MsgBeep(;
-       "Prilikom formiranja internog barkoda##vec postoji kod: "  + cIBK + "??##" + ;
-     "Moracete za artikal "+pripr->idroba+" sami zadati jedinstveni barkod !" )
-     replace barkod with "????"
-else
-    PopWa()
-    replace barkod with cIBK
-endif
-
-endif
-if cSprefix=="N"
-// ne stampaj koji nemaju isti prefix
-if left(barkod,len(cPrefix)) != cPrefix
-      select pripr
-      skip
-      loop
-endif
-endif
-
-
-SELECT BARKOD
-for  i:=1  to  PRIPR->kolicina + IF( PRIPR->kolicina > 0 , nRezerva , 0 )
-
-	APPEND BLANK
-
-	REPLACE ID       WITH  KonvZnWin(PRIPR->idroba)
-
-	if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="D"
-		REPLACE L1 WITH KonvZnWin(DTOC(PRIPR->datdok)+", "+TRIM(PRIPR->(idfirma+"-"+idtipdok+"-"+brdok)))
-	else
-		REPLACE L1 WITH KonvZnWin(cLinija1)
+		PushWa()
+		set order to tag "BARKOD"
+		seek cIBK
+		if found()
+     			PopWa()
+     			MsgBeep(;
+       			"Prilikom formiranja internog barkoda##vec postoji kod: "  + cIBK + "??##" + ;
+     			"Moracete za artikal "+pripr->idroba+" sami zadati jedinstveni barkod !" )
+     			replace barkod with "????"
+		else
+    			PopWa()
+    			replace barkod with cIBK
+		endif
 	endif
 
-	REPLACE L2 WITH KonvZnWin(cLinija2), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
+	if cSprefix=="N"
+		// ne stampaj koji nemaju isti prefix
+		if left(barkod,len(cPrefix)) != cPrefix
+      			select pripr
+      			skip
+      			loop
+		endif
+	endif
 
-	nRobNazLen := LEN(roba->naz)
+	SELECT BARKOD
+	for  i:=1  to  PRIPR->kolicina + IF( PRIPR->kolicina > 0 , nRezerva , 0 )
+
+		APPEND BLANK
+
+		REPLACE ID WITH KonvZnWin(PRIPR->idroba)
+
+		if IzFmkIni("Barkod","BrDok","D",SIFPATH)=="D"
+			REPLACE L1 WITH KonvZnWin(DTOC(PRIPR->datdok)+", "+TRIM(PRIPR->(idfirma+"-"+idtipdok+"-"+brdok)))
+		else
+			REPLACE L1 WITH KonvZnWin(cLinija1)
+		endif
+
+		REPLACE L2 WITH KonvZnWin(cLinija2), VPC WITH ROBA->vpc, MPC WITH ROBA->mpc, BARKOD WITH roba->barkod
+
+		nRobNazLen := LEN(roba->naz)
 	
-	if IzFmkIni("BarKod","JMJ","D",SIFPATH)=="N"
-		replace NAZIV WITH KonvZnWin(TRIM(LEFT(ROBA->naz, nRobNazLen)))
-	else
-		replace NAZIV WITH KonvZnWin(TRIM(LEFT(ROBA->naz, nRobNazLen))+" ("+TRIM(ROBA->jmj)+")")
-	endif
-
-next
-SELECT PRIPR
-SKIP 1
-
+		if IzFmkIni("BarKod","JMJ","D",SIFPATH)=="N"
+			replace NAZIV WITH KonvZnWin(TRIM(LEFT(ROBA->naz, nRobNazLen)))
+		else
+			replace NAZIV WITH KonvZnWin(TRIM(LEFT(ROBA->naz, nRobNazLen))+" ("+TRIM(ROBA->jmj)+")")
+		endif
+	
+	next
+	SELECT PRIPR
+	SKIP 1
 enddo
-
 close all
 
 if pitanje(,"Aktivirati Win Report ?","D")=="D"
@@ -814,18 +817,6 @@ endif
 
 
 CLOSERET
-*}
-
-/*! \fn FaEdPrLBK()
- *  \brief Priprema barkodova
- */
- 
-function FaEdPrLBK()
-*{
-if Ch==ASC(' ')
-     aStampati[recno()] := IF( aStampati[recno()]=="N" , "D" , "N" )
-     return DE_REFRESH
-  endif
-return DE_CONT
+return
 *}
 
