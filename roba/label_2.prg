@@ -289,7 +289,7 @@ aStrings := get_str_val(nIdString)
 cFPom := "DEKLARACIJA"
 AADD(aText, cFPom)
 
-cPom := "Uvoznik/serviser: " + ALLTRIM(partn->naz)
+cPom := "Uvoz/servis " + ALLTRIM(partn->naz)
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
@@ -338,12 +338,12 @@ if LEN(aStrings) > 0
 	next
 endif
 
-cPom := "Cijena: " + ALLTRIM(STR(roba->mpc, 12, 2)) + " KM"
-aPom := SjeciStr(cPom, nLabLen)
-for nPom:=1 to LEN(aPom)
-	cFPom := aPom[nPom]
-	AADD(aText, cFPom)
-next
+// dodaj "---------"
+cFPom := REPLICATE("-", nLabLen - 1)
+AADD(aText, cFPom)
+
+cFPom := "F+1Cijena: " + ALLTRIM(STR(roba->mpc, 12, 2)) + " KM"
+AADD(aText, cFPom)
 
 
 // broj redova je ?
