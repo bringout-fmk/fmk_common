@@ -289,7 +289,7 @@ aStrings := get_str_val(nIdString)
 cFPom := "DEKLARACIJA"
 AADD(aText, cFPom)
 
-cPom := "Uvoznik: " + ALLTRIM(partn->naz)
+cPom := "Uvoznik/serviser: " + ALLTRIM(partn->naz)
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
@@ -338,7 +338,7 @@ if LEN(aStrings) > 0
 	next
 endif
 
-cPom := "Serviser: " + ALLTRIM(partn->naz)
+cPom := "Cijena: " + ALLTRIM(STR(roba->mpc, 12, 2)) + " KM"
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
