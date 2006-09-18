@@ -318,7 +318,7 @@
 #define F_RNST 141
 #define F_P_RNST 142
 #define F_LOGIT 143
-
+#define F_S_GRUPE 144
 
 #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 
