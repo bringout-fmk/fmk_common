@@ -30,8 +30,6 @@ if (IzFmkIni("Svi","SifAuto","N", SIFPATH)=="N") .or.;
 	AADD(ImeKol, {padc("ID",10),  {|| id }, iif(IzFmkIni("Svi","SifAuto","N", SIFPATH)="D","","id")  , {|| .t.}, {|| vpsifra(wId)} })
 endif
 
-add_mcode(@ImeKol)
-
 // kataloski broj
 if roba->(fieldpos("KATBR"))<>0
 	AADD(ImeKol, {padc("KATBR",14 ), {|| katBr}, "katBr"   })

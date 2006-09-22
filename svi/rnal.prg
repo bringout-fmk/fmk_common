@@ -14,7 +14,6 @@ nTArea := SELECT()
 O_RNAL
 
 AADD(ImeKol, { PADC("Id",10), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { PADC("Naziv",60), {|| naz}, "naz" })
 
 for i:=1 to LEN(ImeKol)

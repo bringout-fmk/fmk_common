@@ -17,7 +17,6 @@ O_KONTO
 
 AADD(ImeKol, {PADC("ID",7), {|| id}, "id", {|| .t.}, {|| vpsifra(wId) }})
 AADD(ImeKol, {"Naziv", {|| naz}, "naz" })
-add_mcode(@ImeKol)
 
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)

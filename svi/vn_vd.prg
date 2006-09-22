@@ -15,7 +15,6 @@ nTArea := SELECT()
 O_TNAL
 
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
 
 for i:=1 to LEN(ImeKol)
@@ -39,7 +38,6 @@ nTArea := SELECT()
 O_TDOK
 
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
 
 for i:=1 to LEN(ImeKol)

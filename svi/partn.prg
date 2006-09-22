@@ -19,7 +19,6 @@ nTArea := SELECT()
 O_PARTN
 
 AADD(ImeKol,{PADR("ID",6),{|| id},"id",{|| .t.},{|| vpsifra(wid)}})
-add_mcode(@ImeKol)
 AADD(ImeKol,{PADR("Naziv",25),{|| PADR(naz,25) } , "naz"})
 if IzFmkIni("Partn","Naziv2","N", SIFPATH)=="D"
 	AADD(ImeKol,{PADR("Naziv2",25),{|| naz2},"naz2"})

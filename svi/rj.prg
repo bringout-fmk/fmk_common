@@ -15,7 +15,6 @@ nTArea := SELECT()
 O_RJ
 
 AADD(ImeKol, { PADR("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { PADR("Naziv",35), {|| naz}, "naz" })
 
 if gModul == "FAKT"

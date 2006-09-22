@@ -15,7 +15,6 @@ ImeKol:={}
 Kol:={}
 
 AADD(ImeKol, { PADR("Id", 2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} })
-add_mcode(@ImeKol)
 if ops->(FieldPOS("IDJ")<>0) 
 	AADD(ImeKol, {PADR("IDJ", 3), {|| idj}, "idj"})
 	AADD(ImeKol, {PADR("Kan", 3), {|| idkan}, "idkan"})

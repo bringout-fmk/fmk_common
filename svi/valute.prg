@@ -152,7 +152,6 @@ nTArea := SELECT()
 O_VALUTE
 
 AADD(ImeKol,   { "ID "       , {|| id }   , "id"        })
-add_mcode(@ImeKol)
 AADD(ImeKol,   { "Naziv"     , {|| naz}   , "naz"       })
 AADD(ImeKol,   { "Skrac."    , {|| naz2}  , "naz2"      })
 AADD(ImeKol,   { "Datum"     , {|| datum} , "datum"     })
