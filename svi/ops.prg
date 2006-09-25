@@ -43,7 +43,6 @@ O_BANKE
 
 ImeKol := {}
 AADD(ImeKol, { PADR("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { "Naziv", {|| naz}, "naz" })
 AADD(ImeKol, { "Mjesto", {|| mjesto}, "mjesto" })
 AADD(ImeKol, { "Adresa", {|| adresa}, "adresa" })

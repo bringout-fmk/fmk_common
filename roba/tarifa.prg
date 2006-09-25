@@ -27,7 +27,6 @@ nTArea := SELECT()
 O_TARIFA
 
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)}  })
-add_mcode(@ImeKol)
 AADD(ImeKol, { PADC("Naziv",35), {|| LEFT(naz, 35)}, "naz" })
 
 if IsPDV()

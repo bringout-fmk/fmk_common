@@ -13,7 +13,6 @@ nTArea := SELECT()
 O_KONCIJ
 
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
 AADD(ImeKol, { "Tip", {|| naz}, "naz"})
 AADD(ImeKol, { "PM", {|| idprodmjes}, "idprodmjes"})
@@ -86,7 +85,6 @@ nTArea := SELECT()
 O_KONCIJ
 
 AADD(ImeKol, { "ID", {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
-add_mcode(@ImeKol)
 AADD(ImeKol, { PADC("Shema",5), {|| PADC(shema,5)}, "shema"})
 AADD(ImeKol, { "Tip", {|| naz}, "naz"})
 AADD(ImeKol, { "PM", {|| idprodmjes}, "idprodmjes"})
