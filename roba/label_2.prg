@@ -159,7 +159,7 @@ Box(, nBoxMax, 60)
 	
 	++ nX
 	
-	@ m_x + nX, m_y + 2 SAY "Dimenzije labele:" GET cLabDim VALID !EMPTY(cLabDim)
+	@ m_x + nX, m_y + 2 SAY "Dimenzije labele:" GET cLabDim VALID !EMPTY(cLabDim) .and. v_lab_dim(cLabDim)
 	
 	++ nX
 	
@@ -196,6 +196,15 @@ WPar("lR", @cServRoba)
 return 1
 
 
+// ---------------------------------------
+// validacija velicine labele
+// ---------------------------------------
+static function v_lab_dim(cDim)
+if ALLTRIM(cDim) $ "40x30#55x44"
+	return .t.
+endif
+MsgBeep("Nepostojeca dimenzija !!!")
+return .f.
 
 
 // -----------------------------------------
@@ -224,6 +233,7 @@ endif
 
 do case
 	case cDim == "40x30"
+		
 		//1 - sirina u mm
 		AADD(aPrParams, 40 )
 		//2 - duzina u mm
@@ -233,16 +243,40 @@ do case
 		AADD(aPrParams, 32 )
 		//4 - najmanji font
 		AADD(aPrParams,  1 )
+		
 		//5 - lijeva marg (nX)
-		AADD(aPrParams,  mm2dot(1.7) )
-
+		AADD(aPrParams,  mm2dot(1.8) )
 		//6 - gornja margina (nY)
 		AADD(aPrParams,  mm2dot(1.2) )
+
 		//7 - velicina reda 
 		AADD(aPrParams,  mm2dot(1.65))
 		//8 - max redova na etiketi
 		AADD(aPrParams,  17)
+
+	case cDim == "55x44"
 		
+		//1 - sirina u mm
+		AADD(aPrParams, 55 )
+		//2 - duzina u mm
+		AADD(aPrParams, 44 )
+
+		//3 - max znakova u redu
+		AADD(aPrParams, 35 )
+		//4 - najmanji font
+		AADD(aPrParams,  2 )
+		
+		//5 - lijeva marg (nX)
+		AADD(aPrParams,  mm2dot(1) )
+		//6 - gornja margina (nY)
+		AADD(aPrParams,  mm2dot(1.2) )
+		
+		//7 - velicina reda 
+		AADD(aPrParams,  mm2dot(2.3))
+		
+		//8 - max redova na etiketi
+		AADD(aPrParams,  18)
+
 endcase
 
 if LEN(aPrParams) == 0
@@ -322,6 +356,7 @@ if LEN(aStrings) > 0
 	for i:=1 to LEN(aStrings)
 		
 		if ALLTRIM(aStrings[i, 3]) == "R_G_ATTRIB" .and. ;
+		   !EMPTY(ALLTRIM(aStrings[i, 5])) .and. ;
 		   ALLTRIM(aStrings[i, 5]) <> "-"
 			
 			cPom := ALLTRIM(aStrings[i, 4])
@@ -345,13 +380,11 @@ AADD(aText, cFPom)
 cFPom := "F+1Cijena: " + ALLTRIM(STR(roba->mpc, 12, 2)) + " KM"
 AADD(aText, cFPom)
 
-
 // broj redova je ?
 nBrRed := LEN(aText)
 
 //cFPom := "br_redova=" + ALLTRIM(STR(nBrRed, 20, 0))
 //write_2_file(nH, cFPom, .t.)
-
 
 // start nove forme
 epl2_f_start()
@@ -363,7 +396,6 @@ epl2_f_width(aPrParams[1])
 // lijeva, gornja margina
 epl2_f_init(aPrParams[5], aPrParams[6])
 
-altd()
 // aPrParams[8] - max redova na etiketi
 nDodajRedova := redova_za_centriranje(nBrRed, aPrParams[8])
 
