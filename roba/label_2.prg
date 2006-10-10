@@ -317,13 +317,24 @@ nIdString := roba->strings
 // napuni matricu sa atributima...
 aStrings := get_str_val(nIdString)
 
-
 // napuni u aText redove deklaracije.....
 
-cFPom := "DEKLARACIJA"
+if aPrParams[1] > 45
+	cPom := "F+1"
+else
+	cPom := ""
+endif
+
+cFPom := cPom + "DEKLARACIJA"
+
 AADD(aText, cFPom)
 
 cPom := "Uvoz/servis " + ALLTRIM(partn->naz)
+
+if aPrParams[1] > 45
+	cPom += " " + ALLTRIM(partn->mjesto)
+endif
+
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
@@ -331,13 +342,18 @@ for nPom:=1 to LEN(aPom)
 next
 
 cPom := ALLTRIM(partn->adresa)
+
+if aPrParams[1] > 45
+	cPom += ", tel: " + ALLTRIM(partn->telefon)
+endif
+
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
 	AADD(aText, cFPom)
 next
 
-cPom := "Sifra: " + cArtikal
+cPom := "F+1Sifra: " + cArtikal
 aPom := SjeciStr(cPom, nLabLen)
 for nPom:=1 to LEN(aPom)
 	cFPom := aPom[nPom]
@@ -382,9 +398,6 @@ AADD(aText, cFPom)
 
 // broj redova je ?
 nBrRed := LEN(aText)
-
-//cFPom := "br_redova=" + ALLTRIM(STR(nBrRed, 20, 0))
-//write_2_file(nH, cFPom, .t.)
 
 // start nove forme
 epl2_f_start()
