@@ -322,6 +322,9 @@ endif
 // kreiraj lokal tabelu
 cre_lokal(F_LOKAL)
 
+// kreiraj tabele dok_src
+cre_doksrc()
+
 return
 
 // --------------------------------------------
@@ -338,4 +341,6 @@ else
 endif
 
 return
+
+
 

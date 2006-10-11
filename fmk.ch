@@ -320,6 +320,11 @@
 #define F_LOGIT 143
 #define F_S_GRUPE 144
 
+// DOK_SRC
+#define F_P_DOKSRC 180
+#define F_DOKSRC 181
+
+
 #include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
 
 #define POR_PPP		1 

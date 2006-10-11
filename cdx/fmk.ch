@@ -142,4 +142,8 @@
 #xcommand O_ERRORS => SELECT (F_ERRORS); USEX (PRIVPATH+"ERRORS"); set order to tag "1"
 
 
+// tabele DOK_SRC
+#xcommand O_DOKSRC => SELECT (F_DOKSRC); USE (KUMPATH+"DOKSRC"); set order to tag "1"
+#xcommand O_P_DOKSRC => SELECT (F_P_DOKSRC); USEX (PRIVPATH+"P_DOKSRC"); set order to tag "1"
+
 
