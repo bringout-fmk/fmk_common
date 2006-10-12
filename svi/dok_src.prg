@@ -10,12 +10,12 @@ local cDokSrcName := "DOKSRC"
 local cPDokSrcName := "P_" + cDokSrcName
 local nBrDokLen := 8
 
-if goModul:oDataBase:cName == "TOPS"
+if goModul:oDataBase:cName == "POS"
 	nBrDokLen := 6
 endif
 
 // ako nije jedan od ponudjenih modula preskoci
-if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#TOPS")
+if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#POS")
 	return
 endif
 
@@ -117,6 +117,9 @@ return
 // --------------------------------------------------
 static function doksrc_to_p(cFirma, cIdVd, cBrDok, dDatDok)
 local nTArea := SELECT()
+local cSeek := ""
+
+O_P_DOKSRC
 O_DOKSRC
 
 zap_p_doksrc()
@@ -124,11 +127,18 @@ zap_p_doksrc()
 select doksrc
 set order to tag "1"
 go top
-seek cFirma + cIdVd + cBrDok
+
+cSeek := cFirma + cIdVd + cBrDok
+if dDatDok <> nil
+	cSeek += DTOS(dDatDok)
+endif
+
+seek cSeek
 
 do while !EOF() .and. field->idfirma == cFirma ;
 		.and. field->idvd == cIdVd ;
-		.and. field->brdok == cBrDok
+		.and. field->brdok == cBrDok ;
+		.and. IF(dDatDok<>nil, field->datdok == dDatDok, .t.)
 	
 	Scatter()
 	select p_doksrc
@@ -144,19 +154,27 @@ return
 // ---------------------------------------------------
 // brisanje zapisa iz tabele DOKSRC
 // ---------------------------------------------------
-static function d_doksrc(cFirma, cIdVd, cBrDok, dDatDok)
+function d_doksrc(cFirma, cIdVd, cBrDok, dDatDok)
 local nTArea := SELECT()
+local cSeek := ""
 
+O_DOKSRC
 select doksrc
 set order to tag "1"
 go top
 
-seek cFirma + cIdVd + cBrDok
+cSeek := cFirma + cIdVd + cBrDok
+if dDatDok <> nil
+	cSeek += DTOS(dDatDok)
+endif
+
+seek cSeek
 
 // izbrisi iz doksrc
 do while !EOF() .and. field->idfirma == cFirma ;
 		.and. field->idvd == cIdVd ;
-		.and. field->brdok == cBrDok
+		.and. field->brdok == cBrDok ;
+		.and. IF(dDatDok <> nil, field->datdok == dDatDok, .t.)
 	delete
 	skip
 enddo
