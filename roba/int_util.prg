@@ -8,7 +8,6 @@
  *  \param cPath - putanja do kalk.dbf
  */
 function GetKalkVars(cFirma, cKonto, cPath)
-*{
 // firma je uvijek 50
 cFirma:="50"
 // konto prodavnicki
@@ -17,7 +16,6 @@ cKonto := PADR(cKonto, 7)
 // putanja
 cPath := IzFmkIni("TOPS", "KalkKumPath", "i:\sigma", KUMPATH)
 return
-*}
 
 
 

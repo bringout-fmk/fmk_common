@@ -49,6 +49,8 @@ endif
 CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirma+src_idvd+src_brdok+DTOS(src_datdok)", PRIVPATH + cPDokSrcName)
 CREATE_INDEX("2","src_modul+src_idfirma+src_idvd+src_brdok+DTOS(src_datdok)", PRIVPATH + cPDokSrcName)
 
+cre_p_update()
+
 return
 
 // ------------------------------------------------------
@@ -337,5 +339,149 @@ set order to tag "1"
 select (nTArea)
 
 return lReturn
+
+
+
+// ----------------------------------------------------------
+// kreiranje tabele P_UPDATE
+//
+// tabela se non-stop puni informacijama pri svakom skeniranju
+// iz kalk-a ili update-a iz TOPS-a
+// skeniranje se u kalk-u pokrece ako je p_updated = "N"
+// te se pri zavrsetku setuje na "D"
+// svaki import u TOPSK puni p_updated = "N"
+//
+// | modul | idkonto | p_updated | p_up_date | p_up_time |
+// | TOPS  | 13270   |    N      | 02.10.06  | 13:22:01  |
+// | TOPS  | 13280   |    D      | 03.10.06  | 15:10:22  |
+// itd...
+// ----------------------------------------------------------
+
+function cre_p_update()
+local aDBF := {}
+local cDbfName := "P_UPDATE"
+
+if goModul:oDataBase:cName <> "KALK"
+	return
+endif
+
+AADD(aDBf,{ "modul"               , "C" ,  10 ,  0 })
+AADD(aDBf,{ "idkonto"             , "C" ,   7 ,  0 })
+AADD(aDBf,{ "p_updated"           , "C" ,   1 ,  0 })
+AADD(aDBf,{ "p_up_date"           , "D" ,   8 ,  0 })
+AADD(aDBf,{ "p_up_time"           , "C" ,  10 ,  0 })
+
+// kreiraj u KUMPATH
+if !FILE(KUMPATH + cDbfName + ".DBF")
+	DBCREATE2(KUMPATH + cDbfName + ".DBF", aDbf)
+endif
+// indexi....
+CREATE_INDEX("1","modul+idkonto+p_updated", KUMPATH + cDbfName)
+
+return
+
+
+// -----------------------------------------
+// otvoranje tabele p_update
+// -----------------------------------------
+function o_p_update(cPath)
+local nTArea := SELECT()
+
+if (cPath == nil)
+	cPath := KUMPATH
+endif
+
+cPath := ALLTRIM(cPath)
+
+AddBS(@cPath)
+
+if !FILE(cPath + "P_UPDATE.DBF")
+	select (nTArea)
+	return 0
+endif
+
+select (240)
+use (cPath + "P_UPDATE") alias p_update
+set order to tag "1"
+
+select (nTArea)
+
+return 1
+
+
+
+// -----------------------------------
+// zatvaranje tabele p_update
+// -----------------------------------
+function c_p_update()
+select p_update
+use
+return 1
+
+
+// -----------------------------------------------
+// skenira tabelu update za cKonto
+// lReturn - .t. - treba skenirati
+// lReturn - .f. - ne treba skenirati
+// -----------------------------------------------
+function scan_p_update(cModul, cKonto, cPath)
+local lReturn := .f.
+local nTArea := SELECT()
+
+// otvori update
+if o_p_update(cPath) == 0
+	return
+endif
+
+select p_update
+set order to tag "1"
+go top
+seek PADR(cModul, 10) + cKonto
+
+if FOUND()
+	if field->p_updated == "N"
+		lReturn := .t.
+	endif
+endif
+
+// zatvori p_update
+c_p_update()
+
+select (nTArea)
+
+return lReturn
+
+
+// -----------------------------------------------
+// dodaje zapis u tabelu p_update
+// -----------------------------------------------
+function add_p_update(cModul, cKonto, cUpd, cPath)
+local nTArea:=SELECT()
+
+// otvori p_update
+if o_p_update(cPath) == 0
+	return
+endif
+
+select p_update
+set order to tag "1"
+go top
+seek PADR(cModul,10) + cKonto
+
+if !FOUND()
+	append blank
+endif
+
+replace modul with cModul
+replace idkonto with cKonto
+replace p_updated with cUpd
+replace p_up_date with DATE()
+replace p_up_time with TIME()
+
+// zatvori p_update
+c_p_update()
+
+select (nTArea)
+return 
 
 
