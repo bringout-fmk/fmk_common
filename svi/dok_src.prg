@@ -59,7 +59,7 @@ return
 function add_p_doksrc( cFirma, cTD, cBrDok, dDatDok, ;
 		cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, ;
 		dSrcDatDok, cSrcKto1, cSrcKto2, cSrcPartn, ;
-		cSrcOpis )
+		cSrcOpis, cPath )
 
 local nTArea := SELECT()
 
@@ -77,7 +77,8 @@ if seek_p_src(cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, dSrcDatDok)
 	return
 endif
 
-O_P_DOKSRC
+o_p_doksrc(cPath)
+
 select p_doksrc
 append blank
 
@@ -95,20 +96,60 @@ replace field->src_kto_zad with cSrcKto2
 replace field->src_partner with cSrcPartn
 replace field->src_opis with cSrcOpis
 
+select p_doksrc
+use
+
 select (nTArea)
 
 return
 
+
+// ---------------------------------------
+// otvaranje tabele p_doksrc
+// ---------------------------------------
+function o_p_doksrc(cPath)
+if cPath == nil
+	cPath := PRIVPATH
+endif
+
+AddBS(@cPath)
+
+select (180)
+use (cPath + "P_DOKSRC.DBF") alias P_DOKSRC
+set order to tag "1"
+
+return
+
+
+// --------------------------------------
+// otvaranje tabele doksrc
+// --------------------------------------
+function o_doksrc(cPath)
+if cPath == nil
+	cPath := KUMPATH
+endif
+
+AddBS(@cPath)
+
+select (181)
+use (cPath + "DOKSRC.DBF") alias DOKSRC
+set order to tag "1"
+
+return
+
+
 // -----------------------------------
 // zapuje p_doksrc
 // -----------------------------------
-function zap_p_doksrc()
+function zap_p_doksrc(cPath)
 local nTArea := SELECT()
 // ako postoji tabela...
 if is_doksrc()
-	O_P_DOKSRC
+	o_p_doksrc(cPath)
 	select p_doksrc
 	zap
+	select p_doksrc
+	use
 	select (nTArea)
 endif
 return
@@ -210,8 +251,10 @@ return lRet
 
 // ------------------------------------------------------
 // azuriraj p_doksrc -> doksrc
+// cPPath - privpath
+// cKPath - kumpath
 // ------------------------------------------------------
-function p_to_doksrc()
+function p_to_doksrc(cPPath, cKPath)
 local nTArea := SELECT()
 local nTRecNR := (nTArea)->(RecNo())
 
@@ -220,8 +263,15 @@ if !is_doksrc()
 	return
 endif
 
-O_P_DOKSRC
-O_DOKSRC
+if cPPath == nil
+	cPPath := PRIVPATH
+endif
+if cKPath == nil
+	cKPath := KUMPATH
+endif
+
+o_p_doksrc(cPPath)
+o_doksrc(cKPath)
 
 select p_doksrc
 go top
@@ -259,6 +309,11 @@ MsgC()
 
 select p_doksrc
 zap
+
+select p_doksrc
+use
+select doksrc
+use
 
 select (nTArea)
 return
