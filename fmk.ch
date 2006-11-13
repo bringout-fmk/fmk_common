@@ -304,21 +304,29 @@
 #define F_LOKAL 242
 
 // RNAL
-#define F_P_RNAL 130
-#define F_P_RNOP 131
-#define F_T_RNST 132
-#define F_T_RNOP 133
-#define F_T_PARS 134
-#define F_RNAL 135
-#define F_RNOP 136
-#define F_RNLOG 137
-#define F_S_RNOP 138
-#define F_S_RNKA 139
-#define F_S_TIPOVI 140
-#define F_RNST 141
-#define F_P_RNST 142
-#define F_LOGIT 143
-#define F_S_GRUPE 144
+#define F__DOCS		130
+#define F__DOC_IT	131
+#define F__DOC_OPS	132
+#define F_T_DOCS	133
+#define F_T_DOC_OPS	134
+#define F_T_PARS	135
+#define F_DOCS		136
+#define F_DOC_IT	137
+#define F_DOC_OPS	138
+#define F_DOC_LOG	139
+#define F_DOC_LIT	140
+#define F_E_GROUPS	141
+#define F_ARTICLES	142
+#define F_ELEMENTS	143
+#define F_E_AOPS	144
+#define F_E_ATT		145
+#define F_E_GR_ATT	146
+#define F_E_GR_VAL	147
+#define F_AOPS		148
+#define F_AOPS_ATT	149
+#define F_CUSTOMS	150
+#define F_CONTACTS	151
+
 
 // DOK_SRC
 #define F_P_DOKSRC 180
