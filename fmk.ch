@@ -307,8 +307,8 @@
 #define F__DOCS		130
 #define F__DOC_IT	131
 #define F__DOC_OPS	132
-#define F_T_DOCS	133
-#define F_T_DOC_OPS	134
+#define F_T_DOCIT	133
+#define F_T_DOCOP	134
 #define F_T_PARS	135
 #define F_DOCS		136
 #define F_DOC_IT	137
