@@ -327,6 +327,8 @@
 #define F_CUSTOMS	150
 #define F_CONTACTS	151
 #define F__FND_PAR	152
+#define F__TMP1		153
+#define F__TMP2		154
 
 
 // DOK_SRC

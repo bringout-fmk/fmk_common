@@ -1,8 +1,9 @@
 #include "sc.ch"
 
-
+// ------------------------------------------------------
+// otvara login screen - prijavu korisnika
+// ------------------------------------------------------
 function LoginScreen()
-*{
 local nPokusaj
 local cIme
 local cLozinka
@@ -13,21 +14,27 @@ cLozinka:=SPACE(15)
 private GetList:={}
 Box("#PRIJAVA KORISNIKA",5,70)
 	do while (.t.)
-		++nPokusaj
-		if (nPokusaj>4)
+		
+		++ nPokusaj
+		
+		if (nPokusaj > 4)
 			MsgBeep("Odustanite molim Vas, nemate pravo pristupa!")
 			clear screen
 			quit
 		endif
-		nKursor:=SETCURSOR(4)
-		cLozinka:=SPACE(15)
+		
+		nKursor := SETCURSOR(4)
+		cLozinka := SPACE(15)
+		
 		@ m_x+2, m_y+2 SAY "IME    " GET cIme COLOR "N/BG" PICT "@!"
 		@ m_x+4, m_y+2 SAY "LOZINKA" GET cLozinka COLOR "BG/BG" PICT "@!"
 		READ
-		if LASTKEY()==K_ESC
+		
+		if LASTKEY() == K_ESC
 			clear screen
 			quit
 		endif
+		
 		if (PrijavaOK(cIme,cLozinka))
 			goModul:oDatabase:setUser(users->naz)
 			goModul:oDatabase:setPassword(users->psw)
@@ -41,9 +48,10 @@ Box("#PRIJAVA KORISNIKA",5,70)
 		endif
 	enddo
 BoxC()
+
 SETCURSOR(nKursor)
+
 return
-*}
 
 
 
