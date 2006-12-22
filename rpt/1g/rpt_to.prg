@@ -57,9 +57,9 @@ local cColor := "BG+/B"
 
 // procitaj parametre
 O_PARAMS
-private cHistory := ""
+private cHistory := "1"
 private aHistory := {}
-private cSection := "T"
+private cSection := "L"
 
 RPar( "rj", @cRj )
 RPar( "m1", @cMonthFrom )
@@ -437,10 +437,10 @@ return REPLICATE("_", 20)
 // -----------------------------------------------
 static function _p_header( cLine, nVar1, nVar2, cMonthFrom, cMonthTo, cYear )
 local cTmp
-local cPom := "Iznos akontacije"
+local cPom := "Akontacija"
 
 if nVar2 == 2
-	cPom := "Iznos ostatka"
+	cPom := "Izn.ostatka"
 endif
 
 cTmp := ""
