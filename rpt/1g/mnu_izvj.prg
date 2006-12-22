@@ -97,27 +97,29 @@ Menu_SC("preg")
 return
 *}
 
-function MnuIzvO()
-*{
 
+
+function MnuIzvO()
 private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc,"1. lista radnika sa netom po opst.stanovanja ")
+AADD(opc,"1. lista radnika sa netom po opst.stanovanja  ")
 AADD(opcexe,{|| SpRadOpSt()})
 
 if (IsRamaGlas())
-	AADD(opc,"2. pregled plata po radnim nalozima")
+	AADD(opc,"2. pregled plata po radnim nalozima    ")
 	AADD(opcexe,{|| PlatePoRNalozima()})
 endif
 
 AADD(opc,"A. autorski honorari")
 AADD(opcexe,{|| AutorskiHonorari()})
+AADD(opc,"T. lista radnika za isplatu toplog obroka")
+AADD(opcexe,{|| to_list()})
 
 Menu_SC("ost")
 return
-*}
+
 
 
 
