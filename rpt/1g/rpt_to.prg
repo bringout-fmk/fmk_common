@@ -14,6 +14,7 @@ local cMonthTo := gMjesec
 local cYear := gGodina
 local cHours := PADR("S01;S10;", 200)
 local nHourLimit := 0
+local nMinHrLimit := 0
 local nKoef := 7
 local nAcontAmount := 70.00
 local nRptVar1 := 1
@@ -22,14 +23,14 @@ local nRptVar2 := 1
 __PAGE_LEN := 60
 
 if _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, ;
-		@cHours, @nHourLimit, @nKoef, @nAcontAmount, ;
+		@cHours, @nHourLimit, @nMinHrLimit, @nKoef, @nAcontAmount, ;
 		@nRptVar1, @nRptVar2 ) == 0
 	return
 endif
 
 // generisi listu...
 if _gen_list( cRj, cMonthFrom, cMonthTo, cYear, ;
-	cHours, nHourLimit, nKoef, nAcontAmount ) == 0
+	cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount ) == 0
 
 	return
 endif
@@ -47,7 +48,8 @@ return
 // setuje parametre izvjestaja
 // --------------------------------------
 static function _get_vars( cRj, cMonthFrom, cMonthTo, cYear, ;
-				cHours, nHourLimit, nKoef, nAcontAmount, ;
+				cHours, nHourLimit, nMinHrLimit, ;
+				nKoef, nAcontAmount, ;
 				nRptVar1, nRptVar2 )
 local nTArea := SELECT()
 local nBoxX := 20
@@ -67,6 +69,7 @@ RPar( "m2", @cMonthTo )
 RPar( "y1", @cYear )
 RPar( "s1", @cHours )
 RPar( "s2", @nHourLimit )
+RPar( "s3", @nMinHrLimit )
 RPar( "k1", @nKoef )
 RPar( "a1", @nAcontAmount )
 RPar( "v1", @nRptVar1 )
@@ -103,9 +106,13 @@ Box(, nBoxX, nBoxY )
 	@ m_x + nX, m_y + 2 SAY "Iznos akontacije:" GET nAcontAmount PICT "99999.99"
 	@ m_x + nX, col() + 1 SAY "KM"
 
-	nX += 2
+	nX += 1
 
-	@ m_x + nX, m_y + 2 SAY "Limit za sate:" GET nHourLimit PICT "999999"
+	@ m_x + nX, m_y + 2 SAY "Minimalni limit za sate:" GET nMinHrLimit PICT "999999"
+
+	nX += 1
+	
+	@ m_x + nX, m_y + 2 SAY "Maksimalni limit za sate:" GET nHourLimit PICT "999999"
 
 	nX += 2
 	
@@ -151,6 +158,7 @@ WPar( "m2", cMonthTo )
 WPar( "y1", cYear )
 WPar( "s1", cHours )
 WPar( "s2", nHourLimit )
+WPar( "s3", nMinHrLimit )
 WPar( "k1", nKoef )
 WPar( "a1", nAcontAmount )
 WPar( "v1", nRptVar1 )
@@ -166,7 +174,7 @@ return 1
 // generise listu radnika... prema parmetrima
 // ----------------------------------------------------
 static function _gen_list( cRj, cMonthFrom, cMonthTo, cYear, ;
-		cHours, nHourLimit, nKoef, nAcontAmount )
+		cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount )
 
 local cIdRadn
 local aHours := {}
@@ -234,7 +242,9 @@ do while !EOF() .and. field->godina == cYear ;
 	enddo
 
 	// ako ima sati i nije probijen limit ako postoji limit
-	if ROUND( nUSati, 2 ) > 0 .and. ( nHourLimit == 0 .or. ( nHourLimit <> 0 .and. nUSati <= nHourLimit ))
+	if ROUND( nUSati, 2 ) > 0  ;
+		.and. ( nHourLimit == 0 .or. ;
+		( nHourLimit <> 0 .and. nUSati <= nHourLimit ))
 		
 		select _tmp
 		append blank
@@ -245,8 +255,19 @@ do while !EOF() .and. field->godina == cYear ;
 		_r_prezime := radn->naz
 		_r_imeoca := radn->imerod
 		_r_hours := nUSati
-		_r_to := ( nUsati / 8 ) * nKoef 
-		_r_acont := nAcontAmount
+		_r_to := ROUND2( ( nUsati / 8 ) * nKoef , gZaok )
+		
+		if ROUND(nMinHrLimit, 2) <> 0
+		
+			if nUSati >= nMinHrLimit
+				_r_acont := nAcontAmount
+			else
+				_r_acont := 0
+			endif
+		else
+			_r_acont := nAcontAmount
+		endif
+		
 		_r_total := _r_to - _r_acont
 		
 		Gather()
@@ -275,6 +296,7 @@ static function _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2 )
 local nRbr := 0
 local nUSati := 0
 local nUTotal := 0
+local nUAcont := 0
 local nUTo := 0
 local cLine
 
@@ -290,6 +312,14 @@ START PRINT CRET
 _p_header( cLine, nRptVar1, nRptVar2, cMFrom, cMTo, cYear )
 
 do while !EOF()
+
+	// ako je ispis akontacije i spisak radnika, r_acont == 0, preskoci
+	if ROUND(r_acont, 2) == 0 .and. nRptVar1 == 2 .and. nRptVar2 == 1
+		
+		skip
+		loop
+		
+	endif
 
 	// provjeri za novu stranu
 	_new_page()
@@ -323,6 +353,9 @@ do while !EOF()
 		// akontacija
 		?? field->r_acont
 
+		nUAcont += field->r_acont
+		
+
 		?? " "
 	
 		// razlika
@@ -339,6 +372,8 @@ do while !EOF()
 			?? field->r_acont
 			?? " "
 			?? _get_mp()
+
+			nUAcont += field->r_acont
 			
 		else
 		
@@ -347,6 +382,8 @@ do while !EOF()
 			?? " "
 			?? _get_mp()
 		
+			nUTotal += field->r_total
+			
 		endif
 	
 	endif
@@ -361,15 +398,28 @@ _new_page()
 
 ? cLine
 
+? "UKUPNO:"
+?? SPACE(30)
+
 if nRptVar1 == 1
-	
-	? "UKUPNO:"
-	?? SPACE(30)
+
 	?? nUSati
 	?? nUTo
-	?? SPACE(13)
+	?? nUAcont
 	?? nUTotal
-
+	
+elseif nRptVar1 == 2
+	
+	if nRptVar2 == 1
+	
+		?? nUAcont
+	
+	else
+	
+		?? nUTotal
+	
+	endif
+	
 endif
 
 ? cLine
