@@ -324,6 +324,12 @@ do while !EOF()
 	// provjeri za novu stranu
 	_new_page()
 	
+	if nRptVar1 == 2
+		
+		? 
+		
+	endif
+
 	// r.br
 	? PADL( STR( ++nRbr , 3 ) + ".", 5 )
 	
@@ -387,7 +393,8 @@ do while !EOF()
 		endif
 	
 	endif
-	
+
+
 	skip
 	
 enddo
