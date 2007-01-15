@@ -63,7 +63,7 @@ if file("install.mem")
     fMem:=.t.
 endif
 
-@ 1,1 SAY "Instalacija FMK - SIGMA-COM software 02.00, 05.95-29.01.06"
+@ 1,1 SAY "Instalacija FMK - SIGMA-COM software 02.01, 05.95-15.01.07"
 
 
 cFMkInst:="D"
