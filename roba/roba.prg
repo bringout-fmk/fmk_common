@@ -32,12 +32,12 @@ endif
 
 // kataloski broj
 if roba->(fieldpos("KATBR"))<>0
-	AADD(ImeKol, {padc("KATBR",14 ), {|| katBr}, "katBr"   })
+	AADD(ImeKol, {padc("KATBR",14 ), {|| PADR(katBr, 14)}, "katBr"   })
 endif
 
 // sifra dobavljaca
 if roba->(fieldpos("SIFRADOB"))<>0
-	AADD(ImeKol, {padc("S.dobav.",13 ), {|| sifraDob}, "sifraDob"   })
+	AADD(ImeKol, {padc("S.dobav.",13 ), {|| PADR(sifraDob, 13)}, "sifraDob"   })
 endif
 
 // naziv
