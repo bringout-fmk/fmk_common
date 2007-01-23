@@ -30,6 +30,7 @@ public gPicDEM
 public gPickol
 public gFPicCDem
 public gFPicDem
+public gFPicKol
 
 public glAutoFillBK
 public gDuzSifIni
@@ -66,6 +67,7 @@ gPicDEM:="9999999.99"
 gPickol:="999999.999"
 gFPicCDem:="0"
 gFPicDem:="0"
+gFPicKol:="0"
 
 gDuzSifINI:=IzFmkIni('Sifroba','DuzSifra','10',SIFPATH)
 return
