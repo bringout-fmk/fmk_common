@@ -113,7 +113,15 @@ return
 
 // export funkcija
 function exp_report()
-*{
+local nTArea := SELECT()
+
+O_PARAMS
+private cSection:="E"
+private cHistory:=" "
+private aHistory:={}
+
+RPar("eK", @cKonverzija)
+RPar("eL", @cLauncher)
 
 cLauncher := PADR(cLauncher, 70)
 
@@ -128,10 +136,17 @@ Box(, 10, 70)
 BoxC()
 
 if LastKey()==K_ESC
+	select (nTArea)
 	closeret
 endif
 
+WPar("eK", cKonverzija)
+WPar("eL", cLauncher)
+
+select params
+use
+
+select (nTArea)
 return cLauncher
-*}
 
 

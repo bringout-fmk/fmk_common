@@ -289,10 +289,13 @@ do while !eof() .and. id==cidugov
    ENDIF
 
    if nRbr==0
-    select PARTN; hseek ugov->idpartner
-    _txt3b:=_txt3c:=""
-    _txt3a:=ugov->idpartner+"."
-    IzSifre()
+    select PARTN
+    hseek ugov->idpartner
+    _txt3b := _txt3c:=""
+    _txt3a := PADR(ugov->idpartner+".", 30)
+    
+    IzSifre(.t.)
+    
     select ftxt; hseek ugov->iddodtxt; cDodTxt:=TRIM(naz)
     hseek ugov->idtxt
     private _Txt1:=""
