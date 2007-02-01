@@ -10,7 +10,7 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis)
+static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt )
 local dPom
 local nX := 2
 local nBoxLen := 20
@@ -25,6 +25,8 @@ cKtoDug := PADR("2120", 7)
 cKtoPot := PADR("5430", 7)
 // opis
 cOpis := PADR("", 100)
+// artikal
+cIdArt := PADR("", 10)
 
 if dDatObr == nil
 	dDatObr := DATE()
@@ -35,14 +37,12 @@ endif
 
 dPom := dDatObr
 
-
-
 // mjesec na koji se odnosi fakturisanje
 nMjesec := MONTH(dPom)
 // godina na koju se odnosi fakturisanje
 nGodina := YEAR(dPom)
 
-Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 15, 70)
+Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 16, 70)
 
 @ m_x + nX, m_y + 2 SAY PADL("Datum fakturisanja", nBoxLen) GET dDatGen 
 nX += 2
@@ -64,6 +64,11 @@ nX += 2
    WHEN {|| dDatLUpl := dDatGen - 1, .t. }
 
 nX += 2
+
+@ m_x + nX, m_y + 2 SAY PADL("Fakturisati artikal (prazno-svi)", nBoxLen + 10) GET cIdArt VALID EMPTY(cIdArt) .or. p_roba( @cIdArt )
+
+nX += 2
+
 @ m_x + nX, m_y + 2 SAY PADL("Opis", nBoxLen) GET cOpis ;
    WHEN  {|| cOpis := IIF( EMPTY(cOpis), PADR("Obracun " + fakt_do(dDatObr), 100), cOpis), .t.} ;
    PICT "@S40"
@@ -100,16 +105,19 @@ local nFaktBr
 local nMjesec
 local nGodina
 local dDatGen := DATE()
-
 local cFaktOd
 local cFaktDo
+local cIdArt
+local cIdFirma
+local nTArea
+
 // otvori tabele
 o_ugov()
 
 // otvori parametre generacije
 lSetParams := .t.
 
-if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis) == 0
+if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt ) == 0
 	return
 endif
 
@@ -123,24 +131,28 @@ if RecCount2() <> 0
 endif
 
 // ako postoji vec generisano za datum sta izadji ili nastavi
-if lSetParams .and. postoji_generacija(dDatObr) == 0
+if lSetParams .and. postoji_generacija(dDatObr, cIdArt) == 0
 	return
 endif
 
 // dodaj u gen_ug novu generaciju
 if lSetParams
+	
 	select gen_ug
 	set order to tag "dat_obr"
 	seek DTOS(dDatObr)
+	
 	if !FOUND()
 		append blank
 	endif
+	
 	replace dat_obr with dDatObr
 	replace dat_gen with dDatGen
 	replace dat_u_fin with dDatLUpl
 	replace kto_kup with cKtoDug
 	replace kto_dob with cKtoPot
 	replace opis with cOpis
+	
 endif
 
 // filter na samo aktivne ugovore
@@ -158,9 +170,6 @@ nNBrDok := ""
 // ukupni broj faktura
 nFaktBr := 0
 
-
-
-
 Box(,3, 60)
 
 @ m_x + 1, m_y + 2 SAY "Generacija ugovora u toku..."
@@ -172,7 +181,7 @@ cFaktDo := ""
 do while !EOF()
 	
 	// da li ima stavki za fakturisanje ???
-	if !ima_u_rugov(ugov->id)
+	if !ima_u_rugov( ugov->id, cIdArt )
 		skip
 		loop
 	endif
@@ -180,14 +189,21 @@ do while !EOF()
 	select ugov
 	
 	// provjeri da li treba fakturisati ???
-	if !treba_generisati(ugov->id, dDatObr)
+	if !treba_generisati( ugov->id, dDatObr )
 		skip
 		loop
+	endif
+	
+	if !EMPTY( cIdArt )
+		// uzmi firmu na osnovu artikla
+		cIdFirma := g_idfirma( cIdArt )
+	else
+		cIdFirma := gFirma
 	endif
 
 	// nadji novi broj dokumenta
 	if EMPTY(cNBrDok)
-		cNBrDok := FaNoviBroj( gFirma, ugov->idtipdok)
+		cNBrDok := FaNoviBroj( cIdFirma, ugov->idtipdok)
 		cFaktOd := cNBrDok
 	else
 		// uvecaj stari
@@ -201,7 +217,8 @@ do while !EOF()
 	@ m_x + 2, m_y + 2 SAY "Ug / Partner -> " + cUId + " / " + cUPartner
 	
 	// generisi ugovor za partnera
-	g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok)
+	g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, cNBrDok, cIdArt, cIdFirma )
+	
 	select ugov
 	skip
 
@@ -213,7 +230,7 @@ cFaktDo := cNBrDok
 select gen_ug
 set order to tag "dat_obr"
 go top
-seek DTOS(dDatObr)
+seek DTOS(dDatObr) + cIdArt
 if Found()
 	replace fakt_br with nFaktBr
 	replace saldo with nSaldo
@@ -227,10 +244,36 @@ endif
 BoxC()
 
 // prikazi info generacije
-s_gen_info(dDatObr)
+s_gen_info( dDatObr )
 
 Azur(.t.)
+
 return
+
+
+// --------------------------------------------
+// vraca firmu na osnovu roba->k2
+// --------------------------------------------
+static function g_idfirma( cArt_id )
+local nTArea := SELECT()
+local cFirma := gFirma
+
+select roba
+go top
+seek cArt_id
+
+if FOUND()
+	if !EMPTY( field->k2 ) ;
+		.and. LEN( ALLTRIM(field->k2) ) == 2 
+		
+		cFirma := ALLTRIM( field->k2 )
+	
+	endif
+endif
+
+select (nTArea)
+
+return cFirma
 
 
 // ------------------------------------------
@@ -323,23 +366,35 @@ return	dPObr := mo_ye(nPMonth, nPYear)
 // -----------------------------------------
 // da li ima stavki u rugovu za ugovor
 // -----------------------------------------
-static function ima_u_rugov(cIdUgovor)
+static function ima_u_rugov( cIdUgovor, cArt_id )
 local nTArr
 local lRet := .f.
 nTArr := SELECT()
 select rugov
-seek cIdUgovor
+
+if cArt_id == nil
+	cArt_id := ""
+endif
+
+if EMPTY( cArt_id )
+	seek cIdUgovor
+else
+	seek cIdUgovor + cArt_id
+endif
+
 if Found()
 	lRet := .t.
 endif
+
 select (nTArr)
+
 return lRet
 
 
 // --------------------------------
 // prikazi info o generaciji
 // --------------------------------
-static function s_gen_info(dDat)
+static function s_gen_info( dDat )
 local cPom
 
 select gen_ug
@@ -376,6 +431,7 @@ seek cId
 select (nTArr)
 return
 
+
 // ------------------------------------
 // nastimaj roba u ROBI
 // ------------------------------------
@@ -391,7 +447,7 @@ return
 // --------------------------------------------------
 // generacija ugovora za jednog partnera
 // --------------------------------------------------
-static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok)
+static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma )
 local dDatGen
 local cFTipDok
 local cIdUgov
@@ -441,6 +497,22 @@ nCount := 0
 
 // prodji kroz rugov
 do while !EOF() .and. (id == cUId)
+
+	if !EMPTY( cArtikal )
+		
+		// ako postoji zadata roba... 
+		// ako rugov->idroba nije predmet fakturisanja
+		// preskoci tu stavku ...
+		
+		if cArtikal <> rugov->idroba
+			
+			select rugov
+			skip
+			loop
+			
+		endif
+		
+	endif
 
 	nCijena := rugov->cijena
 	nKolicina := rugov->kolicina
@@ -531,7 +603,7 @@ do while !EOF() .and. (id == cUId)
 	
 	select pripr
 	
-   	_idfirma := gFirma
+   	_idfirma := cFirma
    	_idpartner := cUPartn
   	_zaokr := ugov->zaokr
    	_rbr := STR(++nRbr, 3)
@@ -580,7 +652,7 @@ dPPromDob := g_dpprom_part(cUPartn, cKtoPot)
 // dodaj stavku u gen_ug_p
 a_to_gen_p(dDatObr, cUId, cUPartn, nSaldoKup,;
            nSaldoDob, dPUplKup, dPPromKup, dPPromDob,;
-	   nFaktIzn, nFaktPdv)
+	   nFaktIzn, nFaktPdv )
 
 // uvecaj broj faktura
 ++ nFaktBr
@@ -607,7 +679,7 @@ skip -(nCount - 1)
 Scatter()
 
 // obradi djokere
-txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl)
+txt_djokeri(nSaldoKup, nSaldoDob, dPUplKup, dPPromKup, dPPromDob, dDatLUpl, cUPartn )
 
 Gather()
 
@@ -621,17 +693,22 @@ return
 // --------------------------------------------
 // provjerava da li postoji generacija u GEN_UG
 // --------------------------------------------
-static function postoji_generacija(dDatObr)
+static function postoji_generacija( dDatObr, cIdArt )
+
+if !EMPTY( cIdArt )
+	return 1
+endif
 
 select gen_ug
 set order to tag "dat_obr"
 seek DTOS(dDatObr)
+
 if !FOUND()
 	return 1
 endif
 
 if Pitanje(,"Obracun " + fakt_do(dDatObr) + " postoji, ponoviti (D/N)?", "D") == "D"
-	vrati_nazad(dDatObr)
+	vrati_nazad( dDatObr, cIdArt )
 
 	close all
 	o_ugov()
@@ -650,11 +727,13 @@ return 0
 // ---------------------------------------------
 // vrati obracun nazad
 // ---------------------------------------------
-static function vrati_nazad(dDatObr)
+static function vrati_nazad( dDatObr, cIdArt )
 local cBrDokOdDo
+local cFirma := gFirma
 
 select gen_ug
 set order to tag "dat_obr"
+go top
 seek DTOS(dDatObr)
 
 if !found()
@@ -662,9 +741,15 @@ if !found()
 	return
 endif
 
-if  IsDocExists(gFirma, "10", gen_ug->brdok_od) .and. IsDocExists(gFirma, "10", gen_ug->brdok_do)
+if !EMPTY(cIdArt)
+	cFirma := g_idfirma( cIdArt )
+endif
+
+if IsDocExists(cFirma, "10", gen_ug->brdok_od) .and. ;
+	IsDocExists(cFirma, "10", gen_ug->brdok_do)
+	
 	cBrDokOdDo := gen_ug->brdok_od + "--" +  gen_ug->brdok_do + ";"
-	PovSvi(cBrDokOdDo, nil, nil)
+	PovSvi(cBrDokOdDo, nil, nil, cFirma)
 
 endif
 
@@ -673,3 +758,5 @@ O_PRIPR
 BrisiPripr()
 
 return
+
+

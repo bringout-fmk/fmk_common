@@ -135,7 +135,6 @@ AADD(aDBF, { "DAT_GEN"  , "D" ,   8,  0 })
 // datum valute za izgenerisane dokumente
 AADD(aDBF, { "DAT_VAL"  , "D" ,   8,  0 })
 
-
 // datum posljednje uplate
 AADD(aDBF, { "DAT_U_FIN", "D" ,   8,  0 })
 // konto kupac

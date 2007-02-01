@@ -70,7 +70,6 @@ static function set_a_kol(aImeKol, aKol)
 aImeKol := {}
 aKol := {}
 
-
 AADD(aImeKol, { "Ugovor", {|| PADR( trim(id) + "/" + trim(IdPartner) + ":" + g_part_name(IdPartner), 34) }, "Idpartner", {|| vpsifra(wid), .t.}, {|| P_Firma(@wIdPartner)}})
 
 AADD(aImeKol, { "Opis", {|| PADR( trim(naz) + ": " + g_rugov_opis(id) , 30)  }, "naz" })

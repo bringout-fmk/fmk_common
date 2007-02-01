@@ -53,7 +53,9 @@ return cRet
 // _txt djokeri, obrada 
 // ----------------------------------------
 function txt_djokeri(nSaldoKup, nSaldoDob, ;
-                     dPUplKup, dPPromKup, dPPromDob, dLUplata)
+                     dPUplKup, dPPromKup, ;
+		     dPPromDob, dLUplata, ;
+		     cPartner )
 
 local cPom
 
@@ -72,6 +74,10 @@ _txt := STRTRAN(_txt, "#D_P_PROMJENA_KUP#", cPom)
 // datum posljednje promjene dobavljac
 cPom := DToC(dPPromDob)
 _txt := STRTRAN(_txt, "#D_P_PROMJENA_DOB#", cPom)
+
+// id partner
+cPom := cPartner
+_txt := STRTRAN(_txt, "#U_PARTNER#", cPom )
 
 return
 
