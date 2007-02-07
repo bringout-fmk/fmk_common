@@ -73,7 +73,7 @@ if lSvi
   		cFilt1:=cFilt1 + ".and.mjesec>="+cm2str(cMjesec)+".and.mjesec<="+cm2str(cMjesecDo)+".and.godina="+cm2str(cGodina)
 	endif
 	
-GO TOP
+	GO TOP
 
 else
 
@@ -83,7 +83,6 @@ else
 	endif
 
 endif 	
-
 
 if lViseObr
 	cFilt1 += ".and. OBR="+cm2str(cObracun)
@@ -105,18 +104,13 @@ else
 	EOF CRET
 endif
 
-
-
-
 PoDoIzSez(cGodina, cMjesecDo)
-
 
 if !lPorNaRekap
    cLinija:="------------------------  ----------------               -------------------"
 else
    cLinija:="------------------------  ---------------  ---------------  -------------"
 endif
-
 
 CreOpsLD()
 CreRekLD()
@@ -139,7 +133,6 @@ else
   	lGusto:=.f.
   	nDSGusto:=0
 endif
-
 
 // samo pozicionira bazu PAROBR na odgovarajuci zapis
 ParObr(cmjesec, IIF(lViseObr,cObracun,), IIF(!lSvi,cIdRj,))
@@ -235,472 +228,137 @@ if !lGusto
 	?
 endif
 
-
 ?
 
 ProizvTP()
 
-if cMjesec==cMjesecDo     
-	// za vise mjeseci nema prikaza poreza i doprinosa
+// prikaz koeficijenta benef.
+if cMjesec == cMjesecDo
 	if !lGusto
-  		?
+		?
 	endif
 	PrikKBO()
 	PrikKBOBenef()
-	select por
-	go top
-	nPom:=nPor:=nPor2:=nPorOps:=nPorOps2:=0
-	nC1:=20
+endif
 
-	cLinija:="----------------------- -------- ----------- -----------"
-
-	if cUmPD=="D"
-  		m+=" ----------- -----------"
+if cMjesec == cMjesecDo
+	
+	// obracunaj i prikazi poreze
+	
+	private nPor
+	private nPor2 
+	private nPorOps
+	private nPorOps2
+	
+	obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl )
+	
+	if !lGusto
+		?
+ 		?
 	endif
 
-	if cUmPD=="D"
-  		P_12CPI
-  		? "----------------------- -------- ----------- ----------- ----------- -----------"
-  		? Lokal("                                 Obracunska     Porez    Preplaceni     Porez   ")
-  		? Lokal("     Naziv poreza          %      osnovica   po obracunu    porez     za uplatu ")
-  		? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
-  		? "----------------------- -------- ----------- ----------- ----------- -----------"
+	?
+
+	if prow() > 55 + gpStranica
+		FF
 	endif
 
-	do while !eof()
-  		if prow()>55+gPStranica
-    			FF
-  		endif
-   		
-		? id,"-",naz
-   		@ prow(),pcol()+1 SAY iznos pict "99.99%"
-   		nC1:=pcol()+1
-   		if !empty(poopst)
-			altd()
-     			if poopst=="1"
-       				?? Lokal(" (po opst.stan)")
-     			elseif poopst=="2"
-       				?? Lokal(" (po opst.stan)")
-     			elseif poopst=="3"
-       				?? Lokal(" (po kant.stan)")
-     			elseif poopst=="4"
-       				?? Lokal(" (po kant.rada)")
-     			elseif poopst=="5"
-       				?? Lokal(" (po ent. stan)")
-     			elseif poopst=="6"
-       				?? Lokal(" (po ent. rada)")
-       				?? Lokal(" (po opst.rada)")
-     			endif
-     			nOOP:=0      
-			// ukupna Osnovica za ObraŸun Poreza za po opçtinama
-     			nPOLjudi:=0  
-     			// ukup.ljudi za po opçtinama
-     			nPorOps:=0
-     			nPorOps2:=0
-     			select opsld
-     			seek por->poopst
-     			? strtran(cLinija,"-","=")
-     			do while !eof() .and. id==por->poopst   //idopsst
-		         select ops
-			 hseek opsld->idops
-			 select opsld
-		         IF !ImaUOp("POR",POR->id)
-		           SKIP 1
-			   LOOP
-		         ENDIF
-		         ? idops,ops->naz
-		         @ prow(),nc1 SAY iznos picture gpici
-		         @ prow(),pcol()+1 SAY nPom:=round2(max(por->dlimit,por->iznos/100*iznos),gZaok2) pict gpici
-		         if cUmPD=="D"
-		           // ______  PORLD ______________
-		           @ prow(),pcol()+1 SAY nPom2:=round2(max(por->dlimit,por->iznos/100*piznos),gZaok2) pict gpici
-		           @ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-		           Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom-nPom2,0,idops,NLjudi())
-		           nPorOps2+=nPom2
-		         else
-		           Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,iznos,idops,NLjudi())
-		         endif
-		         nOOP += iznos
-		         nPOLjudi += ljudi
-		         nPorOps+=nPom
-		         skip
-		         if prow()>62+gPStranica
-			 	FF
-			 endif
-		     enddo
-		     select por
-		     ? cLinija
-		     nPor+=nPorOps
-		     nPor2+=nPorOps2
-	   endif // poopst
-   if !empty(poopst)
-     ? cLinija
-     ? Lokal("Ukupno:")
-//     @ prow(),nc1 SAY nUNeto pict gpici
-     @ prow(),nc1 SAY nOOP pict gpici
-     @ prow(),pcol()+1 SAY nPorOps   pict gpici
-     if cUmPD=="D"
-       @ prow(),pcol()+1 SAY nPorOps2   pict gpici
-       @ prow(),pcol()+1 SAY nPorOps-nPorOps2   pict gpici
-       Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps-nPorOps2,0,,NLjudi())
-     else
-//       Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps,nUNeto,,NLjudi())
-       Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps,nOOP,,"("+ALLTRIM(STR(nPOLjudi))+")")
-     endif
-     ? cLinija
-   else
-     @ prow(),nc1 SAY nUNeto pict gpici
-     @ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nUNeto),gZaok2) pict gpici
-     if cUmPD=="D"
-       @ prow(),pcol()+1 SAY nPom2:=round2(max(dlimit,iznos/100*nUNeto2),gZaok2) pict gpici
-       @ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-       Rekapld("POR"+por->id,cgodina,cmjesec,nPom-nPom2,0)
-       nPor2+=nPom2
-     else
-       Rekapld("POR"+por->id,cgodina,cmjesec,nPom,nUNeto,,"("+ALLTRIM(STR(nLjudi))+")")
-     endif
-     nPor+=nPom
-   endif
+	private nDopr
+	private nDopr2
+	
+	// obracunaj i prikazi doprinose
+	obr_doprinos( @nDopr, @nDopr2 )
 
+	if cUmPD == "D"
+		P_10CPI
+	endif
 
-  skip
-enddo
-if round2(nUPorOl,2)<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
-   ? Lokal("PORESKE OLAKSICE")
-   select por; go top
-   nPOlOps:=0
-   if !empty(poopst)
-      if poopst=="1"
-       ?? Lokal(" (po opst.stan)")
-      else
-       ?? Lokal(" (po opst.rada)")
-      endif
-      nPOlOps:=0
-      select opsld
-      seek por->poopst
-      do while !eof() .and. id==por->poopst
-         If prow()>55+gPStranica
-           FF
-         endif
-         select ops; hseek opsld->idops; select opsld
-         IF !ImaUOp("POR",POR->id)
-           SKIP 1; LOOP
-         ENDIF
-         ? idops, ops->naz
-         @ prow(), nc1 SAY parobr->prosld picture gpici
-         @ prow(), pcol()+1 SAY round2(iznos2,gZaok2)    picture gpici
-         Rekapld("POROL"+por->id+opsld->idops,cgodina,cmjesec,round2(iznos2,gZaok2),0,opsld->idops,NLjudi())
-         skip
-         if prow()>62+gPStranica; FF; endif
-      enddo
-      select por
-      ? cLinija
-      ? Lokal("UKUPNO POR.OL")
-   endif // poopst
-   @ prow(),nC1 SAY parobr->prosld  pict gpici
-   @ prow(),pcol()+1 SAY round2(nUPorOl,gZaok2)    pict gpici
-   Rekapld("POROL"+por->id,cgodina,cmjesec,round2(nUPorOl,gZaok2),0,,"("+ALLTRIM(STR(nLjudi))+")")
-   if !empty(poopst)
-   	? cLinija
-   endif
+	?
 
-endif
-? cLinija
-? Lokal("Ukupno Porez")
-@ prow(),nC1 SAY space(len(gpici))
-@ prow(),pcol()+1 SAY nPor-nUPorOl pict gpici
-if cUmPD=="D"
-  @ prow(),PCOL()+1 SAY nPor2              pict gpici
-  @ prow(),pcol()+1 SAY nPor-nUPorOl-nPor2 pict gpici
-endif
-? cLinija
-IF !lGusto
- ?
- ?
-ENDIF
-?
-if prow()>55+gpStranica; FF; endif
+	cLinija:="---------------------------------"
 
+	if prow()>49+gPStranica
+		FF
+	endif
 
-m:="----------------------- -------- ----------- -----------"
-if cUmPD=="D"
-  m+=" ----------- -----------"
-endif
-select dopr; go top
-nPom:=nDopr:=0
-nPom2:=nDopr2:=0
-nC1:=20
+	? cLinija
 
-if cUmPD=="D"
-  ? "----------------------- -------- ----------- ----------- ----------- -----------"
-  ? Lokal("                                 Obracunska   Doprinos   Preplaceni   Doprinos  ")
-  ? Lokal("    Naziv doprinosa        %      osnovica   po obracunu  doprinos    za uplatu ")
-  ? "          (1)             (2)        (3)     (4)=(2)*(3)     (5)     (6)=(4)-(5)"
-  ? "----------------------- -------- ----------- ----------- ----------- -----------"
-endif
+	? "     " + Lokal("NETO PRIMANJA:")
+	@ prow(),pcol()+1 SAY nUNeto pict gpici
+	?? "(" + Lokal("za isplatu:")
+	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciM pict gpici
+	?? "," + Lokal("Obustave:")
+	@ prow(),pcol()+1 SAY -nUOdbiciM pict gpici
+	?? ")"
+	? " " + Lokal("PRIMANJA VAN NETA:")
+	@ prow(),pcol()+1 SAY nUOdbiciP pict gpici  // dodatna primanja van neta
+	? "            " + Lokal("POREZI:")
+	IF cUmPD=="D"
+		@ prow(),pcol()+1 SAY nPor-nUPorOl-nPor2    pict gpici
+	ELSE
+  		@ prow(),pcol()+1 SAY nPor-nUPorOl    pict gpici
+	ENDIF
+	? "         " + Lokal("DOPRINOSI:")
+	IF cUmPD=="D"
+  		@ prow(),pcol()+1 SAY nDopr-nDopr2    pict gpici
+	ELSE
+  		@ prow(),pcol()+1 SAY nDopr    pict gpici
+	ENDIF
+	? cLinija
+	IF cUmPD=="D"
+  		? Lokal(" POTREBNA SREDSTVA:")
+  		@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPor-nUPorOl)+nDopr-nPor2-nDopr2    pict gpici
+	ELSE
+  		? Lokal(" POTREBNA SREDSTVA:")
+  		@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPor-nUPorOl)+nDopr    pict gpici
+	ENDIF
+	? cLinija
+	?
+	? Lokal("Izvrsena obrada na") + " ",str(nLjudi,5), Lokal("radnika")
+	?
+	if nUSati==0
+		nUSati:=999999
+	endif
+	? Lokal("Prosjecni neto/satu je"),alltrim(transform(nUNeto,gpici)),"/",alltrim(str(nUSati)),"=",alltrim(transform(nUNeto/nUsati,gpici)),"*",alltrim(transform(parobr->k1,"999")),"=",alltrim(transform(nUneto/nUsati*parobr->k1,gpici))
 
-do while !eof()
-
-  if prow()>55+gpStranica
-     FF
-  endif
-
-  // ako je BENEF i ako je osnova 0 preskoci ovaj doprinos
-  if ("BENEF" $ naz) .and. nUBNOsnova == 0
-      skip
-      loop 
-  endif
-
-  if right(id,1)=="X"
-   ? cLinija
-  endif
-  ? id,"-",naz
-
-  @ prow(),pcol()+1 SAY iznos pict "99.99%"
-  nC1:=pcol()+1
-
-  if empty(idkbenef) // doprinos udara na neto
-
-    altd()
-    if !empty(poopst)
-      if poopst=="1"
-        ?? Lokal(" (po opst.stan)")
-      elseif poopst=="2"
-        ?? Lokal(" (po opst.rada)")
-      elseif poopst=="3"
-        ?? Lokal(" (po kant.stan)")
-      elseif poopst=="4"
-        ?? Lokal(" (po kant.rada)")
-      elseif poopst=="5"
-        ?? Lokal(" (po ent. stan)")
-      elseif poopst=="6"
-        ?? Lokal(" (po ent. rada)")
-      endif
-      ? strtran(m,"-","=")
-      nOOD:=0          // ukup.osnovica za obraŸun doprinosa za po opçtinama
-      nPOLjudi:=0      // ukup.ljudi za po opçtinama
-      nDoprOps:=0
-      nDoprOps2:=0
-      select opsld
-      seek dopr->poopst
-      altd()
-      do while !eof() .and. id==dopr->poopst
-        altd()
-        select ops; hseek opsld->idops; select opsld
-        IF !ImaUOp("DOPR",DOPR->id)
-          SKIP 1; LOOP
-        ENDIF
-        ? idops,ops->naz
-        nBOOps:=round2(iznos*parobr->k3/100,gZaok2)
-        @ prow(),nc1 SAY nBOOps picture gpici
-        nPom:=round2(max(dopr->dlimit,dopr->iznos/100*nBOOps),gZaok2)
-        if cUmPD=="D"
-          nBOOps2:=round2(piznos*nPK3/100,gZaok2)
-          nPom2:=round2(max(dopr->dlimit,dopr->iznos/100*nBOOps2),gZaok2)
-        endif
-        if round(dopr->iznos,4)=0 .and. dopr->dlimit>0
-          nPom:=dopr->dlimit*opsld->ljudi
-          if cUmPD=="D"
-            nPom2:=dopr->dlimit*opsld->pljudi
-          endif
-        endif
-        @ prow(),pcol()+1 SAY  nPom picture gpici
-        if cUmPD=="D"
-          @ prow(),pcol()+1 SAY  nPom2 picture gpici
-          @ prow(),pcol()+1 SAY  nPom-nPom2 picture gpici
-          Rekapld("DOPR"+dopr->id+idops,cgodina,cmjesec,nPom-nPom2,0,idops,NLjudi())
-          nDoprOps2+=nPom2
-          nDoprOps+=nPom
-        else
-          Rekapld("DOPR"+dopr->id+opsld->idops,cgodina,cmjesec,npom,nBOOps,idops,NLjudi())
-          nDoprOps+=nPom
-        endif
-        nOOD += nBOOps
-        nPOLjudi += ljudi
-        skip
-        if prow()>62+gPStranica; FF; endif
-      enddo // opsld
-      select dopr
-      ? cLinija
-      ? Lokal("UKUPNO") + SPACE(1),DOPR->ID
-//      @ prow(),nC1 SAY nBO pict gpici
-      @ prow(),nC1 SAY nOOD pict gpici
-      @ prow(),pcol()+1 SAY nDoprOps pict gpici
-      if cUmPD=="D"
-        @ prow(),pcol()+1 SAY nDoprOps2 pict gpici
-        @ prow(),pcol()+1 SAY nDoprOps-nDoprOps2 pict gpici
-        Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nDoprOps-nDoprOps2,0,,NLjudi())
-        nPom2:=nDoprOps2
-      else
-        if nDoprOps>0
-//          Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nDoprOps,nBO,,NLjudi())
-          Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nDoprOps,nOOD,,"("+ALLTRIM(STR(nPOLjudi))+")")
-        endif
-      endif
-      ? cLinija
-      nPom:=nDoprOps
-    else
-      // doprinosi nisu po opstinama
-      altd()
-      if "BENEF" $ dopr->naz
-           nBo:=round2(parobr->k3/100*nUBNOsnova,gZaok2)
-      else
-           nBo:=round2(parobr->k3/100*nUNetoOsnova,gZaok2)
-      endif
-      @ prow(),nC1 SAY nBO pict gpici
-      nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)
-      if cUmPD=="D"
-        nPom2:=round2(max(dlimit,iznos/100*nBO2),gZaok2)
-      endif
-      if round(iznos,4)=0 .and. dlimit>0
-          nPom:=dlimit*nljudi      // nije po opstinama
-          if cUmPD=="D"
-            nPom2:=dlimit*nljudi      // nije po opstinama ?!?nLjudi
-          endif
-      endif
-      @ prow(),pcol()+1 SAY nPom pict gpici
-      if cUmPD=="D"
-        @ prow(),pcol()+1 SAY nPom2 pict gpici
-        @ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-        Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nPom-nPom2,0)
-      else
-        Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nPom,nBO,,"("+ALLTRIM(STR(nLjudi))+")")
-      endif
-    endif // poopst
-  else
-  //**************** po stopama beneficiranog radnog staza ?? nije testirano
-    nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-    if nPom0<>0
-      nPom2:=parobr->k3/100*aNeta[nPom0,2]
-    else
-      nPom2:=0
-    endif
-    if round2(nPom2,gZaok2)<>0
-      @ prow(),pcol()+1 SAY nPom2 pict gpici
-      nC1:=pcol()+1
-      @ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nPom2),gZaok2) pict gpici
-    endif
-  endif  // ****************  nije testirano
-
-  if right(id,1)=="X"
-    ? cLinija
-    IF !lGusto
-      ?
-    ENDIF
-    nDopr+=nPom
-    if cUmPD=="D"
-      nDopr2+=nPom2
-    endif
-  endif
-
-  skip
-  if prow()>56+gPStranica; FF; endif
-enddo
-? cLinija 
-? Lokal("Ukupno Doprinosi")
-@ prow(),nc1 SAY space(len(gpici))
-@ prow(),pcol()+1 SAY nDopr  pict gpici
-if cUmPD=="D"
-  @ prow(),pcol()+1 SAY nDopr2  pict gpici
-  @ prow(),pcol()+1 SAY nDopr-nDopr2  pict gpici
-endif
-? cLinija
-IF cUmPD=="D"
-  P_10CPI
-ENDIF
-?
-?
-
-
-cLinija:="---------------------------------"
-altd()
-if prow()>49+gPStranica
-	FF
-endif
-? cLinija
-? "     " + Lokal("NETO PRIMANJA:")
-@ prow(),pcol()+1 SAY nUNeto pict gpici
-?? "(" + Lokal("za isplatu:")
-@ prow(),pcol()+1 SAY nUNeto+nUOdbiciM pict gpici
-?? "," + Lokal("Obustave:")
-@ prow(),pcol()+1 SAY -nUOdbiciM pict gpici
-?? ")"
-? " " + Lokal("PRIMANJA VAN NETA:")
-@ prow(),pcol()+1 SAY nUOdbiciP pict gpici  // dodatna primanja van neta
-? "            " + Lokal("POREZI:")
-IF cUmPD=="D"
-	@ prow(),pcol()+1 SAY nPor-nUPorOl-nPor2    pict gpici
-ELSE
-  	@ prow(),pcol()+1 SAY nPor-nUPorOl    pict gpici
-ENDIF
-? "         " + Lokal("DOPRINOSI:")
-IF cUmPD=="D"
-  	@ prow(),pcol()+1 SAY nDopr-nDopr2    pict gpici
-ELSE
-  	@ prow(),pcol()+1 SAY nDopr    pict gpici
-ENDIF
-? cLinija
-IF cUmPD=="D"
-  	? Lokal(" POTREBNA SREDSTVA:")
-  	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPor-nUPorOl)+nDopr-nPor2-nDopr2    pict gpici
-ELSE
-  	? Lokal(" POTREBNA SREDSTVA:")
-  	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPor-nUPorOl)+nDopr    pict gpici
-ENDIF
-? cLinija
-?
-? Lokal("Izvrsena obrada na") + " ",str(nLjudi,5), Lokal("radnika")
-?
-if nUSati==0
-	nUSati:=999999
-endif
-? Lokal("Prosjecni neto/satu je"),alltrim(transform(nUNeto,gpici)),"/",alltrim(str(nUSati)),"=",alltrim(transform(nUNeto/nUsati,gpici)),"*",alltrim(transform(parobr->k1,"999")),"=",alltrim(transform(nUneto/nUsati*parobr->k1,gpici))
-
-
-ELSE // cMjesec==cMjesecDo // za viçe mjeseci nema prikaza poreza i doprinosa
-  // ali se mo§e dobiti bruto osnova i prosjeŸni neto po satu
-  // --------------------------------------------------------
-  ASORT(aNetoMj,,,{|x,y| x[1]<y[1]})
-  ?
-  ?     Lokal("MJESEC³  UK.NETO  ³UK.SATI³KOEF.BRUTO³FOND SATI³BRUTO OSNOV³PROSJ.NETO ")
-  ?     " (A)  ³    (B)    ³  (C)  ³   (D)    ³   (E)   ³(B)*(D)/100³(E)*(B)/(C)"
-  ? ms:="ÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄ"
-  nT1:=nT2:=nT3:=nT4:=nT5:=0
-  FOR i:=1 TO LEN(aNetoMj)
-    ? STR(aNetoMj[i,1],4,0) +". ³"+;
-      TRANS(aNetoMj[i,2],gPicI) +"³"+;
-      STR(aNetoMj[i,3],7) +"³"+;
-      TRANS(aNetoMj[i,4],"999.99999%") +"³"+;
-      STR(aNetoMj[i,5],9) +"³"+;
-      TRANS(ROUND2(aNetoMj[i,2]*aNetoMj[i,4]/100,gZaok2),gPicI) +"³"+;
-      TRANS(aNetoMj[i,5]*aNetoMj[i,2]/aNetoMj[i,3],gPicI)
-      nT1 += aNetoMj[i,2]
-      nT2 += aNetoMj[i,3]
-      nT3 += aNetoMj[i,5]
-      nT4 += ROUND2(aNetoMj[i,2]*aNetoMj[i,4]/100,gZaok2)
-      nT5 += aNetoMj[i,5]*aNetoMj[i,2]/aNetoMj[i,3]
-  NEXT
-  altd()
-  nT5 := nT5/LEN(aNetoMj)
-  // nT5 := nT3*nT1/nT2
-  ? ms
-  ?     "UKUPNO³"+;
-      TRANS(nT1,gPicI) +"³"+;
-      STR(nT2,7) +"³"+;
-      "          "+"³"+;
-      STR(nT3,9) +"³"+;
-      TRANS(nT4,gPicI) +"³"+;
-      TRANS(nT5,gPicI)
+ELSE 
+	// cMjesec == cMjesecDo 
+	// za vise mjeseci nema prikaza poreza i doprinosa
+  	// ali se moze dobiti bruto osnova i prosjecni neto po satu
+  	ASORT(aNetoMj,,,{|x,y| x[1]<y[1]})
+  	?
+  	?     Lokal("MJESEC³  UK.NETO  ³UK.SATI³KOEF.BRUTO³FOND SATI³BRUTO OSNOV³PROSJ.NETO ")
+  	?     " (A)  ³    (B)    ³  (C)  ³   (D)    ³   (E)   ³(B)*(D)/100³(E)*(B)/(C)"
+  	? ms:="ÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄ"
+  	nT1:=nT2:=nT3:=nT4:=nT5:=0
+  	FOR i:=1 TO LEN(aNetoMj)
+    		? STR(aNetoMj[i,1],4,0) +". ³"+;
+      		TRANS(aNetoMj[i,2],gPicI) +"³"+;
+     		STR(aNetoMj[i,3],7) +"³"+;
+      		TRANS(aNetoMj[i,4],"999.99999%") +"³"+;
+      		STR(aNetoMj[i,5],9) +"³"+;
+      		TRANS(ROUND2(aNetoMj[i,2]*aNetoMj[i,4]/100,gZaok2),gPicI) +"³"+;
+      		TRANS(aNetoMj[i,5]*aNetoMj[i,2]/aNetoMj[i,3],gPicI)
+      		nT1 += aNetoMj[i,2]
+      		nT2 += aNetoMj[i,3]
+      		nT3 += aNetoMj[i,5]
+      		nT4 += ROUND2(aNetoMj[i,2]*aNetoMj[i,4]/100,gZaok2)
+      		nT5 += aNetoMj[i,5]*aNetoMj[i,2]/aNetoMj[i,3]
+  	NEXT
+  
+  	nT5 := nT5/LEN(aNetoMj)
+  	? ms
+  	?     "UKUPNO³"+;
+      		TRANS(nT1,gPicI) +"³"+;
+      		STR(nT2,7) +"³"+;
+      		"          "+"³"+;
+      		STR(nT3,9) +"³"+;
+      		TRANS(nT4,gPicI) +"³"+;
+      		TRANS(nT5,gPicI)
 
 ENDIF
 
 P_10CPI
-//if prow()<62+gPStranica
-// nPom:=62+gPStranica-prow()
-// for i:=1 to nPom
-//   ?
-// next
-//endif
 ?
 ?
 ?  PADC("     " + Lokal("Obradio:") + "                                 " + Lokal("Direktor:") + "    ",80)
@@ -708,17 +366,25 @@ P_10CPI
 ?  PADC("_____________________                    __________________",80)
 ?
 FF
+
 IF lGusto
-  gRPL_Normal()
-  gPStranica-=nDSGusto
+	gRPL_Normal()
+  	gPStranica-=nDSGusto
 ENDIF
+
 END PRINT
+
 #ifdef CAX
-select opsld; use
-select rekld; use
-select ld
+	select opsld
+	use
+	select rekld
+	use
+	select ld
 #endif
+
 CLOSERET
+return
+
 
 
 function RekapLd(cId,nGodina,nMjesec,nIzn1,nIzn2,cIdPartner,cOpis,cOpis2,lObavDodaj)
