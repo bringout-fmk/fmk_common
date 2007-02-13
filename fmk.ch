@@ -216,6 +216,8 @@
 #define F_OBRACUNI 203
 #define F_RADSAT   213
 #define F_REKLDP   214
+#define F_IZDANJA  215
+#define F_RNAL	   216
 
 //kam
 #define F_KAMPRIPR 204
