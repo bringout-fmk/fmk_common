@@ -1,14 +1,15 @@
 #include "\dev\fmk\ld\ld.ch"
 
-
+// ----------------------------------------------------
+// osnovna funkcija za poziv izvjestaja - menij
+// ----------------------------------------------------
 function MnuIzvj()
-*{
 
 private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc,"1. kartice                   ")
+AADD(opc,"1. kartice                               ")
 AADD(opcexe,{|| MnuIzvK()})
 AADD(opc,"2. rekapitulacije")
 AADD(opcexe,{|| MnuIzvR()})
@@ -19,14 +20,19 @@ AADD(opcexe,{|| MnuIzvS()})
 AADD(opc,"5. ostali izvjestaji")
 AADD(opcexe,{|| MnuIzvO()})
 
+if gAHonorar == "D"
+	AADD(opc,"6. autorski honorari - izvjestaji")
+	AADD(opcexe,{|| mnu_ahon()})
+endif
+
 Menu_SC("izvj")
 
 return
-*}
 
+// ----------------------------------------
+// izvjestaji kartice
+// ----------------------------------------
 function MnuIzvK()
-*{
-
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -36,14 +42,13 @@ AADD(opcexe,{|| KartPl()})
 AADD(opc,"2. kartica plate za period (za m4)")
 AADD(opcexe,{|| UKartPl()})
 
-
 Menu_SC("kart")
 return
-*}
 
+// -----------------------------------------
+// menij - izvjestaji specifikacije
+// -----------------------------------------
 function MnuIzvS()
-*{
-
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -66,11 +71,11 @@ AADD(opcexe,{|| SpecPrimRj()})
 
 Menu_SC("spec")
 return
-*}
 
+// -------------------------------------
+// menij - pregledi
+// -------------------------------------
 function MnuIzvP()
-*{
-
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -95,10 +100,11 @@ AADD(opcexe,{|| IsplataTR("1")})
 
 Menu_SC("preg")
 return
-*}
 
 
-
+// --------------------------------------------
+// menij ostali izvjestaji
+// --------------------------------------------
 function MnuIzvO()
 private opc:={}
 private opcexe:={}
@@ -112,8 +118,6 @@ if (IsRamaGlas())
 	AADD(opcexe,{|| PlatePoRNalozima()})
 endif
 
-AADD(opc,"A. autorski honorari")
-AADD(opcexe,{|| AutorskiHonorari()})
 AADD(opc,"T. lista radnika za isplatu toplog obroka")
 AADD(opcexe,{|| to_list()})
 
@@ -121,6 +125,22 @@ Menu_SC("ost")
 return
 
 
+// --------------------------------------------
+// menij izvjestaji autorski honorari
+// --------------------------------------------
+function mnu_ahon()
+private opc:={}
+private opcexe:={}
+private Izbor:=1
+
+AADD(opc,"1. autorski honorari - lista               ")
+AADD(opcexe,{|| ah_list_rpt()})
+AADD(opc,"2. autorski honorari - specifikacija")
+AADD(opcexe,{|| ah_spec_rpt()})
+
+Menu_SC("a_honorari")
+
+return
 
 
 function MnuIzvR()

@@ -354,15 +354,21 @@ IF l2kolone
 	SvratiUFajl()
 	// SETPRC(0,0)
 ENDIF
+
 ? m
 ? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
 ? m
+
 cUneto:="D"
 nRRsati:=0 
+
 for i:=1 to cLDPolja
+	
 	cPom:=padl(alltrim(str(i)),2,"0")
+	
 	select tippr
 	seek cPom
+	
 	if tippr->uneto=="N" .and. cUneto=="D"
 		cUneto:="N"
 		? m
@@ -373,6 +379,7 @@ for i:=1 to cLDPolja
 		?? "",gValuta
 		? m
 	endif
+	
 	if tippr->(found()) .and. tippr->aktivan=="D"
 		if _i&cpom<>0 .or. _s&cPom<>0
 			// uvodi se djoker # : Primjer: Naziv tipa primanja
@@ -381,7 +388,9 @@ for i:=1 to cLDPolja
 			nDJ:=at("#",tippr->naz)
 			cTPNaz:=tippr->naz
 			if nDJ<>0
+				
 				RSati:=_s&cPom
+				
 				@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
 				@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
 				@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
@@ -391,10 +400,15 @@ for i:=1 to cLDPolja
 					cTPNAZ:=left(tippr->naz,nDJ-1)+alltrim(str(&cDJ))
 				endif
 			endif
+			
 			? cLMSK+tippr->id+"-"+padr(cTPNAZ,len(tippr->naz)),tippr->opis
 			nC1:=pcol()
+			
 			if tippr->fiksan $ "DN"
-				@ prow(),pcol()+8 SAY _s&cPom  pict gpics; ?? " s"
+				
+				@ prow(),pcol()+8 SAY _s&cPom  pict gpics
+				?? " s"
+				
 				if tippr->id=="01" .and. lRadniSati
 					nRRSati:=_s&cPom
 					@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
@@ -404,20 +418,26 @@ for i:=1 to cLDPolja
 					@ prow(),60+LEN(cLMSK) say _i&cPom pict gpici
 				endif
 			elseif tippr->fiksan=="P"
+				
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999.99%"
 				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
 			elseif tippr->fiksan=="B"
+				
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999999"; ?? " b"
 				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
 			elseif tippr->fiksan=="C"
+				
 				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
 			endif
+			
 			if "SUMKREDITA" $ tippr->formula .and. gReKrKP=="1"
+				
 				IF l2kolone
 					P_COND2
 				ELSE
 					P_COND
 				ENDIF
+				
 				? m
 				? cLMSK+"  ",Lokal("Od toga pojedinacni krediti:")
 				select radkr
@@ -431,26 +451,34 @@ for i:=1 to cLDPolja
 					@ prow(),58+LEN(cLMSK) SAY iznos pict "("+gpici+")"
 					skip 1
 				enddo
+				
 				? m
+				
 				IF l2kolone
 					P_COND2
 				ELSE
 					P_12CPI
 				ENDIF
+				
 				select ld
+				
 			elseif "SUMKREDITA" $ tippr->formula
+				
 				select radkr
 				set order to 1
 				seek str(_godina,4) + str(_mjesec,2) + _idradn
 				ukredita:=0
+				
 				IF l2kolone
 					P_COND2
 				ELSE
 					P_COND
 				ENDIF
+				
 				? m2:=cLMSK+"   ------------------------------------------------  --------- --------- -------"
 				?     cLMSK+Lokal("        Kreditor      /              na osnovu         Ukupno    Ostalo   Rata")
 				? m2
+				
 				do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn==_idradn
 					select kred
 					hseek radkr->idkred
@@ -463,11 +491,13 @@ for i:=1 to cLDPolja
 					ukredita+=iznos
 					skip 1
 				enddo
+				
 				IF l2kolone
 					P_COND2
 				ELSE
 					P_12CPI
 				ENDIF
+				
 				select ld
 			endif
 		endif
@@ -539,25 +569,55 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		?
 		?
 	ENDIF
+	
 	select por
 	go top
-	nPom:=nPor:=0
+	
+	nPom:=0
+	nPor:=0
 	nC1:=30+LEN(cLMSK)
 	nPorOl:=0
+	
 	do while !eof()
+	
+		lStepPor := .f.
+		
+		if por->(FIELDPOS("ALGORITAM")) <> 0
+			if por->algoritam == "S"
+				lStepPor := .t.
+			endif
+		endif
+		
 		PozicOps(POR->poopst)
+		
 		IF !ImaUOp("POR",POR->id)
 			SKIP 1
 			LOOP
 		ENDIF
-		? cLMSK+id,"-",naz
-		@ prow(),pcol()+1 SAY iznos pict "99.99%"
-		nC1:=pcol()+1
-		@ prow(),pcol()+1 SAY MAX(_UNeto,PAROBR->prosld*gPDLimit/100) pict gpici
-		@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)) pict gpici
-		nPor+=nPom
+		
+		if lStepPor == .f.
+		
+			? cLMSK+id,"-",naz
+		
+			@ prow(),pcol()+1 SAY iznos pict "99.99%"
+		
+			nC1:=pcol()+1
+		
+			@ prow(),pcol()+1 SAY MAX(_UNeto,PAROBR->prosld*gPDLimit/100) pict gpici
+			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)) pict gpici
+		
+			nPor += nPom
+		
+		else
+			// stepenasti porez....
+			
+			// nPor += ....
+		
+		endif
+		
 		skip 1
 	enddo
+	
 	if radn->porol<>0  .and. gDaPorOl=="D" .and. !Obr2_9()  // poreska olaksica
 		if alltrim(cVarPorOl)=="2"
 			nPorOl:=RADN->porol
@@ -578,13 +638,17 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		@ prow(),nC1 SAY parobr->prosld pict gpici
 		@ prow(),pcol()+1 SAY nPorOl    pict gpici
 	endif
+	
 	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
+		
 		? m
 		? cLMSK+Lokal("Ukupno Porez")
 		@ prow(),nC1 SAY space(len(gpici))
 		@ prow(),pcol()+1 SAY nPor-nPorOl pict gpici
 		? m
+		
 	endif
+	
 	if !lSkrivena .and. prow()>55+gPStranica
 		FF
 	endif
@@ -592,17 +656,23 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	?
 	
 	m:=cLMSK+"----------------------- -------- ------------- -------------"
+	
 	select dopr
 	go top
-	nPom:=nDopr:=0
+	
+	nPom:=0
+	nDopr:=0
 	nC1:=20+LEN(cLMSK)
 	
 	do while !eof()
+		
 		PozicOps(DOPR->poopst)
+		
 		IF !ImaUOp("DOPR",DOPR->id) .or. !lPrikSveDopr .and. !DOPR->ID $ cPrikDopr
 			SKIP 1
 			LOOP
 		ENDIF
+		
 		if right(id,1)=="X"
 			? m
 		endif
@@ -614,6 +684,7 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		
 		? cLMSK+id,"-",naz
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
+		
 		if empty(idkbenef) // doprinos udara na neto
 			if ("BENEF" $ dopr->naz .and. nBFO <> 0)
 				@ prow(),pcol()+1 SAY nBFO pict gpici
@@ -635,33 +706,34 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 				@ prow(),pcol()+1 SAY nPom2 pict gpici
 				nC1:=pcol()+1
 				nPom:=max(dlimit,round(iznos/100*nPom2,gZaok2))
-				// if round(iznos,4)=0 .and. dlimit>0  // fuell boss
-				//  nPom:=nLjudi*dlimit
-				// endif
 				@ prow(),pcol()+1 SAY nPom pict gpici
 			endif
 		endif
+		
 		if right(id,1)=="X"
 			? m
 			?
 			nDopr+=nPom
 		endif
+		
 		if !lSkrivena .and. prow()>57+gPStranica
 			FF
 		endif
+		
 		skip 1
-	enddo // doprinosi
+		
+	enddo
 
-	m:=cLMSK+"--------------------------"
+	m := cLMSK + "--------------------------"
 
 	// if prow()>31
-	if gPotp<>"D"
+	if gPotp <> "D"
 		if pcount()==0
 			FF
 		endif
 	endif
 	
-endif // gPrBruto
+endif
 
 if l2kolone
 	SET PRINTER TO (cDefDev) ADDITIVE

@@ -58,12 +58,10 @@ if gLokal <> "0"
 endif
 Menu_SC("op")
 return
-*}
 
 
 
 function MnuSpSif()
-*{
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -86,9 +84,6 @@ if lViseObr
 	else
 		AADD(opcexe, {|| MsgBeep(cZabrana)})
 	endif
-else
-	AADD(opc,"---------------------")
-	AADD(opcexe, {|| nil})
 endif
 
 AADD(opc,"4. porezi")
@@ -103,20 +98,17 @@ if gSihtarica=="D"
 	AADD(opcexe, {|| P_TprSiht()})
 	AADD(opc,"8. norme radova u sihtarici   ")
 	AADD(opcexe, {|| P_NorSiht()})
-else
-	AADD(opc,"-----------------------")
-	AADD(opcexe, {|| nil})
-	AADD(opc,"-----------------------")
-	AADD(opcexe, {|| nil})
 endif
 
+if gAHonorar == "D"
+	AADD(opc,"9. autorski honorari - izdanja ")
+	AADD(opcexe, {|| P_Izdanja()})
+endif
 
 Menu_SC("spc")
 return
-*}
 
 function OSifre()
-*{
 
 O_SIFK
 O_SIFV
@@ -125,6 +117,10 @@ O_BANKE
 if gSihtarica=="D"
 	O_TPRSIHT
   	O_NORSIHT
+endif
+
+if gAHonorar == "D"
+	O_IZDANJA
 endif
 
 O_RADN
@@ -147,7 +143,6 @@ if (IsRamaGlas())
 endif
 
 return
-*}
 
 
 

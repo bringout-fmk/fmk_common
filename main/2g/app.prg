@@ -199,11 +199,13 @@ AADD(opcexe, {|| MnuParams()})
 private Izbor:=1
 
 say_fmk_ver()
+say_ahonorar()
 
 Menu_SC("gld",.t.,lPodBugom)
 
 return
-*}
+
+
 
 *void TLDMod::sRegg()
 *{
@@ -256,7 +258,8 @@ public cFormula:=""
 public gRJ:="01"
 public gnHelpObr:=0
 public gMjesec:=1
-public gObracun:=" "
+public gObracun := " "
+public gIzdanje := SPACE(10)
 public gGodina:=2002
 public gZaok:=2
 public gZaok2:=2
@@ -267,6 +270,7 @@ public gTipObr:="1"
 public gVarSpec:="1"
 public cVarPorOl:="1"
 public gSihtarica:="N"
+public gAHonorar := "N"
 public gFUPrim:=PADR("UNETO+I24+I25",50)
 public gBFForm:=PADR("",100)
 public gFURaz:=PADR("",60)
@@ -336,6 +340,7 @@ Rpar("ur",@gFURaz)
 Rpar("va",@gValuta)
 Rpar("vs",@gVarSpec)
 Rpar("Si",@gSihtarica)
+Rpar("aH",@gAHonorar)
 Rpar("z2",@gZaok2)
 Rpar("zo",@gZaok)
 //Rpar("tB",@gTabela)
@@ -357,15 +362,21 @@ ELSE
 ENDIF
 
 return
-*}
 
+
+// --------------------------------------------------------
+// prikaz informacije da se radi o autorskim honorarima
+// --------------------------------------------------------
+static function say_ahonorar()
+if gAHonorar <> nil .and. gAHonorar == "D"
+	@ 24, 10 SAY "AUTORSKI HONORARI" COLOR "BG+/B"
+endif
+return
 
 
 function RadnikJeProizvodni()
-*{
 private cPom
 cPom:=IzFmkIni("ProizvodniRadnik","Formula",'"P"$RADN->K4',KUMPATH)
 return (&cPom)
-*}
 
 

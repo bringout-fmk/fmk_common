@@ -1,20 +1,15 @@
 #include "\dev\fmk\ld\ld.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
+
+
 function TDbLDNew()
-*{
 local oObj
 oObj:=TDbLD():new()
 oObj:self:=oObj
 oObj:cName:="LD"
 oObj:lAdmin:=.f.
 return oObj
-*}
+
 
 /*! \file fmk/ld/db/2g/db.prg
  *  \brief LD Database
@@ -240,6 +235,7 @@ public gaDbfs := {;
 { F_POR    ,"POR"     , P_SIFPATH     },;
 { F_DOPR   ,"DOPR"    , P_SIFPATH     },;
 { F_PAROBR ,"PAROBR"  , P_SIFPATH     },;
+{ F_IZDANJA,"IZDANJA" , P_SIFPATH     },;
 { F_TIPPR  ,"TIPPR"   , P_SIFPATH     },;
 { F_TIPPR2 ,"TIPPR2"  , P_SIFPATH     },;
 { F_KRED   ,"KRED"    , P_SIFPATH     },;
@@ -250,8 +246,6 @@ public gaDbfs := {;
 }
 
 return
-
-*}
 
 
 /*! \fn *void TDbLD::install(string cKorisn,string cSifra,variant p3,variant p4,variant p5,variant p6,variant p7)
@@ -302,7 +296,7 @@ AADD(aDBf,{ 'POL'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'MATBR'               , 'C' ,  13 ,  0 })
 AADD(aDBf,{ 'DATOD'               , 'D' ,   8 ,  0 })
 AADD(aDBf,{ 'brknjiz'             , 'C' ,  12,   0 })
-AADD(aDBf,{ 'brtekr'              , 'C' ,  20,   0 })
+AADD(aDBf,{ 'brtekr'              , 'C' ,  40,   0 })
 AADD(aDBf,{ 'Isplata'             , 'C' ,   2,   0 })
 AADD(aDBf,{ 'IdBanka'             , 'C' ,   6,   0 })
 AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
@@ -395,16 +389,17 @@ endif
 
 // OPSLD
 if (nArea==-1 .or. nArea==(F_OPSLD))
-	//REKLD.DBF
 
 	if !FILE(PRIVPATH+"OPSLD.DBF")
-  		aDbf:={   {"ID"    , "C" ,  1, 0},;
+	
+  		aDbf:={ {"ID"    , "C" ,  1, 0},;
             		{"IDOPS" , "C" ,  4, 0},;
             		{"IZNOS" , "N" , 18, 4},;
             		{"IZNOS2", "N" , 18, 4},;
-            		{"LJUDI" , "N" ,  4, 0};
+            		{"LJUDI" , "N" ,  4, 0} ;
           		}
-  		DBCREATE2(PRIVPATH+"OPSLD.DBF",aDbf)
+  		DBCREATE2(PRIVPATH + "OPSLD.DBF", aDbf)
+		
 	endif
 
   	CREATE_INDEX("1","id+idops",PRIVPATH+"OPSLD")
@@ -445,11 +440,12 @@ AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
 AADD(aDBf,{ 'Aktivan'             , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'Fiksan'              , 'C' ,   1 ,  0 })
-AADD(aDBf,{ 'UFS'                 , 'C' ,   1 ,  0 })  // u fond sati
+AADD(aDBf,{ 'UFS'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'UNeto'               , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'Koef1'               , 'N' ,   5 ,  2 })
 AADD(aDBf,{ 'Formula'             , 'C' , 200 ,  0 })
 AADD(aDBf,{ 'OPIS'                , 'C' ,   8 ,  0 })
+AADD(aDBf,{ 'TPR_TIP'             , 'C' ,   1 ,  0 })
 
 if !file(SIFPATH+"TIPPR.DBF")
    DBCREATE2(SIFPATH+'TIPPR.DBF',aDbf)
@@ -492,56 +488,51 @@ CREATE_INDEX("ID","id",SIFPATH+"KRED")
 CREATE_INDEX("NAZ","naz",SIFPATH+"KRED")
 
 
-// OPS
-/*
-if !file(SIFPATH+"OPS.DBF")
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   4 ,  0 })
-   AADD(aDBf,{ 'IDJ'                 , 'C' ,   3 ,  0 })
-   AADD(aDBf,{ 'IDKAN'               , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'IDN0'                , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-   AADD(aDBf,{ 'ZIPCODE'             , 'C' ,   5 ,  0 })
-   AADD(aDBf,{ 'PUCCANTON'           , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'PUCCITY'             , 'C' ,   5 ,  0 })
-   DBCREATE2(SIFPATH+'OPS.DBF',aDbf)
-endif
-CREATE_INDEX("ID","id",SIFPATH+"OPS")
-CREATE_INDEX("IDJ","idj",SIFPATH+"OPS")
-CREATE_INDEX("IDKAN","idkan",SIFPATH+"OPS")
-CREATE_INDEX("IDN0","idN0",SIFPATH+"OPS")
-CREATE_INDEX("NAZ","naz",SIFPATH+"OPS")
-
-*/
-
-
 // POR
 if !file(SIFPATH+"POR.DBF")
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-   AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
-   AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
-   AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
-   DBCREATE2(SIFPATH+'POR.DBF',aDbf)
+
+   	aDBf:={}
+  	
+	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+   	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+   	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+   	
+	// stepenasti porez
+	AADD(aDBf,{ 'ALGORITAM'           , 'C' ,   1 ,  0 })
+	AADD(aDBf,{ 'S_STO_1'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_1'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_2'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_2'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_3'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_3'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_4'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_4'             , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'S_STO_5'             , 'N' ,   5 ,  2 })
+	AADD(aDBf,{ 'S_IZN_5'             , 'N' ,  12 ,  2 })
+   
+	DBCREATE2(SIFPATH+'POR.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",SIFPATH+"POR")
 
 
 // DOPR
 if !file(SIFPATH+"DOPR.DBF")
-   aDBf:={}
-   AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
-   AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
-   AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
-   AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
-   AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
-   AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
-   DBCREATE2(SIFPATH+'DOPR.DBF',aDbf)
+   
+	aDBf:={}
+   	AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
+   	AADD(aDBf,{ 'NAZ'                 , 'C' ,  20 ,  0 })
+   	AADD(aDBf,{ 'IZNOS'               , 'N' ,   5 ,  2 })
+   	AADD(aDBf,{ 'IdKBenef'            , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
+   	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
+	
+   	DBCREATE2(SIFPATH+'DOPR.DBF',aDbf)
 endif
 
 CREATE_INDEX("ID","id",SIFPATH+"DOPR")
-
 
 aDBf:={}
 AADD(aDBf,{ 'Godina'              , 'N' ,   4 ,  0 })
@@ -636,30 +627,43 @@ AADD(aDBf,{ 'USATI'               , 'N' ,   8 ,  1 })
 AADD(aDBf,{ 'UNETO'               , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'UODBICI'             , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'UIZNOS'              , 'N' ,  13 ,  2 })
+
 if !file(KUMPATH+'LD.DBF')
 	DBCREATE2(KUMPATH+'LD.DBF',aDbf)
 endif
 
-
 IF lVOBrisiCDX
-  DelSve("LD.CDX",trim(cDirRad))
+	DelSve("LD.CDX", trim(cDirRad))
 ENDIF
 
 IF lViseObr
-  // polje OBR koristimo u indeksima
-  CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn",KUMPATH+"LD")
-  CREATE_INDEX("2","str(godina)+str(mjesec)+obr+idradn+idrj",KUMPATH+"LD")
-  CREATE_INDEX("3","str(godina)+idrj+idradn",KUMPATH+"LD")
-  CREATE_INDEX("4","str(godina)+idradn+str(mjesec)+obr",KUMPATH+"LD")
-  CREATE_INDEX("1U","str(godina)+idrj+str(mjesec)+idradn",KUMPATH+"LD")
-  CREATE_INDEX("2U","str(godina)+str(mjesec)+idradn+idrj",KUMPATH+"LD")
+
+	// polje OBR koristimo u indeksima
+  	CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+obr+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("2","str(godina)+str(mjesec)+obr+idradn+idrj",KUMPATH+"LD")
+  	CREATE_INDEX("3","str(godina)+idrj+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("4","str(godina)+idradn+str(mjesec)+obr",KUMPATH+"LD")
+  	CREATE_INDEX("1U","str(godina)+idrj+str(mjesec)+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("2U","str(godina)+str(mjesec)+idradn+idrj",KUMPATH+"LD")
+
+ELSEIF gAHonorar == "D"
+
+	// polje OBR koristimo u indeksima
+  	CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+izdanje+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("2","str(godina)+str(mjesec)+izdanje+idradn+idrj",KUMPATH+"LD")
+  	CREATE_INDEX("3","str(godina)+idrj+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("4","str(godina)+idradn+str(mjesec)+izdanje",KUMPATH+"LD")
+  	CREATE_INDEX("5","idradn+str(godina)+str(mjesec)",KUMPATH+"LD")
+
 ELSE
-  // standardno: ne postoji polje OBR
-  CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+idradn",KUMPATH+"LD")
-  CREATE_INDEX("2","str(godina)+str(mjesec)+idradn+idrj",KUMPATH+"LD")
-  CREATE_INDEX("3","str(godina)+idrj+idradn",KUMPATH+"LD")
-  CREATE_INDEX("4","str(godina)+idradn+str(mjesec)",KUMPATH+"LD")
-  CREATE_INDEX("5","idradn+str(godina)+str(mjesec)",KUMPATH+"LD")
+  	
+	// standardno: ne postoji polje OBR
+  	CREATE_INDEX("1","str(godina)+idrj+str(mjesec)+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("2","str(godina)+str(mjesec)+idradn+idrj",KUMPATH+"LD")
+  	CREATE_INDEX("3","str(godina)+idrj+idradn",KUMPATH+"LD")
+  	CREATE_INDEX("4","str(godina)+idradn+str(mjesec)",KUMPATH+"LD")
+  	CREATE_INDEX("5","idradn+str(godina)+str(mjesec)",KUMPATH+"LD")
+	
 ENDIF
 
 CREATE_INDEX("RADN","idradn",KUMPATH+"LD")
@@ -669,15 +673,12 @@ if !file(PRIVPATH+"LDSM.DBF")
    DBCREATE2(PRIVPATH+"LDSM.DBF",aDbf)
 endif
 
-
 CREATE_INDEX("1","Obr+str(godina)+str(mjesec)+idradn+idrj",PRIVPATH+"LDSM")
 CREATE_INDEX("RADN","idradn",PRIVPATH+"LDSM")
-
 
 if !file(PRIVPATH+"_LD.DBF")
    DBCREATE2(PRIVPATH+"_LD.DBF",aDbf)
 endif
-
 
 if !file(SIFPATH+"STRSPR.DBF")
     aDbf:={ {"id","C",3,0} ,;
@@ -804,9 +805,6 @@ CREATE_INDEX("ID","id+SORT+naz",SIFPATH+"SIFK")
 CREATE_INDEX("ID2","id+oznaka",SIFPATH+"SIFK")
 CREATE_INDEX("NAZ","naz",SIFPATH+"SIFK")
 
-
-
-
 if !file(SIFPATH+"SIFV.dbf")  // sifrarnici - vrijednosti karakteristika
    aDbf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   8 ,  0 })
@@ -839,7 +837,6 @@ endif
 CREATE_INDEX("ID","id", SIFPATH+"BANKE")
 CREATE_INDEX("NAZ","naz", SIFPATH+"BANKE")
 
-
 // OBRACUNI.DBF
 if !file(KUMPATH+"OBRACUNI.DBF")
         aDbf:={}
@@ -862,9 +859,28 @@ if !file(KUMPATH+"RADSAT.DBF")
 endif
 CREATE_INDEX("IDRADN","idradn",KUMPATH+"RADSAT")
 
+if gAHonorar == "D"
+	
+	if !FILE( SIFPATH + "IZDANJA.DBF" )
+    		
+		aDbf := {}
+		AADD(aDbf, {"ID", "C", 10, 0})
+		AADD(aDbf, {"IZ_NAZ",  "C", 30, 0})
+		AADD(aDbf, {"IZ_BROJ", "C", 10, 0})
+		AADD(aDbf, {"IZ_DATUM", "D", 8, 0})
+    
+     		DBCREATE2( SIFPATH + "IZDANJA.DBF", aDbf)
+	endif
+	
+	CREATE_INDEX("ID","ID", SIFPATH + "IZDANJA")
+	CREATE_INDEX("NAZ","IZ_NAZ", SIFPATH + "IZDANJA")
+	CREATE_INDEX("DAT","DTOS(IZ_DATUM)+ID", SIFPATH + "IZDANJA")
+	CREATE_INDEX("BR","IZ_BROJ", SIFPATH + "IZDANJA")
+	
+endif
+
 
 return
-*}
 
 
 
@@ -894,15 +910,21 @@ if i==F_LD .or. i=F_RADN .or. i==F_RADKR .or. i==F_RJ .or. i==F_RADSIHT .or. i==
 endif
 
 if i==F_POR .or. i==F_DOPR .or. i==F_PAROBR .or. i==F_TIPPR .or. i==F_TIPPR2 .or. i==F_KRED .or. i==F_STRSPR .or. i==F_KBENEF .or. i==F_VPOSLA .or. i==F_BANKE
-	lIdiDalje:=.t.
+	lIdiDalje := .t.
 endif
 
 if i==F_OBRACUNI .or. i==F_RADSAT
-	lIdiDalje:=.t.
+	lIdiDalje := .t.
 endif
 
 if (gSecurity=="D" .and. (i==175 .or. i==176 .or. i==177 .or. i==178 .or. I==179))
-	lIdiDalje:=.t.
+	lIdiDalje := .t.
+endif
+
+if gAHonorar == "D"
+	if i==F_IZDANJA
+		lIdiDalje := .t.
+	endif
 endif
 
 if lIdiDalje

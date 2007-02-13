@@ -52,3 +52,5 @@
 
 #xcommand O_RADSAT => select (F_RADSAT) ; use (KUMPATH+"RADSAT"); set order to tag "IDRADN"
 
+#xcommand O_IZDANJA => select (F_IZDANJA) ; use (SIFPATH+"IZDANJA"); set order to tag "ID"
+

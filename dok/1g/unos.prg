@@ -12,7 +12,6 @@ private nPlacenoRSati
 
 cIdRadn:=SPACE(_LR_)
 GetList:={}
-altd()
 cRj:=gRj
 nGodina:=gGodina
 nMjesec:=gMjesec
@@ -30,6 +29,7 @@ lRadniSati:=(IzFmkIni("LD","RadniSati","N",KUMPATH)=="D")
 do while .t.
 	
 	lSaveObracun:=.f.
+	
 	PrikaziBox(@lSaveObracun)
 
 	if (lSaveObracun)
@@ -74,7 +74,7 @@ do while .t.
 	Beep(1)
 
 enddo // do while .t.
-*}
+return
 
 
 
@@ -122,6 +122,13 @@ cMjesec:=gMjesec
 cGodina:=gGodina
 cObracun:=gObracun
 
+if gAHonorar == "D"
+	cIzdanje := SPACE(10)
+	if gIzdanje <> nil .and. !EMPTY(gIzdanje)
+		cIzdanje := gIzdanje
+	endif
+endif
+
 if Logirati("LD","DOK","UNOS")
 	lLogUnos:=.t.
 else
@@ -160,19 +167,34 @@ Box(,21,77)
 	@ m_x+1,COL()+2 SAY Lokal("Godina: ")
 	QQOutC(str(cGodina,4),"GR+/N")
 	
-	@ m_x+2,m_y+2 SAY Lokal("Radnik   ") GET cIdRadn valid {|| P_Radn(@cIdRadn),SetPos(m_x+2,m_y+26),QQOUT(TRIM(radn->naz)+" ("+trim(radn->imerod)+") "+radn->ime),.t.}
+	@ m_x+2,m_y+2 SAY Lokal("Radnik:") GET cIdRadn ;
+	  VALID {|| P_Radn(@cIdRadn), SetPos(m_x+2,m_y+17), ;
+	  QQOUT(PADR( TRIM(radn->naz)+" ("+TRIM(radn->imerod)+") "+TRIM(radn->ime), 28 )), .t.}
+	
+	if gAHonorar == "D"
+		@ m_x+2,m_y+45 SAY Lokal("Izd:") GET cIzdanje valid {|| p_izdanja(@cIzdanje), SetPos(m_x+2,m_y+61), QQOUT(PADR(TRIM(izdanja->iz_naz)+" br." + trim(izdanja->iz_broj), 13)),.t.}
+	endif
+	
 	read
+	
 	clvbox()
 	ESC_BCR
 
 	select radn
 	select ld
 	
-	seek STR(cGodina,4)+cIdRj+str(cMjesec,2)+IF(lViseObr,cObracun,"")+cIdRadn
+	if gAHonorar == "D"
+		seek STR(cGodina,4)+cIdRj+str(cMjesec,2)+cIzdanje+cIdRadn
+	else
+		seek STR(cGodina,4)+cIdRj+str(cMjesec,2)+IF(lViseObr,cObracun,"")+cIdRadn
+	endif
 	
 	if found()
   		lNovi:=.f.
   		scatter()
+		if gAHonorar == "D"
+			gIzdanje := _izdanje
+		endif
 	else
 		lNovi:=.t.
   		append blank
@@ -182,7 +204,11 @@ Box(,21,77)
 		_idradn:=cIdRadn
 		_mjesec:=cMjesec
   		if lViseObr
-			_obr:=cObracun
+			_obr := cObracun
+		endif
+		if gAHonorar == "D"
+			_izdanje := cIzdanje
+			gIzdanje := cIzdanje
 		endif
 	endif
 
@@ -225,6 +251,11 @@ Box(,21,77)
 	endif 
 
 	PrikUnos()
+	
+	if gAHonorar == "D"
+		izr_honorar()
+	endif
+	
 	PrikUkupno(@lSaveObracun)
 		
 	if lLogUnos

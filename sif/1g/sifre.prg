@@ -2,7 +2,6 @@
 
 
 function P_Radn(cId,dx,dy)
-*{
 
 local i
 local nArr
@@ -383,12 +382,16 @@ endif
 if OPS->(fieldpos("DNE"))<>0
   	AADD( ImeKol, { padr("Bez doprinosa:",20), {||  dne}, "dne" } )
 endif
-if OPS->(fieldpos("PTAH"))<>0
-  	AADD( ImeKol, { padr("Prizn.tr.aut.hon.",20), {||  ptah}, "ptah" } )
+if OPS->(fieldpos("AH_POR"))<>0
+  	AADD( ImeKol, { padr("aut.hon.porez",20), {||  ah_por}, "ah_por" })
 endif
-if OPS->(fieldpos("PSAH"))<>0
-  	AADD( ImeKol, { padr("Por.stopa aut.hon.",20), {||  psah}, "psah" } )
+if OPS->(fieldpos("AH_PRTR"))<>0
+  	AADD( ImeKol, {padr("aut.hon.pr.trosak",20), {|| ah_prtr}, "ah_prtr" })
 endif
+if OPS->(fieldpos("AH_PRST"))<>0
+  	AADD( ImeKol, {padr("aut.hon.pr.stopa",20), {|| ah_prst}, "ah_prst" })
+endif
+
 // dodaj specificna polja za popunu obrasca DP
 if OPS->(fieldpos("ZIPCODE"))<>0
   	AADD(ImeKol,{padr("PTT br.", 7),{|| zipcode},"zipcode"})
@@ -743,6 +746,36 @@ return PostojiSifra(F_VPOSLA, 1, 10, 55, ;
 	Lokal("Lista: Vrste posla"), ;
 	@cId,dx,dy)
 *}
+
+
+// ----------------------------------------------
+// sifrarnik izdanja
+// ----------------------------------------------
+function P_Izdanja(cId,dx,dy)
+local i
+local nArr
+nArr:=SELECT()
+private imekol := {}
+private kol := {}
+
+select (F_IZDANJA)
+if (!used())
+	O_IZDANJA
+endif
+select (nArr)
+
+ImeKol:={ { padr("Id",10), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} }, ;
+          { padr("Naziv",20), {||  iz_naz}, "iz_naz" }, ;
+          { padr("broj",10), {|| iz_broj}, "iz_broj"  }, ;
+          { padr("datum",8), {|| iz_datum}, "iz_datum"  } }
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
+return PostojiSifra(F_IZDANJA,1,10,55,"Autorski honorari: lista izdanja",@cId,dx,dy)
+
+
 
 
 function P_NorSiht(cId,dx,dy)

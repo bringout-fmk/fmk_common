@@ -1,8 +1,10 @@
 #include "\dev\fmk\ld\ld.ch"
 #include "\dev\fmk\ld\cdx\rddinit.ch"
 
+// -----------------------------------------
+// parametri - firma
+// -----------------------------------------
 function SetFirma()
-*{
 private GetList:={}
 
 Box(, 6,60)
@@ -31,11 +33,13 @@ if (LastKey()<>K_ESC)
 endif
 
 return
-*}
 
 
+
+// -----------------------------------------
+// parametri - formati prikaza
+// -----------------------------------------
 function SetForma()
-*{
 private GetList:={}
 
 Box(,5,60)
@@ -56,11 +60,13 @@ if (LastKey()<>K_ESC)
 endif
 
 return
-*}
 
 
+
+// -----------------------------------------
+// parametri - formule
+// -----------------------------------------
 function SetFormule()
-*{
 private GetList:={}
 
 Box(,16,77)
@@ -94,16 +100,17 @@ if (LastKey()<>K_ESC)
 endif
 
 return
-*}
 
 
+// -----------------------------------------
+// parametri nacin obracuna
+// -----------------------------------------
 function SetObracun()
-*{
 private GetList:={}
 
 cVarPorol:=PADR(cVarPorol,2)
 
-Box(,10,77)
+Box(, 11, 77)
 	@ m_x+1,m_y+2 SAY "Tip obracuna " GET gTipObr
       	@ m_x+2,m_y+2 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid glistic $ "DN"
       	@ m_x+3,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" valid V_setform()
@@ -115,7 +122,8 @@ Box(,10,77)
 
       	@ m_x+9,m_y+2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  valid gVarSpec $ "12" pict "9"
       	@ m_x+10,m_y+2 SAY "Obrada sihtarice ?" GET gSihtarica valid gSihtarica $ "DN" pict "@!"
-      	read
+      	@ m_x+11,m_y+2 SAY "Obrada autorskih honorara ?" GET gAHonorar valid gAHonorar $ "DN" .and. ahon_ready() pict "@!"
+	read
 BoxC()
 
 if (LastKey()<>K_ESC)
@@ -127,15 +135,15 @@ if (LastKey()<>K_ESC)
       	WPar("um",gUNMjesec)
       	Wpar("vs",gVarSpec)
       	Wpar("Si",gSihtarica)
+      	Wpar("aH",gAHonorar)
 endif
 
 return
-*}
 
-
-
+// -----------------------------------------------
+// formati prikaza dokumenata
+// -----------------------------------------------
 function SetPrikaz()
-*{
 private GetList:={}
 
 Box(,7,77)
@@ -161,12 +169,12 @@ if (LastKey()<>K_ESC)
 endif
 
 return
-*}
 
 
-
+// -----------------------------------------
+// parametri - razno
+// -----------------------------------------
 function SetRazno()
-*{
 private GetList:={}
 
 Box(, 3,60)
@@ -175,15 +183,15 @@ Box(, 3,60)
 BoxC()
 
 if (LastKey()<>K_ESC)
-	WPar("os", @gFSpec)   // fajl-obrazac specifikacije
+	WPar("os", @gFSpec)   
+	// fajl-obrazac specifikacije
 endif
 
 return
-*}
+
 
 
 function V_SetForm()
-*{
 local cScr
 local nArr:=SELECT()
 
@@ -226,120 +234,10 @@ endif
 
 select (nArr)
 return .t.
-*}
 
-
-/*
-function SkloniSezonu(cSezona,fInverse,fDa,fNulirati,fRS)
-*{
-local cScr
-
-if fDa==nil
-	fDa:=.f.
-endif
-
-if fInverse==nil
-	fInverse:=.f.
-endif
-
-if fNulirati==nil
-	fNulirati:=.f.
-endif
-
-if fRs==nil
-	// mrezna radna stanica , sezona je otvorena
-  	fRs:=.f.
-endif
-
-if fRs // radna stanica
-	if File(PRIVPATH+cSezona+SLASH+"_RADKR.DBF")
-      	// nema se sta raditi ......., pripr.dbf u sezoni postoji !
-      		return
-	endif
-  	aFilesK:={}
-  	aFilesS:={}
-  	aFilesP:={}
-endif
-
-save screen to cScr
-
-cls
-?
-if fInverse
-	? "Prenos iz  sezonskih direktorija u radne podatke"
-else
-	? "Prenos radnih podataka u sezonske direktorije"
-endif
-
-?
-// privatni
-fNul:=.f.
-
-Skloni(PRIVPATH,"PARAMS.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"_RADN.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"_RADKR.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"_OPSLD.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"_KRED.DBF",cSezona,finverse,fda,fnul)
-Skloni(PRIVPATH,"_PRIPNO.DBF",cSezona,finverse,fda,fnul)
-
-if fNulirati
-	fNul:=.t.
-else
-	fNul:=.f.
-endif  // kumulativ datoteke
-
-Skloni(PRIVPATH,"LDSM.DBF",cSezona,finverse,fda,fnul)
-
-if fRs
-	// mrezna radna stanica!!! , baci samo privatne direktorije
- 	?
- 	?
- 	?
- 	Beep(4)
- 	? "pritisni nesto za nastavak.."
- 	restore screen from cScr
- 	return
-endif
-
-fNul:=.f.
-
-Skloni(KUMPATH,"RADN.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"RADKR.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"RJ.DBF",cSezona,finverse,fda,fnul)
-Skloni(KUMPATH,"LD.DBF",cSezona,finverse,fda,fnul)
-
-fNul:=.f.
-
-Skloni(SIFPATH,"PAROBR.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"KRED.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"OPS.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"POR.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"DOPR.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"STRSPR.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"KBENEF.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"VPOSLA.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"TIPPR.DBF",cSezona,finverse,fda,fnul)
-//if lViseObr
-Skloni(SIFPATH,"TIPPR2.DBF",cSezona,finverse,fda,fnul)
-//endif
-Skloni(SIFPATH,"SIFK.DBF",cSezona,finverse,fda,fnul)
-Skloni(SIFPATH,"SIFV.DBF",cSezona,finverse,fda,fnul)
-
-//sifrarnici
-?
-?
-?
-Beep(4)
-? "pritisni nesto za nastavak.."
-
-restore screen from cScr
-return
-*}
-*/
 
 
 function PrenosLD()
-*{
 Beep(4)
 MsgBeep("Da bi se rasteretili od podataka koji nam nisu potrebni,#"+;
         "vrsimo brisanje nepotrebnih podataka u tekucoj godini.##"+;

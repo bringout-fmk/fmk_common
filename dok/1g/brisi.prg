@@ -3,7 +3,6 @@
 
 
 function BrisiRadnika()
-*{
 local nTrec
 local cIdRadn
 local cMjesec
@@ -26,6 +25,9 @@ do while .t.
 	cMjesec:=gMjesec
 	cGodina:=gGodina
 	cObracun := gObracun
+	if gAHonorar == "D"
+		cIzdanje := gIzdanje
+	endif
 	Box(,4,60)
 		@ m_x+1,m_y+2 SAY "Radna jedinica: "
 		QQOUTC(cIdRJ,"N/W")
@@ -35,9 +37,16 @@ do while .t.
   			@ m_x+2,col()+2 SAY "Obracun: "
 			QQOUTC(cObracun,"N/W")
 		endif
+		
+		if gAHonorar == "D"
+  			@ m_x+2,col()+2 SAY "Izdanje: " GET cIzdanje VALID !EMPTY(cIzdanje) .and. p_izdanja(@cIzdanje)
+		endif
+		
 		@ m_x+3,m_y+2 SAY "Godina: "
 		QQOUTC(STR(cGodina,4),"N/W")
+		
 		@ m_x+4,m_y+2 SAY "Radnik" GET cIdRadn valid {|| cIdRadn $ "XXXXXX" .or. P_Radn(@cIdRadn),SetPos(m_x+2,m_y+20),QQOUT(TRIM(radn->naz)+" ("+TRIM(radn->imerod)+") "+radn->ime),.t.}
+		
 		read
 		ESC_BCR
 	BoxC()
@@ -52,7 +61,11 @@ do while .t.
 
 	if cIdRadn<>"XXXXXX"
 		select ld
-		seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()+cIdRadn
+		if gAHonorar == "D"
+			seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+cIzdanje+cIdRadn
+		else
+			seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()+cIdRadn
+		endif
 		if Found()
   			if Pitanje(,"Sigurno zelite izbrisati ovaj zapis D/N","N")=="D"
     				delete
@@ -99,12 +112,15 @@ return
 *}
 
 function BrisiMjesec()
-*{
 local cMjesec
 local cIdRj
 local fnovi
 nUser:=001
 O_RADN
+
+if gAHonorar == "D"
+	O_IZDANJA
+endif
 
 if Logirati(goModul:oDataBase:cName,"DOK","BRISIMJESEC")
 	lLogBrMjesec:=.t.
@@ -112,20 +128,32 @@ else
 	lLogBrMjesec:=.f.
 endif
 
-
 do while .t.
+
 	O_LD
+	
 	cIdRadn:=SPACE(_LR_)
 	cIdRj:=gRj
 	cMjesec:=gMjesec
 	cGodina:=gGodina
 	cObracun:=gObracun
+	
+	if gAHonorar == "D"
+		cIzdanje := gIzdanje
+	endif
+	
 	Box(,4,60)
 		@ m_x+1,m_y+2 SAY "Radna jedinica: " GET cIdRJ
 		@ m_x+2,m_y+2 SAY "Mjesec: "  GET cMjesec pict "99"
+		
 		if lViseObr
   			@ m_x+2,col()+2 SAY "Obracun: " GET cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
 		endif
+		
+		if gAHonorar == "D"
+  			@ m_x+2,col()+2 SAY "Izdanje: " GET cIzdanje VALID !EMPTY(cIzdanje) .and. p_izdanja(@cIzdanje)
+		endif
+	
 		@ m_x+3,m_y+2 SAY "Godina: "  GET cGodina pict "9999"
 		read
 		ClvBox()
@@ -149,9 +177,13 @@ do while .t.
 
 	select ld
 	
-	seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
+	if gAHonorar == "D"
+		seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+cIzdanje
+	else
+		seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
+	endif
 	
-	do while STR(cGodina,4)+cIdRj+STR(cMjesec,2)==STR(Godina,4)+IdRj+STR(Mjesec,2) .and. if(lViseObr,cObracun==obr,.t.)
+	do while STR(cGodina,4)+cIdRj+STR(cMjesec,2)==STR(Godina,4)+IdRj+STR(Mjesec,2) .and. if(lViseObr,cObracun==obr,.t.) .and. if(gAHonorar=="D",cIzdanje==izdanje, .t.)
    		skip
 		nRec:=RecNo()
 		skip -1

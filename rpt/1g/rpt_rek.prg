@@ -170,7 +170,8 @@ else
  	endif
 endif
 
-VrtiSeULD(lSvi)
+// napravi obracun
+napr_obracun(lSvi)
 
 if nLjudi==0
 	nLjudi:=9999999
@@ -204,6 +205,7 @@ endif
 
 ? cLinija
 
+// ispisi tipove primanja...
 IspisTP(lSvi)
 
 if IzFmkIni("LD","Rekap_ZaIsplatuRasclanitiPoTekRacunima","N",KUMPATH)=="D" .and. LEN(aUkTR)>1
@@ -275,9 +277,9 @@ if cMjesec == cMjesecDo
 
 	?
 
-	cLinija:="---------------------------------"
+	cLinija := "---------------------------------"
 
-	if prow()>49+gPStranica
+	if prow() > 49 + gPStranica
 		FF
 	endif
 
@@ -603,63 +605,65 @@ seek "3"+ops->idkan
 
 if found()
 	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
- 		else
-   			append blank
-   			replace id with "3", idops with ops->idkan, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
- 		endif
- 		seek "5"+ops->idn0
- 		if found()
-   			replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
- 		else
-   			append blank
-   			replace id with "5", idops with ops->idn0, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
- 		endif
- 		select ops
-		seek radn->idopsrad
- 		select opsld
- 		seek "2"+radn->idopsrad
- 		if found()
-   			replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl , ljudi with ljudi+1
- 		else
-   			append blank
-   			replace id with "2", idops with radn->idopsrad, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
- 		endif
- 		seek "4"+ops->idkan
- 		if found()
-   			replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
- 		else
-   			append blank
-   			replace id with "4", idops with ops->idkan, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
- 		endif
- 		seek "6"+ops->idn0
- 		if found()
-   			replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
- 		else
-   			append blank
-   			replace id with "6", idops with ops->idn0, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
- 		endif
- 		select ld
- 		//*************************
+else
+	append blank
+	replace id with "3", idops with ops->idkan, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+endif
 
+seek "5"+ops->idn0
+if found()
+	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+else
+	append blank
+	replace id with "5", idops with ops->idn0, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+endif
 
+select ops
+seek radn->idopsrad
 
+select opsld
+seek "2"+radn->idopsrad
+if found()
+	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl , ljudi with ljudi+1
+else
+	append blank
+	replace id with "2", idops with radn->idopsrad, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+endif
+
+seek "4"+ops->idkan
+if found()
+	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+else
+	append blank
+	replace id with "4", idops with ops->idkan, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+endif
+
+seek "6"+ops->idn0
+if found()
+	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+else
+	append blank
+	replace id with "6", idops with ops->idn0, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+endif
+
+select ld
 
 return
-*}
 
 
-function VrtiSeULD(lSvi)
-*{
+
+function napr_obracun(lSvi)
 
 nPorOl:=0
 nUPorOl:=0
 aNetoMj:={}
 
-altd()
 do while !eof() .and. eval(bUSlov)
+	
 	// vrti se u bazi LD.DBF
- 	if lViseObr .and. EMPTY(cObracun)
-   		ScatterS(godina,mjesec,idrj,idradn)
+ 	
+	if lViseObr .and. EMPTY(cObracun)
+   		ScatterS(godina, mjesec, idrj, idradn)
  	else
    		Scatter()
  	endif
@@ -669,53 +673,91 @@ do while !eof() .and. eval(bUSlov)
  	select vposla
 	hseek _idvposla
 
- 	if (!empty(copsst) .and. copsst<>radn->idopsst) .or. (!empty(copsrad) .and. copsrad<>radn->idopsrad)
+ 	if ( (!empty(cOpsSt) .and. cOpsSt<>radn->idopsst)) ;
+		.or. ((!empty(cOpsRad) .and. cOpsRad<>radn->idopsrad))
+		
    		select ld
    		skip 1
 		loop
+		
  	endif
 
-	if (IsRamaGlas() .and. cK4<>"S")
-		if (cK4="P".and.!radn->k4="P" .or. cK4="N".and.radn->k4="P")
+	if (IsRamaGlas() .and. cK4 <> "S")
+	
+		if (cK4="P" .and. !radn->k4="P" .or. cK4="N".and.radn->k4="P")
 			select ld
 			skip 1
 			loop
 		endif
 	endif
 
- 	_ouneto:=MAX(_uneto,PAROBR->prosld*gPDLimit/100)
+ 	_ouneto := MAX(_uneto, PAROBR->prosld * gPDLimit/100 )
  
+ 	// obradi poreze....
+	
  	select por
 	go top
- 	nPor:=nPorOl:=0
- 	do while !eof()  // datoteka por
-   		PozicOps(POR->poopst)
-   		if !ImaUOp("POR",POR->id)
+	
+ 	nPor:=0
+	nPorOl:=0
+ 	
+	do while !eof()  
+		
+		lStepPor := .f.
+		
+		if por->(FIELDPOS("ALGORITAM")) <> 0 ;
+			.and. por->algoritam == "S"
+			
+			lStepPor := .t.
+			
+		endif
+		
+		// porezi
+   		
+		PozicOps( POR->poopst )
+   		
+		if !ImaUOp( "POR",POR->id )
      			SKIP 1
 			LOOP
    		endif
-   		nPor+=round2(max(dlimit,iznos/100*_oUNeto),gZaok2)
-   		skip
+   		
+		if lStepPor == .t.
+			
+			// stepenasti proracun poreza ...
+		
+		else
+			// prosti procentni racun
+			nPor += round2(max(dlimit,iznos/100*_oUNeto),gZaok2)
+   		endif
+		
+		skip
+		
  	enddo
- 	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() // poreska olaksica
-   		if alltrim(cVarPorOl)=="2"
+ 	
+	if radn->porol <> 0 .and. gDaPorOl=="D" .and. !Obr2_9() 
+		// poreska olaksica
+   		
+		if alltrim(cVarPorOl)=="2"
      			nPorOl:=RADN->porol
    		elseif alltrim(cVarPorol)=="1"
      			nPorOl:=round(parobr->prosld*radn->porol/100,gZaok)
    		else
      			nPorOl:= &("_I"+cVarPorol)
    		endif
-   		if nPorOl>nPor 
+   		
+		if nPorOl>nPor 
 			// poreska olaksica ne moze biti veca od poreza
      			nPorOl:=nPor
    		endif
-   			nUPorOl+=nPorOl
+   		
+		nUPorOl+=nPorOl
  	endif
 
 	PopuniOpsLD()
 
 	nPom:=ASCAN(aNeta,{|x| x[1]==vposla->idkbenef})
- 	if nPom==0
+ 	
+	if nPom==0
     		AADD(aNeta,{vposla->idkbenef,_oUNeto})
  	else
     		aNeta[nPom,2]+=_oUNeto
@@ -738,11 +780,13 @@ do while !eof() .and. eval(bUSlov)
   			endif
   		endif
  	next
-	++nLjudi
-	nUSati+=_USati   // ukupno sati
-	nUNeto+=_UNeto  // ukupno neto iznos
 	
-	nUNetoOsnova+=_oUNeto  // ukupno neto osnova za obracun por.i dopr.
+	++nLjudi
+	
+	nUSati += _USati   // ukupno sati
+	nUNeto += _UNeto  // ukupno neto iznos
+	
+	nUNetoOsnova += _oUNeto  // ukupno neto osnova za obracun por.i dopr.
 	
 	if UBenefOsnovu()
 		nUBNOsnova+=_oUNeto - if(!Empty(gBFForm), &gBFForm, 0)
@@ -757,19 +801,21 @@ do while !eof() .and. eval(bUSlov)
    		AADD( aUkTR , { cTR , _uiznos } )
  	ENDIF
 
- 	nUIznos+=_UIznos  // ukupno iznos
-	nUOdbici+=_UOdbici  // ukupno odbici
+ 	nUIznos += _UIznos  // ukupno iznos
+	nUOdbici += _UOdbici  // ukupno odbici
 
-	IF cMjesec<>cMjesecDo
-		altd()
+	IF cMjesec <> cMjesecDo
+		
 		nPom:=ASCAN(aNetoMj,{|x| x[1]==mjesec})
+		
 		IF nPom>0
 			aNetoMj[nPom,2] += _uneto
 			aNetoMj[nPom,3] += _usati
 		ELSE
 			nTObl:=SELECT()
 			nTRec := PAROBR->(RECNO())
-			ParObr(mjesec,IF(lViseObr,cObracun,),IF(!lSvi,cIdRj,))      // samo pozicionira bazu PAROBR na odgovaraju†i zapis
+			ParObr(mjesec,IF(lViseObr,cObracun,),IF(!lSvi,cIdRj,))
+			// samo pozicionira bazu PAROBR na odgovaraju†i zapis
 			AADD(aNetoMj,{mjesec,_uneto,_usati,PAROBR->k3,PAROBR->k1})
 			SELECT PAROBR
 			GO (nTRec)
@@ -777,16 +823,15 @@ do while !eof() .and. eval(bUSlov)
 		ENDIF
 	ENDIF
 
-	IF RADN->isplata=="TR"  // isplata na tekuci racun
+	IF RADN->isplata == "TR"  // isplata na tekuci racun
 		Rekapld( "IS_"+RADN->idbanka , cgodina , cmjesecDo ,_UIznos , 0 , RADN->idbanka , RADN->brtekr , RADNIK , .t. )
 	ENDIF
+	
 	select ld
 	skip
 enddo
-	// vrti se u bazi LD.DBF *******
 
 return
-*}
 
 
 // ----------------------------------------
