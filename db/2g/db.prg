@@ -358,8 +358,8 @@ endif
 aDbf:={}
 AADD( aDbf, {"GODINA"     ,  "C" ,  4, 0})
 AADD( aDbf, {"MJESEC"     ,  "C" ,  2, 0})
-AADD( aDbf, {"ID"         ,  "C" , 30, 0})
-AADD( aDbf, {"OPIS"       ,  "C" , 20, 0})
+AADD( aDbf, {"ID"         ,  "C" , 40, 0})
+AADD( aDbf, {"OPIS"       ,  "C" , 40, 0})
 AADD( aDbf, {"IZNOS1"     ,  "N" , 18, 4})
 AADD( aDbf, {"IZNOS2"     ,  "N" , 18, 4})
 AADD( aDbf, {"IDPARTNER"  ,  "C" ,  6, 0})
@@ -372,6 +372,7 @@ if (nArea==-1 .or. nArea==(F_REKLD))
 	endif
 
   	CREATE_INDEX("1","godina+mjesec+id",KUMPATH+"REKLD")
+  	CREATE_INDEX("2","godina+mjesec+id+idpartner",KUMPATH+"REKLD")
 endif
 
 if (nArea==-1 .or. nArea==(F_REKLDP))

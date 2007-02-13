@@ -242,10 +242,13 @@ Box(,21,77)
 	if lRadniSati
 		@ m_x+4,m_y+59 SAY "R.sati:" GET _radSat
 	endif
+	
 	read
+	
 	if lRadniSati
 		FillRadSati(cIdRadn,_radSat)
 	endif
+	
 	if gSihtarica=="D"
 		UzmiSiht()
 	endif 
@@ -253,7 +256,19 @@ Box(,21,77)
 	PrikUnos()
 	
 	if gAHonorar == "D"
-		izr_honorar()
+		
+		_USati:=0
+		_UNeto:=0
+		_UOdbici:=0
+
+		UkRadnik()  	
+
+		if izr_honorar( cIdRadn, .t. ) == .f.
+			lSaveObracun := .f.
+			BoxC()
+			return
+		endif
+
 	endif
 	
 	PrikUkupno(@lSaveObracun)

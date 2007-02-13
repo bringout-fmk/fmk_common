@@ -173,11 +173,20 @@ do while !eof()
 				// neto
 				@ prow(),pcol()+1 SAY _i&cTipPr pict gpici
 				nTNeto += _i&cTipPr
+			
+				cIzdInfo := _get_izd( _izdanje )
+			
+     				Rekapld( "NETO", cGodina, cMjesec, _i&cTipPr, 0, RADN->id, RADN->brtekr, RADNIK, .t. , cIzdInfo)
+     				
+				Rekapld( "BRUTO", cGodina, cMjesec , _ubruto, 0, RADN->id, RADN->brtekr, RADNIK, .t., cIzdInfo )
 				
-     				Rekapld( "IS_"+RADN->idbanka , cgodina , cmjesec ,_i&cTipPr, 0 , RADN->idbanka , RADN->brtekr , RADNIK , .t. )
-   			endif
-   			EXIT
- 		ENDDO
+				Rekapld( "POR" + ops->id, cGodina, cMjesec , _uporez, 0, RADN->id, RADN->brtekr, RADNIK, .t., cIzdInfo )
+   			
+			endif
+   			
+			EXIT
+ 		
+		ENDDO
 		
 		skip 1
 	enddo
@@ -405,8 +414,6 @@ Box("#IZVJESTAJ: LISTA AUTORSKIH HONORARA",10,65)
 	read
 	
 	clvbox()
-	ESC_BCR
-	
 BoxC()
 
 if LastKey() <> K_ESC

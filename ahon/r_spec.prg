@@ -378,7 +378,6 @@ Box("#IZVJESTAJ: SPACIFIKACIJA AUTORSKIH HONORARA",10,65)
 	read
 	
 	clvbox()
-	ESC_BCR
 	
 BoxC()
 

@@ -389,7 +389,7 @@ return
 
 
 
-function RekapLd(cId,nGodina,nMjesec,nIzn1,nIzn2,cIdPartner,cOpis,cOpis2,lObavDodaj)
+function RekapLd(cId,nGodina,nMjesec,nIzn1,nIzn2,cIdPartner,cOpis,cOpis2,lObavDodaj, cIzdanje)
 *{
 
 if lObavDodaj==nil
@@ -406,6 +406,10 @@ endif
 
 if cOpis2=nil
   	cOpis2=""
+endif
+
+if cIzdanje == nil
+	cIzdanje := ""
 endif
 
 pushwa()
@@ -426,6 +430,10 @@ replace godina with str(nGodina,4),mjesec with str(nMjesec,2),;
         idpartner with cIdPartner,;
         opis with cOpis ,;
         opis2 with cOpis2
+	
+if gAHonorar == "D"
+	replace izdanje with cIzdanje
+endif
 
 popwa()
 
@@ -536,12 +544,16 @@ function CreRekLD()
 
 aDbf:={{"GODINA"     ,  "C" ,  4, 0} ,;
        {"MJESEC"     ,  "C" ,  2, 0} ,;
-       {"ID"         ,  "C" , 30, 0} ,;
-       {"opis"       ,  "C" , 20, 0} ,;
+       {"ID"         ,  "C" , 40, 0} ,;
+       {"opis"       ,  "C" , 40, 0} ,;
        {"opis2"      ,  "C" , 35, 0} ,;
        {"iznos1"     ,  "N" , 25, 4} ,;
        {"iznos2"     ,  "N" , 25, 4} ,;
        {"idpartner"  ,  "C" ,  6, 0}}
+
+if gAHonorar == "D"
+	AADD(aDbf, { "IZDANJE", "C", 40, 0 })
+endif
 
 DBCREATE2(KUMPATH+"REKLD",aDbf)
 
@@ -549,7 +561,13 @@ select (F_REKLD)
 usex (KUMPATH+"rekld")
 
 index ON  BRISANO+"10" TAG "BRISAN"
-index on  godina+mjesec+id  tag "1"
+index on  godina+mjesec+id tag "1"
+
+if gAHonorar == "D"
+	index on  godina+mjesec+id+idpartner tag "2"
+	index on  godina+mjesec+id+izdanje tag "3"
+	index on  godina+mjesec+id+idpartner+izdanje tag "4"
+endif
 
 set order to tag "1"
 use
