@@ -176,11 +176,11 @@ do while !eof()
 			
 				cIzdInfo := _get_izd( _izdanje )
 			
-     				Rekapld( "NETO", cGodina, cMjesec, _i&cTipPr, 0, RADN->id, RADN->brtekr, RADNIK, .t. , cIzdInfo)
+     				Rekapld( "NETO", cGodina, cMjesec, _i&cTipPr, 0, RADN->id, ALLTRIM(RADN->idbanka) + "#" + ALLTRIM(RADN->brtekr), RADNIK, .t. , cIzdInfo)
      				
-				Rekapld( "BRUTO", cGodina, cMjesec , _ubruto, 0, RADN->id, RADN->brtekr, RADNIK, .t., cIzdInfo )
+				Rekapld( "BRUTO", cGodina, cMjesec , _ubruto, 0, RADN->id, ALLTRIM(RADN->idbanka) + "#" + ALLTRIM(RADN->brtekr), RADNIK, .t., cIzdInfo )
 				
-				Rekapld( "POR" + ops->id, cGodina, cMjesec , _uporez, 0, RADN->id, RADN->brtekr, RADNIK, .t., cIzdInfo )
+				Rekapld( "POR" + ops->id, cGodina, cMjesec , _uporez, 0, RADN->id, ALLTRIM(RADN->idbanka) + "#" + ALLTRIM(RADN->brtekr), RADNIK, .t., cIzdInfo )
    			
 			endif
    			
