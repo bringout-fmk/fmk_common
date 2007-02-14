@@ -1,20 +1,23 @@
 #include "sc.ch"
 
+
+
 // ----------------------------------
 // pregled destinacije 
 // ----------------------------------
-function P_Destin(cId,dx,dy)
+function P_Destin(cId, cPartId, dx,dy)
 local GetList:={}
 private ImeKol:={}
 private Kol:={}
 private cLastOznaka:=" "
-private cIdTek:=UGOV->idpartner
+private cIdTek:=cPartId
 private nArr:=SELECT()
 
 SELECT DEST
 SET ORDER TO TAG "1"
 HSEEK cIdTek+cId
 
+/*
 IF FOUND()
    IF Pitanje(,"Izvrsiti ispravku destinacije "+cId+" ? (D/N)","N")=="D"
      EdDestBlok(K_F2,cId)
@@ -42,6 +45,7 @@ ELSE
    RETURN .t.
 ENDIF
 
+*/
 SET SCOPE TO cIdTek
 ImeKol:={ ;
           { "OZNAKA"  , {|| OZNAKA },  "OZNAKA"  },;
@@ -56,6 +60,7 @@ ImeKol:={ ;
          }
 for i:=1 to len(ImeKol); AADD(Kol,i); next
 private gTBDir:="N"
+
 PostojiSifra(F_DEST,"1",10,70,"Destinacije za:"+cIdTek+"-"+Ocitaj(F_PARTN,cIdTek,"naz"), , , , {|Ch| EdDestBlok(Ch)},,,,.f.)
 
 private gTBDir:="D"

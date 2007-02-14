@@ -29,6 +29,8 @@ cHeader += "<F3> ispravka ugov id-a, "
 cHeader += "<F5> stavke ugovora, "
 cHeader += "<F6> lista za K1='G'"
 
+O_UGOV
+
 DFTParUg(.t.)
 
 // setuj kolone tabele
@@ -130,7 +132,7 @@ static function key_handler(Ch)
 local GetList:={}
 local nRec:=0
 
-@ m_x+11, 30 SAY "<c+G> - generisanje novih ugovora"
+@ m_x+11, 5 SAY "<D> - setuj posljednje fakturisanje <c+G> - generisanje novih ugovora"
 
 do case
 	case ( Ch == K_CTRL_T )
@@ -140,6 +142,15 @@ do case
 		endif
 		return DE_CONT
 		
+	case UPPER(CHR(Ch)) == "D"
+		
+		// setuj datum do kojeg si fakturisao
+		if set_datl_fakt() == 1
+			return DE_REFRESH
+		else
+			return DE_CONT
+		endif
+	
 	case ( Ch == K_CTRL_G )
 	   	
 		// automatsko generisanje novih ugovora 
@@ -180,6 +191,41 @@ do case
 endcase
 
 return DE_CONT
+
+
+// -------------------------------------------------
+// postavi datum posljedjeg fakturisanja
+// -------------------------------------------------
+function set_datl_fakt()
+local dDatL := DATE()
+local cProm := "N"
+private GetList := {}
+
+Box(, 5, 60)
+	
+	@ m_x + 1, m_y + 2 SAY "SETOVANJE DATUMA POSLJEDNJEG FAKTURISANJA:"
+	@ m_x + 3, m_y + 2 SAY "Postavi datum na:" GET dDatL
+	@ m_x + 5, m_y + 2 SAY "Izvrsiti promjenu (D/N)?" GET cProm VALID cProm $ "DN" PICT "@!"
+	
+	read
+BoxC()
+
+if LastKey() <> K_ESC .and. cProm == "D"
+	
+	select ugov 
+	go top
+	
+	do while !EOF()
+		if ugov->f_nivo == "G"
+			replace dat_l_fakt with dDatL
+		endif
+		skip
+	enddo
+	
+	return 1
+endif
+
+return 0
 
 
 // -----------------------------------------------------------
@@ -309,6 +355,15 @@ Box(, 20,75,.f.)
 ++ nX
 
 @ m_x + nX, m_y + 2 SAY PADL("Partner", nBoxLen) GET _idpartner VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35, Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) , x } PICT "@!"
+
+if ugov->(FIELDPOS("destin")) <> 0
+	
+	++ nX
+	
+	@ m_x + nX, m_y + 2 SAY PADL("Destinacija", nBoxLen) GET _destin ;
+          PICT "@!" VALID EMPTY(_destin) .or. P_Destin(@_destin, _idpartner)
+	
+endif
 
 ++ nX
 

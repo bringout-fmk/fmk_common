@@ -95,6 +95,8 @@ AADD(aDBf, { 'F_NIVO'    , 'C' ,  1,  0 })
 AADD(aDBf, { 'F_P_D_NIVO', 'N' ,  5,  0 })
 // datum zadnjeg obracuna    
 AADD(aDBf, { 'DAT_L_FAKT', 'D' ,  8,  0 })
+// destinacija    
+AADD(aDBf, { 'DESTIN',     'C' ,  6,  0 })
 
 return aDbf
 

@@ -286,6 +286,7 @@ local i
 local lNasaoObracun
 // predhodni obracun
 local dPObr
+local cNFakt
 
 PushWa()
 
@@ -300,50 +301,71 @@ if ugov->datdo < dDatObr
 	return .f.
 endif
 
+// nivo fakturisanja
+cFNivo := ugov->f_nivo
+
 SELECT gen_ug_p
 SET ORDER TO TAG "DAT_OBR"
 
-lNasaoObracun := .f.
-// gledamo obracune u predhodnih 6 mjeseci
-for i:=1 to 6
+altd()
+// GODISNJI NIVO...
+if ugov->f_nivo == "G"
 
-	// predhodni mjesec (datum) u odnosu na dPom
-	dPObr := pr_mjesec(dPom)
-
-	// ima li ovaj obracun pohranjen
-	SELECT gen_ug_p
-	SEEK DTOS(dPObr) + cUgovId + ugov->IdPartner
-
-	if found()
-  		lNasaoObracun :=.t.
-		exit
-	else
-		// nisam nasao ovaj obracun, pokusaj ponovo mjesec ispred ...
-		dPom := dPObr
-	endif
-
-next
-
-if !lNasaoObracun
-	// nisam nasao obracun, ovo je prva generacija
-	// pa je u ugov upisan datum posljednjeg obracuna
 	dPObr := ugov->dat_l_fakt
+	
+	PopWa()
+
+	if dDatObr - 365 >= dPObr
+		return .t.
+	else
+		return .f.
+	endif
 
 else
-	// ako su rucno pravljene fakture (unaprijed)
-	// u ugov se upisuje do kada je to pravljeno
-	if ugov->dat_l_fakt >= dDatObr
+	
+	lNasaoObracun := .f.
+	// gledamo obracune u predhodnih 6 mjeseci
+	for i:=1 to 6
+
+		// predhodni mjesec (datum) u odnosu na dPom
+		dPObr := pr_mjesec(dPom)
+
+		// ima li ovaj obracun pohranjen
+		SELECT gen_ug_p
+		SEEK DTOS(dPObr) + cUgovId + ugov->IdPartner
+
+		if found()
+  			lNasaoObracun :=.t.
+			exit
+		else
+			// nisam nasao ovaj obracun, 
+			// pokusaj ponovo mjesec ispred ...
+			dPom := dPObr
+		endif
+	next
+	
+	if !lNasaoObracun
+		// nisam nasao obracun, ovo je prva generacija
+		// pa je u ugov upisan datum posljednjeg obracuna
 		dPObr := ugov->dat_l_fakt
+	else
+		// ako su rucno pravljene fakture (unaprijed)
+		// u ugov se upisuje do kada je to pravljeno
+		if ugov->dat_l_fakt >= dDatObr
+			dPObr := ugov->dat_l_fakt
+		endif
+	endif
+
+	PopWa()
+
+	if dDatObr > dPObr
+		return .t.
+	else
+		return .f.
 	endif
 endif
 
-PopWa()
-
-if dDatObr > dPObr
-	return .t.
-else
-	return .f.
-endif
+return
 
 // -----------------------------------
 // predhodni mjesec
