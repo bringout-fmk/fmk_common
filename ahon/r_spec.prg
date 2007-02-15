@@ -47,8 +47,11 @@ Box(,2,30)
 	nUkupno := RECCOUNT2()
 	
 	cFilt := IF(EMPTY(cMjesec), ".t.", "MJESEC==cMjesec" ) + ".and." + ;
-       		IF(EMPTY(cGodina),".t.","GODINA==cGodina") + ".and." + ;
-		IF(EMPTY(cIdRadn),".t.","IDRADN==cIdRadn")
+       		IF(EMPTY(cGodina),".t.","GODINA==cGodina")
+
+	if !EMPTY(cIdRadn)
+		cFilt += ".and. IDRADN==cIdRadn"
+	endif
      		
 	if !EMPTY(cIdRj)
 		cFilt += ".and. idrj == cIdRj"
@@ -67,40 +70,44 @@ cPicProc := "99.99%"
 // linija za izvjestaj
 cLine := _g_line()
 
-bAutor := {|| ahon_autor( cIdRadn ) }
 bHeader := {|| ahon_header() }
 
 select rj
 hseek ld->idrj
 select ld
+go top
 
 START PRINT CRET
 
-nRbr := 0
-
-?
-?
-
-// prva tabela
-EVAL( bAutor )
-
-?
-?
-?
-?
-?
-
-// druga tabela
-
-nRbr := 0
-nTBruto := 0
-nTNeto := 0
-nTPrTrosk := 0
-nTPorOsn := 0
-nTPorez := 0
-
 do while !eof()
+
+	nRbr := 0
 	
+	cIdRadn := idradn
+	
+	bAutor := {|| ahon_autor( cIdRadn ) }
+	
+	select ld
+	
+	nRbr := 0
+	nTBruto := 0
+	nTNeto := 0
+	nTPrTrosk := 0
+	nTPorOsn := 0
+	nTPorez := 0
+
+	?
+	?
+
+	// prva tabela
+	EVAL( bAutor )
+
+	?
+	?
+	?
+	?
+	?
+
  	do while !eof() .and. cGodina==godina .and. idrj=cIdrj .and. cMjesec=mjesec .and. idradn == cIdRadn
  
  		Scatter()
@@ -124,44 +131,51 @@ do while !eof()
 		
 		skip 1
 	enddo
+
+	B_ON
+	
+	? cLeft, "II. PODACI O OSTVARENOM PRIHODU"
+	
+	B_OFF
+	
+	EVAL( bHeader )
+
+	cLine := _g_line()
+
+	select radn
+	hseek cIdRadn
+	select ops
+	hseek radn->idopsst
+	select ld
+
+	? cLeft + STR( ++nRbr, 5)
+	@ prow(),pcol()+1 SAY PADR("Pisana dijela", 20)
+	@ prow(),pcol()+1 SAY nTBruto pict gpici
+	@ prow(),pcol()+1 SAY ops->ah_prtr pict cPicProc
+	@ prow(),pcol()+1 SAY nTPrTrosk pict gpici
+	@ prow(),pcol()+1 SAY nTPorOsn pict gpici
+	@ prow(),pcol()+1 SAY ops->ah_por pict cPicProc
+	@ prow(),pcol()+1 SAY nTPorez pict gpici
+	@ prow(),pcol()+1 SAY nTNeto pict gpici
+
+	? cLine
+
+	?
+	?
+	?
+	?
+	?
+	?
+	
+	B_ON
+	? cLeft + "DATUM:", DATE()
+	? Lokal( PADL("Podnosilac prijave:", 70) )
+	? Lokal( PADL(REPLICATE("_", 30), 70) )
+	B_OFF
+
+	FF
+	
 enddo
-
-? cLeft, "II. PODACI O OSTVARENOM PRIHODU"
-
-EVAL( bHeader )
-
-cLine := _g_line()
-
-select radn
-hseek cIdRadn
-select ops
-hseek radn->idopsst
-select ld
-
-
-? cLeft + STR( ++nRbr, 5)
-@ prow(),pcol()+1 SAY PADR("Pisana dijela", 20)
-@ prow(),pcol()+1 SAY nTBruto pict gpici
-@ prow(),pcol()+1 SAY ops->ah_prtr pict cPicProc
-@ prow(),pcol()+1 SAY nTPrTrosk pict gpici
-@ prow(),pcol()+1 SAY nTPorOsn pict gpici
-@ prow(),pcol()+1 SAY ops->ah_por pict cPicProc
-@ prow(),pcol()+1 SAY nTPorez pict gpici
-@ prow(),pcol()+1 SAY nTNeto pict gpici
-
-? cLine
-
-?
-?
-?
-?
-?
-?
-? cLeft + "DATUM:", DATE()
-? Lokal( PADL("Podnosilac prijave:", 70) )
-? Lokal( PADL(REPLICATE("_", 30), 70) )
-
-FF
 
 END PRINT
 CLOSERET
@@ -208,8 +222,14 @@ aBank := TokToNiz(cRadnRn, "#")
 aTmp := TokToNiz( cNaslov, "##" )
 
 ?
+
+B_ON
+P_12CPI
+?
 ? SPACE(__left_marg) + PADC( aTmp[1], 77 )
 ? SPACE(__left_marg) + PADC( aTmp[2], 77 )
+B_OFF
+P_10CPI
 
 ?
 ?
@@ -386,7 +406,7 @@ Box("#IZVJESTAJ: SPACIFIKACIJA AUTORSKIH HONORARA",10,65)
 	@ m_x+3,m_y+2 SAY "Mjesec: " GET cMjesec PICT "99"
 	@ m_x+4,m_y+2 SAY "Godina: " GET cGodina PICT "9999"
 	@ m_x+6,m_y+2 SAY "Tip primanja: " GET cTipPr
-	@ m_x+8,m_y+2 SAY "Autor: " GET cIdradn VALID p_radn(@cIdRadn)
+	@ m_x+8,m_y+2 SAY "Autor (prazno-svi): " GET cIdradn VALID EMPTY(cIdRadn) .or. p_radn(@cIdRadn)
 	read
 	
 	clvbox()
