@@ -10,6 +10,7 @@ private cMjesec := gMjesec
 private cGodina := gGodina
 private cObracun := ""
 private cIzdanje := SPACE(10)
+private cIzdNaz := ""
 private cVarSort:="2"
 private cOpsSt:=SPACE(4)
 private cTipPr := "01"
@@ -34,6 +35,10 @@ if EMPTY(cOpsSt)
 	cOpsSt:=""
 else
 	cOpcinaSt:=ALLTRIM(Ocitaj(F_OPS,cOpsSt,"naz"))
+endif
+
+if !EMPTY(cIzdanje)
+	cIzdNaz := _get_izd( cIzdanje )
 endif
 
 O_TIPPR
@@ -139,7 +144,7 @@ do while !eof()
 				? str( ++nRbr, 4) + "."
 				
 				// radnik - ime i prezime
-				@ prow(),pcol()+1 SAY PADR(RADNIK, 40)
+				@ prow(),pcol()+1 SAY PADR(ALLTRIM(RADNIK) + " (" + radn->id + ")" , 40)
 				
 				// opcina
 				@ prow(),pcol()+1 SAY PADR(ops->naz, 20)
@@ -282,7 +287,7 @@ U_ON
 if EMPTY(cIzdanje)
 	?? PADC( Lokal("Izdanje: sva izdanja") , 30)
 else
-	?? PADC( Lokal("Izdanje: " + cIzdanje ), 30)
+	?? PADC( Lokal("Izdanje: " + cIzdanje + ", " + cIzdNaz ), 70)
 endif
 
 U_OFF

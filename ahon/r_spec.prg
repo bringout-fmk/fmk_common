@@ -78,9 +78,16 @@ START PRINT CRET
 
 nRbr := 0
 
+?
+?
+
 // prva tabela
 EVAL( bAutor )
 
+?
+?
+?
+?
 ?
 
 // druga tabela
@@ -144,6 +151,11 @@ select ld
 
 ? cLine
 
+?
+?
+?
+?
+?
 ?
 ? cLeft + "DATUM:", DATE()
 ? Lokal( PADL("Podnosilac prijave:", 70) )
