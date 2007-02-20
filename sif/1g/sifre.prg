@@ -229,9 +229,10 @@ return PostojiSifra(F_PAROBR, 1, 10, 70, Lokal("Parametri obracuna"), ;
 function P_TipPr(cId,dx,dy)
 *{
 local nArr
+local i
 nArr:=SELECT()
-private imekol
-private kol
+private imekol := {}
+private kol := {}
 
 select (F_TIPPR)
 if (!used())
@@ -239,26 +240,51 @@ if (!used())
 endif
 select (nArr)
 
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                       ,;
-          {      "Aktivan"  , {||  padc(aktivan,7) }, "aktivan" }      ,;
-          {      "Fiksan"  , {||  padc(fiksan,7) }, "fiksan" }         ,;
-          { padr("U fond s.",10), {||  padc(ufs,10) }, "ufs" } ,;
-          { padr("U neto", 6), {||  padc(uneto,6 ) }, "uneto" } ,;
-          { padr("Formula",200), {|| formula}, "formula"  }, ;
-          { padr("Opis",8), {|| opis}, "opis"  } ;
-       }
-Kol:={1,2,3,4,5,6,7,8}
+AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
+AADD(ImeKol, { "Aktivan", {||  padc(aktivan,7) }, "aktivan" } )
+AADD(ImeKol, { "Fiksan", {||  padc(fiksan,7) }, "fiksan" } )
+AADD(ImeKol, { padr("U fond s.",10), {||  padc(ufs,10) }, "ufs" } )
+AADD(ImeKol, { padr("U neto", 6), {||  padc(uneto,6 ) }, "uneto" } )
+
+if TIPPR->(FIELDPOS("TPR_TIP")) <> 0
+	AADD(ImeKol, { padr("tp.tip", 6), {||  tpr_tip }, "tpr_tip", {|| .t.}, {|| v_tpr_tip(wtpr_tip) } } )
+endif
+
+AADD(ImeKol, { padr("Formula",200), {|| formula}, "formula"  } )
+AADD(ImeKol, { padr("Opis",8), {|| opis}, "opis"  } )
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
 return PostojiSifra(F_TIPPR, 1, 10, 55, Lokal("Tipovi primanja"), ;
 	@cId, dx, dy, ;
 	{|Ch| TprBl(Ch)},,,,,{"ID"})
-*}
+
+
+// -----------------------------------------
+// valid tpr_tip
+// -----------------------------------------
+function v_tpr_tip( cTip )
+if EMPTY(cTip)
+	msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - naknade za rad#X - neoporezive stavke, krediti itd...")
+endif
+return .t.
+
+// ---------------------------------------- 
+// valid dop_tip
+// ---------------------------------------- 
+function v_dop_tip( cTip)
+if EMPTY(cTip)
+	msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade")
+endif
+return .t.
 
 
 // ------------------------------------------
 // ------------------------------------------
 function TprBl(Ch)
-*{
 if Logirati(goModul:oDataBase:cName,"SIF","EDITTIPPR")
 	select tippr
 	if (Ch==K_F2)
@@ -538,24 +564,54 @@ return lVrati
 // ---------------------------------
 // ---------------------------------
 function P_POR(cId,dx,dy)
-*{
 local nArr
+local i
 nArr:=SELECT()
-private imekol,kol
+private Imekol := {}
+private Kol := {}
 
 select (F_POR)
 if (!used())
 	O_POR
 endif
+
 select (nArr)
 
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                       ,;
-          { padr("Iznos",20), {||  iznos}, "iznos" }                       ,;
-          { padr("Donji limit",12), {||  dlimit}, "dlimit" }           ,;
-          { padr("PoOpst",6), {||  poopst}, "poopst" }           ;
-       }
-Kol:={1,2,3,4,5}
+AADD(ImeKol, { padr("Id", 2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+
+if POR->(FIELDPOS("ALGORITAM")) <> 0
+	AADD(ImeKol, { "Algor.", {|| algoritam}, "algoritam" } )
+endif
+
+AADD(ImeKol, { padr("Naziv",20), {|| naz}, "naz" })
+
+AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos", {|| wh_oldpor(walgoritam) } })
+
+AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" })
+
+AADD(ImeKol, { padr("PoOpst",6), {||  poopst}, "poopst" })
+
+// nove stope i iznosi....
+if POR->(FIELDPOS("ALGORITAM")) <> 0
+
+	AADD(ImeKol, { "p.tip", {|| por_tip}, "por_tip", {|| .t.}, {|| v_dop_tip(wpor_tip)} } )
+	AADD(ImeKol, { "St.1", {|| s_sto_1}, "s_sto_1", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "Izn.1", {|| s_izn_1}, "s_izn_1", {|| wh_por(walgoritam) } } )
+	AADD(ImeKol, { "St.2", {|| s_sto_2}, "s_sto_2", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "Izn.2", {|| s_izn_2}, "s_izn_2", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "St.3", {|| s_sto_3}, "s_sto_3", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "Izn.3", {|| s_izn_3}, "s_izn_3", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "St.4", {|| s_sto_4}, "s_sto_4", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "Izn.4", {|| s_izn_4}, "s_izn_4", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "St.5", {|| s_sto_5}, "s_sto_5", {|| wh_por(walgoritam)} } )
+	AADD(ImeKol, { "Izn.5", {|| s_izn_5}, "s_izn_5", {|| wh_por(walgoritam)} } )
+	
+endif
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
 PushWa()
 
 select (F_SIFK)
@@ -599,15 +655,41 @@ PopWa()
 return PostojiSifra(F_POR, 1, 10, 75, ;
         Lokal("Lista poreza na platu.....<F5> arhiviranje poreza, <F6> pregled"), ;
 	@cId,dx,dy,{|Ch| PorBl(Ch)})
-*}
+
+
+// -------------------------------
+// when porez
+// -------------------------------
+function wh_por( cAlg )
+local lRet := .f.
+
+if !EMPTY( cAlg ) .and. cAlg == "S"
+	lRet := .t.
+endif
+
+return lRet
+
+
+// -------------------------------
+// when stari porez
+// -------------------------------
+function wh_oldpor( cAlg )
+local lRet := .f.
+
+if EMPTY(cAlg)
+	lRet := .t.
+endif
+
+return lRet
+
 
 
 function P_DOPR(cId,dx,dy)
 *{
 local nArr
 nArr:=SELECT()
-private imekol
-private kol
+private imekol := {}
+private kol := {}
 
 select (F_SIFK)
 if !used()
@@ -623,14 +705,23 @@ if !used()
 endif
 select (nArr)
 
-ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          { padr("Naziv",20), {||  naz}, "naz" }                      , ;
-          { padr("Iznos",20), {||  iznos}, "iznos" }                   ,;
-          { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } },;
-          { padr("Donji limit",12), {||  dlimit}, "dlimit" }       ,;
-          { padr("PoOpst",6), {||  poopst}, "poopst" }           ;
-       }
-Kol:={1,2,3,4,5,6}
+AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
+AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos" } )
+
+if DOPR->(FIELDPOS("DOP_TIP")) <> 0
+	AADD(ImeKol, { padr("d.tip", 6), {||  dop_tip}, "dop_tip", {|| .t.}, {|| v_dop_tip(wdop_tip) } }  )
+endif
+
+AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )
+AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" } )
+AADD(ImeKol, { padr("PoOpst",6), {||  poopst}, "poopst" }  )
+
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
+
 PushWa()
 
 select (F_SIFK)
@@ -672,7 +763,9 @@ PopWa()
 return PostojiSifra(F_DOPR, 1, 10, 75, ;
 	Lokal("Lista doprinosa na platu......<F5> arhiviranje doprinosa, <F6> pregled"), ;
 	@cId,dx,dy,{|Ch| DoprBl(Ch)})
-*}
+
+
+
 
 // --------------------------------
 // --------------------------------

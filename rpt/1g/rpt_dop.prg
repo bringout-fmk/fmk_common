@@ -69,9 +69,9 @@ do while !eof()
       nDoprOps:=0
       nDoprOps2:=0
       select opsld
-      seek dopr->poopst
+      seek SPACE(2) + dopr->poopst
       altd()
-      do while !eof() .and. id==dopr->poopst
+      do while !eof() .and. id==dopr->poopst .and. porid == SPACE(2)
         altd()
         select ops; hseek opsld->idops; select opsld
         IF !ImaUOp("DOPR",DOPR->id)

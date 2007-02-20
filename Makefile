@@ -11,6 +11,7 @@ liball:
 	make -C param/1g
 	make -C ut/1g
 	make -C ahon
+	make -C por
 	make -C 1g exe
 	
 cleanall:	
@@ -24,6 +25,7 @@ cleanall:
 	make -C param/1g clean
 	make -C ut/1g clean
 	make -C ahon clean
+	make -C por clean
 	make -C 1g clean
 
 ld:   cleanall  liball

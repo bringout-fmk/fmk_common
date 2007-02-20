@@ -362,6 +362,9 @@ ENDIF
 cUneto:="D"
 nRRsati:=0 
 
+nOsnNeto := 0
+nOsnOstalo := 0
+
 for i:=1 to cLDPolja
 	
 	cPom:=padl(alltrim(str(i)),2,"0")
@@ -382,11 +385,14 @@ for i:=1 to cLDPolja
 	
 	if tippr->(found()) .and. tippr->aktivan=="D"
 		if _i&cpom<>0 .or. _s&cPom<>0
+			
 			// uvodi se djoker # : Primjer: Naziv tipa primanja
 			// je: REDOVAN RAD BOD #RADN->N1 -> naci RADN->N1
 			// i ispisati REDOVAN RAD BOD 12.0
+			
 			nDJ:=at("#",tippr->naz)
 			cTPNaz:=tippr->naz
+			
 			if nDJ<>0
 				
 				RSati:=_s&cPom
@@ -428,6 +434,20 @@ for i:=1 to cLDPolja
 			elseif tippr->fiksan=="C"
 				
 				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+			endif
+			
+			// uzmi osnovice
+			if tippr->tpr_tip == "N"
+				nOsnNeto += _i&cPom
+			elseif tippr->tpr_tip == "2"
+				nOsnOstalo += _i&cPom
+			elseif tippr->tpr_tip == " "
+				// standardni tekuci sistem
+				if tippr->uneto == "D"
+					nOsnNeto += _i&cPom
+				else
+					nOsnOstalo += _i&cPom
+				endif
 			endif
 			
 			if "SUMKREDITA" $ tippr->formula .and. gReKrKP=="1"
@@ -511,7 +531,9 @@ next
 ? m
 
 if cVarijanta=="5"
+
 	// select ldsm
+	
 	select ld
 	PushWA()
 	set order to tag "2"
@@ -539,15 +561,21 @@ if lRadniSati
 endif
 
 if gPrBruto=="D"  // prikaz bruto iznosa
+	
 	select (F_POR)
+	
 	if !used()
 		O_POR
 	endif
+	
 	select (F_DOPR)
+	
 	if !used()
 		O_DOPR
 	endif
+	
 	select (F_KBENEF)
+	
 	if !used()
 		O_KBENEF
 	endif
@@ -575,18 +603,13 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	
 	nPom:=0
 	nPor:=0
-	nC1:=30+LEN(cLMSK)
+	nC1:=30 + LEN(cLMSK)
 	nPorOl:=0
 	
 	do while !eof()
 	
-		lStepPor := .f.
-		
-		if por->(FIELDPOS("ALGORITAM")) <> 0
-			if por->algoritam == "S"
-				lStepPor := .t.
-			endif
-		endif
+		// vrati algoritam poreza
+		cAlgoritam := get_algoritam()
 		
 		PozicOps(POR->poopst)
 		
@@ -594,26 +617,12 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 			SKIP 1
 			LOOP
 		ENDIF
+	
+		// obracunaj porez
+		aPor := obr_por( por->id, nOsnNeto, nOsnOstalo )
 		
-		if lStepPor == .f.
-		
-			? cLMSK+id,"-",naz
-		
-			@ prow(),pcol()+1 SAY iznos pict "99.99%"
-		
-			nC1:=pcol()+1
-		
-			@ prow(),pcol()+1 SAY MAX(_UNeto,PAROBR->prosld*gPDLimit/100) pict gpici
-			@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)) pict gpici
-		
-			nPor += nPom
-		
-		else
-			// stepenasti porez....
-			
-			// nPor += ....
-		
-		endif
+		// ispisi porez
+		nPor += isp_por( aPor, cAlgoritam, cLMSK )
 		
 		skip 1
 	enddo
@@ -626,17 +635,22 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		else
 			nPorOl:= &("_I"+cVarPorol)
 		endif
+		
 		? cLMSK+Lokal("PORESKA OLAKSICA")
+		
 		if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
 			nPorOl:=nPor
 		endif
+		
 		if cVarPorOl=="2"
 			@ prow(),pcol()+1 SAY ""
 		else
 			@ prow(),pcol()+1 SAY radn->PorOl pict "99.99%"
 		endif
+		
 		@ prow(),nC1 SAY parobr->prosld pict gpici
 		@ prow(),pcol()+1 SAY nPorOl    pict gpici
+		
 	endif
 	
 	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()

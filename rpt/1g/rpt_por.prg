@@ -4,10 +4,16 @@
 // obracun i prikaz poreza
 // -------------------------------------
 function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl )
+local cAlgoritam := ""
 
 select por
 go top
-nPom:=nPor:=nPor2:=nPorOps:=nPorOps2:=0
+
+nPom:=0
+nPor:=0
+nPor2:=0
+nPorOps:=0
+nPorOps2:=0
 nC1:=20
 
 cLinija:="----------------------- -------- ----------- -----------"
@@ -27,18 +33,25 @@ endif
 
 do while !eof()
 	
-	if prow()>55+gPStranica
+	cAlgoritam := get_algoritam()
+	
+	if prow() > ( 55 + gPStranica )
 		FF
 	endif
-   		
-	? id,"-",naz
+
+	? id, "-", naz
 	
-	@ prow(),pcol()+1 SAY iznos pict "99.99%"
+	if cAlgoritam == "S"
+		@ prow(), pcol() + 1 SAY "st.por"
+	else
+		@ prow(), pcol() + 1 SAY iznos pict "99.99%"
+	endif
 	
-	nC1:=pcol()+1
+	nC1 := pcol() + 1
 	
-	if !empty(poopst)
-     		if poopst=="1"
+	if !EMPTY(poopst)
+     		
+		if poopst=="1"
        			?? Lokal(" (po opst.stan)")
      		elseif poopst=="2"
        			?? Lokal(" (po opst.stan)")
@@ -54,74 +67,164 @@ do while !eof()
      		endif
      		
 		nOOP:=0      
-		// ukupna Osnovica za ObraŸun Poreza za po opçtinama
+		// ukupna Osnovica za Obracun Poreza za po opstinama
      		
 		nPOLjudi:=0  
-     		// ukup.ljudi za po opçtinama
+     		// ukup.ljudi za po opstinama
      		
 		nPorOps:=0
      		nPorOps2:=0
      		
+		if cAlgoritam == "S"
+			cSeek := por->id
+		else
+			cSeek := SPACE(2)
+		endif
+		
 		select opsld
-     		seek por->poopst
+     		seek cSeek + por->poopst
      		
 		? strtran(cLinija,"-","=")
      		
-		do while !eof() .and. id == por->poopst
+		do while !eof() .and. porid == cSeek ;
+			.and. id == por->poopst
 		
+			cOpst := opsld->idops
+			
 			select ops
-			hseek opsld->idops
+			hseek cOpst
 			
 			select opsld
 		        
-			IF !ImaUOp("POR",POR->id)
-		        	SKIP 1
-			   	LOOP
-		        ENDIF
-		        
-			? idops,ops->naz
-		        
-			@ prow(),nc1 SAY iznos picture gpici
-		        @ prow(),pcol()+1 SAY nPom:=round2(max(por->dlimit,por->iznos/100*iznos),gZaok2) pict gpici
-		        
-			if cUmPD=="D"
-		        	 // ______  PORLD ______________
-		        	@ prow(),pcol()+1 SAY nPom2:=round2(max(por->dlimit,por->iznos/100*piznos),gZaok2) pict gpici
-		           	@ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
-		           	Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom-nPom2,0,idops,NLjudi())
-		           	nPorOps2+=nPom2
-		        else
-		        	Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,iznos,idops,NLjudi())
+			if !ImaUOp("POR", POR->id)
+		        	
+				skip 1
+			   	loop
+				
 		        endif
-		        nOOP += iznos
+		        
+			if cAlgoritam == "S"
+				
+			  ? idops, ops->naz
+				
+			  nPom := 0
+			  
+			  do while !EOF() .and. porid == cSeek ;
+				.and. id == por->poopst ;
+				.and. idops == cOpst
+				
+				if t_iz_1 <> 0
+				  ? " -obracun za stopu "
+				  @ prow(), pcol()+1 SAY t_st_1 pict "99.99%"
+				  @ prow(), pcol()+1 SAY "="
+		        	  @ prow(), pcol()+1 SAY t_iz_1 pict gpici
+		        	endif
+				
+				if t_iz_2 <> 0
+				  ? " -obracun za stopu "
+				  @ prow(), pcol()+1 SAY t_st_2 pict "99.99%"
+				  @ prow(), pcol()+1 SAY "="
+		        	  @ prow(), pcol()+1 SAY t_iz_2 pict gpici
+		        	endif
+				
+				if t_iz_3 <> 0
+				  ? " -obracun za stopu "
+				  @ prow(), pcol()+1 SAY t_st_3 pict "99.99%"
+				  @ prow(), pcol()+1 SAY "="
+		        	  @ prow(), pcol()+1 SAY t_iz_3 pict gpici
+		        	endif
+				
+				if t_iz_4 <> 0
+				  ? " -obracun za stopu "
+				  @ prow(), pcol()+1 SAY t_st_4 pict "99.99%"
+				  @ prow(), pcol()+1 SAY "="
+		        	  @ prow(), pcol()+1 SAY t_iz_4 pict gpici
+		        	endif
+			
+				if t_iz_5 <> 0
+				  ? " -obracun za stopu "
+				  @ prow(), pcol()+1 SAY t_st_5 pict "99.99%"
+				  @ prow(), pcol()+1 SAY "="
+		        	  @ prow(), pcol()+1 SAY t_iz_5 pict gpici
+		        	endif
+			
+				nPom += t_iz_1
+				nPom += t_iz_2 
+				nPom += t_iz_3
+				nPom += t_iz_4
+				nPom += t_iz_5
+				
+				skip
+					
+			  enddo
+
+			  @ prow(), pcol()+1 SAY "Uk."
+			  @ prow(), pcol()+1 SAY nPom PICT gPici
+			  
+			  ?
+			  
+			else
+			
+			  ? idops, ops->naz
+		        
+			  @ prow(), nC1 SAY iznos picture gpici
+		        	
+			  @ prow(), pcol()+1 SAY nPom := round2(max(por->dlimit,por->iznos/100*iznos),gZaok2) pict gpici
+		        
+			  if cUmPD=="D"
+		        	@ prow(),pcol()+1 SAY nPom2:=round2(max(por->dlimit,por->iznos/100*piznos),gZaok2) pict gpici
+		        	@ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
+		        	
+				Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom-nPom2,0,idops,NLjudi())
+		        	nPorOps2 += nPom2
+		          else
+		        	
+				Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,iznos,idops,NLjudi())
+		          endif
+		        
+			endif
+			
+			nOOP += iznos
 		        nPOLjudi += ljudi
-		        nPorOps+=nPom
-		        skip
-		        if prow()>62+gPStranica
+		        nPorOps += nPom
+		       
+		        if cAlgoritam <> "S"
+				skip
+		        endif
+			
+			if prow() > (62 + gPStranica)
 				FF
 			endif
+		
 		enddo
 		select por
+		
 		? cLinija
-		nPor+=nPorOps
-		nPor2+=nPorOps2
+		
+		nPor += nPorOps
+		nPor2 += nPorOps2
+		
 	endif
    	
-	if !empty(poopst)
-     		? cLinija
-     		? Lokal("Ukupno:")
-     		@ prow(),nc1 SAY nOOP pict gpici
+	if !EMPTY(poopst)
+	
+     		? Lokal("Ukupno po ops.:")
+     		
+		@ prow(), nC1 SAY nOOP pict gpici
      		@ prow(),pcol()+1 SAY nPorOps   pict gpici
-     		if cUmPD=="D"
+     		
+		if cUmPD=="D"
        			@ prow(),pcol()+1 SAY nPorOps2   pict gpici
        			@ prow(),pcol()+1 SAY nPorOps-nPorOps2   pict gpici
        			Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps-nPorOps2,0,,NLjudi())
      		else
        			Rekapld("POR"+por->id,cgodina,cmjesec,nPorOps,nOOP,,"("+ALLTRIM(STR(nPOLjudi))+")")
      		endif
+		
      		? cLinija
    	else
-     		@ prow(),nc1 SAY nUNeto pict gpici
+     		
+		@ prow(),nc1 SAY nUNeto pict gpici
      		@ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nUNeto),gZaok2) pict gpici
      		if cUmPD=="D"
        			@ prow(),pcol()+1 SAY nPom2:=round2(max(dlimit,iznos/100*nUNeto2),gZaok2) pict gpici
@@ -131,11 +234,14 @@ do while !eof()
      		else
        			Rekapld("POR"+por->id,cgodina,cmjesec,nPom,nUNeto,,"("+ALLTRIM(STR(nLjudi))+")")
      		endif
-     		nPor+=nPom
+     		
+		nPor += nPom
    	endif
+	
 	skip
 enddo
 
+/*
 if round2(nUPorOl,2)<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
 	? Lokal("PORESKE OLAKSICE")
    	select por
@@ -182,15 +288,18 @@ if round2(nUPorOl,2)<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
    		? cLinija
    	endif
 endif
+*/
 
 ? cLinija
 ? Lokal("Ukupno Porez")
 @ prow(),nC1 SAY space(len(gpici))
-@ prow(),pcol()+1 SAY nPor-nUPorOl pict gpici
+@ prow(),pcol()+1 SAY nPor - nUPorOl pict gpici
+
 if cUmPD=="D"
 	@ prow(),PCOL()+1 SAY nPor2              pict gpici
   	@ prow(),pcol()+1 SAY nPor-nUPorOl-nPor2 pict gpici
 endif
+
 ? cLinija
 
 return

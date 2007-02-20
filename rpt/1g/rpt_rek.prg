@@ -230,8 +230,6 @@ if !lGusto
 	?
 endif
 
-?
-
 ProizvTP()
 
 // prikaz koeficijenta benef.
@@ -581,9 +579,20 @@ function CreOpsLD()
 *{
 
 aDbf:={{"ID"    ,"C", 1,0},;
+       {"PORID" ,"C", 2,0},;
        {"IDOPS" ,"C", 4,0},;
        {"IZNOS" ,"N",25,4},;
        {"IZNOS2","N",25,4},;
+       {"T_ST_1","N",5,2},;
+       {"T_ST_2","N",5,2},;
+       {"T_ST_3","N",5,2},;
+       {"T_ST_4","N",5,2},;
+       {"T_ST_5","N",5,2},;
+       {"T_IZ_1","N",25,4},;
+       {"T_IZ_2","N",25,4},;
+       {"T_IZ_3","N",25,4},;
+       {"T_IZ_4","N",25,4},;
+       {"T_IZ_5","N",25,4},;
        {"LJUDI" ,"N", 10,0}}
 
 //id- 1 opsstan
@@ -595,73 +604,315 @@ DBCreate2(PRIVPATH + "opsld",aDbf)
 select(F_OPSLD)
 usex (PRIVPATH+"opsld")
 
-INDEX ON ID+IDOPS tag "1"
-index ON  BRISANO TAG "BRISAN"
+INDEX ON PORID+ID+IDOPS tag "1"
+index ON BRISANO TAG "BRISAN"
 use
 
 return
-*}
 
 
+// ---------------------------------------
 // Popunjava tabelu OPSLD
-function PopuniOpsLD()
-*{
+// ---------------------------------------
+function PopuniOpsLD( cTip, cPorId, aPorezi )
+local nT_st_1 := 0
+local nT_st_2 := 0
+local nT_st_3 := 0
+local nT_st_4 := 0
+local nT_st_5 := 0
+local nT_iz_1 := 0
+local nT_iz_2 := 0
+local nT_iz_3 := 0
+local nT_iz_4 := 0
+local nT_iz_5 := 0
+local i
+local nPom
+local nOsnovica := 0
+
+if cTip == nil
+	cTip := ""
+endif
+
+if cPorId == nil
+	cPorId := SPACE(2)
+endif
+
+if aPorezi == nil
+	aPorezi := {}
+endif
+
+// ako je stepenasta...
+if cTip == "S"
+	
+	// uzmi prirodu obracuna
+	cPrObr := get_pr_obracuna()
+
+	if cPrObr == "N" .or. cPrObr == " "
+		nOsnovica := _oosnneto
+	elseif cPrObr == "2"
+		nOsnovica := _oosnostalo
+	elseif cPrObr == "P"
+		nOsnovica := ( _oosnneto + _oosnostalo )
+	endif
+	
+	for i:=1 to LEN(aPorezi)
+		
+		if i==1
+			nT_st_1 := aPorezi[i, 5]
+			nT_iz_1 := aPorezi[i, 6]
+		endif
+		if i==2
+			nT_st_2 := aPorezi[i, 5]
+			nT_iz_2 := aPorezi[i, 6]
+		endif
+		if i==3
+			nT_st_3 := aPorezi[i, 5]
+			nT_iz_3 := aPorezi[i, 6]
+		endif
+		if i==4
+			nT_st_4 := aPorezi[i, 5]
+			nT_iz_4 := aPorezi[i, 6]
+		endif
+		if i==5
+			nT_st_5 := aPorezi[i, 5]
+			nT_iz_5 := aPorezi[i, 6]
+		endif
+	next
+else
+	cPorId := "  "
+	nOsnovica := _ouneto
+endif
 
 select ops
 seek radn->idopsst
 select opsld
-seek "1"+radn->idopsst
+
+// po opc.stanovanja
+seek cPorId + "1" + radn->idopsst
 
 if Found()
-	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+	replace iznos with iznos + nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with ljudi+1
+	replace t_iz_1 with t_iz_1 + nT_iz_1
+	replace t_iz_2 with t_iz_2 + nT_iz_2
+	replace t_iz_3 with t_iz_3 + nT_iz_3
+	replace t_iz_4 with t_iz_4 + nT_iz_4
+	replace t_iz_5 with t_iz_5 + nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
+
 else
 	append blank
-	replace id with "1", idops with radn->idopsst, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+	replace id with "1"
+	replace porid with cPorId
+	replace idops with radn->idopsst
+	replace iznos with nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with 1
+	replace t_iz_1 with nT_iz_1
+	replace t_iz_2 with nT_iz_2
+	replace t_iz_3 with nT_iz_3
+	replace t_iz_4 with nT_iz_4
+	replace t_iz_5 with nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
 endif
-		
-seek "3"+ops->idkan
+
+// po kantonu
+seek cPorId + "3" + ops->idkan
 
 if found()
-	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+	replace iznos with iznos + nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with ljudi + 1
+	replace t_iz_1 with t_iz_1 + nT_iz_1
+	replace t_iz_2 with t_iz_2 + nT_iz_2
+	replace t_iz_3 with t_iz_3 + nT_iz_3
+	replace t_iz_4 with t_iz_4 + nT_iz_4
+	replace t_iz_5 with t_iz_5 + nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
+
 else
 	append blank
-	replace id with "3", idops with ops->idkan, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+	replace id with "3"
+	replace porid with cPorId
+	replace idops with ops->idkan
+	replace iznos with nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with 1
+	replace t_iz_1 with nT_iz_1
+	replace t_iz_2 with nT_iz_2
+	replace t_iz_3 with nT_iz_3
+	replace t_iz_4 with nT_iz_4
+	replace t_iz_5 with nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
 endif
 
-seek "5"+ops->idn0
+// po idn0
+seek cPorId + "5" + ops->idn0
 if found()
-	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+	replace iznos with iznos + nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with ljudi + 1
+	replace t_iz_1 with t_iz_1 + nT_iz_1
+	replace t_iz_2 with t_iz_2 + nT_iz_2
+	replace t_iz_3 with t_iz_3 + nT_iz_3
+	replace t_iz_4 with t_iz_4 + nT_iz_4
+	replace t_iz_5 with t_iz_5 + nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
+
 else
 	append blank
-	replace id with "5", idops with ops->idn0, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+	replace id with "5"
+	replace porid with cPorId
+	replace idops with ops->idn0
+	replace iznos with nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with 1
+	replace t_iz_1 with nT_iz_1
+	replace t_iz_2 with nT_iz_2
+	replace t_iz_3 with nT_iz_3
+	replace t_iz_4 with nT_iz_4
+	replace t_iz_5 with nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
 endif
 
 select ops
 seek radn->idopsrad
-
 select opsld
-seek "2"+radn->idopsrad
+
+// po opc.rada
+seek cPorId + "2" + radn->idopsrad
 if found()
-	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl , ljudi with ljudi+1
+	replace iznos with iznos + nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with ljudi + 1
+	replace t_iz_1 with t_iz_1 + nT_iz_1
+	replace t_iz_2 with t_iz_2 + nT_iz_2
+	replace t_iz_3 with t_iz_3 + nT_iz_3
+	replace t_iz_4 with t_iz_4 + nT_iz_4
+	replace t_iz_5 with t_iz_5 + nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
+
 else
 	append blank
-	replace id with "2", idops with radn->idopsrad, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+	replace id with "2"
+	replace porid with cPorId
+	replace idops with radn->idopsrad
+	replace iznos with nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with 1
+	replace t_iz_1 with nT_iz_1
+	replace t_iz_2 with nT_iz_2
+	replace t_iz_3 with nT_iz_3
+	replace t_iz_4 with nT_iz_4
+	replace t_iz_5 with nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
 endif
 
-seek "4"+ops->idkan
+// po kantonu
+seek cPorId + "4" + ops->idkan
 if found()
-	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+	replace iznos with iznos + nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with ljudi + 1
+	replace t_iz_1 with t_iz_1 + nT_iz_1
+	replace t_iz_2 with t_iz_2 + nT_iz_2
+	replace t_iz_3 with t_iz_3 + nT_iz_3
+	replace t_iz_4 with t_iz_4 + nT_iz_4
+	replace t_iz_5 with t_iz_5 + nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
+
 else
 	append blank
-	replace id with "4", idops with ops->idkan, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+	replace id with "4"
+	replace porid with cPorId
+	replace idops with ops->idkan
+	replace iznos with nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with 1
+	replace t_iz_1 with nT_iz_1
+	replace t_iz_2 with nT_iz_2
+	replace t_iz_3 with nT_iz_3
+	replace t_iz_4 with nT_iz_4
+	replace t_iz_5 with nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
 endif
 
-seek "6"+ops->idn0
+// po idn0
+seek cPorId + "6" + ops->idn0
 if found()
-	replace iznos with iznos+_ouneto, iznos2 with iznos2+nPorOl, ljudi with ljudi+1
+	replace iznos with iznos + nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with ljudi + 1
+	replace t_iz_1 with t_iz_1 + nT_iz_1
+	replace t_iz_2 with t_iz_2 + nT_iz_2
+	replace t_iz_3 with t_iz_3 + nT_iz_3
+	replace t_iz_4 with t_iz_4 + nT_iz_4
+	replace t_iz_5 with t_iz_5 + nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
+
 else
 	append blank
-	replace id with "6", idops with ops->idn0, iznos with _ouneto,iznos2 with iznos2+nPorOl, ljudi with 1
+	replace id with "6"
+	replace porid with cPorId
+	replace idops with ops->idn0
+	replace iznos with nOsnovica
+	replace iznos2 with iznos2 + nPorOl
+	replace ljudi with 1
+	replace t_iz_1 with nT_iz_1
+	replace t_iz_2 with nT_iz_2
+	replace t_iz_3 with nT_iz_3
+	replace t_iz_4 with nT_iz_4
+	replace t_iz_5 with nT_iz_5
+	replace t_st_1 with nT_st_1
+	replace t_st_2 with nT_st_2
+	replace t_st_3 with nT_st_3
+	replace t_st_4 with nT_st_4
+	replace t_st_5 with nT_st_5
 endif
 
 select ld
@@ -670,7 +921,12 @@ return
 
 
 
+// -----------------------------------------------------
+// napravi obracun
+// -----------------------------------------------------
 function napr_obracun(lSvi)
+local i
+local cTpr
 
 nPorOl:=0
 nUPorOl:=0
@@ -678,8 +934,6 @@ aNetoMj:={}
 
 do while !eof() .and. eval(bUSlov)
 	
-	// vrti se u bazi LD.DBF
- 	
 	if lViseObr .and. EMPTY(cObracun)
    		ScatterS(godina, mjesec, idrj, idradn)
  	else
@@ -710,7 +964,50 @@ do while !eof() .and. eval(bUSlov)
 	endif
 
  	_ouneto := MAX(_uneto, PAROBR->prosld * gPDLimit/100 )
+	
+ 	_oosnneto := 0
+	_oosnostalo := 0
  
+ 	// vrati osnovicu za neto i ostala primanja
+ 	for i:=1 to cLDPolja
+ 		
+		cTprField := PADL( ALLTRIM(STR(i)), 2, "0" )
+		cTpr := "_I" + cTprField
+		
+		if &cTpr == 0
+			loop
+		endif
+		
+		select tippr
+		seek cTprField
+		select ld
+		
+		if tippr->tpr_tip == "N"
+			
+			// osnovica neto
+			_oosnneto += &cTpr
+			
+		elseif tippr->tpr_tip == "2"
+			
+			// osnovica ostalo
+			_oosnostalo += &cTpr
+			
+		elseif tippr->tpr_tip == " "
+		
+			if tippr->uneto == "D"
+				
+				// osnovica ostalo
+				_oosnneto += &cTpr
+				
+			elseif tippr->uneto == "N"
+				
+				// osnovica ostalo
+				_oosnostalo += &cTpr
+				
+			endif
+		endif
+ 	next
+	
  	// obradi poreze....
 	
  	select por
@@ -721,32 +1018,30 @@ do while !eof() .and. eval(bUSlov)
  	
 	do while !eof()  
 		
-		lStepPor := .f.
-		
-		if por->(FIELDPOS("ALGORITAM")) <> 0 ;
-			.and. por->algoritam == "S"
-			
-			lStepPor := .t.
-			
-		endif
-		
 		// porezi
    		
+		cAlgoritam := get_algoritam()
+		
 		PozicOps( POR->poopst )
    		
-		if !ImaUOp( "POR",POR->id )
+		if !ImaUOp( "POR", POR->id )
      			SKIP 1
 			LOOP
    		endif
    		
-		if lStepPor == .t.
-			
-			// stepenasti proracun poreza ...
+		// obracunaj porez
+		aPor := obr_por( por->id, _oosnneto, _oosnostalo )
 		
-		else
-			// prosti procentni racun
-			nPor += round2(max(dlimit,iznos/100*_oUNeto),gZaok2)
-   		endif
+		// samo izracunaj total, ne ispisuj porez
+		nPor += isp_por( aPor, cAlgoritam, "", .f. )
+
+		//nPor += round2(max(dlimit,iznos/100*_oUNeto),gZaok2)
+		
+		if cAlgoritam == "S"
+			PopuniOpsLd( cAlgoritam, por->id, aPor )
+		endif
+		
+		select por
 		
 		skip
 		
