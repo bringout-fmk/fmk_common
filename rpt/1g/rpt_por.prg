@@ -158,10 +158,10 @@ do while !eof()
 					
 			  enddo
 
-			  @ prow(), pcol()+1 SAY "Uk."
+			  @ prow(), pcol()+1 SAY "UK="
 			  @ prow(), pcol()+1 SAY nPom PICT gPici
 			  
-			  ?
+			  Rekapld("POR"+por->id+idops,cGodina,cMjesec,nPom,iznos,idops,NLjudi())
 			  
 			else
 			

@@ -39,7 +39,7 @@ do while !eof()
   endif
 
   if right(id,1)=="X"
-   ? cLinija
+     ? cLinija
   endif
   ? id,"-",naz
 

@@ -820,6 +820,8 @@ return
 // kartica plate bruto X
 static function KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 local nKRedova
+local nOsnNeto
+local nOsnOstalo
 
 // koliko redova ima kartica
 nKRedova := kart_redova()
@@ -831,34 +833,62 @@ if gTipObr=="2" .and. parobr->k1<>0
 	@ prow(),pcol()+1 SAY parobr->vrbod/parobr->k1*brbod pict "99999.999"
 endif
 
-IF l2kolone
+if l2kolone
 	P_COND2
-	// aRCPos := { PROW() , PCOL() }
 	cDefDev := SET(_SET_PRINTFILE)
 	SvratiUFajl()
-	// SETPRC(0,0)
-ENDIF
+endif
+
 ? m
+
 ? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
+
 ? m
-private nC1:=30+LEN(cLMSK)
+
+private nC1 := 30 + LEN(cLMSK)
+
+nOsnNeto := 0
+nOsnOstalo := 0
+
 for i:=1 to cLDPolja
-	cPom:=padl(alltrim(str(i)),2,"0")
+	
+	cPom := PADL(ALLTRIM(STR(i)), 2, "0")
+	cTpFld := "I" + cPom
+	
 	select tippr
 	seek cPom
-	if tippr->uneto=="D"
+	
+	select ld
+	
+	// sracunaj neto i ostalo...
+	if tippr->tpr_tip == "N"
+		nOsnNeto += &cTpFld
+	elseif tippr->tpr_tip == "2"
+		nOsnOstalo += &cTpFld
+	elseif tippr->tpr_tip == " "
+		if tippr->uneto == "D"
+			nOsnNeto += &cTpFld
+		elseif tippr->uneto == "N"
+			nOsnOstalo += &cTpFld
+		endif
+	endif
+
+	select tippr
+	if tippr->uneto == "D"
 		PrikPrimanje()
 	endif
 next
+
 ? m
 ? cLMSK+ Lokal("UKUPNO NETO:")
-@ prow(),nC1+8  SAY  _USati  pict gpics
+@ prow(), nC1 + 8 SAY _USati pict gpics
 ?? SPACE(1) + Lokal("sati")
-@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
-?? "",gValuta
+@ prow(), 60 + LEN(cLMSK) SAY _UNeto pict gpici
+?? "", gValuta
 ? m
-nBruto:=_UNETO
-nPorDopr:=0
+
+nBruto := _UNETO
+nPorDopr := 0
 select (F_POR)
 if !used()
 	O_POR
@@ -871,34 +901,62 @@ select (F_KBENEF)
 if !used()
 	O_KBENEF
 endif
+
 nBO:=0
 nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
+
 select por
 go top
-nPom:=nPor:=0
-nC1:=30+LEN(cLMSK)
-nPorOl:=0
+
+nPom := 0
+nPor := 0
+nC1 := 30 + LEN(cLMSK)
+nPorOl := 0
+aPor := {}
+
 do while !eof()
-	PozicOps(POR->poopst)
-	IF !ImaUOp("POR",POR->id)
-		SKIP 1
-		LOOP
-	ENDIF
+	
+	// uzmi algoritam
+	cAlgoritam := get_algoritam()
+	
+	PozicOps( POR->poopst )
+	
+	if !ImaUOp( "POR", POR->id )
+		skip 1
+		loop
+	endif
+	
+	// obracunaj porez
+	aPor := obr_por( por->id, nOsnNeto, nOsnOstalo )
+		
 	IF !lSkrivena
-		? cLMSK+id,"-",naz
-		@ prow(),pcol()+1 SAY iznos pict "99.99%"
-		nC1:=pcol()+1
-		// @ prow(),pcol()+1 SAY _UNeto pict gpici
-		@ prow(),39+LEN(cLMSK)  SAY nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)) pict gpici
+	
+		nPom := isp_por( aPor, cAlgoritam, cLMSK )
+		
+		//? cLMSK+id,"-",naz
+		//@ prow(),pcol()+1 SAY iznos pict "99.99%"
+		//nC1:=pcol()+1
+		//@ prow(),39+LEN(cLMSK)  SAY nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)) pict gpici
+	
 	ELSE
-		nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2))
+		
+		nPom := isp_por( aPor, cAlgoritam, cLMSK, .f. )
+		
+		//nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2))
+	
 	ENDIF
-	nPor+=nPom
+	
+	nPor += nPom
+	
 	skip 1
 enddo
-nBruto+=nPor
-nPorDopr+=nPor
-if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() // poreska olaksica
+
+nBruto += nPor
+nPorDopr += nPor
+
+if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() 
+	
+	// poreska olaksica
 	if alltrim(cVarPorOl)=="2"
 		nPorOl:=RADN->porol
 	elseif alltrim(cVarPorol)=="1"
@@ -906,9 +964,9 @@ if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() // poreska olaksica
 	else
 		nPorOl:= &("_I"+cVarPorol)
 	endif
-	IF !lSkrivena
+	if !lSkrivena
 		? cLMSK+ Lokal("PORESKA OLAKSICA")
-	ENDIF
+	endif
 	if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
 		nPorOl:=nPor
 	endif
@@ -924,7 +982,8 @@ if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() // poreska olaksica
 	nBruto-=nPorol
 	nPorDopr-=nPorOl
 endif
-IF !lSkrivena
+
+if !lSkrivena
 	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
 		? m
 		? cLMSK+Lokal("Ukupno Porez")
@@ -932,25 +991,34 @@ IF !lSkrivena
 		@ prow(),39+LEN(cLMSK) SAY nPor-nPorOl pict gpici
 		? m
 	endif
-ENDIF
+endif
+
 select dopr
 go top
+
 nPom:=nDopr:=0
 nC1:=20+LEN(cLMSK)
-do while !eof()  // DOPRINOSI
+
+do while !eof()  
+	
+	// DOPRINOSI
 	PozicOps(DOPR->poopst)
-	IF !ImaUOp("DOPR",DOPR->id)
+	
+	if !ImaUOp("DOPR",DOPR->id)
 		SKIP 1
 		LOOP
-	ENDIF
+	endif
+	
 	if right(id,1)<>"X"
 		SKIP 1
 		LOOP
 	endif
-	IF !lSkrivena
+	
+	if !lSkrivena
 		? cLMSK+id,"-",naz
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
-	ENDIF
+	endif
+	
 	if empty(idkbenef) // doprinos udara na neto
 		// @ prow(),pcol()+1 SAY nBO pict gpici
 		nC1:=pcol()+1
