@@ -436,12 +436,21 @@ for i:=1 to cLDPolja
 				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
 			endif
 			
-			// uzmi osnovice
-			if tippr->tpr_tip == "N"
+			if tippr->(FIELDPOS("TPR_TIP")) <> 0
+			  // uzmi osnovice
+			  if tippr->tpr_tip == "N"
 				nOsnNeto += _i&cPom
-			elseif tippr->tpr_tip == "2"
+			  elseif tippr->tpr_tip == "2"
 				nOsnOstalo += _i&cPom
-			elseif tippr->tpr_tip == " "
+			  elseif tippr->tpr_tip == " "
+				// standardni tekuci sistem
+				if tippr->uneto == "D"
+					nOsnNeto += _i&cPom
+				else
+					nOsnOstalo += _i&cPom
+				endif
+			  endif
+			else
 				// standardni tekuci sistem
 				if tippr->uneto == "D"
 					nOsnNeto += _i&cPom
@@ -860,17 +869,25 @@ for i:=1 to cLDPolja
 	
 	select ld
 	
-	// sracunaj neto i ostalo...
-	if tippr->tpr_tip == "N"
+	if tippr->(FIELDPOS("TPR_TIP")) <> 0
+	   // sracunaj neto i ostalo...
+	   if tippr->tpr_tip == "N"
 		nOsnNeto += &cTpFld
-	elseif tippr->tpr_tip == "2"
+	   elseif tippr->tpr_tip == "2"
 		nOsnOstalo += &cTpFld
-	elseif tippr->tpr_tip == " "
+	   elseif tippr->tpr_tip == " "
 		if tippr->uneto == "D"
 			nOsnNeto += &cTpFld
 		elseif tippr->uneto == "N"
 			nOsnOstalo += &cTpFld
 		endif
+	   endif
+	else
+	   if tippr->uneto == "D"
+		nOsnNeto += &cTpFld
+	   elseif tippr->uneto == "N"
+		nOsnOstalo += &cTpFld
+	   endif
 	endif
 
 	select tippr

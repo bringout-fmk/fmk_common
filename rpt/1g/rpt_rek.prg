@@ -982,17 +982,18 @@ do while !eof() .and. eval(bUSlov)
 		seek cTprField
 		select ld
 		
-		if tippr->tpr_tip == "N"
+		if tippr->(FIELDPOS("TPR_TIP")) <> 0
+		  if tippr->tpr_tip == "N"
 			
 			// osnovica neto
 			_oosnneto += &cTpr
 			
-		elseif tippr->tpr_tip == "2"
+		  elseif tippr->tpr_tip == "2"
 			
 			// osnovica ostalo
 			_oosnostalo += &cTpr
 			
-		elseif tippr->tpr_tip == " "
+		  elseif tippr->tpr_tip == " "
 		
 			if tippr->uneto == "D"
 				
@@ -1004,6 +1005,15 @@ do while !eof() .and. eval(bUSlov)
 				// osnovica ostalo
 				_oosnostalo += &cTpr
 				
+			endif
+		  endif
+		else
+			if tippr->uneto == "D"
+				// osnovica ostalo
+				_oosnneto += &cTpr
+			elseif tippr->uneto == "N"
+				// osnovica ostalo
+				_oosnostalo += &cTpr
 			endif
 		endif
  	next

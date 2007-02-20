@@ -108,12 +108,6 @@ if kred->(FieldPos("FIL")) == 0
 	cModStru += "KRED.CHS, "
 endif
 
-O_POR
-select por
-if por->(FieldPos("ALGORITAM")) == 0
-	cModStru += "LD.CHS" 
-endif
-
 if !EMPTY(cModStru)
 	MsgBeep("Upozorenje!##Odraditi modifikacije struktura:#" + cModStru)
 endif
