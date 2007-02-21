@@ -153,11 +153,11 @@ endif
 
 ++ nX
 
-@ m_x + nX, m_y + 2 SAY PADL("Kolicina", nBoxLen) GET nKolicina pict "99999999.999"
+@ m_x + nX, m_y + 2 SAY PADL("Kolicina", nBoxLen) GET nKolicina pict "99999999.999" VALID _val_num( nKolicina )
 
 if lCijena
 	++ nX
-	@ m_x + nX, m_y + 2 SAY PADL("Cijena", nBoxLen) GET nCijena pict gPICCDEM
+	@ m_x + nX, m_y + 2 SAY PADL("Cijena", nBoxLen) GET nCijena pict gPICCDEM VALID _val_num( nCijena )
 endif
 
 ++ nX
@@ -206,6 +206,22 @@ endif
     
 return DE_REFRESH
 
+
+// ----------------------------------------
+// validacija numerika
+// ----------------------------------------
+static function _val_num( nNum )
+local lRet := .t.
+
+if nNum <= 0
+	lRet := .f.
+endif
+
+if lRet == .f.
+	MsgBeep("Vrijednost mora biti > 0 !!!")
+endif
+
+return lRet
 
 // ----------------------------------------
 // vecina ugovora ima samo jednu stavku
