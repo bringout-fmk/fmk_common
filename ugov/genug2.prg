@@ -489,12 +489,19 @@ return
 // ------------------------------------
 static function n_dest(cPartn, cDest)
 local nTArr
+local lRet := .f.
 nTArr := SELECT()
 select dest
 set order to tag "ID"
-hseek cPartn + cDest
+go top
+seek cPartn + cDest
+
+if FOUND()
+	lRet := .t.
+endif
+
 select (nTArr)
-return
+return lRet
 
 
 // --------------------------------------------------
@@ -504,6 +511,7 @@ static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldo
 local dDatGen
 local cFTipDok
 local cIdUgov
+local i
 local nRbr
 local nCijena
 local nFaktIzn:=0
@@ -526,7 +534,7 @@ local cKtoDug
 local dDatLFakt
 local nMjesec
 local nGodina
-local lFromDest := .f.
+local lFromDest
 
 select gen_ug
 set order to tag "dat_obr"
@@ -551,6 +559,8 @@ nCount := 0
 
 // prodji kroz rugov
 do while !EOF() .and. (id == cUId)
+	
+	lFromDest := .f.
 
 	if !EMPTY( cArtikal )
 		
@@ -577,17 +587,19 @@ do while !EOF() .and. (id == cUId)
 	if cDestin <> nil .and. !EMPTY( cDestin )
 	
 		// postoji def. destinacija za svu robu
-		n_dest( cUPartn, cDestin )
-		lFromDest := .t.
+		if n_dest( cUPartn, cDestin )
+			lFromDest := .t.
+		endif
 		
 	elseif cDestin <> nil .and. EMPTY( cDestin )
 		
 		// za svaku robu treba posebna faktura
-		n_dest( cUPartn, rugov->dest )
-		lFromDest := .t.
-
+		if n_dest( cUPartn, rugov->dest )
+			lFromDest := .t.
+		endif
+		
 		// daj novi broj dokumenta....
-		if nCount > 0
+		if lFromDest == .t. .and. nCount > 0
 			
 			// uvecaj uk.broj gen.faktura
 			++ nFaktBr

@@ -132,7 +132,7 @@ static function key_handler(Ch)
 local GetList:={}
 local nRec:=0
 
-@ m_x+11, 5 SAY "<D>-set poslj.fakt. <c+G>-gen.novih ugov. <P>-preg.dest."
+@ m_x+11, 5 SAY "<R>-set poslj.fakt. <c+G>-gen.novih ugov. <P>-preg.dest."
 
 do case
 	case ( Ch == K_CTRL_T )
@@ -142,7 +142,7 @@ do case
 		endif
 		return DE_CONT
 		
-	case UPPER(CHR(Ch)) == "D"
+	case UPPER(CHR(Ch)) == "R"
 		
 		// setuj datum do kojeg si fakturisao
 		if set_datl_fakt() == 1
@@ -155,7 +155,7 @@ do case
 	
 		// pregled destinacija
 		if ugov->(FIELDPOS("def_dest")) <> 0
-			p_dest_2( ugov->def_dest, ugov->idpartner )
+			p_dest_2( nil, ugov->idpartner )
 		endif
 
 		return DE_CONT
@@ -370,7 +370,7 @@ if is_dest()
 	++ nX
 	
 	@ m_x + nX, m_y + 2 SAY PADL("Def.dest", nBoxLen) GET _def_dest ;
-          PICT "@!" VALID EMPTY(_def_dest) .or. p_dest_2( @_def_dest, _idpartner )
+          PICT "@!" VALID {|| EMPTY(_def_dest) .or. p_dest_2( @_def_dest, _idpartner ) }
 	
 endif
 

@@ -4,6 +4,7 @@
 // id partner
 static __partn
 static __ugov
+static __dest_len
 
 // ----------------------------------
 // pregled destinacije 
@@ -22,7 +23,7 @@ cHeader += "-"
 cHeader += PADR( Ocitaj(F_PARTN, cPartId, "naz"), 20 ) + ".."
 
 select dest
-set order to tag "ID"
+set order to tag "IDDEST"
 
 if !EMPTY(cPartId)
 	__partn := cPartId
@@ -31,6 +32,7 @@ else
 endif
 
 __ugov := ugov->id
+__dest_len := 6
 
 // postavi filter
 set_f_tbl( cPartId )
@@ -38,8 +40,7 @@ set_f_tbl( cPartId )
 // setuj kolone
 set_a_kol( @ImeKol, @Kol )
 
-
-xRet := PostojiSifra(F_DEST, 1, 16, 70, cHeader, @cId, dx, dy,{|Ch| key_handler(Ch)} )
+xRet := PostojiSifra(F_DEST, "IDDEST", 16, 70, cHeader, @cId, dx, dy,{|Ch| key_handler(Ch)} )
 
 select (nArr)
 
@@ -134,7 +135,7 @@ set filter to
 set order to tag "IDDEST"
 go bottom
 
-xRet := PADL( ALLTRIM( STR( VAL(field->id) + 1 ) ), 3 )
+xRet := PADL( ALLTRIM( STR( VAL(field->id) + 1 ) ), __dest_len, "0" )
 
 set order to tag "ID"
 
@@ -190,7 +191,7 @@ endif
 
 ++nX
 
-@ m_x + nX, m_y + 2 SAY PADR("Partner: " + _idpartner + ", dest.rbr: " + _id, 70)
+@ m_x + nX, m_y + 2 SAY PADR("Partner: " + ALLTRIM(_idpartner) + " , dest.rbr: " + ALLTRIM(_id), 70)
 
 nX += 2
 

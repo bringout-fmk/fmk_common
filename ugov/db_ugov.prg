@@ -74,7 +74,7 @@ return
 static function a_dest()
 local aDbf:={}
 
-AADD(aDBF, { "ID"        , "C" ,  3,  0 })
+AADD(aDBF, { "ID"        , "C" ,  6,  0 })
 AADD(aDBF, { "IDPartner" , "C" ,  6,  0 })
 AADD(aDBF, { "Naziv"     , "C" , 25,  0 })
 AADD(aDBF, { "Naziv2"    , "C" , 25,  0 })
@@ -124,7 +124,7 @@ AADD(aDBf, { 'F_P_D_NIVO', 'N' ,  5,  0 })
 // datum zadnjeg obracuna    
 AADD(aDBf, { 'DAT_L_FAKT', 'D' ,  8,  0 })
 // destinacija    
-AADD(aDBf, { 'DEF_DEST',   'C' ,  3,  0 })
+AADD(aDBf, { 'DEF_DEST',   'C' ,  6,  0 })
 
 return aDbf
 
@@ -143,7 +143,7 @@ AADD(aDBf, { 'Rabat'    , 'N' ,   6,  3 })
 AADD(aDBf, { 'Porez'    , 'N' ,   5,  2 })
 AADD(aDBf, { 'K1'       , 'C' ,   1,  0 })
 AADD(aDBf, { 'K2'       , 'C' ,   2,  0 })
-AADD(aDBf, { 'DEST'     , 'C' ,   3,  0 })
+AADD(aDBf, { 'DEST'     , 'C' ,   6,  0 })
 
 return aDbf
 
