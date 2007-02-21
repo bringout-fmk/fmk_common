@@ -42,6 +42,8 @@ set_a_kol( @ImeKol, @Kol )
 
 xRet := PostojiSifra(F_DEST, "IDDEST", 16, 70, cHeader, @cId, dx, dy,{|Ch| key_handler(Ch)} )
 
+set filter to
+
 select (nArr)
 
 return xRet
