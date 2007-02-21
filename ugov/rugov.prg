@@ -1,6 +1,9 @@
 #include "sc.ch"
 
 
+static __partn
+
+
 // --------------------------------------
 // otvara stavke ugovora - robu iz RUGOV
 // --------------------------------------
@@ -26,6 +29,8 @@ set cursor on
 
 ?? "Ugovor:", ugov->id, ugov->naz, ugov->DatOd
 
+__partn := ugov->idpartner
+
 BrowseKey(m_x+3, m_y+1, m_x+ nLenTbl - 1, m_y+ nWidthTbl, ;
     ImeKol, {|Ch| key_handler(Ch, cIdUgov)}, ;
     "id+brisano==cIdUgov + ' '", ;
@@ -45,13 +50,11 @@ aImeKol := {}
 aKol := {}
 
 AADD(aImeKol, { "ID roba",   {|| IdRoba} })
-
 AADD(aImeKol, { PADC("Kol.", LEN(pickol)), {|| transform(Kolicina, pickol)} })
 
 if rugov->(fieldpos("cijena"))<>0
   	AADD(aImeKol, { "Cijena", {|| transform(cijena, picdem) },  "cijena"    } )
 endif
-
 
 AADD(aImeKol, { "Rabat",   {|| Rabat}  })
 AADD(aImeKol, { "Porez",   {|| Porez}  })
@@ -59,6 +62,10 @@ AADD(aImeKol, { "Porez",   {|| Porez}  })
 if rugov->(fieldpos("K1"))<>0
 	AADD(aImeKol, { "K1", {|| K1},    "K1"    } )
   	AADD(aImeKol, { "K2", {|| K2},    "K2"    } )
+endif
+
+if rugov->(fieldpos("dest")) <> 0
+	AADD(aImeKol, { "Dest.", {|| get_dest_info( __partn, dest )}, "dest"  } )
 endif
 
 for i:=1 to len(aImeKol)
@@ -97,11 +104,13 @@ return nRet
 function edit_rugov(lNovi)
 local cIdRoba
 local nKolicina
+local cDestinacija
 local nRabat
 local nPorez
 local nCijena
 local lCijena := .f.
 local lK1 := .f.
+local lDest := .f.
 local cK1
 local cK2
 local nX := 1
@@ -111,6 +120,10 @@ cIdRoba:=IdRoba
 nKolicina:=kolicina
 nRabat:=rabat
 nPorez:=porez
+
+if is_dest()
+	lDest := .t.
+endif
 
 if rugov->(fieldpos("K1")) <> 0
 	cK1 := k1
@@ -123,11 +136,23 @@ if rugov->(fieldpos("cijena")) <> 0
 	lCijena := .t.
 endif
 
-Box(,7,75,.f.)
+if lDest
+	cDestinacija := dest
+endif
+
+Box(, 8, 75, .f.)
 
 @ m_x + nX, m_y + 2 SAY PADL("Roba", nBoxLen) GET cIdRoba pict "@!" valid P_Roba(@cIDRoba)
 
+if lDest
+	
+	++ nX
+	@ m_x + nX, m_y + 2 SAY PADL("Destinacija:", nBoxLen) GET cDestinacija pict "@!" valid {|| EMPTY(cDestinacija) .or. p_dest_2( @cDestinacija, __partn )}
+	
+endif
+
 ++ nX
+
 @ m_x + nX, m_y + 2 SAY PADL("Kolicina", nBoxLen) GET nKolicina pict "99999999.999"
 
 if lCijena
@@ -166,6 +191,10 @@ replace kolicina with nKolicina
 replace rabat with nRabat
 replace porez with nPorez
 
+if lDest
+	replace dest with cDestinacija
+endif
+
 if lCijena
 	replace cijena with nCijena
 endif
@@ -184,10 +213,14 @@ return DE_REFRESH
 // -----------------------------------------
 function g_rugov_opis(cIdUgov)
 local cOpis:=""
+local nTArea := SELECT()
 PushWa()
 SELECT RUGOV
 seek cIdUgov
 cOpis += trim(idroba)+ " " + alltrim(transform(kolicina, pickol)) + " x " + alltrim(transform(cijena, picdem))
 
 PopWa()
+select (nTArea)
 return cOpis
+
+

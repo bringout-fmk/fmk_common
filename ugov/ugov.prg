@@ -132,7 +132,7 @@ static function key_handler(Ch)
 local GetList:={}
 local nRec:=0
 
-@ m_x+11, 5 SAY "<D> - setuj posljednje fakturisanje <c+G> - generisanje novih ugovora"
+@ m_x+11, 5 SAY "<D>-set poslj.fakt. <c+G>-gen.novih ugov. <P>-preg.dest."
 
 do case
 	case ( Ch == K_CTRL_T )
@@ -150,14 +150,23 @@ do case
 		else
 			return DE_CONT
 		endif
+		
+	case UPPER(CHR(Ch)) == "P"
 	
+		// pregled destinacija
+		if ugov->(FIELDPOS("def_dest")) <> 0
+			p_dest_2( ugov->def_dest, ugov->idpartner )
+		endif
+
+		return DE_CONT
+		
 	case ( Ch == K_CTRL_G )
 	   	
 		// automatsko generisanje novih ugovora 
 		// za sve partnere sa podacima
 		// prethodnog ugovora
 	   	gen_ug_part()
-	    
+	
 	case (Ch == K_F2)
 		// ispravka ugovora
 		edit_ugovor(.f.)
@@ -325,9 +334,9 @@ if lNovi
 endif
  	    
 Scatter()
- 	   
 	   
 if lNovi
+
 	_datod:=DATE()
    	_datdo:=CTOD("31.12.2059")
    	_aktivan:="D"
@@ -356,12 +365,12 @@ Box(, 20,75,.f.)
 
 @ m_x + nX, m_y + 2 SAY PADL("Partner", nBoxLen) GET _idpartner VALID {|| x:=P_Firma(@_IdPartner), MSAY2(m_x+2,m_y+35, Ocitaj(F_PARTN,_IdPartner,"NazPartn()")) , x } PICT "@!"
 
-if ugov->(FIELDPOS("destin")) <> 0
+if is_dest()
 	
 	++ nX
 	
-	@ m_x + nX, m_y + 2 SAY PADL("Destinacija", nBoxLen) GET _destin ;
-          PICT "@!" VALID EMPTY(_destin) .or. P_Destin(@_destin, _idpartner)
+	@ m_x + nX, m_y + 2 SAY PADL("Def.dest", nBoxLen) GET _def_dest ;
+          PICT "@!" VALID EMPTY(_def_dest) .or. p_dest_2( @_def_dest, _idpartner )
 	
 endif
 
@@ -455,7 +464,9 @@ if ugov->(fieldpos("A1"))<>0
 	@ m_x + nX, m_y + 2 SAY PADL("B1", nBoxLen) GET _b1
 	@ m_x + nX, col() + 2 SAY PADL("B2", nBoxLen) GET _b2
 endif
+
 read
+
 BoxC()
 
 if LastKey() == K_ESC

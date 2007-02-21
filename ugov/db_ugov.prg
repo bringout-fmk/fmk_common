@@ -10,6 +10,7 @@ cre_tbl("UGOV")
 cre_tbl("RUGOV")
 cre_tbl("GEN_UG")
 cre_tbl("GEN_UG_P")
+cre_tbl("DEST")
 
 return
 
@@ -18,6 +19,7 @@ return
 // ------------------------------------------
 static function cre_tbl(cTbl)
 local aDbf
+local cPath := KUMPATH
 
 // struktura
 do case
@@ -29,35 +31,61 @@ do case
 		aDbf := a_genug()
 	case cTbl == "GEN_UG_P"
 		aDbf := a_gug_p()
+	case cTbl == "DEST"
+		cPath := SIFPATH
+		aDbf := a_dest()
 endcase
 
 // kreiraj dbf
-if !File( KUMPATH + cTbl + "." + DBFEXT )
-	DBcreate2(KUMPATH + cTbl, aDBF)
+if !File( cPath + cTbl + "." + DBFEXT )
+	DBcreate2(cPath + cTbl, aDBF)
 endif
 
 // indexi
 do case
 	case cTbl == "UGOV"
-		CREATE_INDEX("ID"      ,"Id+idpartner" ,KUMPATH+"UGOV")
-		CREATE_INDEX("NAZ"     ,"idpartner+Id" ,KUMPATH+"UGOV")
-		CREATE_INDEX("NAZ2"    ,"naz"          ,KUMPATH+"UGOV")
-		CREATE_INDEX("PARTNER" ,"IDPARTNER"    ,KUMPATH+"UGOV")
-		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,KUMPATH+"UGOV")
+		CREATE_INDEX("ID"      ,"Id+idpartner" ,cPath+"UGOV")
+		CREATE_INDEX("NAZ"     ,"idpartner+Id" ,cPath+"UGOV")
+		CREATE_INDEX("NAZ2"    ,"naz"          ,cPath+"UGOV")
+		CREATE_INDEX("PARTNER" ,"IDPARTNER"    ,cPath+"UGOV")
+		CREATE_INDEX("AKTIVAN" ,"AKTIVAN"      ,cPath+"UGOV")
 
 	case cTbl == "RUGOV"
-		CREATE_INDEX("ID","id+IdRoba",KUMPATH+"RUGOV")
-		CREATE_INDEX("IDROBA","IdRoba",KUMPATH+"RUGOV")
+		CREATE_INDEX("ID","id+IdRoba",cPath+"RUGOV")
+		CREATE_INDEX("IDROBA","IdRoba",cPath+"RUGOV")
 
 	case cTbl == "GEN_UG"
-		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)", KUMPATH+"GEN_UG")
-		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)", KUMPATH+"GEN_UG")
+		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)", cPath+"GEN_UG")
+		CREATE_INDEX("DAT_GEN","DTOS(DAT_GEN)", cPath+"GEN_UG")
 
 	case cTbl == "GEN_UG_P"
-		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", KUMPATH+"GEN_UG_P")
+		CREATE_INDEX("DAT_OBR","DTOS(DAT_OBR)+ID_UGOV+IDPARTNER", cPath+"GEN_UG_P")
+	case cTbl == "DEST"
+		CREATE_INDEX("ID","IDPARTNER+ID", cPath+"DEST")
+		CREATE_INDEX("IDDEST","ID", cPath+"DEST")
 endcase 
 
 return
+
+
+// ---------------------------------------------
+// vraca matricu sa tabelom DEST
+// ---------------------------------------------
+static function a_dest()
+local aDbf:={}
+
+AADD(aDBF, { "ID"        , "C" ,  3,  0 })
+AADD(aDBF, { "IDPartner" , "C" ,  6,  0 })
+AADD(aDBF, { "Naziv"     , "C" , 25,  0 })
+AADD(aDBF, { "Naziv2"    , "C" , 25,  0 })
+AADD(aDBF, { "Mjesto"    , "C" , 20,  0 })
+AADD(aDBF, { "Adresa"    , "C" , 30,  0 })
+AADD(aDBF, { "Ptt"       , "C" , 10,  0 })
+AADD(aDBF, { "Telefon"   , "C" , 20,  0 })
+AADD(aDBf, { "Mobitel"   , "C" , 20,  0 })
+AADD(aDBf, { "Fax"       , "C" , 20,  0 })
+
+return aDbf
 
 
 // -----------------------------------------
@@ -96,7 +124,7 @@ AADD(aDBf, { 'F_P_D_NIVO', 'N' ,  5,  0 })
 // datum zadnjeg obracuna    
 AADD(aDBf, { 'DAT_L_FAKT', 'D' ,  8,  0 })
 // destinacija    
-AADD(aDBf, { 'DESTIN',     'C' ,  6,  0 })
+AADD(aDBf, { 'DEF_DEST',   'C' ,  3,  0 })
 
 return aDbf
 
@@ -115,6 +143,7 @@ AADD(aDBf, { 'Rabat'    , 'N' ,   6,  3 })
 AADD(aDBf, { 'Porez'    , 'N' ,   5,  2 })
 AADD(aDBf, { 'K1'       , 'C' ,   1,  0 })
 AADD(aDBf, { 'K2'       , 'C' ,   2,  0 })
+AADD(aDBf, { 'DEST'     , 'C' ,   3,  0 })
 
 return aDbf
 
@@ -202,6 +231,7 @@ O_FAKT
 O_DOKS
 O_ROBA
 O_PARTN
+O_DEST
 O_UGOV
 O_RUGOV
 O_GEN_UG
@@ -236,5 +266,24 @@ replace f_iznos with nFaktIzn
 replace f_iznos_pdv with nFaktPDV
 
 return 
+
+
+// -------------------------------------
+// da li se koristi destinacija
+// -------------------------------------
+function is_dest()
+local lRet := .f.
+local nTArea := SELECT()
+
+if rugov->(fieldpos("dest")) <> 0 .and. ;
+	FILE( SIFPATH + "DEST.DBF" )
+	
+	lRet := .t.
+	
+endif
+
+select (nTArea)
+return lRet
+
 
 
