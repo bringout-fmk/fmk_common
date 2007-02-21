@@ -93,7 +93,7 @@
 
 #xcommand O_FTXT    => select (F_FTXT);    use (SIFPATH+"ftxt")    ; set order to tag "ID"
 #xcommand O_UPL      => select (F_UPL); use  (KUMPATH+"UPL")         ; set order to tag "1"
-#xcommand O_DEST     => select(F_DEST);  use  (KUMPATH+"DEST")     ; set order to tag "1"
+#xcommand O_DEST     => select(F_DEST);  use  (SIFPATH+"DEST")     ; set order to tag "ID"
 #xcommand O_POR      => select 95; cmxAutoOpen(.f.); usex (PRIVPATH+"por")  ; cmxAutoOpen(.t.)
 
 #xcommand O_VRSTEP => SELECT (F_VRSTEP); USE (SIFPATH+"VRSTEP"); set order to tag "ID"
