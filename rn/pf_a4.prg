@@ -800,12 +800,22 @@ if !EMPTY(cKTelFax)
 endif
 
 if !EMPTY(cDestinacija)
- p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
- cPom := "Za: "  + ALLTRIM( cDestinacija )
- p_line(cPom, 12 , .f.)
- ?
+	
+	p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
+ 	
+	cPom := "Za: "  + ALLTRIM( cDestinacija )
+ 	aPom := SjeciStr( cPom, 75 )
+	
+	B_ON
+	
+	for i := 1 to LEN( aPom )
+		p_line( aPom[i] , 12 , .f.)
+ 	next
+	
+	B_OFF
+	
+	?
 endif
-
 
 P_10CPI
 // broj dokumenta
