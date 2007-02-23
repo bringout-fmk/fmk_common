@@ -655,12 +655,17 @@ if cTip == "S"
 		nOsnovica := ( _oosnneto + _oosnostalo )
 	endif
 	
+	// uzmi stope i iznose...
+	// aPorez[5] - stopa
+	// aPorez[6] - iznos
+	
 	for i:=1 to LEN(aPorezi)
 		
 		if i==1
 			nT_st_1 := aPorezi[i, 5]
 			nT_iz_1 := aPorezi[i, 6]
 		endif
+		
 		if i==2
 			nT_st_2 := aPorezi[i, 5]
 			nT_iz_2 := aPorezi[i, 6]
@@ -691,19 +696,36 @@ select opsld
 seek cPorId + "1" + radn->idopsst
 
 if Found()
+	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
-	replace ljudi with ljudi+1
+	replace ljudi with ljudi + 1
+	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
 	replace t_iz_4 with t_iz_4 + nT_iz_4
 	replace t_iz_5 with t_iz_5 + nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
 
 else
 	append blank
@@ -713,16 +735,33 @@ else
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with 1
+	
 	replace t_iz_1 with nT_iz_1
 	replace t_iz_2 with nT_iz_2
 	replace t_iz_3 with nT_iz_3
 	replace t_iz_4 with nT_iz_4
 	replace t_iz_5 with nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+	
 endif
 
 // po kantonu
@@ -732,17 +771,32 @@ if found()
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
+	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
 	replace t_iz_4 with t_iz_4 + nT_iz_4
 	replace t_iz_5 with t_iz_5 + nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
-
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
 else
 	append blank
 	replace id with "3"
@@ -751,34 +805,68 @@ else
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with 1
+	
 	replace t_iz_1 with nT_iz_1
 	replace t_iz_2 with nT_iz_2
 	replace t_iz_3 with nT_iz_3
 	replace t_iz_4 with nT_iz_4
 	replace t_iz_5 with nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+
 endif
 
 // po idn0
 seek cPorId + "5" + ops->idn0
 if found()
+	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
+	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
 	replace t_iz_4 with t_iz_4 + nT_iz_4
 	replace t_iz_5 with t_iz_5 + nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
 
 else
 	append blank
@@ -788,16 +876,33 @@ else
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with 1
+	
 	replace t_iz_1 with nT_iz_1
 	replace t_iz_2 with nT_iz_2
 	replace t_iz_3 with nT_iz_3
 	replace t_iz_4 with nT_iz_4
 	replace t_iz_5 with nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+
 endif
 
 select ops
@@ -807,19 +912,37 @@ select opsld
 // po opc.rada
 seek cPorId + "2" + radn->idopsrad
 if found()
+	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
+	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
 	replace t_iz_4 with t_iz_4 + nT_iz_4
 	replace t_iz_5 with t_iz_5 + nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+
 
 else
 	append blank
@@ -829,34 +952,68 @@ else
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with 1
+	
 	replace t_iz_1 with nT_iz_1
 	replace t_iz_2 with nT_iz_2
 	replace t_iz_3 with nT_iz_3
 	replace t_iz_4 with nT_iz_4
 	replace t_iz_5 with nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+
 endif
 
 // po kantonu
 seek cPorId + "4" + ops->idkan
 if found()
+	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
+	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
 	replace t_iz_4 with t_iz_4 + nT_iz_4
 	replace t_iz_5 with t_iz_5 + nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
 
 else
 	append blank
@@ -866,34 +1023,68 @@ else
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with 1
+	
 	replace t_iz_1 with nT_iz_1
 	replace t_iz_2 with nT_iz_2
 	replace t_iz_3 with nT_iz_3
 	replace t_iz_4 with nT_iz_4
 	replace t_iz_5 with nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+
 endif
 
 // po idn0
 seek cPorId + "6" + ops->idn0
 if found()
+	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
+	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
 	replace t_iz_4 with t_iz_4 + nT_iz_4
 	replace t_iz_5 with t_iz_5 + nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
 
 else
 	append blank
@@ -908,11 +1099,27 @@ else
 	replace t_iz_3 with nT_iz_3
 	replace t_iz_4 with nT_iz_4
 	replace t_iz_5 with nT_iz_5
-	replace t_st_1 with nT_st_1
-	replace t_st_2 with nT_st_2
-	replace t_st_3 with nT_st_3
-	replace t_st_4 with nT_st_4
-	replace t_st_5 with nT_st_5
+	
+	if nT_st_1 > t_st_1
+		replace t_st_1 with nT_st_1
+	endif
+	
+	if nT_st_2 > t_st_2
+		replace t_st_2 with nT_st_2
+	endif
+	
+	if nT_st_3 > t_st_3
+		replace t_st_3 with nT_st_3
+	endif
+	
+	if nT_st_4 > t_st_4
+		replace t_st_4 with nT_st_4
+	endif
+	
+	if nT_st_5 > t_st_5
+		replace t_st_5 with nT_st_5
+	endif
+
 endif
 
 select ld
