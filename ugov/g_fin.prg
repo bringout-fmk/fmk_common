@@ -58,6 +58,11 @@ enddo
 
 nSaldo := nDuguje - nPotrazuje
 
+// klasa 5 potrazuje
+if LEFT( cKto, 1 ) == "5"
+	nSaldo := nPotrazuje - nDuguje
+endif
+
 return nSaldo
 
 
