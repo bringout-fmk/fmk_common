@@ -147,8 +147,14 @@ next
 nT1:=nT2:=nT3:=nT4:=0
 nUNeto:=0
 nUNetoOsnova:=0
+nDoprOsnova := 0
+nDoprOsnOst := 0
 nUBNOsnova:=0
-nUIznos:=nUSati:=nUOdbici:=nUOdbiciP:=nUOdbiciM:=0
+nUIznos:=0
+nUSati:=0
+nUOdbici:=0
+nUOdbiciP:=0
+nUOdbiciM:=0
 nLjudi:=0
 
 private aNeta:={}
@@ -583,6 +589,7 @@ aDbf:={{"ID"    ,"C", 1,0},;
        {"IDOPS" ,"C", 4,0},;
        {"IZNOS" ,"N",25,4},;
        {"IZNOS2","N",25,4},;
+       {"IZN_OST","N",25,4},;
        {"T_ST_1","N",5,2},;
        {"T_ST_2","N",5,2},;
        {"T_ST_3","N",5,2},;
@@ -595,12 +602,13 @@ aDbf:={{"ID"    ,"C", 1,0},;
        {"T_IZ_5","N",25,4},;
        {"LJUDI" ,"N", 10,0}}
 
-//id- 1 opsstan
-//id- 2 opsrad
 
-DBCreate2(PRIVPATH + "opsld",aDbf)
+if FILE(PRIVPATH + "OPSLD.DBF")
+	FERASE(PRIVPATH + "OPSLD.DBF")
+	FERASE(PRIVPATH + "OPSLD.CDX")
+endif
 
-
+DBCreate2(PRIVPATH + "opsld", aDbf)
 select(F_OPSLD)
 usex (PRIVPATH+"opsld")
 
@@ -628,6 +636,7 @@ local nT_iz_5 := 0
 local i
 local nPom
 local nOsnovica := 0
+local nOstalo := 0
 
 if cTip == nil
 	cTip := ""
@@ -685,7 +694,8 @@ if cTip == "S"
 	next
 else
 	cPorId := "  "
-	nOsnovica := _ouneto
+	nOsnovica := _oosnneto
+	nOstalo := _oosnostalo
 endif
 
 select ops
@@ -699,6 +709,7 @@ if Found()
 	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace izn_ost with izn_ost + nOstalo
 	replace ljudi with ljudi + 1
 	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
@@ -734,6 +745,7 @@ else
 	replace idops with radn->idopsst
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
 	replace t_iz_1 with nT_iz_1
@@ -772,6 +784,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
 	
+	replace izn_ost with izn_ost + nOstalo
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
@@ -804,6 +817,7 @@ else
 	replace idops with ops->idkan
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
 	replace t_iz_1 with nT_iz_1
@@ -842,6 +856,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
 	
+	replace izn_ost with izn_ost + nOstalo
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
@@ -875,6 +890,7 @@ else
 	replace idops with ops->idn0
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
 	replace t_iz_1 with nT_iz_1
@@ -917,6 +933,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
 	
+	replace izn_ost with izn_ost + nOstalo
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
@@ -951,6 +968,7 @@ else
 	replace idops with radn->idopsrad
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
 	replace t_iz_1 with nT_iz_1
@@ -989,6 +1007,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
 	
+	replace izn_ost with izn_ost + nOstalo
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
@@ -1022,6 +1041,7 @@ else
 	replace idops with ops->idkan
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
 	replace t_iz_1 with nT_iz_1
@@ -1060,6 +1080,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with ljudi + 1
 	
+	replace izn_ost with izn_ost + nOstalo
 	replace t_iz_1 with t_iz_1 + nT_iz_1
 	replace t_iz_2 with t_iz_2 + nT_iz_2
 	replace t_iz_3 with t_iz_3 + nT_iz_3
@@ -1092,6 +1113,7 @@ else
 	replace porid with cPorId
 	replace idops with ops->idn0
 	replace iznos with nOsnovica
+	replace izn_ost with nOstalo
 	replace iznos2 with iznos2 + nPorOl
 	replace ljudi with 1
 	replace t_iz_1 with nT_iz_1
@@ -1294,6 +1316,7 @@ do while !eof() .and. eval(bUSlov)
  	endif
 
  	for i:=1 to cLDPolja
+	
   		cPom:=padl(alltrim(str(i)),2,"0")
   		select tippr
 		seek cPom
@@ -1311,15 +1334,22 @@ do while !eof() .and. eval(bUSlov)
   		endif
  	next
 	
-	++nLjudi
+	++ nLjudi
 	
 	nUSati += _USati   // ukupno sati
 	nUNeto += _UNeto  // ukupno neto iznos
 	
-	nUNetoOsnova += _oUNeto  // ukupno neto osnova za obracun por.i dopr.
+	nUNetoOsnova += _oUNeto  
+	// ukupno neto osnova 
 	
+	nDoprOsnova += _oosnneto
+	// neto osnova za obracun doprinosa
+	
+	nDoprOsnOst += _oosnostalo
+	// ostalo - osonova za obracun doprinosa
+
 	if UBenefOsnovu()
-		nUBNOsnova+=_oUNeto - if(!Empty(gBFForm), &gBFForm, 0)
+		nUBNOsnova += _oUNeto - if(!Empty(gBFForm), &gBFForm, 0)
 	endif
 
 	cTR := IF( RADN->isplata$"TR#SK", RADN->idbanka,;
@@ -1404,7 +1434,7 @@ ENDIF
 
 
 return
-*}
+
 
 // ----------------------------
 // ----------------------------
@@ -1433,11 +1463,9 @@ endif
 ?
 
 return
-*}
 
 
 function IspisTP(lSvi)
-*{
 
 cUNeto:="D"
 
@@ -1445,11 +1473,9 @@ for i:=1 to cLDPolja
 	if prow()>55+gPStranica
     		FF
   	endif
-	//********************* 90 - ke
   	cPom:=padl(alltrim(str(i)),2,"0")
   	_s&cPom:=aRekap[i,1]   // nafiluj ove varijable radi prora~una dodatnih stavki
   	_i&cPom:=aRekap[i,2]
-  	//**********************
 
   	cPom:=padl(alltrim(str(i)),2,"0")
   	select tippr
@@ -1471,10 +1497,8 @@ for i:=1 to cLDPolja
        			@ prow(),60 SAY nUNeto*(por->iznos/100) pict gpici
 			?? "",gValuta
     		endif
-    		// ****** radi 90 - ke
     		_UNeto:=nUNeto
     		_USati:=nUSati
-    		//***********
     		? cLinija
   	endif
 
@@ -1533,11 +1557,9 @@ for i:=1 to cLDPolja
 next
 
 return
-*}
 
 
 function IspisKred(lSvi)
-*{
 if "SUMKREDITA" $ tippr->formula
 	if gReKrOs=="X"
         	? cLinija
@@ -1652,13 +1674,9 @@ if "SUMKREDITA" $ tippr->formula
 	endif
 endif
 
-
 return
-*}
 
 
-// -------------------------------
-// -------------------------------
 function PoTekRacunima()
 
 ? cLinija
@@ -1684,10 +1702,9 @@ return
 
 
 // ----------------------------------------------
+// ispis tipova primanja....
 // ----------------------------------------------
 function ProizvTP()
-*{
-
 
 // proizvoljni redovi pocinju sa "9"
 
@@ -1718,24 +1735,20 @@ do while !eof() .and. left(id,1)="9"
   	endif
 enddo
 
-
-
 return
-*}
+
+
 
 function PrikKBO()
-*{
 nBO:=0
 ? Lokal("Koef. Bruto osnove (KBO):"),transform(parobr->k3,"999.99999%")
 ?? space(1),Lokal("BRUTO OSNOVA = NETO OSNOVA*KBO =")
 @ prow(),pcol()+1 SAY nBo:=round2(parobr->k3/100*nUNetoOsnova,gZaok2) pict gpici
 ?
 return
-*}
 
 
 function PrikKBOBenef()
-*{
 if nUBNOsnova == 0
 	return
 endif
@@ -1746,16 +1759,15 @@ nBO:=0
 @ prow(),pcol()+1 SAY nBo:=round2(parobr->k3/100*nUBNOsnova,gZaok2) pict gpici
 ?
 return
-*}
+
 
 
 function UBenefOsnovu()
-*{
 if radn->k4 == "BF"
 	return .t.
 endif
 
 return .f.
-*}
+
 
 

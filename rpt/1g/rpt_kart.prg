@@ -689,6 +689,19 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	
 	do while !eof()
 		
+		if dopr->(FIELDPOS("DOP_TIP")) <> 0
+			
+			if dopr->dop_tip == "N" .or. dopr->dop_tip == " " 
+				nOsn := nOsnNeto
+			elseif dopr->dop_tip == "2"
+				nOsn := nOsnOstalo
+			elseif dopr->dop_tip == "P"
+				nOsn := nOsnNeto + nOsnOstalo
+			endif
+		
+			nBo := round2(parobr->k3/100*MAX(nOsn, PAROBR->prosld*gPDLimit/100),gZaok2)
+		endif
+		
 		PozicOps(DOPR->poopst)
 		
 		IF !ImaUOp("DOPR",DOPR->id) .or. !lPrikSveDopr .and. !DOPR->ID $ cPrikDopr
@@ -708,7 +721,8 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		? cLMSK+id,"-",naz
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
 		
-		if empty(idkbenef) // doprinos udara na neto
+		if empty(idkbenef) 
+			// doprinos udara na neto
 			if ("BENEF" $ dopr->naz .and. nBFO <> 0)
 				@ prow(),pcol()+1 SAY nBFO pict gpici
 				nC1:=pcol()+1
