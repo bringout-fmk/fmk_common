@@ -54,7 +54,7 @@ cnf21:=cnf22:=cnf23:=cnf24:=cnf25:=cnf26:=cnf27:=cnf28:=cnf29:=cnf30:=space(20)
 cnf31:=cnf32:=cnf33:=cnf34:=cnf35:=cnf36:=cnf37:=cnf38:=cnf39:=cnf40:=space(20)
 cnf41:=cnf42:=cnf43:=cnf44:=cnf45:=cnf46:=cnf47:=cnf48:=cnf49:=cnf50:=space(20)
 cnf51:=cnf52:=cnf53:=cnf54:=cnf55:=cnf56:=cnf57:=cnf58:=cnf59:=cnf60:=space(20)
-cPosSif:="N"
+cPosSif:="D"
 
 if file("install.mem")
     cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:="D"
@@ -63,20 +63,28 @@ if file("install.mem")
     fMem:=.t.
 endif
 
-@ 1,1 SAY "Instalacija FMK - SIGMA-COM software 02.01, 05.95-15.01.07"
+@ 1,1 SAY PADC("Instalacija FMK - SIGMA-COM software 02.02, 05.95-15.03.07", 77) COLOR "I"
 
 
 cFMkInst:="D"
-@ 3,1 SAY "Instalacija FMK/EXT (D/N) " GET cFMKInst  vali cFMKInst $ "DN" pict "@!"
+@ 3,1 SAY "Instalacija [D] FMK - bazni moduli, [N] EXT - ostali moduli (D/N)? " GET cFMKInst valid cFMKInst $ "DN" pict "@!"
 read
 
-cFullPath:='N'
+if LastKey() == ASC(CHR(27))
+	clear screen
+	return
+endif
+
+cFullPath := "N"
 @ 4,1 SAY "Pri pozivu EXE fajlova navesti puno ime (full path) " GET cFullPath pict "@!" valid cFullpath$"DN"
+
 read
 
+if LastKey() == ASC(CHR(27))
+	clear screen
+	return
+endif
 
-******************************
-******************************
 nPrograma:=11
 
 if !fmem
@@ -136,7 +144,7 @@ if cFmkInst=="N"
 nPrograma:=16
 
 // imena programa
-cnProg[1]:="TNAM"
+cNProg[1]:="TNAM"
 cNProg[2]:="INKAS"
 cNPROG[3]:="RVET"
 cNPROG[4]:="KADEV"
@@ -190,19 +198,41 @@ cTPROG[16]:="VV"
 
 endif
 
+// ocisti ekran....
+@ 2, 1 SAY PADR(" ", 70)
+@ 3, 1 SAY PADR(" ", 70)
+
 for i:=1 to nPrograma
-	cPom:=alltrim(str(i))
-  	@ i+3,1 SAY padr("Instalise se: "+cTprog[i],55,".") GET cPROG&cpom valid cprog&cpom $ "DN" pict "@!"
-  	read
+
+	cPom := ALLTRIM(STR(i))
+  
+  	cTmp1 := " - Instalise se: "
+	cTmp2 := cTprog[i]
+	
+	@ i + 3, 1 SAY cTmp1
+	@ i + 3, col() SAY cTmp2 COLOR "GR+/N"
+	@ i + 3, col() SAY REPLICATE(".", 65 - (LEN(cTmp1) + LEN(cTmp2))) GET cProg&cPom valid cProg&cPom $ "DN" pict "@!"
+  	
+	read
+	
+	if LastKey() == ASC(CHR(27))
+		clear screen
+		@ 10, 20 SAY "....... INSTALACIJA PREKINUTA ......."
+		return
+	endif
 next
+
 read
 
 cls
 
 cDN:="D"
 do while .t.
+
 	@ 7,1 SAY "Za koliko se firmi program instalise"  GET nFirmi pict "99" valid nfirmi < 61 .and. nFirmi>0
+	
 	read
+	
 	for i:=1 to nFirmi
  		cPom:=alltrim(str(i))
  		IF EMPTY(cnf&cPom)
@@ -212,23 +242,32 @@ do while .t.
  		@ 8,col()+2 GET cnf&cPom
  		read
 	next
+	
 	?
+	
 	@ 10,1 SAY "Sifre firmi su respektivno :"
+	
 	? " "
+	
 	for i:=1 to nFirmi
    		cPom:=alltrim(str(i))
    		?? cSF&cPom+" "
 	next
+	
 	@ 14,1 SAY "Ispravno (D/N) ?" GET cDN valid cDN $ "DN" pict "@!"
+	
 	read
+	
 	if cDN=="D"
 		exit
 	endif
+
 enddo
 
 if !fmem
 	cRS:="1"
 endif
+
 @ 15,1 SAY "Broj radne stanice na koju se vrsi instalacija: " GET cRS valid CRS $ "123456789A" pict "@!"
 read
 
@@ -246,16 +285,21 @@ DO WHILE .T.
 	else
  		cBDir2:=padr(cBDir2,20)
 	endif
+	
 	cBDir9:=padr("",20)
 
 	cExeDir:=space(20)
+	
 	@ 1,1 SAY "Bazni direktorij SERVERA:" get cBDir2
 	@ 2,1 SAY "Bazni direktorij RS:     " get cBDir1
 	@ 3,1 SAY "Sek.  direktorij SERVERA:" get cBDir9
+	
 	if cFullpath=="D"
 		@ 4,1 SAY "Direktorij EXE fajlova  :" get cExeDir pict "@!" when {|| cExeDir:=cBDir2,.t.}
 	endif
+	
 	@ 5,1 SAY "Svaka firma posebno sifrarnici:" get cPosSif pict "@!" valid cPosSif $"DN"
+	
 	read
 
 
