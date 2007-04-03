@@ -325,6 +325,9 @@ cre_lokal(F_LOKAL)
 // kreiraj tabele dok_src
 cre_doksrc()
 
+// kreiraj relacije
+cre_relation()
+
 return
 
 // --------------------------------------------
