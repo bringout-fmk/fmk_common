@@ -8,8 +8,8 @@ static __LEV_MAX
 // da li se koriste pravila
 // -----------------------------------------------
 function is_fmkrules()
-if FILE(SIFPATH + "\FMKRULES.DBF")
-	return .t.
+if !FILE(SIFPATH + "FMKRULES.DBF")
+	return .f.
 endif
 return .t.
 
@@ -26,6 +26,7 @@ function p_fmkrules( cId, dx, dy, aSpecKol, bRBlock )
 local cModName
 local nSelect := SELECT()
 local nRet
+local cHeader := ""
 private Kol
 private ImeKol
 
@@ -39,18 +40,39 @@ if aSpecKol == nil
 	aSpecKol := {}
 endif
 
+cHeader += " " 
+cHeader += ALLTRIM( goModul:oDataBase:cName )
+cHeader += " "
+cHeader += "pravila : RULES "
+
 cModName := goModul:oDataBase:cName
 cModName := PADR( cModName, 10 )
 
 // sredi kolone
 set_a_kol( @ImeKol, @Kol, aSpecKol )
+// postavi filter za modul
+set_mod_filt()
 
-nRet := PostojiSifra( F_FMKRULES, 1, 16, 70, "Pravila", @cId, dx, dy , bRBlock )
+go top
+
+nRet := PostojiSifra( F_FMKRULES, 1, 16, 70, cHeader, @cId, dx, dy , bRBlock )
 
 select (nSelect)
 
 return nRet
 
+
+// ---------------------------------------
+// postavlja filter za modul
+// ---------------------------------------
+static function set_mod_filt()
+local cFilt := ""
+
+cFilt := "modul_name = " + cm2str( PADR(goModul:oDataBase:cName , 10) )
+
+set filter to &cFilt
+
+return
 
 // --------------------------------------------------------
 // setovanje kolona tabele "FMKRULES"
@@ -66,7 +88,7 @@ aKol := {}
 
 AADD(aImeKol, { "ID", {|| rule_id}, "rule_id", ;
 	{|| i_rule_id(@wrule_id ) , .f.}, {|| .t.} })
-AADD(aImeKol, { "Modul", {|| modul_name }, "modul_name", {|| _v_mod_name(@wmodul_name), .f. }  })
+AADD(aImeKol, { "Modul", {|| modul_name }, "modul_name", {|| _w_mod_name(@wmodul_name), .f. }  })
 AADD(aImeKol, { "Objekat", {|| rule_obj }, "rule_obj"  })
 AADD(aImeKol, { "Podbr.", {|| rule_no}, "rule_no", ;
 	{|| i_rule_no(@wrule_no, wrule_obj ) , .f.}, {|| .t.}, , "99999" })
@@ -75,7 +97,7 @@ AADD(aImeKol, { "Naziv", {|| PADR(rule_name, 20) + ".." }, ;
 AADD(aImeKol, { "Err.msg", {|| PADR(rule_ermsg, 30) + ".." }, ;
 	"rule_ermsg" })
 AADD(aImeKol, { "Nivo", {|| rule_level }, ;
-	"rule_level", {|| .t.}, {|| _v_level(wrule_level) } })
+	"rule_level", {|| .t.}, {|| _w_level(wrule_level) } })
 
 if LEN(aSpecKol) == 0
 
@@ -87,6 +109,8 @@ if LEN(aSpecKol) == 0
 	AADD(aImeKol, { "pr.k3", {|| rule_c3 }, "rule_c3" })
 	AADD(aImeKol, { "pr.k4", {|| rule_c4 }, "rule_c4" })
 	AADD(aImeKol, { "pr.k5", {|| rule_c5 }, "rule_c5" })
+	AADD(aImeKol, { "pr.k6", {|| rule_c6 }, "rule_c6" })
+	AADD(aImeKol, { "pr.k7", {|| rule_c7 }, "rule_c7" })
 	
 	// numericke
 	AADD(aImeKol, { "pr.n1", {|| rule_n1 }, "rule_n1" })
@@ -101,9 +125,11 @@ else
 	
 	// dodajem na osnovu matrice aSpecKol
 	for nSpec := 1 to LEN( aSpecKol )
+		
 		AADD( aImeKol, { aSpecKol[nSpec, 1] , aSpecKol[nSpec, 2], ;
 			aSpecKol[nSpec, 3], aSpecKol[nSpec, 4], ;
 			aSpecKol[nSpec, 5] } )
+
 	next
 	
 endif
@@ -116,17 +142,17 @@ return
 
 
 // ----------------------------------------------
-// modul naziv
+// when naziv
 // ----------------------------------------------
-static function _v_mod_name( cName )
+static function _w_mod_name( cName )
 cName := PADR( goModul:oDataBase:cName, 10 )
 return .t.
 
 
 // ----------------------------------------
-// validacija levela
+// when levela
 // ----------------------------------------
-static function _v_level( nLev )
+static function _w_level( nLev )
 local lRet := .f.
 
 if nLev >= __LEV_MIN .and. nLev <= __LEV_MAX
@@ -227,17 +253,49 @@ function _last_id()
 local nNo := 0
 local nSelect := SELECT()
 local nRec := RECNO()
+local cTbFilter
 
 select fmkrules
+cTbFilter := DBFilter()
+set filter to
+
 set order to tag "1"
 go bottom
 
 nNo := field->rule_id + 1
 
+set order to tag "2"
+set filter to &cTbFilter
+
 select (nSelect)
 go (nRec)
 
 return nNo
+
+
+
+// -----------------------------------------------------
+// prikazuje poruku o gresci
+// -----------------------------------------------------
+function sh_rule_err( cMsg )
+local aMsg
+local cPom := ""
+
+aMsg := SjeciStr( ALLTRIM(aMsg), 60 )
+
+for i:=1 to LEN(aMsg)
+	
+	cPom += aMsg[i]
+	
+	if i <> LEN(aMsg)
+		cPom += "#"
+	endif
+	
+next
+
+msgbeep( cPom )
+
+return
 
 
 

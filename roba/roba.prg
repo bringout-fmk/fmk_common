@@ -120,14 +120,28 @@ endif
 
 if roba->(fieldpos("K1"))<>0
 	AADD (ImeKol,{ padc("K1",4 ), {|| k1 }, "k1"   })
-	AADD (ImeKol,{ padc("K2",4 ), {|| k2 }, "k2"   })
+	AADD (ImeKol,{ padc("K2",4 ), {|| k2 }, "k2", ;
+		{|| .t.}, {|| .t.}, nil, nil, nil, nil, 35   })
 	AADD (ImeKol,{ padc("N1",12), {|| N1 }, "N1"   })
-	AADD (ImeKol,{ padc("N2",12 ), {|| N2 }, "N2"   })
+	AADD (ImeKol,{ padc("N2",12 ), {|| N2 }, "N2", ;
+		{|| .t.}, {|| .t.}, nil, nil, nil, nil, 35   })
 endif
+
 if roba->(fieldpos("K7"))<>0
 	AADD (ImeKol,{ padc("K7",2 ), {|| k7 }, "k7"   })
-	AADD (ImeKol,{ padc("K8",2 ), {|| k8 }, "k8"   })
-	AADD (ImeKol,{ padc("K9",3 ), {|| k9 }, "k9"   })
+	AADD (ImeKol,{ padc("K8",2 ), {|| k8 }, "k8"  })
+	AADD (ImeKol,{ padc("K9",3 ), {|| k9 }, "k9" })
+endif
+
+// AUTOMATSKI TROSKOVI ROBE, samo za KALK
+if goModul:oDataBase:cName == "KALK" .and. roba->(fieldpos("TROSK1")) <> 0
+	AADD (ImeKol,{ PADR(c10T1,8) ,{|| trosk1 }, "trosk1", {|| .t.}, {|| .t.} })
+	AADD (ImeKol,{ PADR(c10T2,8), {|| trosk2 }, "trosk2", ;
+		{|| .t. }, {|| .t. }, nil, nil, nil, nil, 30 })
+	AADD (ImeKol,{ PADR(c10T3,8), {|| trosk3 }, "trosk3", {|| .t.}, {|| .t.} })
+	AADD (ImeKol,{ PADR(c10T4,8), {|| trosk4 }, "trosk4", ;
+		{|| .t. }, {|| .t. }, nil, nil, nil, nil, 30 })
+	AADD (ImeKol,{ PADR(c10T5,8), {|| trosk5 }, "trosk5"   })
 endif
 
 if roba->(fieldpos("ZANIVEL"))<>0

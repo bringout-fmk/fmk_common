@@ -1,12 +1,10 @@
 #include "sc.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- *
- */
 
+
+// ----------------------------------------------
+// otvara sifrarnik partera
+// ----------------------------------------------
 function P_Firma(cId, dx, dy)
 local nTArea
 private ImeKol
@@ -26,26 +24,51 @@ endif
 AADD(ImeKol,{PADR("PTT",5),{|| PTT},"ptt"})
 AADD(ImeKol,{PADR("Mjesto",16),{|| MJESTO},"mjesto"})
 AADD(ImeKol,{PADR("Adresa",24),{|| ADRESA},"adresa"})
+
+if partn->(fieldpos("_kup")) <> 0
+	
+	AADD(ImeKol, { "kup?", {|| _kup }, "_kup", ;
+		{|| .t.}, {|| _v_dn( w_kup ) }})
+
+	AADD(ImeKol, { "dob?", {|| " " + _dob + " " }, "_dob", ;
+		{|| .t.}, {|| _v_dn( w_dob ) }, nil, nil, nil, nil, 20 } )
+
+	AADD(ImeKol, { "banka?", {|| " " + _banka + " " }, "_banka", ;
+		{|| .t.}, {|| _v_dn( w_banka ) }, nil, nil, nil, nil, 30 } )
+
+	AADD(ImeKol, { "radnik?", {|| " " + _radnik + " " }, "_radnik", ;
+		{|| .t.}, {|| _v_dn( w_radnik ) }, nil, nil, nil, nil, 40 } )
+
+endif
+
 AADD(ImeKol,{PADR("Ziro R ",22),{|| ZIROR},"ziror"})
-if partn->(fieldpos("DZIROR"))<>0
+
+if partn->(fieldpos("DZIROR")) <> 0
 	AADD(ImeKol,{padr("Dev ZR",22 ),{|| DZIROR},"Dziror"})
 endif
+
 AADD(Imekol,{PADR("Telefon",12),{|| TELEFON},"telefon"})
+
 if partn->(fieldpos("FAX"))<>0
 	AADD(ImeKol,{padr("Fax",12 ),{|| fax},"fax"})
 endif
+
 if partn->(fieldpos("MOBTEL"))<>0
 	AADD(ImeKol,{padr("MobTel",20 ),{|| mobtel},"mobtel"})
 endif
+
 if partn->(fieldpos("IDOPS"))<>0 .and. (F_OPS)->(USED())
 	AADD (ImeKol,{padr("Opcina",20 ),{|| idops},"idops",{|| .t.},{||P_Ops(@widops)}})
 endif
+
 if partn->(fieldpos("BRLK"))<>0
 	AADD(ImeKol,{padr("Broj LK",20 ),{|| mobtel},"brlk"})
 endif
+
 if partn->(fieldpos("JMBG"))<>0
 	AADD(ImeKol,{padr("JMBG",20 ),{|| mobtel},"jmbg"})
 endif
+
 if partn->(fieldpos("FIDBR"))<>0
 	AADD(ImeKol,{padr("Partn Firma ID",20 ),{|| mobtel},"fidbr"})
 endif
@@ -91,20 +114,43 @@ do while !eof() .and. ID="PARTN"
  	endif
 
  	AADD(Kol, iif( sifk->UBrowsu='1',++i, 0) )
+	
 	skip
+
 enddo
+
 PopWa()
 
 select (nTArea)
 
 private gTBDir
 gTBDir:="N"
+
 return PostojiSifra(F_PARTN,1,10,60,"Lista Partnera", @cId, dx, dy,;
        gPartnBlock)
-*}
 
 
+
+// -------------------------------------
+// validacija polja P_TIP
+// -------------------------------------
+static function _v_dn( cDn )
+local lRet := .f.
+
+if UPPER(cDN) $ " DN"
+	lRet := .t.
+endif
+
+if lRet == .f.
+	msgbeep("Unjeti D ili N")
+endif
+
+return lRet
+
+
+// --------------------------------------------------------
 // funkcija vraca .t. ako je definisana grupa partnera
+// --------------------------------------------------------
 function p_group()
 local lRet:=.f.
 
@@ -239,3 +285,79 @@ endif
 PopWa()
 
 return cRet
+
+
+// ------------------------------------
+// da li je partner kupac ???
+// ------------------------------------
+function is_kupac( cId )
+local cFld := "_KUP"
+
+if _ck_status( cId, cFld ) 
+	return .t.
+endif
+
+return .f.
+
+// ------------------------------------
+// da li je partner dobavljac ???
+// ------------------------------------
+function is_dobavljac( cId )
+local cFld := "_DOB"
+
+if _ck_status( cId, cFld ) 
+	return .t.
+endif
+
+return .f.
+
+// ------------------------------------
+// da li je partner banka ???
+// ------------------------------------
+function is_banka( cId )
+local cFld := "_BANKA"
+
+if _ck_status( cId, cFld ) 
+	return .t.
+endif
+
+return .f.
+
+
+// ------------------------------------
+// da li je partner radnik ???
+// ------------------------------------
+function is_radnik( cId )
+local cFld := "_RADNIK"
+
+if _ck_status( cId, cFld ) 
+	return .t.
+endif
+
+return .f.
+
+
+// --------------------------------------------
+// provjerava status polja cFld
+// --------------------------------------------
+static function _ck_status( cId, cFld )
+local lRet := .f.
+local nSelect := SELECT()
+
+O_PARTN
+select partn
+seek cId
+
+if partn->(FIELDPOS(cFld)) <> 0
+	if &cFld $ "Dd"
+		lRet := .t.
+	endif
+else
+	lRet := .t.
+endif
+
+select (nSelect)
+
+return lRet
+
+

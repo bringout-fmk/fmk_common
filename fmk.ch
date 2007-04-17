@@ -190,6 +190,9 @@
 #define F_GROUPS  178
 #define F_RULES  179
 
+//rules
+#define F_FMKRULES 204
+
 //ld
 #define F_RADN     180
 #define F_PAROBR   181

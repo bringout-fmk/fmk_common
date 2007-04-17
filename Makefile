@@ -3,6 +3,7 @@ liball:
 	make -C roba
 	make -C event
 	make -C security
+	make -C rules
 	make -C pi
 	make -C ugov
 	make -C partnst
@@ -18,6 +19,7 @@ cleanall:
 	cd roba; make clean
 	cd event; make clean
 	cd security; make clean
+	cd rules; make clean
 	cd ugov; make clean
 	cd partnst; make clean
 	cd rabat/1g; make clean

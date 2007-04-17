@@ -118,6 +118,8 @@
 
 #xcommand O_RULES  => select (F_RULES); use (ToUnix(goModul:oDatabase:cSigmaBD+SLASH+"security"+SLASH+"rules")) ; set order to tag "ID"
 
+#xcommand O_FMKRULES  => select (F_FMKRULES); use (SIFPATH+"FMKRULES") ; set order to tag "2"
+
 //KALK ProdNC
 #xcommand O_PRODNC   => select(F_PRODNC);  use  (KUMPATH+"PRODNC")  ; set order to tag "PRODROBA"
 

@@ -66,7 +66,9 @@ go top
 
 seek PADR(cFrom,10) + PADR(cTo,10) + PADR(cId,10) 
 
-if FOUND()
+if FOUND() .and. field->tfrom == PADR(cFrom, 10) ;
+	.and. field->tto == PADR(cTo, 10) ;
+	.and. field->tfromid == PADR(cId, 10)
 
 	if cType == "1"
 		xVal := field->ttoid
@@ -78,6 +80,24 @@ endif
 
 select ( nTArea )
 return xVal
+
+// ------------------------------
+// dodaj u relacije
+// ------------------------------
+function add_to_relation( cFrom, cTo, cFromId, cToId )
+local nTArea := SELECT()
+
+O_RELATION
+select relation
+append blank
+replace tfrom with PADR(cFrom, 10)
+replace tto with PADR(cTo, 10)
+replace tfromid with PADR(cFromId, 10)
+replace ttoid with PADR(cToId, 10)
+
+select (nTArea)
+return
+
 
 
 // ---------------------------------------------
@@ -108,6 +128,39 @@ next
 select (nTArea)
 return PostojiSifra(F_RELATION, 1, 10, 65, "Lista relacija konverzije", @cId, dx, dy)
 
+
+
+// ---------------------------------------------
+// vraca cijenu artikla iz sifrarnika robe
+// ---------------------------------------------
+function g_art_price( cId, cPriceType )
+local nPrice := 0
+local nTArea := SELECT()
+
+if cPriceType == nil
+	cPriceType := "VPC1"
+endif
+
+O_ROBA
+select roba
+seek cId
+
+if FOUND() .and. field->id == cID
+	do case
+		case cPriceType == "VPC1"
+			nPrice := field->vpc
+		case cPriceType == "VPC2"
+			nPrice := field->vpc2
+		case cPriceType == "MPC1"
+			nPrice := field->mpc
+		case cPriceType == "MPC2"
+			nPrice := field->mpc2
+		case cPriceType == "NC"
+			nPrice := field->nc
+	endcase
+endif
+
+return nPrice
 
 
 

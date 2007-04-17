@@ -12,11 +12,14 @@ O_VALUTE
 O_RJ
 O_BANKE
 O_OPS
+
 select(F_SIFK)
+
 if !used()
 	O_SIFK
   	O_SIFV
 endif
+
 if (!("U" $ TYPE("gSecurity")) .and. gSecurity=="D")
 	O_USERS
 	O_RULES
@@ -24,9 +27,15 @@ if (!("U" $ TYPE("gSecurity")) .and. gSecurity=="D")
 	O_EVENTS
 	O_EVENTLOG
 endif
+
 if (IsRamaGlas().or.gModul=="FAKT".and.glRadNal)
 	O_RNAL
 endif
+
+if FILE(SIFPATH + "RULES.DBF")
+	O_RULES
+endif
+
 return
 
 
@@ -45,9 +54,11 @@ return
 function OSifUgov()
 O_UGOV
 O_RUGOV
+
 if (rugov->(FIELDPOS("DESTIN"))<>0)
 	O_DEST
 endif
+
 O_PARTN
 O_ROBA
 O_SIFK
@@ -99,6 +110,10 @@ AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })
 add_f_mcode(@aDbf)
 AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
 AADD(aDBf,{ 'NAZ2'                , 'C' ,  25 ,  0 })
+AADD(aDBf,{ '_KUP'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ '_DOB'                , 'C' ,   1 ,  0 })
+AADD(aDBf,{ '_BANKA'              , 'C' ,   1 ,  0 })
+AADD(aDBf,{ '_RADNIK'             , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
 AADD(aDBf,{ 'MJESTO'              , 'C' ,  16 ,  0 })
 AADD(aDBf,{ 'ADRESA'              , 'C' ,  24 ,  0 })
@@ -126,6 +141,7 @@ if !file(SIFPATH+"KONTO.dbf")
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  57 ,  0 })
    dbcreate2(SIFPATH+'KONTO.DBF',aDbf)
 endif
+
 CREATE_INDEX("ID","id",SIFPATH+"KONTO") // konta
 CREATE_INDEX("NAZ","naz",SIFPATH+"KONTO")
 index_mcode(SIFPATH, "KONTO")
@@ -319,14 +335,17 @@ if IsRabati()
 	CreRabDB()
 endif
 
-// kreiraj lokal tabelu
+// kreiraj lokal tabelu : LOKAL
 cre_lokal(F_LOKAL)
 
-// kreiraj tabele dok_src
+// kreiraj tabele dok_src : DOK_SRC
 cre_doksrc()
 
-// kreiraj relacije
+// kreiraj relacije : RELATION
 cre_relation()
+
+// kreiraj pravila : RULES
+cre_fmkrules()
 
 return
 
