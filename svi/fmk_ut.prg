@@ -30,25 +30,32 @@ private cIzraz:=SPACE(40)
 
 bKeyOld1:=SETKEY(K_ALT_K,{|| Konv()})
 bKeyOld2:=SETKEY(K_ALT_V,{|| DefKonv()})
+
 Box(,3,60)
+	
 	set cursor on
+	
 	do while .t.
-  		@ m_x,m_y+42 SAY "<a-K> kursiranje"
+  		
+		@ m_x,m_y+42 SAY "<a-K> kursiranje"
   		@ m_x+4,m_y+30 SAY "<a-V> programiranje kursiranja"
   		@ m_x+1,m_y+2 SAY "KALKULATOR: unesite izraz, npr: '(1+33)*1.2' :"
   		@ m_x+2,m_y+2 GET cIzraz
-  		read
+  		
+		read
   		
 		// ako je ukucan "," zamjeni sa tackom "."
 		cIzraz:=STRTRAN(cIzraz, ",",".")
 		
 		@ m_x+3,m_y+2 SAY space(20)
   		if type(cIzraz)<>"N"
-    			if upper(left(cIzraz,1))<>"K"
+    			
+			if upper(left(cIzraz,1))<>"K"
      				@ m_x+3,m_y+2 SAY "ERR"
     			else
      				@ m_x+3,m_y+2 SAY kbroj(substr(cizraz,2))
     			endif
+			
     			//cIzraz:=space(40)
   		else
     			@ m_x+3,m_y+2 SAY &cIzraz pict "99999999.9999"
@@ -58,12 +65,16 @@ Box(,3,60)
   		if lastkey()==27
 			exit
 		endif
-  		//if upper(left(cIzraz,1)==="K"; exit; endif
-  		DO WHILE NEXTKEY()==0
+  		
+		//if upper(left(cIzraz,1)==="K"; exit; endif
+  		
+		DO WHILE NEXTKEY()==0
 			OL_YIELD()
 		ENDDO
-  		INKEY()
-  		// inkey(0)
+  		
+		INKEY()
+  		
+		// inkey(0)
 	enddo
 BoxC()
 
@@ -97,6 +108,31 @@ endif
 
 return
 *}
+
+
+// -----------------------------------
+// auto valute convert
+// -----------------------------------
+function a_val_convert( )
+private cVar := ReadVar()
+private nIzraz := &cVar
+private cIzraz
+
+// samo ako je varijabla numericka....
+if type( cVar ) == "N"
+	
+	cIzraz := ALLTRIM( STR( nIzraz ) )
+	
+	// konvertuj ali bez ENTER-a
+	konv( .f. )
+	
+	nIzraz := VAL( cIzraz )
+	
+	&cVar := nIzraz
+	
+endif
+   	
+return
 
 
 function kbroj(cSifra)
@@ -172,9 +208,14 @@ return
 *}
 
 
-static function Konv()
+static function Konv( lEnter )
 *{
   LOCAL nDuz:=LEN(cIzraz), lOtv:=.t., nK1:=0, nK2:=0
+
+  if lEnter == nil
+  	lEnter := .t.
+  endif
+  
   IF !FILE(SIFPATH+"VALUTE.DBF")
     RETURN
   ENDIF
@@ -212,7 +253,9 @@ static function Konv()
     PopWA()
   ENDIF
   PopWA()
-  KEYBOARD CHR(K_ENTER)
+  if lEnter == .t.
+  	KEYBOARD CHR(K_ENTER)
+  endif
 RETURN
 *}
 
@@ -237,8 +280,8 @@ static function DefKonv()
  Box(,5,65)
    set cursor on
    @ m_x,m_y+19 SAY "PROGRAMIRANJE KURSIRANJA"
-   @ m_x+2,m_y+2 SAY "Oznaka valute iz koje se vrsi konverzija:" GET gValIz
-   @ m_x+3,m_y+2 SAY "Oznaka valute u koju se vrsi konverzija :" GET gValU
+   @ m_x+2,m_y+2 SAY "Oznaka valute u koju se vrsi konverzija:" GET gValIz
+   @ m_x+3,m_y+2 SAY "Oznaka valute iz koje se vrsi konverzija :" GET gValU
    @ m_x+4,m_y+2 SAY "Kurs po kome se vrsi konverzija (1/2/3) :" GET gKurs VALID gKurs$"123" PICT "9"
    read
    IF LASTKEY()<>K_ESC
