@@ -152,7 +152,8 @@ RAZMAK:= SPACE(nLMargina)
 // dodaj sliku headera
 if nPicHRow > 1
 	// put picture code
-	// ? "#%pich#"
+	?
+	P_PIC_H
 endif
 
 if lStZagl == .t.
@@ -238,7 +239,7 @@ do while !EOF()
 	endif
 	
 	// provjeri za novu stranicu
-	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - ( nPicHRow + nPicFRow)
+	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
 		++nStr
 		Nstr_a4(nStr, .t.)
     	endif	
@@ -248,9 +249,11 @@ do while !EOF()
 enddo
 
 // provjeri za novu stranicu
-if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - (nPicHRow + nPicFRow)
+if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
+	
 	++nStr
 	Nstr_a4(nStr, .t.)
+
 endif	
 
 ? cLine
@@ -261,9 +264,10 @@ endif
 
 lPrintedTotal := .t.
 
-if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - (nPicHRow + nPicFRow)
+if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
 	++nStr
 	Nstr_a4(nStr, .t.)
+	
 endif	
 
 ?
@@ -273,8 +277,17 @@ a4_footer()
 
 // dodaj sliku footera
 if nPicFRow > 0
+	
+	// daj slobodne redove do kraja...... stranice
+	nPom := nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr) - prow()
+	
+	for nI := 0 to nPom
+		?
+	next	
+	
 	// put pic footer code
-	// ? "#%picf#"
+	P_PIC_F
+	
 endif
 
 if lStartPrint
@@ -374,7 +387,7 @@ local nFTip
 
 cLine := a4_line("pf")
 
-if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA()
+if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
          ++nStr
 	 Nstr_a4(nil, .f.)
 endif
@@ -392,7 +405,7 @@ do while !EOF() .and. field->tip = "F"
 		p_line(cTxt, 17, .f., .t.)
 	endif
 
-	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() 
+	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
 		 ++nStr
         	 Nstr_a4(nil, .f.)
 	endif
@@ -913,6 +926,11 @@ P_COND
 p_line( "Prenos na sljedecu stranicu", 17, .f. )
 ? cLine
 
+if nPicFRow > 0
+	?
+	P_PIC_F
+endif
+
 FF
 
 P_COND
@@ -1294,5 +1312,19 @@ endif
 
 return nPom
 
+
+// --------------------------------
+// PICTURE korekcija duzine
+// --------------------------------
+static function	PICT_KOREKCIJA( nStr )
+local nPom
+
+if nStr == 1
+	nPom := ( nPicHRow - nPicFRow )
+else
+	nPom := nPicFRow
+endif
+
+return nPom
 
 
