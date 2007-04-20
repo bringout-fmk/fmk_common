@@ -160,10 +160,14 @@ if lStZagl == .t.
 	// zaglavlje por.fakt
 	a4_header()
 else
+	if gPDFPrint <> "D"
 	// ostavi prostor umjesto automatskog zaglavlja
-	for i:=1 to nGMargina
+		for i:=1 to nGMargina
+			?
+		next
+	else
 		?
-	next
+	endif
 endif
 
 // podaci kupac i broj dokumenta itd....
