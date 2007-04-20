@@ -280,8 +280,8 @@ static function DefKonv()
  Box(,5,65)
    set cursor on
    @ m_x,m_y+19 SAY "PROGRAMIRANJE KURSIRANJA"
-   @ m_x+2,m_y+2 SAY "Oznaka valute u koju se vrsi konverzija:" GET gValIz
-   @ m_x+3,m_y+2 SAY "Oznaka valute iz koje se vrsi konverzija :" GET gValU
+   @ m_x+2,m_y+2 SAY "Oznaka valute iz koje se vrsi konverzija:" GET gValIz
+   @ m_x+3,m_y+2 SAY "Oznaka valute u koju se vrsi konverzija :" GET gValU
    @ m_x+4,m_y+2 SAY "Kurs po kome se vrsi konverzija (1/2/3) :" GET gKurs VALID gKurs$"123" PICT "9"
    read
    IF LASTKEY()<>K_ESC

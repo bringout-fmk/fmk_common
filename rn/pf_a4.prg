@@ -49,6 +49,10 @@ static nSw2
 static nSw3
 // linija ispod kupac
 static nSw4
+// header broj redova - slika
+static nPicHRow
+// footer broj redova - slika
+static nPicFRow
 
 // ------------------------------------------------------
 // glavna funkcija za poziv stampe fakture a4
@@ -65,7 +69,6 @@ PIC_KOLICINA :=  PADL(ALLTRIM(RIGHT(PicKol, LEN_KOLICINA)), LEN_KOLICINA, "9")
 PIC_VRIJEDNOST := PADL(ALLTRIM(RIGHT(PicDem, LEN_VRIJEDNOST)), LEN_VRIJEDNOST, "9")
 PIC_CIJENA := PADL(ALLTRIM(RIGHT(PicCDem, LEN_CIJENA)), LEN_CIJENA, "9")
 
-
 drn_open()
 
 select drn
@@ -79,7 +82,6 @@ else
 	lShowPopust:=.f.
 	LEN_NAZIV += LEN_PROC2 + LEN_CIJENA + 2
 endif
-
 
 if (gPdvDokVar == "1")
  // stampaj racun
@@ -137,6 +139,9 @@ nSw2 := VAL(get_dtxt_opis("X05"))
 nSw3 := VAL(get_dtxt_opis("X06"))
 nSw4 := VAL(get_dtxt_opis("X07"))
 
+nPicHRow := VAL(get_dtxt_opis("X11"))
+nPicFRow := VAL(get_dtxt_opis("X12"))
+
 // uzmi glavne varijable za stampu fakture
 // razmak, broj redova sl.teksta, 
 get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZaglStr, @lStZagl, @lDatOtp, @cValuta)
@@ -144,7 +149,13 @@ get_pfa4_vars(@nLMargina, @nGMargina, @nDodRedova, @nSlTxtRow, @lSamoKol, @lZagl
 // razmak ce biti
 RAZMAK:= SPACE(nLMargina)
 
-if lStZagl
+// dodaj sliku headera
+if nPicHRow > 1
+	// put picture code
+	// ? "#%pich#"
+endif
+
+if lStZagl == .t.
 	// zaglavlje por.fakt
 	a4_header()
 else
@@ -157,7 +168,7 @@ endif
 // podaci kupac i broj dokumenta itd....
 pf_a4_kupac()
 
-cLine := a4_line("pf")
+cLine := a4_line( "pf" )
 
 select rn
 set order to tag "1"
@@ -227,7 +238,7 @@ do while !EOF()
 	endif
 	
 	// provjeri za novu stranicu
-	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA()
+	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - ( nPicHRow + nPicFRow)
 		++nStr
 		Nstr_a4(nStr, .t.)
     	endif	
@@ -237,28 +248,34 @@ do while !EOF()
 enddo
 
 // provjeri za novu stranicu
-if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA()
+if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - (nPicHRow + nPicFRow)
 	++nStr
 	Nstr_a4(nStr, .t.)
 endif	
-
 
 ? cLine
 
 if !lSamoKol
 	print_total(cValuta, cLine)
-
 endif
+
 lPrintedTotal := .t.
 
-if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() 
+if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - (nPicHRow + nPicFRow)
 	++nStr
 	Nstr_a4(nStr, .t.)
 endif	
 
 ?
+
 // dodaj text na kraju fakture
 a4_footer()
+
+// dodaj sliku footera
+if nPicFRow > 0
+	// put pic footer code
+	// ? "#%picf#"
+endif
 
 if lStartPrint
 	FF
@@ -266,11 +283,12 @@ if lStartPrint
 endif
 
 return
-*}
+
+
 
 // uzmi osnovne parametre za stampu dokumenta
 function get_pfa4_vars(nLMargina, nGMargina, nDodRedova, nSlTxtRow, lSamoKol, lZaglStr, lStZagl, lDatOtp, cValuta, cPDVStavka)
-*{
+
 
 // uzmi podatak za lijevu marginu
 nLMargina := VAL(get_dtxt_opis("P01"))
@@ -315,14 +333,12 @@ endif
 cValuta := get_dtxt_opis("D07")
 
 return
-*}
+
 
 
 // zaglavlje glavne tabele sa stavkama
 static function st_zagl_data()
-*{
 local cLine
-
 local cRed1:=""
 local cRed2:=""
 local cRed3:=""
@@ -342,18 +358,16 @@ if lShowPopust
 endif
 cRed1 += " " + PADC("Uk.bez.PDV", LEN_VRIJEDNOST)
 
-
 ? cRed1
 
 ? cLine
 
 return
-*}
+
 
 
 // funkcija za ispis slobodnog teksta na kraju fakture
 static function pf_a4_sltxt()
-*{
 local cLine
 local cTxt
 local nFTip
@@ -387,12 +401,10 @@ do while !EOF() .and. field->tip = "F"
 enddo
 
 return
-*}
 
 
 // generalna funkcija footer
 function a4_footer()
-*{
 local cLine 
 
 cLine := a4_line("pf")
@@ -414,9 +426,9 @@ for i :=1 to LEN(aPotpis)
    p_line( aPotpis[i], 10, .f.)
 next
 
-
 return
-*}
+
+
 
 // --------------------------
 // funkcija za ispis headera
@@ -526,7 +538,7 @@ if IsPtxtOutput()
 endif
 
 return
-*}
+
 
 
 // definicija linije za glavnu tabelu sa stavkama
@@ -563,10 +575,8 @@ return cLine
 // ---------------------------------------------------------------------------
 // funkcija za ispis podataka o kupcu, dokument, datum fakture, otpremnica itd..
 static function pf_a4_kupac()
-*{
 local cPartMjesto
 local cPartPTT
-
 local cKNaziv
 local cKAdresa
 local cKIdBroj
@@ -595,7 +605,6 @@ local cLinijaNarOtp
 local nRowsIznad
 local nRowsIspod
 local nRowsOdTabele
-
 
 // koliko je redova odstampano u zaglavlju
 local nPRowsDelta
@@ -994,6 +1003,7 @@ B_OFF
 ? cLine
 return
 
+
 // --------------------------------------------
 // --------------------------------------------
 function NazivDobra(cIdRoba, cRobaNaz, cJmj)
@@ -1072,6 +1082,7 @@ if lBold
 endif
 ??  cPLine
 return
+
 
 // ---------------------------------
 // ---------------------------------
@@ -1284,4 +1295,4 @@ endif
 return nPom
 
 
-return
+
