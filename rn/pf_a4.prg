@@ -153,7 +153,7 @@ RAZMAK:= SPACE(nLMargina)
 if nPicHRow > 1
 	// put picture code
 	?
-	P_PIC_H
+	gpPicH( nPicHRow )
 endif
 
 if lStZagl == .t.
@@ -280,19 +280,19 @@ endif
 a4_footer()
 
 // dodaj sliku footera
-if nPicFRow > 0
+//if nPicFRow > 0
 	
 	// daj slobodne redove do kraja...... stranice
-	nPom := nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr) - prow()
+	//nPom := nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr) - prow()
 	
-	for nI := 0 to nPom
-		?
-	next	
+	//for nI := 0 to nPom
+	//	?
+	//next	
 	
 	// put pic footer code
-	P_PIC_F
+	//gpPicF()
 	
-endif
+//endif
 
 if lStartPrint
 	FF
@@ -931,8 +931,9 @@ p_line( "Prenos na sljedecu stranicu", 17, .f. )
 ? cLine
 
 if nPicFRow > 0
-	?
-	P_PIC_F
+	// za sada nam ne treba....
+	//?
+	//gpPicF()
 endif
 
 FF
@@ -1324,7 +1325,7 @@ static function	PICT_KOREKCIJA( nStr )
 local nPom
 
 if nStr == 1
-	nPom := ( nPicHRow - nPicFRow )
+	nPom := ( nPicHRow + nPicFRow )
 else
 	nPom := nPicFRow
 endif
