@@ -3,6 +3,63 @@
 static __LEV_MIN
 static __LEV_MAX
 
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_obj
+// ------------------------------------------------
+function g_ruleobj( cSeek )
+return PADR(cSeek, 30)
+
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja modul_name
+// ------------------------------------------------
+function g_rulemod( cSeek )
+return PADR(cSeek, 10)
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c1
+// ------------------------------------------------
+function g_rule_c1( cSeek )
+return PADR(cSeek, 1)
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c2
+// ------------------------------------------------
+function g_rule_c2( cSeek )
+return PADR(cSeek, 5)
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c3
+// ------------------------------------------------
+function g_rule_c3( cSeek )
+return PADR(cSeek, 10)
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c4
+// ------------------------------------------------
+function g_rule_c4( cSeek )
+return PADR(cSeek, 10)
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c5
+// ------------------------------------------------
+function g_rule_c5( cSeek )
+return PADR(cSeek, 50)
+
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c6
+// ------------------------------------------------
+function g_rule_c6( cSeek )
+return PADR(cSeek, 50)
+
+
+// ------------------------------------------------
+// vraca vrijednost za seek polja rule_c7
+// ------------------------------------------------
+function g_rule_c7( cSeek )
+return PADR(cSeek, 100)
+
 
 // -----------------------------------------------
 // da li se koriste pravila
