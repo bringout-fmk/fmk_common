@@ -121,12 +121,13 @@ private cIzraz
 // samo ako je varijabla numericka....
 if type( cVar ) == "N"
 	
-	cIzraz := ALLTRIM( STR( nIzraz ) )
+	//cIzraz := ALLTRIM( STR( nIzraz ) )
 	
+	nIzraz := ROUND(nIzraz * omjerval( ValDomaca(), ValPomocna(), DATE() ), 5)
 	// konvertuj ali bez ENTER-a
-	konv( .f. )
+	//konv( .f. )
 	
-	nIzraz := VAL( cIzraz )
+	//nIzraz := VAL( cIzraz )
 	
 	&cVar := nIzraz
 	
@@ -208,22 +209,28 @@ return
 *}
 
 
+// --------------------------------------
+// kovertuj valutu
+// --------------------------------------
 static function Konv( lEnter )
-*{
-  LOCAL nDuz:=LEN(cIzraz), lOtv:=.t., nK1:=0, nK2:=0
+local nDuz:=LEN(cIzraz)
+local lOtv:=.t.
+local nK1:=0
+local nK2:=0
 
-  if lEnter == nil
-  	lEnter := .t.
-  endif
+if lEnter == nil
+ 	lEnter := .t.
+endif
   
-  IF !FILE(SIFPATH+"VALUTE.DBF")
-    RETURN
-  ENDIF
-  PushWA()
-  IF SELECT("VALUTE")==0
+IF !FILE(SIFPATH+"VALUTE.DBF")
+	RETURN
+ENDIF
+
+PushWA()
+IF SELECT("VALUTE")==0
     lOtv:=.f.
     use (SIFPATH+"VALUTE") index (SIFPATH+"VALUTEi1"),(SIFPATH+"VALUTEi2"),(SIFPATH+"VALUTEi3") new
-  ELSE
+ELSE
     SELECT VALUTE
     PushWA()
 #ifdef C52
@@ -232,11 +239,15 @@ static function Konv( lEnter )
     SET ORDER TO 1
 #endif
 
-  ENDIF
-  go top; dbseek( gValIz , .f. ); nK1:=VALUTE->&("kurs"+gKurs)
-  go top; dbseek( gValU  , .f. ); nK2:=VALUTE->&("kurs"+gKurs)
+ENDIF
+go top
+dbseek( gValIz , .f. )
+nK1:=VALUTE->&("kurs"+gKurs)
+go top
+dbseek( gValU  , .f. )
+nK2:=VALUTE->&("kurs"+gKurs)
 
-  IF nK1==0 .or. type(cIzraz)<>"N"
+IF nK1==0 .or. type(cIzraz)<>"N"
     IF !lOtv
       USE
     ELSE
@@ -245,6 +256,7 @@ static function Konv( lEnter )
     PopWA()
     RETURN
   ENDIF
+  altd()
   cIzraz:=&(cIzraz) * nK2 / nK1
   cIzraz:=PADR(cIzraz,nDuz)
   IF !lOtv
