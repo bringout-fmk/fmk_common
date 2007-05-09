@@ -172,6 +172,22 @@ function PdvOslobadjanje(cIdPartner)
 local cIdBroj
 return cIdBroj := IzSifK("PARTN", "PDVO", cIdPartner, .f.)
 
+// ---------------------------------------------
+// da li je partner oslobodjen po clanu
+// ---------------------------------------------
+function IsOslClan(cIdPartner)
+local lRet := .f.
+local cClan
+
+cClan := PdvOslobadjanje(cIdPartner)
+
+if cClan <> nil .and. !EMPTY(cClan)
+	lRet := .t.
+endif
+
+return lRet
+
+
 // -------------------------------------------------------------------------
 // profili 
 // primjer: Profil partnera = "KUP,KMS"
