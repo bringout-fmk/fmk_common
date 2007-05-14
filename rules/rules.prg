@@ -334,15 +334,20 @@ return nNo
 // -----------------------------------------------------
 // prikazuje poruku o gresci
 // -----------------------------------------------------
-function sh_rule_err( cMsg )
+function sh_rule_err( cMsg, nLevel )
 local aMsg
 local cPom := ""
+local cErr := ""
 
-aMsg := SjeciStr( ALLTRIM(aMsg), 60 )
+if nLevel == nil
+	nLevel := 0
+endif
+
+aMsg := SjeciStr( ALLTRIM( cMsg ), 60 )
 
 for i:=1 to LEN(aMsg)
 	
-	cPom += aMsg[i]
+	cPom += ALLTRIM( aMsg[i] )
 	
 	if i <> LEN(aMsg)
 		cPom += "#"
@@ -350,9 +355,28 @@ for i:=1 to LEN(aMsg)
 	
 next
 
-msgbeep( cPom )
+cErr := _info_level( nLevel ) + cPom
+
+msgbeep( cErr )
 
 return
 
+// -----------------------------------------
+// informacija o nivou 
+// -----------------------------------------
+static function _info_level( nLev )
+cRet := ""
+
+do case
+	case nLev == 1 .or. nLev == 2 .or. nLev == 3
+		cRet := "! UPOZORENJE !##"
+	case nLev == 4
+		cRet := "! ZABRANJENO !##"
+	case nLev == 5
+		cRet := "!!! STROGO ZABRANJENO !!!##"
+		
+endcase
+
+return cRet
 
 
