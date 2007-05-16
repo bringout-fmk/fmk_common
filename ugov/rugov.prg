@@ -8,7 +8,7 @@ static __partn
 // otvara stavke ugovora - robu iz RUGOV
 // --------------------------------------
 function V_Rugov( cId )
-local nLenTbl := 10
+local nLenTbl := 12
 local nWidthTbl := 65
 private cIdUgov
 private GetList:={}
@@ -22,6 +22,7 @@ Box(, nLenTbl, nWidthTbl)
 select rugov
 
 set_a_kol(@ImeKol, @Kol)
+set_f_tbl( cIdUgov )
 
 set cursor on
 
@@ -31,15 +32,32 @@ set cursor on
 
 __partn := ugov->idpartner
 
-BrowseKey(m_x+3, m_y+1, m_x+ nLenTbl - 1, m_y+ nWidthTbl, ;
-    ImeKol, {|Ch| key_handler(Ch, cIdUgov)}, ;
-    "id+brisano==cIdUgov + ' '", ;
-    cIdUgov, 2,,,{|| .f.})
+
+ObjDbedit("", nLenTbl,nWidthTbl,{|| key_handler( cIdUgov )},"","",,,,,2)
+
+// izbacen brkey... bezveze
+
+//BrowseKey(m_x+3, m_y+1, m_x+ nLenTbl - 2, m_y+ nWidthTbl, ;
+//    ImeKol, {|Ch| key_handler( Ch, cIdUgov)}, ;
+//    "id+brisano==cIdUgov + ' '", ;
+//    cIdUgov, 2,,,{|| .f.})
 
 select ugov
 BoxC()
 
+set filter to
+
 return .t.
+
+
+static function set_f_tbl( cIdUgov )
+local cFilt := ""
+
+cFilt := "id == " + cm2str( cIdUgov ) + " .and. brisano == ' ' "
+set filter to &cFilt
+go top
+
+return
 
 
 // -------------------------------------
@@ -65,7 +83,7 @@ if rugov->(fieldpos("K1"))<>0
 endif
 
 if rugov->(fieldpos("dest")) <> 0
-	AADD(aImeKol, { "Dest.", {|| get_dest_info( __partn, dest )}, "dest"  } )
+	AADD(aImeKol, { "Dest.", {|| get_dest_info( __partn, dest, 65 )}, "dest"  } )
 endif
 
 for i:=1 to len(aImeKol)
@@ -78,23 +96,45 @@ return
 //------------------------------------------------
 // key handler
 //------------------------------------------------
-static function key_handler(Ch, cIdUgov)
+static function key_handler( cIdUgov)
 local nRet:=DE_CONT
 
+// prikazi destinaciju
+s_box_dest()
+
 do case
+		
 	case Ch == K_CTRL_N
+		
 		nRet := edit_rugov(.t.)
 	
 	case Ch == K_F2
+		
 		nRet := edit_rugov(.f.)
 
 	case Ch==K_CTRL_T
+	
      		if Pitanje(,"Izbrisati stavku ?","N")=="D"
         		delete
      		endif
-     		nRet:=DE_DEL
+     		
+		nRet:=DE_REFRESH
 endcase
+
 return nRet
+
+
+
+static function s_box_dest()
+
+if rugov->(FIELDPOS("dest")) == 0
+	return
+endif
+
+get_dest_binfo( 17, 8 , __partn, rugov->dest )
+
+return
+
 
 
 
@@ -232,8 +272,12 @@ local cOpis:=""
 local nTArea := SELECT()
 PushWa()
 SELECT RUGOV
+set filter to
 seek cIdUgov
-cOpis += trim(idroba)+ " " + alltrim(transform(kolicina, pickol)) + " x " + alltrim(transform(cijena, picdem))
+
+if FOUND()
+	cOpis += trim(idroba)+ " " + alltrim(transform(kolicina, pickol)) + " x " + alltrim(transform(cijena, picdem))
+endif
 
 PopWa()
 select (nTArea)

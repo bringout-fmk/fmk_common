@@ -251,9 +251,13 @@ return 7
 // --------------------------------------------
 // vraca info o destinaciji
 // --------------------------------------------
-function get_dest_info( cPartn, cDest )
+function get_dest_info( cPartn, cDest, nLen )
 local xRet := "---"
 local nTArea := SELECT()
+
+if nLen == nil
+	nLen := 15
+endif
 
 select dest
 set order to tag "ID"
@@ -261,14 +265,47 @@ hseek cPartn + cDest
 
 if FOUND() 
 	if cPartn == field->idpartner .and. cDest == field->id
-		xRet := ALLTRIM(field->naziv) + ":" + ALLTRIM(field->adresa)
+		xRet := ALLTRIM(field->naziv) + ":" + ALLTRIM(field->naziv2) + ":" + ALLTRIM(field->adresa)
 	endif
 endif
 
-xRet := PADR(xRet, 15)
+xRet := PADR( xRet, nLen )
 
 select (nTArea)
 return xRet
+
+
+// --------------------------------------------
+// vraca box info o destinaciji
+// --------------------------------------------
+function get_dest_binfo( nX, nY, cPartn, cDest )
+local xRet := "---"
+local nTArea := SELECT()
+
+select dest
+set order to tag "ID"
+go top
+hseek cPartn + cDest
+
+altd()
+if FOUND() 
+	if cPartn == field->idpartner .and. cDest == field->id
+		
+		cPom := ALLTRIM( field->naziv) + ", " + ALLTRIM(field->naziv2)
+		
+		@ nX, nY SAY SPACE( 65 ) COLOR "I"
+		@ nX, nY SAY PADR( cPom, 65 ) COLOR "I"
+
+		cPom := ALLTRIM(field->adresa) + ", " + ALLTRIM(field->telefon)
+		
+		@ nX + 1, nY SAY SPACE( 65 ) COLOR "I"
+		@ nX + 1, nY SAY PADR( cPom, 65 ) COLOR "I"
+		
+	endif
+endif
+
+select (nTArea)
+return
 
 
 // ----------------------------------------

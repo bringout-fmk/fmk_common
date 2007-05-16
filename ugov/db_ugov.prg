@@ -76,8 +76,8 @@ local aDbf:={}
 
 AADD(aDBF, { "ID"        , "C" ,  6,  0 })
 AADD(aDBF, { "IDPartner" , "C" ,  6,  0 })
-AADD(aDBF, { "Naziv"     , "C" , 25,  0 })
-AADD(aDBF, { "Naziv2"    , "C" , 25,  0 })
+AADD(aDBF, { "Naziv"     , "C" , 40,  0 })
+AADD(aDBF, { "Naziv2"    , "C" , 40,  0 })
 AADD(aDBF, { "Mjesto"    , "C" , 20,  0 })
 AADD(aDBF, { "Adresa"    , "C" , 30,  0 })
 AADD(aDBF, { "Ptt"       , "C" , 10,  0 })
