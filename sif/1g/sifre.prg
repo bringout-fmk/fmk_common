@@ -585,7 +585,7 @@ endif
 
 AADD(ImeKol, { padr("Naziv",20), {|| naz}, "naz" })
 
-AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos", {|| wh_oldpor(walgoritam) } })
+AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos", {|| IF( POR->(FIELDPOS("ALGORITAM")) <> 0 , wh_oldpor(walgoritam), .t. ) } })
 
 AADD(ImeKol, { padr("Donji limit",12), {||  dlimit}, "dlimit" })
 
