@@ -183,12 +183,16 @@ do while !EOF() .and. field->idfirma == cFirma ;
 		.and. field->brdok == cBrDok ;
 		.and. IF(dDatDok<>nil, field->datdok == dDatDok, .t.)
 	
+	
 	Scatter()
+	
 	select p_doksrc
 	append blank
 	Gather()
+	
 	select doksrc
 	skip
+	
 enddo
 
 select (nTArea)
@@ -234,7 +238,6 @@ doksrc_to_p(cFirma, cIdVd, cBrDok, dDatDok)
 // brisi doksrc
 d_doksrc(cFirma, cIdVd, cBrDok, dDatDok)
 return
-
 
 
 
