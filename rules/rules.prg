@@ -336,30 +336,29 @@ return nNo
 // -----------------------------------------------------
 function sh_rule_err( cMsg, nLevel )
 local aMsg
-local cPom := ""
-local cErr := ""
+local cTxt := ""
+local i
 
 if nLevel == nil
 	nLevel := 0
 endif
 
-aMsg := SjeciStr( ALLTRIM( cMsg ), 60 )
+aMsg := SjeciStr( ALLTRIM( cMsg ), 70 )
+
+cTxt := ""
 
 for i:=1 to LEN(aMsg)
-	
-	cPom += ALLTRIM( aMsg[i] )
-	
-	if i <> LEN(aMsg)
-		cPom += "#"
-	endif
+
+	cTxt += aMsg[i] + "#"
 	
 next
 
-cErr := _info_level( nLevel ) + cPom
+cTxt := _info_level( nLevel ) + cTxt
 
-msgbeep( cErr )
+msgbeep( cTxt )
 
 return
+
 
 // -----------------------------------------
 // informacija o nivou 
@@ -369,11 +368,11 @@ cRet := ""
 
 do case
 	case nLev == 1 .or. nLev == 2 .or. nLev == 3
-		cRet := "! UPOZORENJE !##"
+		cRet := "! OBAVJESTENJE !##"
 	case nLev == 4
-		cRet := "! ZABRANJENO !##"
+		cRet := "! UPOZORENJE !##"
 	case nLev == 5
-		cRet := "!!! STROGO ZABRANJENO !!!##"
+		cRet := "!!! VAZNO UPOZORENJE !!!##"
 		
 endcase
 
