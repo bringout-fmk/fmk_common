@@ -271,17 +271,17 @@ local cRed3:=""
 
 cRed1 := RAZMAK() 
 cRed1 += PADC("R.br", LEN_RBR()) 
-cRed1 += " " + PADR("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)", LEN_NAZIV())
+cRed1 += " " + PADR(lokal("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)"), LEN_NAZIV())
 
-cRed1 += " " + PADC("kolicina", LEN_KOLICINA())
+cRed1 += " " + PADC(lokal("kolicina"), LEN_KOLICINA())
 
 if nSw6 > 0
-	cRed1 += " " + PADC("C.b.PDV", LEN_CIJENA())
+	cRed1 += " " + PADC(lokal("C.b.PDV"), LEN_CIJENA())
 	if lShowPopust
- 		cRed1 += " " + PADC("Pop.%", LEN_PROC2())
- 		cRed1 += " " + PADC("C.2.b.PDV", LEN_CIJENA())
+ 		cRed1 += " " + PADC(lokal("Pop.%"), LEN_PROC2())
+ 		cRed1 += " " + PADC(lokal("C.2.b.PDV"), LEN_CIJENA())
 	endif
-	cRed1 += " " + PADC("Uk.bez.PDV", LEN_VRIJEDNOST())
+	cRed1 += " " + PADC(lokal("Uk.bez.PDV"), LEN_VRIJEDNOST())
 endif
 
 ? cRed1
@@ -350,25 +350,25 @@ endif
 // provjeri i dodaj stavke vezane za popust
 if Round(drn->ukpopust, 2) <> 0
 		? RAZMAK()
-		?? PADL("Popust ("+cValuta+") :", LEN_UKUPNO())
+		?? PADL(lokal("Popust (")+cValuta+") :", LEN_UKUPNO())
 		?? show_number(drn->ukpopust, PIC_VRIJEDNOST())
 		
 		? RAZMAK()
-		?? PADL("Uk.bez.PDV-popust ("+cValuta+") :", LEN_UKUPNO())
+		?? PADL(lokal("Uk.bez.PDV-popust (")+cValuta+") :", LEN_UKUPNO())
 		?? show_number(drn->ukbpdvpop, PIC_VRIJEDNOST())
 endif
 
 
 // obracun PDV-a
 ? RAZMAK()
-?? PADL("PDV 17% :", LEN_UKUPNO())
+?? PADL(lokal("PDV 17% :"), LEN_UKUPNO())
 ?? show_number(drn->ukpdv, PIC_VRIJEDNOST())
 
 
 // zaokruzenje
 if ROUND(drn->zaokr,4) <> 0
 	? RAZMAK() 
-	?? PADL("Zaokruzenje :", LEN_UKUPNO())
+	?? PADL(lokal("Zaokruzenje :"), LEN_UKUPNO())
 	?? show_number(drn->zaokr, PIC_VRIJEDNOST())
 endif
 	
@@ -377,7 +377,7 @@ endif
 // ipak izleti za dva karaktera rekapitulacija u bold rezimu
 ?? SPACE(50 - 2)
 B_ON
-?? PADL("** SVEUKUPNO SA PDV  ("+cValuta+") :", LEN_UKUPNO() - 50)
+?? PADL(lokal("** SVEUKUPNO SA PDV  (")+cValuta+") :", LEN_UKUPNO() - 50)
 ?? TRANSFORM(drn->ukupno, PIC_VRIJEDNOST())
 B_OFF
 
@@ -385,7 +385,7 @@ B_OFF
 cSlovima := get_dtxt_opis("D04")
 ? RAZMAK() 
 B_ON
-?? "slovima: " + cSlovima
+?? lokal("slovima: ") + cSlovima
 B_OFF
 ? cLine
 return
@@ -492,7 +492,7 @@ aKupac:=Sjecistr(cNaziv, LEN_COLONA)
 aDobavljac:=SjeciStr(cNaziv2, LEN_COLONA)
 
 B_ON
-cPom := PADR("Narucioc:", LEN_COLONA) + " " + PADR("Dobavljac:", LEN_COLONA)
+cPom := PADR(lokal("Narucioc:"), LEN_COLONA) + " " + PADR(lokal("Dobavljac:"), LEN_COLONA)
 
 p_line( cPom, 12, .t.)
 
@@ -551,8 +551,8 @@ cPom2 := ALLTRIM(cIdBroj2)
 if EMPTY(cPom2)
   cPom2 := "-"
 endif
-cPom := PADR("ID: " + cPom, LEN_COLONA)
-cPom += " " + PADR("ID: " + cPom2, LEN_COLONA)
+cPom := PADR(lokal("ID: ") + cPom, LEN_COLONA)
+cPom += " " + PADR(lokal("ID: ") + cPom2, LEN_COLONA)
 p_line( cPom, 12, .t.)
 
 
@@ -579,7 +579,7 @@ B_OFF
 if !EMPTY(cDestinacija)
  ?
  p_line( REPLICATE("-", LEN_KUPAC() - 10) , 12, .f.)
- cPom := "Destinacija: "  + ALLTRIM( cDestinacija )
+ cPom := lokal("Destinacija: ")  + ALLTRIM( cDestinacija )
  p_line(cPom, 12 , .f.)
  ?
 endif
@@ -589,14 +589,14 @@ endif
 ?
 P_10CPI
 // broj dokumenta
-cPom := "NARUDZBENICA br. ___________ od " + cDatDok
+cPom := lokal("NARUDZBENICA br. ___________ od ") + cDatDok
 cPom := PADC(cPom, LEN_COLONA * 2)
 p_line( cPom, 10, .t.)
 B_OFF
 ?
-cPom:="Molimo da nam na osnovu ponude/dogovora/ugovora _________________ "
+cPom:=lokal("Molimo da nam na osnovu ponude/dogovora/ugovora _________________ ")
 p_line(cPom, 12 , .f.)
-cPom:="isporucite sljedeca dobra/usluge:" 
+cPom:=lokal("isporucite sljedeca dobra/usluge:" )
 p_line(cPom, 12 , .f.)
 
 nPRowsDelta:= prow() - nPRowsDelta 
@@ -612,24 +612,24 @@ function nar_footer()
 local cPom
 
 ?
-cPom:="USLOVI NABAVKE:"
+cPom:=lokal("USLOVI NABAVKE:")
 p_line( cPom, 12, .t.)
 cPom:="----------------"
 p_line( cPom, 12, .t.)
 ?
-cPom:= "Mjesto isporuke _______________________  Nacin placanja: gotovina/banka/kompenzacija"
+cPom:= lokal("Mjesto isporuke _______________________  Nacin placanja: gotovina/banka/kompenzacija")
 p_line( cPom, 12, .t.)
 ?
-cPom := "Vrijeme isporuke _____________________________________________________________"
+cPom := lokal("Vrijeme isporuke _____________________________________________________________")
 ?
 p_line( cPom, 12, .t.)
 ?
-cPom:="Napomena: Molimo popuniti prazna polja, te zaokruziti zeljene opcije"
+cPom:=lokal("Napomena: Molimo popuniti prazna polja, te zaokruziti zeljene opcije")
 p_line(cPom, 20, .f.)
 
 ?
-cPom := PADL(" M.P.          ", LEN_COLONA) + " "
-cPom += PADC("Za narucioca:", LEN_COLONA)
+cPom := PADL(lokal(" M.P.          "), LEN_COLONA) + " "
+cPom += PADC(lokal("Za narucioca:"), LEN_COLONA)
 p_line(cPom, 12, .f.)
 ?
 cPom := PADC(" ", LEN_COLONA) + " "
@@ -650,7 +650,7 @@ nDuzStrKorekcija := 0
 
 P_COND
 ? cLine
-p_line( "Prenos na sljedecu stranicu", 17, .f. )
+p_line( lokal("Prenos na sljedecu stranicu"), 17, .f. )
 ? cLine
 
 FF
@@ -658,7 +658,7 @@ FF
 P_COND
 ? cLine
 if nStr <> nil
-	p_line( "       Strana:" + str(nStr, 3), 17, .f.)
+	p_line( lokal("       Strana:") + str(nStr, 3), 17, .f.)
 endif
 
 // total nije odstampan znaci ima jos podataka
@@ -692,3 +692,4 @@ endif
 return nPom
 
 return
+

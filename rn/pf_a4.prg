@@ -366,14 +366,14 @@ cLine := a4_line("pf")
 
 cRed1 := RAZMAK 
 cRed1 += PADC("R.br", LEN_RBR) 
-cRed1 += " " + PADR("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)", LEN_NAZIV)
-cRed1 += " " + PADC("kolicina", LEN_KOLICINA)
-cRed1 += " " + PADC("C.b.PDV", LEN_CIJENA)
+cRed1 += " " + PADR(lokal("Trgovacki naziv dobra/usluge (sifra, naziv, jmj)"), LEN_NAZIV)
+cRed1 += " " + PADC(lokal("kolicina"), LEN_KOLICINA)
+cRed1 += " " + PADC(lokal("C.b.PDV"), LEN_CIJENA)
 if lShowPopust
- cRed1 += " " + PADC("Pop.%", LEN_PROC2)
- cRed1 += " " + PADC("C.2.b.PDV", LEN_CIJENA)
+ cRed1 += " " + PADC(lokal("Pop.%"), LEN_PROC2)
+ cRed1 += " " + PADC(lokal("C.2.b.PDV"), LEN_CIJENA)
 endif
-cRed1 += " " + PADC("Uk.bez.PDV", LEN_VRIJEDNOST)
+cRed1 += " " + PADC(lokal("Uk.bez.PDV"), LEN_VRIJEDNOST)
 
 ? cRed1
 
@@ -526,12 +526,12 @@ cPom := REPLICATE("-", nPom)
 p_line( cPom , 10, .t.)
 
 
-p_line("Adresa: " + cIAdresa + ", ID broj: " + cIIdBroj, 12, .f.)
+p_line(lokal("Adresa: ") + cIAdresa + lokal(", ID broj: ") + cIIdBroj, 12, .f.)
 p_line(cITelef, 12, .f.)
 p_line(cIWeb, 12, .f.)
 p_line(cSLHead, 10, .f.)
 
-p_line("Banke: ", 12, .f.)
+p_line(lokal("Banke: "), 12, .f.)
 for i:=1 to LEN(aIBanke)
 	if i == 1
 		?? aIBanke[i]
@@ -607,7 +607,7 @@ local cMjesto
 local cDatDok
 local cDatIsp
 local cDatVal
-local cTipDok := "FAKTURA br. "
+local cTipDok := lokal("FAKTURA br. ")
 local cBrDok
 local cBrNar
 local cBrOtp
@@ -714,7 +714,7 @@ lKomision := .f.
 do case
   case cIdVd == "12" .and. cInoDomaci == "KOMISION"
   	// komisiona otpremnica
-	cPom := "Komisionar:"
+	cPom := lokal("Komisionar:")
 	lKomision:=.t.
 	
   case ALLTRIM(cInoDomaci) == "INO"
@@ -722,9 +722,9 @@ do case
 	do case
 	  case cIdVd $ "10#11#20#29"
 		// ino partner
-		cPom:= "Ino-Kupac:"
+		cPom:= lokal("Ino-Kupac:")
 	  otherwise
-	  	cPom:= "Partner"
+	  	cPom:= lokal("Partner")
 	endcase
 		
    case ALLTRIM(cInoDomaci) == "DOMACA"
@@ -732,24 +732,24 @@ do case
 	do case
 	  case cIdVd == "12"
 		// otpremnica - subjekat koji zaduzuje
-		cPom:= "Prima:"
+		cPom:= lokal("Prima:")
 		
 	  case cIdVd $ "10#11#20#29"
-		cPom:= "Kupac:"
+		cPom:= lokal("Kupac:")
 	  otherwise
-	  	cPom := "Partner:"
+	  	cPom := lokal("Partner:")
 	endcase
 		
    otherwise
 	// obracun PDV-a po nekom osnovu = 0
 	do case
 	  case cIdVd == "12"
-		cPom := "Zaduzuje:"
+		cPom := lokal("Zaduzuje:")
 	  case cIdVd $ "10#11#20#29"
 		// kupac oslobodjen PDV-a po nekom clanu ZPDV
-		cPom:= "Kupac, oslobodjen PDV, cl. " + ALLTRIM(cInoDomaci)
+		cPom:= lokal("Kupac, oslobodjen PDV, cl. ") + ALLTRIM(cInoDomaci)
 	  otherwise
-	  	cPom:="Partner"
+	  	cPom:=lokal("Partner")
 	endcase
 	
 endcase	
@@ -780,7 +780,7 @@ B_OFF
 // u istom redu datum isporuke
 if cDatIsp <> DToC(CToD(""))
 	if !(cIdVd $ "12#00#01")
-		?? padl("Datum isporuke: " + cDatIsp, LEN_DATUM)
+		?? padl(lokal("Datum isporuke: ") + cDatIsp, LEN_DATUM)
 	endif
 endif
 
@@ -794,7 +794,7 @@ B_OFF
 // u istom redu datum valute
 if cDatVal <> DToC(CTOD(""))
 	if !(cIdVd $ "12#00#01#20")
-		?? padl("Datum valute: " + cDatVal, LEN_DATUM)
+		?? padl(lokal("Datum valute: ") + cDatVal, LEN_DATUM)
 	endif
 endif
 
@@ -803,20 +803,20 @@ cPom := ALLTRIM(cKIdBroj)
 if EMPTY(cPom)
   cPom := "-"
 endif
-cPom := "ID broj: " + cPom
+cPom := lokal("ID broj: ") + cPom
 p_line(SPACE(2) + PADR(cPom, LEN_KUPAC), 10, .f.)
 
 cKTelFax:=""
 cPom:=ALLTRIM(get_dtxt_opis("K13"))
 if !empty(cPom)
-	cKTelFax:="tel: "+ cPom
+	cKTelFax:=lokal("tel: ")+ cPom
 endif
 cPom:=ALLTRIM(get_dtxt_opis("K14"))
 if !empty(cPom)
 	if !empty(cKTelFax)
 		cKTelFax += ", "
 	endif
-	cKTelFax += "fax: " + cPom
+	cKTelFax += lokal("fax: ") + cPom
 endif
 
 if !EMPTY(cKTelFax)
@@ -829,7 +829,7 @@ if !EMPTY(cDestinacija)
 	
 	p_line( REPLICATE("-", LEN_KUPAC - 10) , 10, .f.)
  	
-	cPom := "Za: "  + ALLTRIM( cDestinacija )
+	cPom := lokal("Za: ")  + ALLTRIM( cDestinacija )
  	aPom := SjeciStr( cPom, 75 )
 	
 	B_ON
@@ -848,7 +848,7 @@ P_10CPI
 
 cPom := ALLTRIM(cTipDok)
 if lKomision
-	cPom := "KOMISIONA DOSTAVNICA br. "
+	cPom := lokal("KOMISIONA DOSTAVNICA br. ")
 endif
 
 if nShowRj == 1
@@ -872,7 +872,7 @@ cLinijaNarOtp := ""
 cPom := cBrOtp
 lBrOtpr := .f.
 if !empty(cPom)
-	cLinijaNarOtp := "Broj otpremnice: " + cPom
+	cLinijaNarOtp := lokal("Broj otpremnice: ") + cPom
 	lBrOtpr := .t.
 endif
 
@@ -881,7 +881,7 @@ if !empty(cPom)
 	if lBrOtpr
 		cLinijaNarOtp += " , "
 	endif
-	cLinijaNarOtp += "Broj ugov./narudzb: " + cPom
+	cLinijaNarOtp += lokal("Broj ugov./narudzb: ") + cPom
 endif
 
 if !EMPTY(cLinijaNarOtp)
@@ -927,7 +927,7 @@ nDuzStrKorekcija := 0
 
 P_COND
 ? cLine
-p_line( "Prenos na sljedecu stranicu", 17, .f. )
+p_line( lokal("Prenos na sljedecu stranicu"), 17, .f. )
 ? cLine
 
 if nPicFRow > 0
@@ -941,7 +941,7 @@ FF
 P_COND
 ? cLine
 if nStr <> nil
-	p_line( "       Strana:" + str(nStr, 3), 17, .f.)
+	p_line( lokal("       Strana:") + str(nStr, 3), 17, .f.)
 endif
 
 // total nije odstampan znaci ima jos podataka
@@ -967,29 +967,29 @@ return
 static function print_total(cValuta, cLine)
 
 ? RAZMAK
-?? PADL("Ukupno bez PDV ("+cValuta+") :", LEN_UKUPNO)
+?? PADL(lokal("Ukupno bez PDV (")+cValuta+") :", LEN_UKUPNO)
 ?? show_number(drn->ukbezpdv, PIC_VRIJEDNOST)
    
 // provjeri i dodaj stavke vezane za popust
 if Round(drn->ukpopust, 2) <> 0
 		? RAZMAK 
-		?? PADL("Popust ("+cValuta+") :", LEN_UKUPNO)
+		?? PADL(lokal("Popust (")+cValuta+") :", LEN_UKUPNO)
 		?? show_number(drn->ukpopust, PIC_VRIJEDNOST)
 		
 		? RAZMAK 
-		?? PADL("Uk.bez.PDV-popust ("+cValuta+") :", LEN_UKUPNO)
+		?? PADL(lokal("Uk.bez.PDV-popust (")+cValuta+") :", LEN_UKUPNO)
 		?? show_number(drn->ukbpdvpop, PIC_VRIJEDNOST)
 endif
 	
     
 ? RAZMAK 
-?? PADL("PDV 17% :", LEN_UKUPNO)
+?? PADL(lokal("PDV 17% :"), LEN_UKUPNO)
 ?? show_number(drn->ukpdv, PIC_VRIJEDNOST)
     
 // zaokruzenje
 if ROUND(drn->zaokr,4) <> 0
 	? RAZMAK 
-	?? PADL("Zaokruzenje :", LEN_UKUPNO)
+	?? PADL(lokal("Zaokruzenje :"), LEN_UKUPNO)
 	?? show_number(drn->zaokr, PIC_VRIJEDNOST)
 endif
 	
@@ -998,7 +998,7 @@ endif
 // ipak izleti za dva karaktera rekapitulacija u bold rezimu
 ?? SPACE(50 - 2)
 B_ON
-?? PADL("** SVEUKUPNO SA PDV  ("+cValuta+") :", LEN_UKUPNO - 50)
+?? PADL(lokal("** SVEUKUPNO SA PDV  (")+cValuta+") :", LEN_UKUPNO - 50)
 ?? show_number(drn->ukupno, PIC_VRIJEDNOST)
 B_OFF
 
@@ -1006,13 +1006,13 @@ B_OFF
 if drn->(fieldpos("ukpoptp")) <> 0
              if Round(drn->ukpoptp, 2) <> 0
 		? RAZMAK
-		?? PADL("Popust na teret prodavca ("+cValuta+") :", LEN_UKUPNO)
+		?? PADL(lokal("Popust na teret prodavca (")+cValuta+") :", LEN_UKUPNO)
 		?? show_number(drn->ukpoptp, PIC_VRIJEDNOST)
 		
 	        ? RAZMAK 
 		?? SPACE(50 - 2)
 		B_ON
-		? PADL("SVEUKUPNO SA PDV - POPUST NA T.P. ("+cValuta+") : ZA PLATITI :", LEN_UKUPNO - 50)
+		? PADL(lokal("SVEUKUPNO SA PDV - POPUST NA T.P. (")+cValuta+lokal(") : ZA PLATITI :"), LEN_UKUPNO - 50)
 		?? show_number(drn->ukupno - drn->ukpoptp, PIC_VRIJEDNOST)
 		B_OFF
 	     endif
@@ -1021,7 +1021,7 @@ endif
 cSlovima := get_dtxt_opis("D04")
 ? RAZMAK 
 B_ON
-?? "slovima: " + cSlovima
+?? lokal("slovima: ") + cSlovima
 B_OFF
 ? cLine
 return
