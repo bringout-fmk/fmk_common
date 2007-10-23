@@ -86,12 +86,14 @@ if fieldpos("KATBR")<>0
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"ROBA") // roba, artikli
 endif
 
+O_ROBA
 if fieldpos("BARKOD")<>0
   select (F_ROBA)
   use
   CREATE_INDEX("BARKOD","BARKOD",SIFPATH+"ROBA") // roba, artikli
 endif
 
+O_ROBA
 if fieldpos("SIFRADOB")<>0
   select (F_ROBA)
   use
