@@ -720,7 +720,7 @@ do case
   case ALLTRIM(cInoDomaci) == "INO"
   
 	do case
-	  case cIdVd $ "10#11#20#29"
+	  case cIdVd $ "10#11#20#22#29"
 		// ino partner
 		cPom:= lokal("Ino-Kupac:")
 	  otherwise

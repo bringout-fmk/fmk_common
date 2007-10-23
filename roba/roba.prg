@@ -10,13 +10,18 @@
 // -----------------------------------------
 // otvaranje tabele roba - sifrarnik
 // -----------------------------------------
-function P_Roba(cId, dx, dy)
+function P_Roba(cId, dx, dy, cSeek )
 local cRet
 local bRoba
 local nTArea
 local lArtGroup := .f.
 private ImeKol
 private Kol
+
+// pretraga po dobavljacu
+if cSeek == nil
+	cSeek := ""
+endif
 
 PushWa()
 ImeKol:={}
@@ -216,11 +221,16 @@ select (nTArea)
 private gTbDir:="N"
 bRoba:=gRobaBlock
 
-cPomTag:=IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
+if !EMPTY(cSeek)
+	cPomTag := cSeek
+else
+	cPomTag := IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
+endif
 
-cRet:=PostojiSifra(F_ROBA,(cPomTag),15,77,"Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
+cRet := PostojiSifra(F_ROBA, (cPomTag), 15, 77, "Lista artikala - robe", @cId, dx, dy, bRoba,,,,,{"ID"})
 
 PopWa()
+
 return cRet
 
 

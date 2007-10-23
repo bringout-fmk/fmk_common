@@ -79,15 +79,23 @@ index_mcode(SIFPATH, "ROBA")
 CREATE_INDEX("NAZ","LEFT(Naz,40)", SIFPATH+"ROBA")
 CREATE_INDEX("ID","id", PRIVPATH+"_ROBA") 
 O_ROBA
+
 if fieldpos("KATBR")<>0
   select (F_ROBA)
   use
   CREATE_INDEX("KATBR","KATBR",SIFPATH+"ROBA") // roba, artikli
 endif
+
 if fieldpos("BARKOD")<>0
   select (F_ROBA)
   use
   CREATE_INDEX("BARKOD","BARKOD",SIFPATH+"ROBA") // roba, artikli
+endif
+
+if fieldpos("SIFRADOB")<>0
+  select (F_ROBA)
+  use
+  CREATE_INDEX("SIFRADOB","SIFRADOB",SIFPATH+"ROBA") // roba, artikli
 endif
 
 if IzFMKINI("ROBA","Planika","N",SIFPATH)=="D"

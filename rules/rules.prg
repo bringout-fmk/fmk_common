@@ -279,7 +279,7 @@ local nSelect := SELECT()
 local nRec := RECNO()
 local cModul := PADR( goModul:oDataBase:cName, 10 )
 
-cRuleObj := PADR( cRuleObj, 20 )
+cRuleObj := PADR( cRuleObj, 30 )
 
 select fmkrules
 set order to tag "2"
