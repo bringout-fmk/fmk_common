@@ -85,35 +85,46 @@ local nIOrd
 local nFRec
 local aStanje
 
+nTRec := RecNo()
+
+nReturn := DE_CONT
+
 do case
     case Ch == K_CTRL_F9
 	// brisanje sastavnica i proizvoda
 	bris_sast()
-	return 7
+	nReturn := 7
 
     case Ch == K_ENTER 
 	// prikazi sastavnicu
 	show_sast()
-	return DE_REFRESH
+	nReturn := DE_REFRESH
 	
     case Ch == K_CTRL_F4
 	// kopiranje sastavnica u drugi proizvod
 	copy_sast()
-	return DE_REFRESH
+	nReturn := DE_REFRESH
 
     case Ch == K_F7
 	// lista sastavnica
 	ISast()
-  	return DE_REFRESH
+  	nReturn := DE_REFRESH
 
     case Ch == K_F10  
 	// ostale opcije
 	ost_opc_sast()
-	return DE_CONT
+	nReturn := DE_CONT
 
 endcase
 
-return DE_CONT
+select roba
+index on id+tip tag "IDUN" to robapro for tip="P"  
+// samo lista robe
+set order to tag "idun"
+go (nTRec)
+
+
+return nReturn
 
 // -----------------------------------------
 // zamjena sastavnice u svim proizvodima
