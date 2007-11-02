@@ -1,9 +1,11 @@
 #include "\dev\fmk\ld\ld.ch"
 
+
 function PlatSp()
-*{
 local nC1:=20
 local cVarSort:="2"
+local lSviRadnici := .f.
+local cSviRadn := "N"
 
 cIdRadn:=SPACE(_LR_)
 cIdRj:=gRj
@@ -20,9 +22,12 @@ cPrikIzn:="D"
 nProcenat:=100
 nZkk:=gZaok
 cDrugiDio:="D"
-cNaslov:=""       // ISPLATA PLATA
-cNaslovTO:=""     // ISPLATA TOPLOG OBROKA
+cNaslov:=""       
+// ISPLATA PLATA
+cNaslovTO:=""     
+// ISPLATA TOPLOG OBROKA
 nIznosTO:=0
+
 if IsMupZeDo()
 	cZaBanku:="N"
 endif
@@ -54,10 +59,15 @@ endif
 @ m_x+ 8,m_y+2 SAY "Naslov izvjestaja"  GET cNaslov pict "@S30"
 @ m_x+ 9,m_y+2 SAY "Naslov za topl.obrok"  GET cNaslovTO pict "@S30"
 @ m_x+10,m_y+2 SAY "Iznos (samo za topli obrok)"  GET nIznosTO pict gPicI
-read; clvbox(); ESC_BCR
+
+@ m_x+11,m_y+2 SAY "Izlistati sve radnike (D/N)"  GET cSviRadn pict "@!" VALID cSviRadn $ "DN"
+
+read
+clvbox()
+ESC_BCR
 if nprocenat<>100
-  @ m_x+11,m_y+2 SAY "zaokruzenje" GET nZkk pict "99"
-  @ m_x+12,m_y+2 SAY "Prikazati i drugi spisak (za "+LTRIM(STR(100-nProcenat,6,2))+"%-tni dio)" GET cDrugiDio VALID cDrugiDio$"DN" PICT "@!"
+  @ m_x+12,m_y+2 SAY "zaokruzenje" GET nZkk pict "99"
+  @ m_x+13,m_y+2 SAY "Prikazati i drugi spisak (za "+LTRIM(STR(100-nProcenat,6,2))+"%-tni dio)" GET cDrugiDio VALID cDrugiDio$"DN" PICT "@!"
   
   read
 else
@@ -72,11 +82,16 @@ BoxC()
  WPar("to",cNaslovTO)
  SELECT PARAMS; USE
 
+if cSviRadn == "D"
+	lSviRadnici := .t.
+endif
+
 
 IF nIznosTO<>0
   cNaslov:=cNaslovTO
   qqImaTO:=IzFMKIni("LD","UslovImaTopliObrok",'UPPER(RADN->K2)=="D"',KUMPATH)
 ENDIF
+
 IF !EMPTY(cNaslov)
   cNaslov += (SPACE(1) + Lokal("za mjesec:")+STR(cMjesec,2)+". " + Lokal("godine:")+STR(cGodina,4)+".")
 ENDIF
@@ -160,8 +175,8 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
    Scatter()
  endif
  select radn; hseek _idradn; select ld
- if nIznosTO=0      // isplata plate
-   if !(empty(radn->isplata) .or. radn->isplata="BL")
+ if nIznosTO = 0      // isplata plate
+   if !lSviRadnici .and. !(empty(radn->isplata) .or. radn->isplata="BL")
       skip
       loop
    endif
