@@ -10,7 +10,7 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, cDestin )
+static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt )
 local dPom
 local nX := 2
 local nBoxLen := 20
@@ -29,6 +29,11 @@ cOpis := PADR("", 100)
 cIdArt := PADR("", 10)
 // destinacije
 cDestin := "N"
+// datum posljednjeg fakturisanja partnera
+cDatLFakt := "N"
+
+// choice
+nGenCh := 0
 
 if dDatObr == nil
 	dDatObr := DATE()
@@ -44,12 +49,19 @@ nMjesec := MONTH(dPom)
 // godina na koju se odnosi fakturisanje
 nGodina := YEAR(dPom)
 
-Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 18, 70)
+Box("#PARAMETRI ZA GENERACIJU FAKTURA PO UGOVORIMA v2", 20, 70)
+
+@ m_x + nX, m_y + 2 SAY PADL("Gen. ?/fakt/ponuda (0/1/2)", nBoxLen + 6 ) GET nGenCh ;
+	PICT "9"
+
+nX += 1
 
 @ m_x + nX, m_y + 2 SAY PADL("Datum fakturisanja", nBoxLen) GET dDatGen 
+
 nX += 2
 
 @ m_x + nX, m_y + 2 SAY PADL("Datum valute", nBoxLen) GET dDatVal 
+
 nX += 2
 
 @ m_x + nX, m_y + 2 SAY PADL("Fakt.za mjesec", nBoxLen) GET nMjesec PICT "99" VALID nMjesec >= 1 .or. nMjesec <= 12
@@ -80,10 +92,15 @@ if is_dest()
 	nX += 2
 	
 	@ m_x + nX, m_y + 2 SAY PADL("Uzeti u obzir destinacije ?", nBoxLen + 10) GET cDestin VALID cDestin $ "DN" PICT "@!"
+
+	nX += 1
 	
+	@ m_x + nX, m_y + 2 SAY PADL("Gledati datum zadnjeg fakturisanja ?", nBoxLen + 16) GET cDatLFakt VALID cDatLFakt $ "DN" PICT "@!"
+
 else
 	cDestin := nil
 endif
+
 
 read
 
@@ -123,6 +140,9 @@ local cIdArt
 local cIdFirma
 local nTArea
 local cDestin
+local nGenCh
+local cGenTipDok := ""
+local cDatLFakt
 
 // otvori tabele
 o_ugov()
@@ -130,7 +150,7 @@ o_ugov()
 // otvori parametre generacije
 lSetParams := .t.
 
-if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @cDestin ) == 0
+if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt ) == 0
 	return
 endif
 
@@ -183,6 +203,14 @@ nNBrDok := ""
 // ukupni broj faktura
 nFaktBr := 0
 
+if nGenCh == 1
+	cGenTipDok := "10"
+endif
+
+if nGenCh == 2
+	cGenTipDok := "20" 
+endif
+
 Box(,3, 60)
 
 @ m_x + 1, m_y + 2 SAY "Generacija ugovora u toku..."
@@ -192,7 +220,9 @@ cFaktDo := ""
 
 // precesljaj ugovore u UGOV
 do while !EOF()
-	
+
+	altd()
+
 	// da li ima stavki za fakturisanje ???
 	if !ima_u_rugov( ugov->id, cIdArt )
 		skip
@@ -202,7 +232,7 @@ do while !EOF()
 	select ugov
 	
 	// provjeri da li treba fakturisati ???
-	if !treba_generisati( ugov->id, dDatObr )
+	if !treba_generisati( ugov->id, dDatObr, cDatLFakt )
 		skip
 		loop
 	endif
@@ -216,7 +246,12 @@ do while !EOF()
 
 	// nadji novi broj dokumenta
 	if EMPTY(cNBrDok)
-		cNBrDok := FaNoviBroj( cIdFirma, ugov->idtipdok)
+		
+		if EMPTY(cGenTipDok)
+			cGenTipDok := ugov->idtipdok
+		endif
+		
+		cNBrDok := FaNoviBroj( cIdFirma, cGenTipDok)
 		cFaktOd := cNBrDok
 	else
 		// uvecaj stari
@@ -236,12 +271,13 @@ do while !EOF()
 	@ m_x + 2, m_y + 2 SAY "Ug / Partner -> " + cUId + " / " + cUPartner
 	
 	// generisi ugovor za partnera
-	g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, @cNBrDok, cIdArt, cIdFirma, cDefDest )
+	g_ug_f_partner(cUId, cUPartner, dDatObr, dDatVal, @nSaldo, @nSaldoPDV, @nFaktBr, @cNBrDok, cIdArt, cIdFirma, cDefDest, cGenTipDok )
 	
 	select ugov
 	skip
 
 enddo
+
 cFaktDo := cNBrDok
 
 
@@ -298,7 +334,7 @@ return cFirma
 // ------------------------------------------
 // da li partnera treba generisati
 // ------------------------------------------
-static function treba_generisati(cUgovId, dDatObr)
+static function treba_generisati( cUgovId, dDatObr, cDatLFakt )
 local nPMonth
 local nPYear
 local i
@@ -307,12 +343,23 @@ local lNasaoObracun
 local dPObr
 local cNFakt
 
+if cDatLFakt == nil
+	cDatLFakt := "N"
+endif
+
 PushWa()
 
 dPom := dDatObr
 
 SELECT ugov
 SEEK cUgovId
+
+
+// pogledaj datum zadnjeg fakturisanja....
+if cDatLFakt == "D" .and. !EMPTY( ugov->dat_l_fakt )
+	PopWa()
+	return .f.
+endif
 
 // istekao je krajnji rok trajanja ugovora
 if ugov->datdo < dDatObr
@@ -507,9 +554,8 @@ return lRet
 // --------------------------------------------------
 // generacija ugovora za jednog partnera
 // --------------------------------------------------
-static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma, cDestin )
+static function g_ug_f_partner(cUId, cUPartn, dDatObr, dDatVal, nGSaldo, nGSaldoPDV, nFaktBr, cBrDok, cArtikal, cFirma, cDestin, cFTipDok )
 local dDatGen
-local cFTipDok
 local cIdUgov
 local i
 local nRbr
@@ -550,7 +596,10 @@ nGodina := gen_ug->(YEAR(dat_obr))
 // nastimaj PARTN na partnera
 n_partner(cUPartn)
 
-cFTipdok := ugov->idtipdok
+if EMPTY(cFTipDok)
+	cFTipdok := ugov->idtipdok
+endif
+
 nRbr := 0
 cIdUgov := ugov->id
 

@@ -87,6 +87,8 @@ if ugov->(fieldpos("F_NIVO")) <> 0
 	AADD(aImeKol, { "Nivo.f", {|| f_nivo}, "f_nivo" })
 	AADD(aImeKol, { "P.nivo.dana", {|| f_p_d_nivo}, "f_p_d_nivo" ,,, "99999" })
 	AADD(aImeKol, { "Fakturisano do", {|| fakt_do() }, "zaokr"  })
+
+	AADD(aImeKol, { "Poslj.faktur.", {|| dat_l_fakt }, "dat_l_fakt"  })
 endif
 
 AADD(aImeKol, { "TXT 1", {|| IdTxt}, "IdTxt", {|| .t.}, {|| P_FTxt(@wIdTxt)}})
