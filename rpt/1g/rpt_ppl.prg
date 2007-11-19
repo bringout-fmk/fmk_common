@@ -1,8 +1,11 @@
 #include "\dev\fmk\ld\ld.ch"
 
+// --------------------------------------
+// report: pregled plata
+// --------------------------------------
 function PregPl()
-*{
 local nC1:=20
+local cPrBruto := "N"
 
 cIdRadn:=SPACE(_LR_)
 cIdRj:=gRj
@@ -29,7 +32,7 @@ private cVPosla:="  "
 
 cIdMinuli:="17"
 cKontrola:="N"
-Box(,9,75)
+Box(,11,75)
 @ m_x+1,m_y+2 SAY Lokal( "Radna jedinica (prazno-sve): ")  GET cIdRJ
 @ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
 IF lViseObr
@@ -40,7 +43,9 @@ ENDIF
 @ m_x+5,m_y+2 SAY "Vrsta posla (prazno-svi): "  GET  cVPosla
 @ m_x+7,m_y+2 SAY "Sifra primanja minuli: "  GET  cIdMinuli pict "@!"
 @ m_x+8,m_y+2 SAY Lokal("Sortirati po(1-sifri,2-prezime+ime)")  GET cVarSort VALID cVarSort$"12"  pict "9"
-@ m_x+9,m_y+2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola$"DN" PICT "@!"
+@ m_x+9,m_y+2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
+			VALID cPrBruto $ "DN" PICT "@!"
+@ m_x+11,m_y+2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola$"DN" PICT "@!"
 read; clvbox(); ESC_BCR
 BoxC()
 
@@ -64,8 +69,10 @@ if !empty(cVPosla)
 endif
 
 select ld
+
 //1 - "str(godina)+idrj+str(mjesec)+idradn"
 //2 - "str(godina)+str(mjesec)+idradn"
+
 if empty(cidrj)
   cidrj:=""
   IF cVarSort=="1"
@@ -113,11 +120,19 @@ IF gVarPP=="2"
 ELSE
   m:="----- ------ ---------------------------------- ------- ----------- ----------- -----------"
 ENDIF
+
+if cPrBruto == "D"
+	m += " " + REPLICATE("-", 12)
+endif
+
 bZagl:={|| ZPregPl() }
 
-select rj; hseek ld->idrj; select ld
+select rj
+hseek ld->idrj
+select ld
 
 START PRINT CRET
+
 P_12CPI
 
 Eval(bZagl)
@@ -128,23 +143,27 @@ nT1:=nT2:=nT3:=nT3b:=nT4:=0
 nVanP:=0  // van neta plus
 nVanM:=0  // van neta minus
 do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
+	
 	if lViseObr .and. EMPTY(cObracun)
    		ScatterS(godina,mjesec,idrj,idradn)
  	else
    		Scatter()
  	endif
- 	select radn
+ 	
+	select radn
 	hseek _idradn
  	select vposla
 	hseek _idvposla
  	select kbenef
 	hseek vposla->idkbenef
  	select ld
- 	if !empty(cvposla) .and. cvposla<>left(_idvposla,2)
+ 	
+	if !empty(cvposla) .and. cvposla<>left(_idvposla,2)
    		skip
 		loop
  	endif
- 	if !empty(ckbenef) .and. ckbenef<>kbenef->id
+ 	
+	if !empty(ckbenef) .and. ckbenef<>kbenef->id
    		skip
 		loop
  	endif
@@ -152,25 +171,33 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	nVanP:=0
  	nVanM:=0
  	nMinuli:=0
- 	for i:=1 to cLDPolja
-  		cPom:=padl(alltrim(str(i)),2,"0")
+ 	
+	for i:=1 to cLDPolja
+  		
+		cPom:=padl(alltrim(str(i)),2,"0")
   		select tippr
 		seek cPom
 		select ld
 
   		if tippr->(found()) .and. tippr->aktivan=="D"
-   			nIznos:=_i&cpom
-   			if tippr->uneto=="N" .and. nIznos<>0
-       				if nIznos>0
-         				nVanP+=nIznos
+   			
+			nIznos:=_i&cpom
+   			
+			if tippr->uneto=="N" .and. nIznos <> 0
+       				
+				if nIznos > 0
+         				nVanP += nIznos
        				else
-         				nVanM+=nIznos
+         				nVanM += nIznos
        				endif
-   			elseif tippr->uneto=="D" .and. nIznos<>0
-       				if cPom==cIdMinuli
-           				nMinuli:=nIznos
+   			
+			elseif tippr->uneto=="D" .and. nIznos <> 0
+       				
+				if cPom == cIdMinuli
+           				nMinuli := nIznos
        				endif
-   			endif
+   			
+			endif
   		endif
  	next
 
@@ -187,13 +214,15 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
    		@ prow(),pcol()+1 SAY nMinuli  pict gpici
  	endif
  	@ prow(),pcol()+1 SAY _uneto  pict gpici
- 	if gVarPP=="2"
+ 	
+	if gVarPP=="2"
    		@ prow(),pcol()+1 SAY nVanP   pict gpici
    		@ prow(),pcol()+1 SAY nVanM   pict gpici
  	else
    		@ prow(),pcol()+1 SAY nVanP+nVanM   pict gpici
  	endif
- 	@ prow(),pcol()+1 SAY _uiznos pict gpici
+ 	
+	@ prow(),pcol()+1 SAY _uiznos pict gpici
 
  	if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
    		@ prow(),pcol()+1 SAY "ERR"
@@ -206,7 +235,8 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	nT3+=nVanP
 	nT3b+=nVanM
 	nT4+=_uiznos
- 	skip
+ 	
+	skip
 enddo
 
 if prow()>58+gpStranica
@@ -240,7 +270,8 @@ CLOSERET
 
 
 function ZPregPl()
-*{
+
+?
 P_COND
 ? UPPER(gTS)+":",gnFirma
 ?
@@ -269,5 +300,6 @@ ELSE
 ENDIF
 ? m
 return
-*}
+
+
 
