@@ -19,17 +19,18 @@ local nKoef := 7
 local nAcontAmount := 70.00
 local nRptVar1 := 1
 local nRptVar2 := 1
+local nDays := 7.5
 
 __PAGE_LEN := 60
 
-if _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, ;
+if _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, @nDays, ;
 		@cHours, @nHourLimit, @nMinHrLimit, @nKoef, @nAcontAmount, ;
 		@nRptVar1, @nRptVar2 ) == 0
 	return
 endif
 
 // generisi listu...
-if _gen_list( cRj, cMonthFrom, cMonthTo, cYear, ;
+if _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 	cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount ) == 0
 
 	return
@@ -47,7 +48,7 @@ return
 // --------------------------------------
 // setuje parametre izvjestaja
 // --------------------------------------
-static function _get_vars( cRj, cMonthFrom, cMonthTo, cYear, ;
+static function _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 				cHours, nHourLimit, nMinHrLimit, ;
 				nKoef, nAcontAmount, ;
 				nRptVar1, nRptVar2 )
@@ -66,6 +67,7 @@ private cSection := "L"
 RPar( "rj", @cRj )
 RPar( "m1", @cMonthFrom )
 RPar( "m2", @cMonthTo )
+RPar( "d1", @nDays )
 RPar( "y1", @cYear )
 RPar( "s1", @cHours )
 RPar( "s2", @nHourLimit )
@@ -100,6 +102,10 @@ Box(, nBoxX, nBoxY )
 	nX += 2
 
 	@ m_x + nX, m_y + 2 SAY "Koeficijent:" GET nKoef PICT "99999.99"
+	
+	nX += 1
+
+	@ m_x + nX, m_y + 2 SAY "Broj dana sa kojim se dijeli:" GET nDays PICT "99999.99"
 	
 	nX += 2
 
@@ -155,6 +161,7 @@ select params
 WPar( "rj", cRj )
 WPar( "m1", cMonthFrom )
 WPar( "m2", cMonthTo )
+WPar( "d1", nDays )
 WPar( "y1", cYear )
 WPar( "s1", cHours )
 WPar( "s2", nHourLimit )
@@ -173,7 +180,7 @@ return 1
 // ----------------------------------------------------
 // generise listu radnika... prema parmetrima
 // ----------------------------------------------------
-static function _gen_list( cRj, cMonthFrom, cMonthTo, cYear, ;
+static function _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 		cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount )
 
 local cIdRadn
@@ -255,7 +262,7 @@ do while !EOF() .and. field->godina == cYear ;
 		_r_prezime := radn->naz
 		_r_imeoca := radn->imerod
 		_r_hours := nUSati
-		_r_to := ROUND2( ( nUsati / 8 ) * nKoef , gZaok )
+		_r_to := ROUND2( ( nUsati / nDays ) * nKoef , gZaok )
 		
 		if ROUND(nMinHrLimit, 2) <> 0
 		
