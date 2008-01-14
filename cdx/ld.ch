@@ -1,6 +1,6 @@
 
 #define RADNIK radn->(PADR(TRIM(naz)+" ("+TRIM(imerod)+") "+ime,35))
-#define RADNZABNK radn->(PADR(TRIM(naz)+" "+TRIM(ime),35))
+#define RADNZABNK radn->(PADR(TRIM(naz)+" ("+TRIM(imerod)+") "+TRIM(ime), 40))
 
 
 #xcommand O_RADN    => select (F_RADN); use (KUMPATH + "RADN"); set order to 1

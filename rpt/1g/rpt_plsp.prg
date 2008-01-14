@@ -470,12 +470,12 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
  		if cIsplata=="TR"
   			@ prow(),pcol()+4 SAY padl(radn->brtekr,22)
 			if cZaBanku=="D"
-				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brtekr), 7)
+				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brtekr), 7, .t. )
 			endif
  		else
    			@ prow(),pcol()+4 SAY padl(radn->brknjiz,22)
  			if cZaBanku=="D"
-				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brknjiz), 7)
+				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brknjiz), 7, .t. )
 			endif
 		endif
  		if cProred=="D"
@@ -870,10 +870,14 @@ return
 // ----------------------------------------------
 // formatiranje stringa ....
 // ----------------------------------------------
-function FormatSTR(cString, nLen, lLeft )
+function FormatSTR(cString, nLen, lLeft, cFill )
 
 if lLeft == nil
 	lLeft := .f.
+endif
+
+if cFill == nil
+	cFill := "0"
 endif
 
 // formatiraj string na odredjenu duzinu
@@ -883,7 +887,7 @@ cRet := PADR( cString, nLen )
 cRet := STRTRAN( cRet, ".", "," )
 
 if lLeft == .t.
-	cRet := PADL( ALLTRIM( cRet ), nLen )
+	cRet := PADL( ALLTRIM( cRet ), nLen, cFill )
 endif
 
 return cRet
