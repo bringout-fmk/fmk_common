@@ -130,7 +130,7 @@ endif
 EOF CRET
 
 nStrana:=0
-m:="----- "+replicate("-",_LR_)+" ---------------------------------- "+IF(lKredit.and.!EMPTY(cSifKred),REPL("-",LEN(RADKR->naosnovu)+1),"-------")+" ----------- -----------"
+m:="----- "+replicate("-",_LR_)+" ---------------------------------- "+IF(lKredit.and.!EMPTY(cSifKred),REPL("-",LEN(RADKR->naosnovu)+1),"-"+REPL("-", LEN(gPicS) ))+" ----------- -----------"
 if cdod=="D"
  if type(ckolona) $ "UUIUE"
      Msg("Nepostojeca kolona")

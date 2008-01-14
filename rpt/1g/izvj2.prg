@@ -287,7 +287,7 @@ hseek str(cGodina,4)
 EOF CRET
 
 nStrana:=0
-m:="----- ------ ---------------------------------- ------- ----------- -----------"
+m:="----- ------ ---------------------------------- " + "-" + REPL("-", LEN(gPicS)) + " ----------- -----------"
 if cdod=="D"
  if type(ckolona) $ "UUIUE"
      Msg("Nepostojeca kolona")

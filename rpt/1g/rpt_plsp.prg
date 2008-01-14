@@ -27,10 +27,8 @@ cNaslov:=""
 cNaslovTO:=""     
 // ISPLATA TOPLOG OBROKA
 nIznosTO:=0
-
-if IsMupZeDo()
-	cZaBanku:="N"
-endif
+// export za banku
+cZaBanku:="N"
 
 O_PARAMS
 
@@ -335,9 +333,7 @@ endif
 @ m_x+6,m_y+2 SAY "Prikaz u procentu %:" GET nprocenat pict "999.99"
 @ m_x+7,m_y+2 SAY "Banka        :" GET cIdBanka valid P_Kred(@cIdBanka)
 @ m_x+8,m_y+2 SAY "Sortirati po(1-sifri,2-prezime+ime)"  GET cVarSort VALID cVarSort$"12"  pict "9"
-if IsMupZeDo()
-	@ m_x+11,m_y+2 SAY "Spremiti izvjestaj za banku (D/N)" GET cZaBanku pict "@!"
-endif
+@ m_x+11,m_y+2 SAY "Spremiti izvjestaj za banku (D/N)" GET cZaBanku pict "@!"
 
 read
 clvbox()
@@ -355,7 +351,7 @@ WPar("VS",cVarSort)
 SELECT PARAMS
 USE
 
-if (IsMupZeDo() .and. cZaBanku=="D")
+if cZaBanku == "D"
 	CreateFileBanka()
 endif
 
@@ -448,11 +444,14 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
 			Eval(bZagl)
 		endif
  		? str(++nRbr,4)+".",idradn, RADNIK
- 		if IsMupZeDo() .and. cZaBanku=="D"
-			cZaBnkRadnik:=FormatSTR(ALLTRIM(RADNZABNK), 40)
+		
+ 		if cZaBanku == "D"
+			cZaBnkRadnik := FormatSTR(ALLTRIM(RADNZABNK), 40)
 		endif
+		
 		nC1:=pcol()+1
- 		if cPrikIzn=="D"
+ 		
+		if cPrikIzn=="D"
    			if nProcenat<>100
     				if nDio==1
       					@ prow(),pcol()+1 SAY round(_uiznos*nprocenat/100,nzkk) pict gpici
@@ -461,8 +460,8 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
     				endif
    			else
     				@ prow(),pcol()+1 SAY _uiznos pict gpici
-				if IsMupZeDo() .and. cZaBanku=="D"
-					cZaBnkIznos:=FormatSTR(ALLTRIM(STR(_uiznos)),20)
+				if cZaBanku == "D"
+					cZaBnkIznos:=FormatSTR(ALLTRIM(STR(_uiznos), 6, 2), 7, .t. )
 				endif
    			endif
  		else
@@ -470,13 +469,13 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
  		endif
  		if cIsplata=="TR"
   			@ prow(),pcol()+4 SAY padl(radn->brtekr,22)
-			if IsMupZeDo() .and. cZaBanku=="D"
-				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brtekr),6)
+			if cZaBanku=="D"
+				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brtekr), 7)
 			endif
  		else
    			@ prow(),pcol()+4 SAY padl(radn->brknjiz,22)
- 			if IsMupZeDo() .and. cZaBanku=="D"
-				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brknjiz),6)
+ 			if cZaBanku=="D"
+				cZaBnkTekRn:=FormatSTR(ALLTRIM(radn->brknjiz), 7)
 			endif
 		endif
  		if cProred=="D"
@@ -496,12 +495,11 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
  		endif
  		skip
 		
-		if IsMupZeDo() .and. cZaBanku=="D"
+		if cZaBanku=="D"
 			cUpisiZaBanku:=""
-			cUpisiZaBanku+=cConstBrojTR
-			cUpisiZaBanku+=cZaBnkIznos
 			cUpisiZaBanku+=cZaBnkTekRn
 			cUpisiZaBanku+=cZaBnkRadnik
+			cUpisiZaBanku+=cZaBnkIznos
 			Write2File(nH, cUpisiZaBanku, .t.)
 			// reset varijable
 			cUpisiZaBanku:=""
@@ -521,7 +519,7 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
 	FF
 next
 
-if IsMupZeDo() .and. cZaBanku=="D"
+if cZaBanku == "D"
 	CloseFileBanka(nH)	
 endif
 
@@ -860,7 +858,6 @@ return
 
 
 function Write2File(nH, cLinija, lNoviRed)
-*{
 #DEFINE NL CHR(13)+CHR(10)
 if lNoviRed
 	FWrite(nH, cLinija+NL)
@@ -868,23 +865,36 @@ else
 	FWrite(nH, cLinija)
 endif
 return
-*}
 
 
-function FormatSTR(cString, nNrChar)
-*{
-nPom:=LEN(cString)
-cRet:=cString+REPLICATE(" ", nNrChar-nPom)
+// ----------------------------------------------
+// formatiranje stringa ....
+// ----------------------------------------------
+function FormatSTR(cString, nLen, lLeft )
+
+if lLeft == nil
+	lLeft := .f.
+endif
+
+// formatiraj string na odredjenu duzinu
+cRet := PADR( cString, nLen )
+
+// zamjeni "." -> ","
+cRet := STRTRAN( cRet, ".", "," )
+
+if lLeft == .t.
+	cRet := PADL( ALLTRIM( cRet ), nLen )
+endif
 
 return cRet
-*}
+
 
 
 function CreateFileBanka()
 *{
 MsgBeep("Odaberite lokaciju za snimanje fajla")
 Box(,5,70)
-	cLokacija:="A:\mup" + DToS(Date()) + ".txt" + SPACE(30)
+	cLokacija:="C:\" + DToS(Date()) + ".txt" + SPACE(30)
 	cConstBrojTR:="56480 "
 	@ 1+m_x, 2+m_y SAY "Parametri:"
 	@ 3+m_x, 2+m_y SAY "Sifra isplatioca tek.rac:" GET cConstBrojTR 
@@ -897,9 +907,11 @@ endif
 if (AT("a:", cLokacija)<>0 .or. AT("A:", cLokacija)<>0)
 	MsgBeep("Spremite praznu disketu...")
 endif
+
 cConstBrojTR:=FormatSTR(ALLTRIM(cConstBrojTR), 6)
 cLokacija:=ALLTRIM(cLokacija)
 nH:=FCreate(cLokacija)
+
 if nH==-1
 	MsgBeep("Greska pri kreiranju fajla !!!")
 	return
