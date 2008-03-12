@@ -42,10 +42,6 @@ return
 function SetForma()
 private GetList:={}
 
-if LEN(gPicS) == 6
-	gPicS := "99" + gPicS
-endif
-
 Box(,5,60)
 	@ m_x+1,m_y+2 SAY "Zaokruzenje primanja          :" GET gZaok pict "99"
       	@ m_x+2,m_y+2 SAY "Zaokruzenje poreza i doprinosa:" GET gZaok2 pict "99"
