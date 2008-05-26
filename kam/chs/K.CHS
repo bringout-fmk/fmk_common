@@ -1,5 +1,0 @@
-*KS
-A DEN N 6 2
-A DUZ3 N 4 0
-C DUZ3 N 4 0  DUZ N 4 0
-C DEN N 6 2  DEN N 15  6
