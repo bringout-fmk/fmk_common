@@ -1,0 +1,8 @@
+*.bak
+*.BAK
+*.obj
+*.OBJ
+*.LIB
+*.lib
+lst
+LST
