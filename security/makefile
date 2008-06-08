@@ -1,12 +1,13 @@
 VERZIJA=CDX
 MODUL=fmk_sec
 
-SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\security\\
+SRCDOSROOT=$(BASEDOS)\\fmk\\fmk_co~1\\security\\
 
 PRGS=db.prg main.prg mnu_sec.prg
 
 CS=
 ASMS=
 
-include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
+
+include ../../fmk_lib/Makefile_clipper
 
