@@ -345,8 +345,6 @@
 #define F_DOKSRC 181
 
 
-#include "\dev\fmk\af\cl-AF\cdx\fmk.ch"
-
 #define POR_PPP		1 
 #define POR_PPU		2
 #define POR_PP		3
