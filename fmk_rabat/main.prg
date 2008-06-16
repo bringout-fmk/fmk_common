@@ -1,4 +1,4 @@
-#include "sc.ch"
+#include "fmk.ch"
 
 
 /*! \fn RabVrijednost(cIdRab, cTipRab, cIdRoba, nTekIzn)
