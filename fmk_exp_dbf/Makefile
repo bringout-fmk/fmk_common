@@ -1,6 +1,6 @@
 ROOT = ../../harbour/harbour/
 
-HB_INC_COMPILE += -I$(TOP)../fmk_lib/include
+HB_INC_COMPILE += -I$(TOP)../../fmk_lib/include
 
 PRG_SOURCES= \
 	    exp_dbf.prg
