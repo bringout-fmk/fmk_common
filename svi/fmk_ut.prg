@@ -2,12 +2,6 @@
 #include "achoice.ch"
 #include "fileio.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 /*! \fn UBrojDok(nBroj,nNumDio,cOstatak)
  * \brief Pretvara Broj podbroj u string format "Broj dokumenta"
  * \code
@@ -778,12 +772,5 @@ return
 *}
 
 function FmkSviVer()
-*{
-return DBUILD
-*}
 
-// ------------------------
-// ------------------------
-function say_fmk_ver()
-@ 24,74 SAY FMK_VER
-return
+return "7.xx"
