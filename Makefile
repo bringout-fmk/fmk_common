@@ -9,7 +9,7 @@ compile:
 	done
 
 install:
-	scripts/cp_fmk_libs_to_hb_lib.sh
+	../fmk_lib/scripts/cp_fmk_libs_to_hb_lib.sh
 
 clean:
 	for d in $(DIRS); do \
