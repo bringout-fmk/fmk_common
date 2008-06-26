@@ -1,4 +1,4 @@
-DIRS = fmk_exp_dbf  fmk_lokalizacija  fmk_rabat  fmk_rules  fmk_ugov
+DIRS = fmk_roba fmk_exp_dbf  fmk_lokalizacija  fmk_rabat  fmk_rules  fmk_ugov
 
 
 all: compile install
