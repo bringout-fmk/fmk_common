@@ -24,13 +24,13 @@ AADD(aDBf,{ "idvd"                , "C" ,   2 ,  0 })
 AADD(aDBf,{ "brdok"               , "C" ,  nBrDokLen ,  0 })
 AADD(aDBf,{ "datdok"              , "D" ,   8 ,  0 })
 AADD(aDBf,{ "src_modul"           , "C" ,  10 ,  0 })
-AADD(aDBf,{ "src_idfirma"         , "C" ,   2 ,  0 })
+AADD(aDBf,{ "src_idfirm"         , "C" ,   2 ,  0 })
 AADD(aDBf,{ "src_idvd"            , "C" ,   2 ,  0 })
 AADD(aDBf,{ "src_brdok"           , "C" ,   8 ,  0 })
 AADD(aDBf,{ "src_datdok"          , "D" ,   8 ,  0 })
-AADD(aDBf,{ "src_kto_raz"         , "C" ,   7 ,  0 })
-AADD(aDBf,{ "src_kto_zad"         , "C" ,   7 ,  0 })
-AADD(aDBf,{ "src_partner"         , "C" ,   6 ,  0 })
+AADD(aDBf,{ "src_kto_ra"         , "C" ,   7 ,  0 })
+AADD(aDBf,{ "src_kto_za"         , "C" ,   7 ,  0 })
+AADD(aDBf,{ "src_partne"         , "C" ,   6 ,  0 })
 AADD(aDBf,{ "src_opis"            , "C" ,  30 ,  0 })
 
 // kreiraj u KUMPATH
@@ -38,7 +38,7 @@ if !FILE(KUMPATH + cDokSrcName + ".DBF")
 	DBCREATE2(KUMPATH + cDokSrcName + ".DBF", aDbf)
 endif
 // indexi....
-CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirma+src_idvd+src_brdok+DTOS(src_datdok)", KUMPATH + cDokSrcName)
+CREATE_INDEX("1","idfirma+idvd+brdok+DTOS(datdok)+src_modul+src_idfirm+src_idvd+src_brdok+DTOS(src_datdok)", KUMPATH + cDokSrcName)
 CREATE_INDEX("2","src_modul+src_idfirma+src_idvd+src_brdok+DTOS(src_datdok)", KUMPATH + cDokSrcName)
 
 // kreiraj u PRIVPATH
@@ -91,9 +91,9 @@ replace field->src_idfirma with cSrcFirma
 replace field->src_idvd with cSrcTD
 replace field->src_brdok with cSrcBrDok
 replace field->src_datdok with dSrcDatDok
-replace field->src_kto_raz with cSrcKto1
-replace field->src_kto_zad with cSrcKto2
-replace field->src_partner with cSrcPartn
+replace field->src_kto_ra with cSrcKto1
+replace field->src_kto_za with cSrcKto2
+replace field->src_partne with cSrcPartn
 replace field->src_opis with cSrcOpis
 
 select p_doksrc
