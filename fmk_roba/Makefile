@@ -5,6 +5,7 @@ HB_INC_COMPILE += -I$(TOP)../../fmk_lib/include
 PRG_SOURCES= \
    adm_db.prg db.prg gvars.prg id_j.prg koncij.prg \
    sifk.prg sifre.prg tarifa.prg trfp.prg rlabele.prg \
+   barkod.prg \
    ut.prg int_db.prg int_util.prg strings.prg label.prg label_1.prg label_2.prg
 
 LIBNAME=fmk_roba

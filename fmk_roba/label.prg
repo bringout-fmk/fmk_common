@@ -64,15 +64,6 @@ closeret
 return
 
 
-// ---------------------------------
-// dodavanje barkoda...
-// ---------------------------------
-function dodajBK(cBK)
-if EMPTY(cBK) .and. IzFmkIni("BARKOD", "Auto", "N", SIFPATH)=="D" .and. IzFmkIni("BARKOD","Svi","N",SIFPATH)=="D" .and. (Pitanje(,"Formirati Barkod ?","N")=="D")
-	cBK:=NoviBK_A()
-endif
-return .t.
-
 
 // --------------------------------
 // nastimaj pointer na partnera...
