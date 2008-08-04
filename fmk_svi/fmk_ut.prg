@@ -62,9 +62,6 @@ Box(,3,60)
   		
 		//if upper(left(cIzraz,1)==="K"; exit; endif
   		
-		DO WHILE NEXTKEY()==0
-			OL_YIELD()
-		ENDDO
   		
 		INKEY()
   		
@@ -78,9 +75,6 @@ if type(cIzraz)<>"N"
     		return 0
   	else
     		private cVar:=readvar()
-    		DO WHILE NEXTKEY()==0
-			OL_YIELD()
-		ENDDO
     		INKEY()
     		// inkey(0)
     		if type(cVar) == "C" .or. (type("fUmemu")=="L" .and. fUMemu)
@@ -670,7 +664,6 @@ endif
 fclose(nHbios)
 
 ? "Kraj....", nZapisano 
-DO WHILE NEXTKEY()==0; OL_YIELD(); ENDDO
 INKEY(3)
 
 

@@ -139,7 +139,7 @@ do while !EOF()
 	?? " "
 	
 	// uk sa PDV
-	?? show_number(rn->ukupno, PIC_VRIJEDOST()) 
+	?? show_number(rn->ukupno, PIC_VRIJEDNOST()) 
 	?? " "
 
 	
