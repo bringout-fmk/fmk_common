@@ -5,7 +5,7 @@ HB_INC_COMPILE += -I$(TOP)../../fmk_lib/include
 PRG_SOURCES= \
           adm_db.prg \
           dok_src.prg \
-          gvars.prg konto.prg \
+          konto.prg \
           ops.prg   partn.prg \
           relation.prg \
           rj.prg \
