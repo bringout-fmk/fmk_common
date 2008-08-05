@@ -6,7 +6,7 @@
 // ----------------------------------
 function cre_fmkrules()
 local aDBF
-local cTbl := "FMKRULES.DBF"
+local cTbl := "fmkrules.dbf"
 
 // uzmi def.polja
 aDbf := g_rule_tbl()

@@ -12,7 +12,6 @@ PRG_SOURCES= \
           rnal.prg \
           rpt_all.prg \
           sifre.prg \
-          specif.prg \
           ut.prg \
           valute.prg \
           vn_vd.prg
