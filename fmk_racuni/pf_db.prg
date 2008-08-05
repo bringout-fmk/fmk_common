@@ -218,7 +218,6 @@ return
 
 // dodaj u drn.dbf
 function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol)
-*{
 local cnt1
 
 if !USED(F_DRN)
@@ -244,6 +243,7 @@ replace ukpdv with nUPDV
 replace ukupno with nUkupno
 replace csumrn with nCSum
 replace zaokr with nZaokr
+altd()
 replace ukkol with nUkKol
 
 if fieldpos("UKPOPTP") <> 0
@@ -288,7 +288,6 @@ if glUgost
 endif
 
 return
-*}
 
 function add_drn_di(dDatIsp)
 
