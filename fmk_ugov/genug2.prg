@@ -221,7 +221,6 @@ cFaktDo := ""
 // precesljaj ugovore u UGOV
 do while !EOF()
 
-	altd()
 
 	// da li ima stavki za fakturisanje ???
 	if !ima_u_rugov( ugov->id, cIdArt )

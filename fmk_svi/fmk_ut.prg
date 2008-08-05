@@ -236,7 +236,6 @@ IF nK1==0 .or. type(cIzraz)<>"N"
     PopWA()
     RETURN
   ENDIF
-  altd()
   cIzraz:=&(cIzraz) * nK2 / nK1
   cIzraz:=PADR(cIzraz,nDuz)
   IF !lOtv

@@ -243,7 +243,6 @@ replace ukpdv with nUPDV
 replace ukupno with nUkupno
 replace csumrn with nCSum
 replace zaokr with nZaokr
-altd()
 replace ukkol with nUkKol
 
 if fieldpos("UKPOPTP") <> 0

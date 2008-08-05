@@ -287,7 +287,6 @@ set order to tag "ID"
 go top
 hseek cPartn + cDest
 
-altd()
 if FOUND() 
 	if cPartn == field->idpartner .and. cDest == field->id
 		
