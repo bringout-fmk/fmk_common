@@ -215,19 +215,11 @@ IF !FILE(SIFPATH+"VALUTE.DBF")
 ENDIF
 
 PushWA()
-IF SELECT("VALUTE")==0
-    lOtv:=.f.
-    use (SIFPATH+"VALUTE") index (SIFPATH+"VALUTEi1"),(SIFPATH+"VALUTEi2"),(SIFPATH+"VALUTEi3") new
-ELSE
-    SELECT VALUTE
-    PushWA()
-#ifdef C52
-    SET ORDER TO TAG "ID"
-#else
-    SET ORDER TO 1
-#endif
 
-ENDIF
+SELECT VALUTE
+PushWA()
+SET ORDER TO TAG "ID"
+
 go top
 dbseek( gValIz , .f. )
 nK1:=VALUTE->&("kurs"+gKurs)
