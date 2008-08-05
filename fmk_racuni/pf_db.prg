@@ -39,7 +39,7 @@ if del_rndbf() == 0
 endif
 
 // provjeri da li postoji fajl DRN.DBF
-if !FILE(PRIVPATH + cDRnName)
+if !file(ToUnix(PRIVPATH + cDRnName))
 	// drn specifikacija polja
 	get_drn_fields(@aDRnField)
         // kreiraj tabelu
@@ -47,7 +47,7 @@ if !FILE(PRIVPATH + cDRnName)
 endif
 
 // provjeri da li postoji fajl RN.DBF
-if !FILE(PRIVPATH + cRnName)
+if !file(ToUnix(PRIVPATH + cRnName))
 	// rn specifikacija polja
 	get_rn_fields(@aRnField)
         // kreiraj tabelu
@@ -55,7 +55,7 @@ if !FILE(PRIVPATH + cRnName)
 endif
 
 // provjeri da li postoji fajl DRNTEXT.DBF
-if !FILE(PRIVPATH + cDRTxtName)
+if !file(ToUnix(PRIVPATH + cDRTxtName))
 	// rn specifikacija polja
 	get_dtxt_fields(@aDRTxtField)
         // kreiraj tabelu
@@ -79,7 +79,7 @@ function dokspf_create()
 *{
 local aDbf:={}
 
-if !FILE(KUMPATH + "\DOKSPF.DBF")
+if !file(ToUnix(KUMPATH + "\DOKSPF.DBF"))
 	AADD(aDbf, {"IDPOS", "C", 2, 0})
 	AADD(aDbf, {"IDVD",  "C", 2, 0})
 	AADD(aDbf, {"DATUM", "D", 8, 0})

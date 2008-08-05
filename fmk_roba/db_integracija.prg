@@ -12,7 +12,7 @@ ChkDTbl()
 cre_errors()
 
 // provjeri da li postoji tabela DINTEG1
-if !FILE(KUMPATH + "DINTEG1.DBF") .or. !FILE(KUMPATH + "DINTEG2.DBF")
+if !FILE(ToUnix(KUMPATH + "DINTEG1.DBF")) .or. !FILE(ToUnix(KUMPATH + "DINTEG2.DBF"))
 	// kreiraj tabelu DINTEG1/2
 	
 	// definicija tabele DINTEG1/2
@@ -30,16 +30,16 @@ if !FILE(KUMPATH + "DINTEG1.DBF") .or. !FILE(KUMPATH + "DINTEG2.DBF")
 		AddOidFields(@aDbf)
 	endif   
 	// kreiraj tabelu DINTEG1/2
-	if !File(KUMPATH + "DINTEG1.DBF")
+	if !file(ToUnix(KUMPATH + "DINTEG1.DBF"))
 		DBcreate2(KUMPATH+"DINTEG1.DBF", aDbf)
 	endif
-	if !File(KUMPATH + "DINTEG2.DBF")
+	if !file(ToUnix(KUMPATH + "DINTEG2.DBF"))
 		DBcreate2(KUMPATH+"DINTEG2.DBF", aDbf)
 	endif
 endif
 
 // provjeri da li postoji tabela INTEG1
-if !FILE(KUMPATH + "INTEG1.DBF")
+if !file(ToUnix(KUMPATH + "INTEG1.DBF"))
 	// kreiraj tabelu INTEG1
 
 	// definicija tabele
@@ -74,7 +74,7 @@ if !FILE(KUMPATH + "INTEG1.DBF")
 endif
 
 // provjeri da li postoji tabela INTEG2
-if !FILE(KUMPATH + "INTEG2.DBF")
+if !file(ToUnix(KUMPATH + "INTEG2.DBF"))
 	// kreiraj tabelu INTEG2
 
 	// definicija tabele
@@ -130,7 +130,7 @@ return
 // kreiranje tabele errors
 function cre_errors()
 // provjeri da li postoji tabela ERRORS.DBF
-if !FILE(PRIVPATH+"ERRORS.DBF")
+if !file(ToUnix(PRIVPATH+"ERRORS.DBF"))
 	aDbf := {}
 	AADD(aDbf, {"TYPE", "C", 10, 0})
 	AADD(aDbf, {"IDROBA", "C", 10, 0})
