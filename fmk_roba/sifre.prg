@@ -70,11 +70,6 @@ endif
 CLOSE ALL
 OFmkRoba()
 
-if IsPlanika()
-	// Planika vrste robe
-	O_RVRSTA
-endif
-
 private Izbor:=1
 gMeniSif:=.t.
 Menu_SC("srob")
