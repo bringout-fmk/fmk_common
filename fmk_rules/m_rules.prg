@@ -2,7 +2,7 @@
 
 
 // ---------------------------------------
-// menij pravila
+// meni pravila
 // ---------------------------------------
 function m_fmkrules()
 private opc := {}

@@ -10,5 +10,7 @@ LIBNAME=fmk_rules
 include $(TOP)$(ROOT)config/lib.cf
 
 HB_FLAGS = -n -b -ufmk_std.ch -kM -gc0 -I$(TOP) -I$(HB_INC_COMPILE)
-
+ifneq ($(FMK_DEBUG),)
+HB_FLAGS += -dFMK_DEBUG=1 
+endif
 

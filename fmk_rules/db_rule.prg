@@ -5,27 +5,23 @@
 // kreiranje tabela "rules"
 // ----------------------------------
 function cre_fmkrules()
-local aDBF
+
 local cTbl := "fmkrules.dbf"
 
 // uzmi def.polja
-aDbf := g_rule_tbl()
+local aDbf := g_rule_tbl()
 
 if !FILE( SIFPATH + cTbl )
 	DBCREATE2( SIFPATH + cTbl, aDbf )
 endif
 
-CREATE_INDEX( "1", "STR(RULE_ID,10)", ; 
-	SIFPATH + cTbl, .t. )
+CREATE_INDEX( "1", "STR(RULE_ID,10)", SIFPATH + cTbl, .t. )
 
-CREATE_INDEX( "2", "MODUL_NAME+RULE_OBJ+STR(RULE_NO,10)", ; 
-	SIFPATH + cTbl, .t. )
+CREATE_INDEX( "2", "MODUL_NAME+RULE_OBJ+STR(RULE_NO,10)", SIFPATH + cTbl, .t. )
 
-CREATE_INDEX( "3", "MODUL_NAME+RULE_OBJ+STR(RULE_LEVEL,2)+STR(RULE_NO,10)", ; 
-	SIFPATH + cTbl, .t. )
+CREATE_INDEX( "3", "MODUL_NAME+RULE_OBJ+STR(RULE_LEVEL,2)+STR(RULE_NO,10)", SIFPATH + cTbl, .t. )
 
-CREATE_INDEX( "4", "MODUL_NAME+RULE_OBJ+RULE_C1+RULE_C2", ; 
-	SIFPATH + cTbl, .t. )
+CREATE_INDEX( "4", "MODUL_NAME+RULE_OBJ+RULE_C1+RULE_C2", SIFPATH + cTbl, .t. )
 
 return
 
