@@ -2,6 +2,7 @@
 	#include "sc.ch"
 #endif
 
+
 #define D_LD_VERZIJA "02.25"
 #define D_LD_PERIOD '06.96-12.03.08'
 
