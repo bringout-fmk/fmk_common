@@ -432,6 +432,9 @@ pf_a4_sltxt(cLine)
 P_12CPI
 ?
 
+// operater koji pravi fakturu
+cOperater := get_dtxt_opis("D11")
+
 cPotpis:= get_dtxt_opis("F10")
 
 cPotpis:=STRTRAN(cPotpis, "?S_5?", SPACE(5) )
@@ -442,6 +445,13 @@ aPotpis:= lomi_tarabe(cPotpis)
 for i :=1 to LEN(aPotpis)
    p_line( aPotpis[i], 10, .f.)
 next
+
+if !EMPTY(cOperater) .and. cOperater <> "-"
+   ?
+   ?
+   p_line( SPACE(5) + "Izradio/la: " + cOperater, 10, .f. )
+endif
+
 
 return
 

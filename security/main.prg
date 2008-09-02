@@ -208,6 +208,23 @@ select (nTArea)
 return cUserName
 
 
+// vraca full username usera iz sec.systema
+function GetFullUserName( user_id )
+local nTArea := SELECT()
+local cUserName := ""
+O_USERS
+select users
+set order to tag "ID"
+seek STR(user_id, 3)
+if users->(FIELDPOS("fullname")) <> 0
+	cUserName := ALLTRIM(field->fullname)
+else
+	cUserName := ALLTRIM(field->naz)
+endif
+select (nTArea)
+return cUserName
+
+
 function FmkSecVer()
 *{
 return DBUILD
