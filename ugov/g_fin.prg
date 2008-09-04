@@ -122,5 +122,59 @@ enddo
 
 return dDatum
 
+// -------------------------------------------------------
+// ispisuje na ekranu box sa stanjem kupca
+// -------------------------------------------------------
+function g_box_stanje( cPartner, cKKup, cKDob )
+local nTArea
+local nSKup := 0
+local nSDob := 0
+local dDate := CTOD("")
+local nSaldo := 0
+local lClose
+local cGet := " "
+private GetList:={}
+
+nTArea := SELECT()
+
+nSKup := g_p_saldo( cPartner, cKKup )
+nSDob := g_p_saldo( cPartner, cKDob )
+dDate := g_dpupl_part( cPartner, cKKup )
+
+nSaldo := nSKup - nSDob
+
+if nSaldo = 0
+	select (nTArea)
+	return
+endif
+
+lClose := .f.
+
+Box(, 9, 50)
+  do while lClose == .f.
+    @ m_x + 1, m_y + 2 SAY "Trenutno stanje partnera:"
+    @ m_x + 2, m_y + 2 SAY "-----------------------------------------------"
+    @ m_x + 3, m_y + 2 SAY "    saldo kupac = " + ALLTRIM(STR(nSKup, 12, 2)) + " KM"
+    @ m_x + 4, m_y + 2 SAY "saldo dobavljac = " + ALLTRIM(STR(nSDob,12,2)) + " KM"
+    @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
+    @ m_x + 6, m_y + 2 SAY "Total: " + ALLTRIM(STR(nSaldo,12,2)) + " KM"
+    @ m_x + 8, m_y + 2 SAY "Datum zadnje uplate: " + DTos(dDate)
+    @ m_x + 9, m_y + 2 GET cGet
+    read
+		
+    if LastKey() == K_ENTER
+	lClose := .t.
+    endif
+
+  enddo
+
+BoxC()
+
+select (nTArea)
+
+return
+
+
+
 
 
