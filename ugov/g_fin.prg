@@ -131,8 +131,7 @@ local nSKup := 0
 local nSDob := 0
 local dDate := CTOD("")
 local nSaldo := 0
-local lClose
-local cGet := " "
+local nX
 private GetList:={}
 
 nTArea := SELECT()
@@ -148,25 +147,36 @@ if nSaldo = 0
 	return
 endif
 
-lClose := .f.
+nX := 1
 
 Box(, 9, 50)
-  do while lClose == .f.
-    @ m_x + 1, m_y + 2 SAY "Trenutno stanje partnera:"
-    @ m_x + 2, m_y + 2 SAY "-----------------------------------------------"
-    @ m_x + 3, m_y + 2 SAY "    saldo kupac = " + ALLTRIM(STR(nSKup, 12, 2)) + " KM"
-    @ m_x + 4, m_y + 2 SAY "saldo dobavljac = " + ALLTRIM(STR(nSDob,12,2)) + " KM"
-    @ m_x + 5, m_y + 2 SAY "-----------------------------------------------"
-    @ m_x + 6, m_y + 2 SAY "Total: " + ALLTRIM(STR(nSaldo,12,2)) + " KM"
-    @ m_x + 8, m_y + 2 SAY "Datum zadnje uplate: " + DTos(dDate)
-    @ m_x + 9, m_y + 2 GET cGet
-    read
-		
-    if LastKey() == K_ENTER
-	lClose := .t.
-    endif
 
-  enddo
+	@ m_x + nX, m_y + 2 SAY "Trenutno stanje partnera:"
+
+    	++nX
+
+    	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+    		
+	++nX
+
+	@ m_x + nX, m_y + 2 SAY PADR( "(1) stanje na kontu " + cKKup + ": " + ALLTRIM(STR(nSKup, 12, 2)) + " KM", 45 ) COLOR IF(nSKup > 100, "W/R+", "W/G+")
+    	
+    	++nX
+
+	@ m_x + nX, m_y + 2 SAY PADR( "(2) stanje na kontu " + cKDob + ": " + ALLTRIM(STR(nSDob,12,2)) + " KM", 45 ) COLOR "W/GB+"
+
+	++nX
+
+	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+    	++nX
+
+	@ m_x + nX, m_y + 2 SAY "Total (1-2) = " + ALLTRIM(STR(nSaldo,12,2)) + " KM" COLOR IF(nSaldo > 100, "W/R+", "W/G+")
+	
+	nX += 2
+
+    	@ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC(dDate)
+		
+    	inkey(0)
 
 BoxC()
 
