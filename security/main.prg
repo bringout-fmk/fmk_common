@@ -218,6 +218,9 @@ set order to tag "ID"
 seek STR(user_id, 3)
 if users->(FIELDPOS("fullname")) <> 0
 	cUserName := ALLTRIM(field->fullname)
+	if Empty(cUserName)
+		cUserName := ALLTRIM(field->naz)
+	endif
 else
 	cUserName := ALLTRIM(field->naz)
 endif

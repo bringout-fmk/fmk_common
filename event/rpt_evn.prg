@@ -100,7 +100,7 @@ EOF CRET
 START PRINT CRET
 
 //         ID   USER    DATUM    VRIJEME   OBJEKAT      KOMPONENTA     FUNKCIJA                     
-cLinija:="---- ------ --------- --------- ---------- --------------- ------------------------------- "
+cLinija:="---- -------------------- --------- --------- ---------- --------------- ------------------------------- "
 
 ZaglKartEvent(cLinija)
 
@@ -154,24 +154,43 @@ do while !eof()
 	
 	? SPACE(2)+STR(field->id,4)
 	?? SPACE(2)
-	@ prow(),pcol()+1 SAY STR(field->user,3)  
+	@ prow(),pcol()+1 SAY PADR( GetFullUserName( field->user ), 20 )  
 	@ prow(),pcol()+1 SAY SPACE(2)+DTOC(field->datum)
 	@ prow(),pcol()+1 SAY SPACE(2)+field->vrijeme+SPACE(3)
 	@ prow(),pcol()+1 SAY field->objekat
 	@ prow(),pcol()+1 SAY field->komponenta
 	@ prow(),pcol()+1 SAY field->funkcija
 	if cSirokiIspis=="D"
+		
+		if ( field->n1 + field->n2 <> 0 )
+		
+			?
+			? SPACE(8)+"* N1: "+STR(field->n1,10,2)+SPACE(5)+"N2: "+STR(field->n2,10,2)
+			nUkN1+=field->n1
+			nUkN2+=field->n2
+		endif
+
+		if (field->count1 + field->count2 <> 0 )
+			
+			? SPACE(8)+"* Count1: "+STR(field->count1,10,2)+" Count2: "+STR(field->count2,10,2)
+			nUkCount1+=field->count1
+			nUkCount1+=field->count2
+		endif
+
+		if !EMPTY(field->c1)
+			? SPACE(8)+"* C1: "+field->c1 
+		endif
+		
+		if !EMPTY(field->c2)
+			? SPACE(8)+"* C2: "+field->c2 
+		endif
+		
+		if !EMPTY(field->c3)
+			? SPACE(8)+"* C3: "+field->c3 
+		endif
+
 		?
-		? SPACE(8)+"* N1: "+STR(field->n1,10,2)+SPACE(5)+"N2: "+STR(field->n2,10,2)
-		nUkN1+=field->n1
-		nUkN2+=field->n2
-		? SPACE(8)+"* Count1: "+STR(field->count1,10,2)+" Count2: "+STR(field->count2,10,2)
-		nUkCount1+=field->count1
-		nUkCount1+=field->count2
-		? SPACE(8)+"* C1: "+field->c1 
-		? SPACE(8)+"* C2: "+field->c2 
-		? SPACE(8)+"* C3: "+field->c3 
-		? SPACE(8)+"* D1: "+DTOC(field->d1)+"  D2 : "+DTOC(field->d2)
+		? SPACE(8)+"* datum (1): "+DTOC(field->d1)+"  datum (2) : "+DTOC(field->d2)
 		? SPACE(8)+"* Opis: "+ALLTRIM(field->opis)
 		? SPACE(8)+"* SQL/Ostalo: "+ALLTRIM(field->sql)
 		?
@@ -268,7 +287,7 @@ set century off
 P_12CPI
 
 ? SPACE(2)+cLinija
-? SPACE(2)+" Id   User    Datum    Vrijeme   Objekat    Komponenta      Funkcija "
+? SPACE(2)+" Id   User              Datum    Vrijeme   Objekat    Komponenta      Funkcija "
 ? SPACE(2)+cLinija
 
 return
