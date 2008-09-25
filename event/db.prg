@@ -66,9 +66,9 @@ AADD(aDbf,{"N1","N",16,2})
 AADD(aDbf,{"N2","N",16,2})
 AADD(aDbf,{"COUNT1","N",7,0})
 AADD(aDbf,{"COUNT2","N",7,0})
-AADD(aDbf,{"C1","C",2,0})
-AADD(aDbf,{"C2","C",4,0})
-AADD(aDbf,{"C3","C",15,0})
+AADD(aDbf,{"C1","C",100,0})
+AADD(aDbf,{"C2","C",100,0})
+AADD(aDbf,{"C3","C",100,0})
 AADD(aDbf,{"D1","D",8,0})
 AADD(aDbf,{"D2","D",8,0})
 AADD(aDbf,{"LOGIRATI","C",1,0})
@@ -236,5 +236,21 @@ endif
 return
 *}
 
+// --------------------------------------------------------
+// vraca nivo bitnosti iz tabele events
+// --------------------------------------------------------
+function get_bitnost(cModul, cKomponenta, cFunkcija)
+local nNivo
+local nTArea := SELECT()
 
+select events
+set order to tag "1"
+go top
 
+seek cModul + cKomponenta + cFunkcija
+
+nNivo := field->bitnost
+
+select (nTArea)
+
+return nNivo

@@ -28,6 +28,7 @@
 #define NL  chr(13)+chr(10)
 
 #xcommand O_PRIPR     => select (F_PRIPR);   usex (PRIVPATH+"PRIPR") ; set order to tag "1"
+#xcommand O_PRIPR9     => select (F_PRIPR9);   usex (PRIVPATH+"PRIPR9") ; set order to tag "1"
 #xcommand O_PRIPRRP   => select (F_PRIPRRP); usex (strtran(cDirPriv,goModul:oDataBase:cSezonDir,SLASH)+"PRIPR")   alias priprrp; set order to tag  "1"
 #xcommand O_FAKT      => select (F_FAKT) ;   use  (KUMPATH+"FAKT") ; set order to tag  "1"
 #xcommand O__FAKT     => select(F__FAKT)  ; cmxAutoOpen(.f.);  usex (PRIVPATH+"_FAKT") ; cmxAutoOpen(.t.)
