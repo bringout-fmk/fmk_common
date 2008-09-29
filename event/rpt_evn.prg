@@ -62,7 +62,12 @@ if (!EMPTY(dDatumOd) .or. !EMPTY(dDatumDo))
 endif
 
 if (!EMPTY(cModul))
-	cFilter+=" .and. objekat=" + Cm2Str(cModul)
+	
+	// fmk uvijek ide u filter	
+	cFilter += " .and. ( objekat=" + Cm2Str(PADR("FMK",10))
+
+	cFilter += " .or. objekat=" + Cm2Str(cModul) + ")"
+
 endif
 
 if (!EMPTY(cKomponenta))
@@ -168,6 +173,7 @@ do while !eof()
 				ALLTRIM(field->funkcija)
 	if cSirokiIspis=="D"
 		
+		// pomocna numericka polja
 		if ( field->n1 + field->n2 <> 0 )
 		
 			?
@@ -176,6 +182,7 @@ do while !eof()
 			nUkN2+=field->n2
 		endif
 
+		// pomocna numericka polja
 		if (field->count1 + field->count2 <> 0 )
 			
 			? SPACE(8)+"* pr.vr.1: "+STR(field->count1,10,2)+" pr.vr.2: "+STR(field->count2,10,2)
@@ -183,23 +190,59 @@ do while !eof()
 			nUkCount1+=field->count2
 		endif
 
-		if !EMPTY(field->c1)
-			? SPACE(8)+"* "+field->c1 
+		// pomocni tekst 1
+		cTxt := field->c1
+		if !EMPTY(cTxt)
+			aTxt := sjecistr(cTxt,70)
+			for i:=1 to LEN(aTxt)
+				if i = 1
+				  ? SPACE(8)+"* " + aTxt[i]
+				else
+				  ? SPACE(10) + aTxt[i]
+				endif
+			next
 		endif
 		
-		if !EMPTY(field->c2)
-			? SPACE(8)+"* "+field->c2 
+		// pomocni tekst 2
+		cTxt := field->c2
+		if !EMPTY(cTxt)
+			aTxt := sjecistr(cTxt,70)
+			for i:=1 to LEN(aTxt)
+				if i = 1
+				  ? SPACE(8)+"* "
+				  ?? aTxt[i]
+				else
+				  ? SPACE(10) + aTxt[i]
+				endif
+
+			next
 		endif
-		
-		if !EMPTY(field->c3)
-			? SPACE(8)+"* "+field->c3 
+	
+		// pomocni tekst 3
+		cTxt := field->c3
+		if !EMPTY(cTxt)
+			aTxt := sjecistr(cTxt,70)
+			for i:=1 to LEN(aTxt)
+				if i = 1
+				  ? SPACE(8)+"* "
+				  ?? aTxt[i]
+				else
+				  ? SPACE(10) + aTxt[i]
+				endif
+
+			next
 		endif
 
-		? SPACE(8)+"* datum (1): "+DTOC(field->d1)+"  datum (2) : "+DTOC(field->d2)
+		// datumi
+		? SPACE(8) + "* datum (1): " + DTOC(field->d1) + ;
+			     "  datum (2): " + DTOC(field->d2)
+
+		// opis operacije
 		? SPACE(8)+"* Opis: "+ALLTRIM(field->opis)
 		
+		// sql string - ako postoji
 		if !EMPTY(field->sql)
-			? SPACE(8)+"* SQL/Ostalo: "+ALLTRIM(field->sql)
+			? SPACE(8) + "SQL/Ostalo: " + field->sql
 		endif
 		?
 	endif
@@ -211,9 +254,9 @@ if prow()>59
 	ZaglKartEvent(cLinija)
 endif
 
-? SPACE(2)+cLinija
+? SPACE(2) + cLinija
 
-if cPrikUkupno=="D"
+if cPrikUkupno == "D"
 	UkIzvjEvents(nUkN1,nUkN2,nUkCount1,nUkCount2)
 
 endif
