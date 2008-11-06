@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 
 function Unos()

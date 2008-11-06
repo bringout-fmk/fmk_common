@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 
 function P_Radn(cId,dx,dy)
@@ -23,6 +23,13 @@ AADD(ImeKol, { Lokal(padr("Ime roditelja",15)),{|| imerod}, "imerod" } )
 AADD(ImeKol, { Lokal(padr("Ime",15)), {|| ime}, "ime" } )
 AADD(ImeKol, { padr( IF(gBodK=="1", Lokal("Br.bodova"), Lokal("Koeficij.")), 10),{|| brbod}, "brbod" })
 AADD(ImeKol, { Lokal(padr("MinR%", 5)), {|| kminrad}, "kminrad" })
+
+if RADN->(FIELDPOS("KLO")) <> 0
+   AADD(ImeKol, { Lokal(padr("Koef.l.odb.", 15)), {|| klo}, "klo" })
+   AADD(ImeKol, { Lokal(padr("Tip rada", 15)), {|| tiprada}, "tiprada", ;
+   	{|| .t.}, {|| wtiprada $ " #N#S#R" .or. MsgTipRada() } })
+endif
+
 AADD(ImeKol, { Lokal(padr("StrSpr",6)), {|| padc(Idstrspr,6)}, "idstrspr", {||.t.}, {|| P_StrSpr(@wIdStrSpr)} } )
 AADD(ImeKol, { Lokal(padr("V.Posla",6)), {|| padc(IdVPosla,6)}, "IdVPosla", {||.t.}, {|| empty(widvposla) .or. P_VPosla(@wIdVPosla)} })
 AADD(ImeKol, { Lokal(padr("Ops.Stan",8)),{|| padc(IdOpsSt,8)}, "IdOpsSt", {||.t.}, {|| P_Ops(@wIdOpsSt)} })
@@ -89,7 +96,8 @@ next
 return PostojiSifra(F_RADN, 1, 12, 72, Lokal("Lista radnika"), ;
           @cId, dx, dy, ;
 	  {|Ch| RadBl(Ch)},,,,,{"ID"})
-*}
+
+
 
 /*! \fn P_HiredFrom(dHiredFrom)
  *  \brief
@@ -169,7 +177,6 @@ return DE_CONT
 
 
 function MsgIspl()
-*{
 Box(,3,50)
 	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: TR - tekuci racun   ")
  	@ m_x+2,m_y+2 SAY Lokal("                 SK - stedna knjizica")
@@ -177,12 +184,23 @@ Box(,3,50)
  	inkey(0)
 BoxC()
 return .f.
-*}
+
+// -------------------------------------------------------
+// poruka - informacije o dostupnim tipovima rada
+// -------------------------------------------------------
+function MsgTipRada()
+Box(,3,50)
+	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: N - nesamostalni rad")
+ 	@ m_x+2,m_y+2 SAY Lokal("                 S - samostalni rad")
+ 	@ m_x+3,m_y+2 SAY Lokal("                 R - rezident")
+ 	inkey(0)
+BoxC()
+return .f.
+
 
 // ------------------------------
 // ------------------------------
 function P_ParObr(cId,dx,dy)
-*{
 local nArr
 nArr:=SELECT()
 private imekol
@@ -663,7 +681,7 @@ return PostojiSifra(F_POR, 1, 10, 75, ;
 function wh_por( cAlg )
 local lRet := .f.
 
-if !EMPTY( cAlg ) .and. cAlg == "S"
+if cAlg == "S"
 	lRet := .t.
 endif
 
@@ -676,7 +694,7 @@ return lRet
 function wh_oldpor( cAlg )
 local lRet := .f.
 
-if EMPTY(cAlg)
+if EMPTY(cAlg) .or. cAlg <> "S"
 	lRet := .t.
 endif
 
@@ -711,6 +729,10 @@ AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos" } )
 
 if DOPR->(FIELDPOS("DOP_TIP")) <> 0
 	AADD(ImeKol, { padr("d.tip", 6), {||  dop_tip}, "dop_tip", {|| .t.}, {|| v_dop_tip(wdop_tip) } }  )
+endif
+
+if DOPR->(FIELDPOS("TIPRADA")) <> 0
+	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #N#S#R" .or. MsgTipRada() } }  )
 endif
 
 AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )

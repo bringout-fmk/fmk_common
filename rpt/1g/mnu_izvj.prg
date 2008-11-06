@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 // ----------------------------------------------------
 // osnovna funkcija za poziv izvjestaja - menij
@@ -38,7 +38,11 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. kartice plate                      ")
-AADD(opcexe,{|| KartPl()})
+if gVarObracuna == "2"
+	AADD(opcexe,{|| KartPl2()})
+else
+	AADD(opcexe,{|| KartPl()})
+endif
 AADD(opc,"2. kartica plate za period (za m4)")
 AADD(opcexe,{|| UKartPl()})
 

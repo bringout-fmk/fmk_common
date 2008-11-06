@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 // lijeva margina
 static __left_marg

@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 
 //#define  RADNIK  radn->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,35))

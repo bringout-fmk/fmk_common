@@ -1,11 +1,14 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
+
+
 
 function Unos2()
 return (nil)
 
+// --------------------------------------------------------
 // Vraca oznaku obracuna ako se radi o vise obracuna
+// --------------------------------------------------------
 function BrojObracuna()
-*{
 private cOznObracuna
 
 if lViseObr
@@ -15,13 +18,11 @@ else
 endif
 
 return cOznObracuna
-*}
 
-/*! \fn UkRadnik()
- *  \brief
- */
+// ---------------------------------
+// ukupno radnik
+// ---------------------------------
 function UkRadnik()
-*{
 local i
 local nArr
 
@@ -48,7 +49,6 @@ next
 
 select(nArr)
 return (nil)
-*}
 
 
 
@@ -1298,7 +1298,10 @@ ENDIF
 go nTRec
 return _BrBod
 
-*****************************************
+
+
+
+
 function Linija()
 
 ?

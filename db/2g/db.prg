@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 
 
@@ -287,6 +287,8 @@ AADD(aDBf,{ 'IMEROD'              , 'C' ,  15 ,  0 })
 AADD(aDBf,{ 'IME'                 , 'C' ,  15 ,  0 })
 AADD(aDBf,{ 'BRBOD'               , 'N' ,  11 ,  2 })
 AADD(aDBf,{ 'KMINRAD'             , 'N' ,   7 ,  2 })
+AADD(aDBf,{ 'KLO'                 , 'N' ,   5 ,  2 })
+AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'IDVPOSLA'            , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'OSNBOL'              , 'N' ,  11 ,  4 })
 AADD(aDBf,{ 'IDSTRSPR'            , 'C' ,   3 ,  0 })
@@ -529,6 +531,7 @@ if !file(SIFPATH+"DOPR.DBF")
    	AADD(aDBf,{ 'DLIMIT'              , 'N' ,  12 ,  2 })
    	AADD(aDBf,{ 'POOPST'              , 'C' ,   1 ,  0 })
    	AADD(aDBf,{ 'DOP_TIP'             , 'C' ,   1 ,  0 })
+   	AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
 	
    	DBCREATE2(SIFPATH+'DOPR.DBF',aDbf)
 endif
@@ -628,6 +631,7 @@ AADD(aDBf,{ 'USATI'               , 'N' ,   8 ,  1 })
 AADD(aDBf,{ 'UNETO'               , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'UODBICI'             , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'UIZNOS'              , 'N' ,  13 ,  2 })
+AADD(aDBf,{ 'VAROBR'              , 'C' ,   1 ,  0 })
 
 if !file(KUMPATH+'LD.DBF')
 	DBCREATE2(KUMPATH+'LD.DBF',aDbf)

@@ -1,5 +1,5 @@
 
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 public gModul:="LD", gGlBaza:="LD.DBF"
 #ifdef  C52

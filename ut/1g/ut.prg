@@ -1,7 +1,38 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 
-PROCEDURE NaDiskete()
+// ------------------------------------------------
+// vraca ukupnu vrijednost licnog odbitka
+// ------------------------------------------------
+function g_licni_odb( cIdRadn )
+local nTArea := SELECT()
+local nIzn := 0
+
+select radn
+seek cIdRadn
+
+if field->klo <> 0
+	nIzn := round2( gOsnLOdb * field->klo, gZaok2)
+else
+	nIzn := 0
+endif
+
+select (nTArea)
+return nIzn
+
+
+// ----------------------------------------------------------
+// setuj obracun na tip u skladu sa zak.promjenama
+// ----------------------------------------------------------
+function set_obr_2009()
+if YEAR(DATE()) >= 2009
+	gVarObracun := "2"
+endif
+return
+
+
+
+function NaDiskete()
 
 cIdRj    := gRj
 cMjesec  := gMjesec
@@ -135,9 +166,7 @@ closeret
 
 
 
-*************************
-*************************
-PROCEDURE SaDisketa()
+function SaDisketa()
 
 local cOdgov:="N"
 
@@ -262,9 +291,10 @@ inkey(0)
 BoxC()
 closeret
 
-*****************************************
-* preuzimanje podataka iz drugog obracuna
-*****************************************
+
+// ------------------------------------------------
+// preuzimanje podataka iz drugog obracuna
+// ------------------------------------------------
 function UzmiObr()
 local i, lSveRJ
 

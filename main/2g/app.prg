@@ -1,22 +1,7 @@
-#include "\dev\fmk\ld\ld.ch"
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
+#include "ld.ch"
 
-
-/*! \file fmk/ld/main/2g/app.prg
- *  \brief
- */
- 
- 
-/*! \fn TLDModNew()
- *  \brief
- */
 
 function TLDModNew()
-*{
 local oObj
 
 #ifdef CLIP
@@ -27,7 +12,6 @@ local oObj
 
 oObj:self:=oObj
 return oObj
-*}
 
 
 #ifdef CPP
@@ -99,6 +83,11 @@ select radn
 if radn->(FieldPOS("HIREDFROM")) == 0
 	// obavjesti za modifikaciju
 	cModStru += "DP.CHS, "
+endif
+
+// provjeri nadogradnje 2009
+if radn->(FieldPOS("KLO")) == 0
+	cModStru += "LD.CHS (zakon.promj.2009), "
 endif
 
 // provjeri KRED->FIL polje
@@ -259,8 +248,12 @@ public gRJ:="01"
 public gnHelpObr:=0
 public gMjesec:=1
 public gObracun := " "
+// varijanta obracuna u skladu sa zak.promjenama
+public gVarObracun := " "
+// default vrijednost osnovnog licnog odbitka 
+public gOsnLOdb := 300
 public gIzdanje := SPACE(10)
-public gGodina:=2002
+public gGodina := ALLTRIM( STR( YEAR( DATE() ) ) )
 public gZaok:=2
 public gZaok2:=2
 public gValuta:="KM "
@@ -320,6 +313,7 @@ RPar("m2",@gMRZ)
 RPar("dl",@gPDLimit)
 Rpar("mj",@gMjesec)
 Rpar("ob",@gObracun)
+Rpar("ov",@gVarObracun)
 RPar("mr",@gMinR)      // min rad %, Bodovi
 RPar("os",@gFSpec)     // fajl-obrazac specifikacije
 RPar("p9",@gDaPorOl)   // praviti poresku olaksicu D/N
@@ -343,6 +337,7 @@ Rpar("Si",@gSihtarica)
 Rpar("aH",@gAHonorar)
 Rpar("z2",@gZaok2)
 Rpar("zo",@gZaok)
+Rpar("lo",@gOsnLOdb)
 //Rpar("tB",@gTabela)
 
 select (F_PARAMS)
@@ -360,6 +355,10 @@ IF IzFMKINI("ZASTITA","PodBugom","N",KUMPATH)=="D"
 ELSE
   lPodBugom:=.f.
 ENDIF
+
+// setuj gVarObracun na vrijednost prema tekucim zak.promjenama
+set_obr_2009()
+
 
 return
 

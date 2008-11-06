@@ -1,4 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
 
 // -----------------------------------------------
@@ -90,18 +90,23 @@ return aPor
 
 // ---------------------------------------------
 // ispis poreza
+// lWOpis - bez opisa id, naz
 // ---------------------------------------------
-function isp_por( aPor, cPorType, cMargina, lIspis )
+function isp_por( aPor, cPorType, cMargina, lIspis, lWOpis )
 local nRet := 0
 
 if lIspis == nil
 	lIspis := .t.
 endif
 
+if lWOpis == nil
+	lWOpis := .f.
+endif
+
 if cPorType == "S"
 	nRet := isp_por_st( aPor, cMargina, lIspis )
 else
-	nRet := isp_por_os( aPor, cMargina, lIspis )
+	nRet := isp_por_os( aPor, cMargina, lIspis, lWOpis )
 endif
 
 return nRet
@@ -109,16 +114,25 @@ return nRet
 // -----------------------------------------
 // ispis poreza, osnovni obracun
 // -----------------------------------------
-static function isp_por_os( aPor, cMargina, lIspis )
+static function isp_por_os( aPor, cMargina, lIspis, lWOpis )
 local nTotal := 0
 local i := 1
 
 if lIspis == .t.
-	? cMargina + aPor[i, 1], "-", aPor[i, 2]
-	@ prow(),pcol()+1 SAY aPor[i, 3] pict "99.99%"
-	nC1 := pcol() + 1
-	@ prow(),pcol()+1 SAY aPor[i, 5] pict gPici
-	@ prow(),pcol()+1 SAY aPor[i, 4] pict gPici
+	
+	? cMargina
+
+	if lWOpis == .f.
+		?? aPor[i, 1], "-", aPor[i, 2]
+		@ prow(),pcol()+1 SAY aPor[i, 3] pict "99.99%"
+		nC1 := pcol() + 1
+		@ prow(),pcol()+1 SAY aPor[i, 5] pict gPici
+		@ prow(),pcol()+1 SAY aPor[i, 4] pict gPici
+	else
+		cTmp := ALLTRIM(STR(aPor[i, 5])) + ;
+			" * " + ALLTRIM(STR(aPor[i, 3], 2)) + "%"
+ 		@ prow(),pcol()+1 SAY SPACE(24) + cTmp
+	endif
 endif
 
 nTotal += aPor[i, 4]
@@ -197,8 +211,8 @@ local i:=1
 
 nDLimit := aPorTek[i, 4]
 nPor := aPorTek[i, 3]
-nOsnovica := MAX(_UNeto, PAROBR->prosld*gPDLimit/100 ) 
-nPorIznos := MAX( nDLimit, ROUND( nPor/100 * MAX(_UNETO, PAROBR->PROSLD * gPDLIMIT / 100), gZaok2))
+nOsnovica := MAX( nIznos, PAROBR->prosld * gPDLimit/100 ) 
+nPorIznos := MAX( nDLimit, ROUND( nPor/100 * MAX( nIznos, PAROBR->PROSLD * gPDLIMIT / 100), gZaok2))
 
 AADD(aPor, { aPorTek[i, 1], aPorTek[i, 2], ;
 	nPor, nPorIznos, nOsnovica })		

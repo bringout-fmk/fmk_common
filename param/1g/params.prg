@@ -1,5 +1,5 @@
-#include "\dev\fmk\ld\ld.ch"
-#include "\dev\fmk\ld\cdx\rddinit.ch"
+#include "ld.ch"
+#include "rddinit.ch"
 
 // -----------------------------------------
 // parametri - firma
@@ -69,7 +69,7 @@ return
 function SetFormule()
 private GetList:={}
 
-Box(,16,77)
+Box(,18,77)
 	gFURaz:=PADR(gFURaz,100)
       	gFUPrim:=PADR(gFUPrim,100)
       	gFUSati:=PADR(gFUSati,100)
@@ -83,20 +83,23 @@ Box(,16,77)
       	@ m_x+11,m_y+2 SAY "God. promjena koef.min.rada - ZENE:" GET gMRZ   pict "9999.99"
       	@ m_x+12,m_y+2 SAY "God. promjena koef.min.rada - MUSK:" GET gMRM   pict "9999.99"
       	@ m_x+14,m_y+2 SAY "% prosjecne plate kao donji limit neta za obracun poreza i doprinosa" GET gPDLimit pict "999.99"
-      	@ m_x+16,m_y+2 SAY "Kod benef.gledaj formulu:" GET gBFForm pict "@!S30"
+      	
+	@ m_x+16,m_y+2 SAY "Osnovni licni odbitak" GET gOsnLOdb VALID gOsnLOdb > 0 PICT "9999.99"
+	@ m_x+18,m_y+2 SAY "Kod benef.gledaj formulu:" GET gBFForm pict "@!S30"
       	read
 BoxC()
 
 if (LastKey()<>K_ESC)
-	Wpar("gd",gFUGod)
+	Wpar("gd", gFUGod)
       	WPar("m1", @gMRM)
       	WPar("m2", @gMRZ)
       	WPar("dl", @gPDLimit)
-      	Wpar("uH",@gFURSati)
-      	Wpar("uS",@gFUSati)
-	Wpar("uB",@gBFForm)
-      	Wpar("up",gFUPrim)
-      	Wpar("ur",gFURaz)
+      	Wpar("uH", @gFURSati)
+      	Wpar("uS", @gFUSati)
+	Wpar("uB", @gBFForm)
+      	Wpar("up", gFUPrim)
+      	Wpar("ur", gFURaz)
+      	Wpar("lo", gOsnLOdb)
 endif
 
 return
@@ -106,23 +109,50 @@ return
 // parametri nacin obracuna
 // -----------------------------------------
 function SetObracun()
+local nX := 1
 private GetList:={}
+
+// setuj obracun u skladu sa zak.promjenama
+set_obr_2009()
 
 cVarPorol:=PADR(cVarPorol,2)
 
-Box(, 11, 77)
-	@ m_x+1,m_y+2 SAY "Tip obracuna " GET gTipObr
-      	@ m_x+2,m_y+2 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid glistic $ "DN"
-      	@ m_x+3,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" valid V_setform()
-      	@ m_x+4,m_y+2 SAY "Minuli rad  %/B:" GET gMinR  valid gMinR $ "%B"   pict "@!"
-      	@ m_x+5,m_y+2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  valid gDaPorOl $ "DN"   pict "@!"
-      	@ m_x+6,m_y+2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
-      	@ m_x+7,m_y+2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 ÄÄ¿  "
-      	@ m_x+8,m_y+2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ÄÄÁÄ>" GET cVarPorOl WHEN gDaPorOl=="D"   PICT "99"
+Box(, 17, 77)
+	
+	@ m_x+nX,m_y+2 SAY "Varijanta obracuna" GET gVarObracun
+      	
+	++nX
+	
+	@ m_x+nX,m_y+2 SAY "  ' ' - (prazno) stara varijanta obracuna" 
+	
+	++nX
+	
+	@ m_x+nX,m_y+2 SAY "  '2' - nova varijanta obracuna, zak.pr.2009" 
+	
+	++nX	
+	
+	@ m_x+nX,m_y+2 SAY "Tip obracuna (legacy)" GET gTipObr
+      	++nX
+	@ m_x+nX,m_y+2 SAY "Mogucnost unosa mjeseca pri obradi D/N:" GET gUnMjesec  pict "@!" valid glistic $ "DN"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Koristiti set formula (sifrarnik Tipovi primanja):" GET gSetForm pict "9" valid V_setform()
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Minuli rad  %/B:" GET gMinR  valid gMinR $ "%B"   pict "@!"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Pri obracunu napraviti poreske olaksice D/N:" GET gDaPorOl  valid gDaPorOl $ "DN"   pict "@!"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Ako se prave por.ol.pri obracunu, koja varijanta se koristi:"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY " '1' - POROL = RADN->porol*PAROBR->prosld/100 ÄÄ¿  "
+      	++nX
+      	@ m_x+nX,m_y+2 SAY " '2' - POROL = RADN->porol, '29' - LD->I29    ÄÄÁÄ>" GET cVarPorOl WHEN gDaPorOl=="D"   PICT "99"
+      	++nX
 
-      	@ m_x+9,m_y+2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  valid gVarSpec $ "12" pict "9"
-      	@ m_x+10,m_y+2 SAY "Obrada sihtarice ?" GET gSihtarica valid gSihtarica $ "DN" pict "@!"
-      	@ m_x+11,m_y+2 SAY "Obrada autorskih honorara ?" GET gAHonorar valid gAHonorar $ "DN" .and. ahon_ready() pict "@!"
+      	@ m_x+nX,m_y+2 SAY "Grupe poslova u specif.uz platu (1-automatski/2-korisnik definise):" GET gVarSpec  valid gVarSpec $ "12" pict "9"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Obrada sihtarice ?" GET gSihtarica valid gSihtarica $ "DN" pict "@!"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Obrada autorskih honorara ?" GET gAHonorar valid gAHonorar $ "DN" .and. ahon_ready() pict "@!"
 	read
 BoxC()
 

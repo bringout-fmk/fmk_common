@@ -1,17 +1,4 @@
-#include "\dev\fmk\ld\ld.ch"
-
-/*
- * ----------------------------------------------------------------
- *                         Copyright Sigma-com software 1996-2006 
- * ----------------------------------------------------------------
- *
- */
- 
-
-/*! \file fmk/ld/main/1g/e.prg
- *  \brief
- */
-
+#include "ld.ch"
 
 EXTERNAL RIGHT,LEFT,FIELDPOS
 

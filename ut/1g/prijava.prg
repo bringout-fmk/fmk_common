@@ -1,28 +1,48 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
+
 
 // ----------------------------------------
 // funkcija za prijavu u obracun
 // ----------------------------------------
 function ParObracun()
+local nX := 1
+local nPadL := 20
 
 if gAHonorar == "D"
 	O_IZDANJA
 endif
+
 O_RJ
 O_PARAMS
 
 select rj
 
-Box(, 3 +IF(lViseObr, 1, 0), 50)
+Box(, 4 +IF(lViseObr, 1, 0), 50)
 	
 	set cursor on
 	
-	@ m_x+1,m_y+2 SAY "Radna jedinica" GET gRJ  valid P_Rj(@gRj) pict "@!"
-	@ m_x+2,m_y+2 SAY "Mjesec        " GET gMjesec pict "99"
- 	@ m_x+3,m_y+2 SAY "Godina        " GET gGodina pict "9999"
+	@ m_x + nX, m_y + 2 SAY PADL( "Radna jedinica", nPadL ) GET gRJ ;
+		valid P_Rj(@gRj) pict "@!"
+	
+	++nX
+
+	@ m_x + nX, m_y + 2 SAY PADL( "Mjesec", nPadL ) GET gMjesec pict "99"
  	
+	++nX
+	
+	@ m_x + nX, m_y + 2 SAY PADL( "Godina", nPadL ) GET gGodina pict "9999"
+ 	
+	++nX
+
+	@ m_x + nX, m_y + 2 SAY PADL( "Varijanta obracuna", nPadL ) GET gVarObracun
+
 	if lViseObr
-   		@ m_x+4, m_y+2 SAY "Obracun       " GET gObracun WHEN HelpObr(.f.,gObracun) VALID ValObr(.f.,gObracun)
+		
+		++nX
+   		
+		@ m_x + nX, m_y + 2 SAY PADL( "Obracun", nPadL ) GET gObracun ;
+			WHEN HelpObr(.f.,gObracun) VALID ValObr(.f.,gObracun)
+	
 	endif
  	
 	read
@@ -32,13 +52,18 @@ Box(, 3 +IF(lViseObr, 1, 0), 50)
 BoxC()
 
 if (LASTKEY()<>K_ESC)
+
 	select params
- 	Wpar("rj",@gRJ)
+ 	
+	Wpar("rj",@gRJ)
  	Wpar("mj",@gMjesec)
  	Wpar("go",@gGodina)
  	Wpar("ob",@gObracun)
- 	select params
+ 	Wpar("ov",@gVarObracun)
+ 	
+	select params
 	use
+
 endif
 
 if gZastitaObracuna=="D"

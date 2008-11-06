@@ -2,9 +2,10 @@
 
 static DUZ_STRANA:=64
 
-
-// kartica plate radnika
-function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
+// ------------------------------------------------------------
+// kartica plate radnika - varijanta 2009
+// ------------------------------------------------------------
+function KartPl2( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
 local i
 local aNeta:={}
 
@@ -29,7 +30,7 @@ cVarSort:="1"
 private cNKNS
 cNKNS:="N"
 
-if (PCount()<4)
+if (PCount() < 4)
 	cIdRadn:=SPACE(_LR_)
 	cIdRj:=gRj
 	cMjesec:=gMjesec
@@ -50,12 +51,13 @@ if lRadniSati
 	O_RADSAT
 endif
 
-private nC1:=20+LEN(cLMSK)
+private nC1 := 20 + LEN(cLMSK)
 
 cVarijanta:=" "
+
 c2K1L:="D"
 
-if (PCount()<4)
+if (PCount() < 4)
 	O_PARAMS
 	private cSection:="4"
 	private cHistory:=" "
@@ -97,15 +99,15 @@ if (PCount()<4)
 	endif
 endif
 
-PoDoIzSez(cGodina,cMjesec)
+PoDoIzSez( cGodina, cMjesec )
 
-if cVarijanta=="5"
+if cVarijanta == "5"
 	O_LDSM
 endif
 
 SELECT LD
 
-cIdRadn:=trim(cidradn)
+cIdRadn := TRIM( cIdRadn )
 
 IF EMPTY(cIdRadn) .and. cVarSort=="2"
 	IF EMPTY(cIdRj)
@@ -141,7 +143,7 @@ ENDIF
 
 EOF CRET
 
-nStrana:=0
+nStrana := 0
 
 select vposla
 hseek ld->idvposla
@@ -149,7 +151,7 @@ select rj
 hseek ld->idrj
 select ld
 
-if pcount()>=4
+if pcount() >= 4
 	START PRINT RET
 else
 	START PRINT CRET
@@ -162,7 +164,7 @@ IF lSkrivena
 	gRPL_Gusto()
 ENDIF
 
-ParObr(cmjesec,IF(lViseObr,cObracun,),cIdRj)
+ParObr( cMjesec, IF(lViseObr,cObracun,), cIdRj )
 
 private lNKNS
 lNKNS:=(cNKNS=="D")
@@ -185,9 +187,9 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 
 	aNeta:={}
 
-	m:=cLMSK+"----------------------- --------  ----------------   ------------------"
+	cMainLine := cLMSK + "----------------------- --------  ----------------   ------------------"
 	IF lViseObr .and. EMPTY(cObracun)
-		ScatterS(Godina,Mjesec,IdRJ,IdRadn)
+		ScatterS( Godina, Mjesec, IdRJ, IdRadn)
 	ELSE
 		Scatter()
 	ENDIF
@@ -202,12 +204,12 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 
 	AADD(aNeta,{vposla->idkbenef,_UNeto})
 
-	if gPrBruto<>"X"
+	if gPrBruto <> "X"
 		// gPrBruto$"DN"
-		KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		_kart_d(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
 	else
 		// gPrBruto=="X"
-		KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		_kart_d(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
 	endif
 
 	nT1+=_usati
@@ -239,11 +241,9 @@ else // pcount >= "4"
 endif
 
 return
-*}
 
-// ---------------------------
-// ---------------------------
-function ZaglKar()
+
+static function ZaglKar()
 
 ++nRBrKart
 
@@ -289,13 +289,13 @@ ELSE
 		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
 	endif
 	? IF(gBodK=="1",Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
+	?? SPACE(4), Lokal("Koef.licnog odbitka:"), radn->klo
 	if lRadniSati
 		?? SPACE(19) + Lokal("Radni sati:   ") + ALLTRIM(STR(ld->radsat))
 	endif
 ENDIF
 
 return
-*}
 
 // provjerava koliko kartica ima redova
 static function kart_redova()
@@ -334,8 +334,10 @@ select ld
 return (nRows + nStRedova)
 
 
+// -------------------------------------------------
 // kartica plate - bruto = N .or. D
-static function KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
+// -------------------------------------------------
+static function _kart_d( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta)
 local nKRedova
 
 // koliko redova ima kartica
@@ -343,11 +345,13 @@ nKRedova := kart_redova()
 
 Eval(bZagl)
 
-if gTipObr=="2" .and. parobr->k1<>0
+if gTipObr == "2" .and. parobr->k1 <> 0
 	?? Lokal("        Bod-sat:")
 	@ prow(),pcol()+1 SAY parobr->vrbod/parobr->k1*brbod pict "99999.99999"
 endif
+
 IF l2kolone
+	
 	P_COND2
 	// aRCPos  := { PROW() , PCOL() }
 	cDefDev := SET(_SET_PRINTFILE)
@@ -355,35 +359,39 @@ IF l2kolone
 	// SETPRC(0,0)
 ENDIF
 
-? m
+? cMainLine
 ? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
-? m
+? cMainLine
 
-cUneto:="D"
-nRRsati:=0 
+cUneto := "D"
+nRRsati := 0 
 
 nOsnNeto := 0
 nOsnOstalo := 0
 
 for i:=1 to cLDPolja
 	
-	cPom:=padl(alltrim(str(i)),2,"0")
+	cPom := padl(alltrim(str(i)),2,"0")
 	
 	select tippr
 	seek cPom
 	
 	if tippr->uneto=="N" .and. cUneto=="D"
+		
 		cUneto:="N"
-		? m
-		? cLMSK+Lokal("UKUPNO NETO:")
+		
+		? cMainLine
+		? cLMSK+Lokal("Ukupna primanja u netu:")
 		@ prow(),nC1+8  SAY  _USati  pict gpics
 		?? SPACE(1) + Lokal("sati")
 		@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
 		?? "",gValuta
-		? m
+		? cMainLine
+	
 	endif
 	
 	if tippr->(found()) .and. tippr->aktivan=="D"
+
 		if _i&cpom<>0 .or. _s&cPom<>0
 			
 			// uvodi se djoker # : Primjer: Naziv tipa primanja
@@ -423,6 +431,7 @@ for i:=1 to cLDPolja
 				else
 					@ prow(),60+LEN(cLMSK) say _i&cPom pict gpici
 				endif
+			
 			elseif tippr->fiksan=="P"
 				
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999.99%"
@@ -467,7 +476,7 @@ for i:=1 to cLDPolja
 					P_COND
 				ENDIF
 				
-				? m
+				? cMainLine
 				? cLMSK+"  ",Lokal("Od toga pojedinacni krediti:")
 				select radkr
 				set order to 1
@@ -481,7 +490,7 @@ for i:=1 to cLDPolja
 					skip 1
 				enddo
 				
-				? m
+				? cMainLine
 				
 				IF l2kolone
 					P_COND2
@@ -533,12 +542,6 @@ for i:=1 to cLDPolja
 	endif
 next
 
-? m
-?  cLMSK+Lokal("UKUPNO ZA ISPLATU")
-@ prow(),60+LEN(cLMSK) SAY _UIznos pict gpici
-?? "",gValuta
-? m
-
 if cVarijanta=="5"
 
 	// select ldsm
@@ -551,12 +554,12 @@ if cVarijanta=="5"
 	?
 	? cLMSK+Lokal("Od toga 1. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
-	? m
+	? cMainLine
 	hseek str(_godina,4)+str(_mjesec,2)+"2"+_idradn+_idrj
 	// hseek "2"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
 	? cLMSK+Lokal("Od toga 2. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
-	? m
+	? cMainLine
 	select ld
 	PopWA()
 endif
@@ -589,103 +592,46 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		O_KBENEF
 	endif
 	
-	m:=cLMSK+"----------------------- -------- ------------- -------------"
-	
+	cDoprSpace := SPACE(3)
+	cDoprLine := cLMSK + cDoprSpace + "----------------------- -------- ------------- -------------"
+
 	nBO:=0
 	nBFO:=0
 	
-	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
-	
+	nOsnZaBr := nOsnNeto + nOsnOstalo
+	nBo := round2( ( ( nOsnZaBr ) * 1.053) / 0.69 , gZaok2 )
+
 	if UBenefOsnovu()
-		nBFo:=round2(parobr->k3/100*MAX(_UNeto-(&gBFForm),PAROBR->prosld*gPDLimit/100),gZaok2)
+		nBFo := round2( ((( nOsnZaBr )-(&gBFForm)) * 1.053 / 0.69 ), gZaok2 )
 	endif
+
+	// bruto placa iz neta...
+
+	? cMainLine
+	? cLMSK + "1. BRUTO PLACA :", ;
+	    "  " + ALLTRIM(STR(nOsnZaBr)) + " * " + ;
+		"1.053 / 0.69"
+
+	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
+	? cMainLine
 	
 	IF lSkrivena
-		? m
+		? cMainLine
 	ELSE
-		?
 		?
 	ENDIF
 	
-	select por
-	go top
+	// razrada doprinosa ....
 	
-	nPom:=0
-	nPor:=0
-	nC1:=30 + LEN(cLMSK)
-	nPorOl:=0
-	
-	do while !eof()
-	
-		// vrati algoritam poreza
-		cAlgoritam := get_algoritam()
-		
-		PozicOps(POR->poopst)
-		
-		IF !ImaUOp("POR",POR->id)
-			SKIP 1
-			LOOP
-		ENDIF
-	
-		// obracunaj porez
-		aPor := obr_por( por->id, nOsnNeto, nOsnOstalo )
-		
-		// ispisi porez
-		nPor += isp_por( aPor, cAlgoritam, cLMSK )
-		
-		skip 1
-	enddo
-	
-	if radn->porol<>0  .and. gDaPorOl=="D" .and. !Obr2_9()  // poreska olaksica
-		if alltrim(cVarPorOl)=="2"
-			nPorOl:=RADN->porol
-		elseif alltrim(cVarPorol)=="1"
-			nPorOl:=round(parobr->prosld*radn->porol/100,gZaok)
-		else
-			nPorOl:= &("_I"+cVarPorol)
-		endif
-		
-		? cLMSK+Lokal("PORESKA OLAKSICA")
-		
-		if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
-			nPorOl:=nPor
-		endif
-		
-		if cVarPorOl=="2"
-			@ prow(),pcol()+1 SAY ""
-		else
-			@ prow(),pcol()+1 SAY radn->PorOl pict "99.99%"
-		endif
-		
-		@ prow(),nC1 SAY parobr->prosld pict gpici
-		@ prow(),pcol()+1 SAY nPorOl    pict gpici
-		
-	endif
-	
-	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
-		
-		? m
-		? cLMSK+Lokal("Ukupno Porez")
-		@ prow(),nC1 SAY space(len(gpici))
-		@ prow(),pcol()+1 SAY nPor-nPorOl pict gpici
-		? m
-		
-	endif
-	
-	if !lSkrivena .and. prow()>55+gPStranica
-		FF
-	endif
-
-	?
-	
-	m:=cLMSK+"----------------------- -------- ------------- -------------"
+	? cLmSK + cDoprSpace + Lokal("Obracun doprinosa:")
 	
 	select dopr
 	go top
 	
-	nPom:=0
-	nDopr:=0
-	nC1:=20+LEN(cLMSK)
+	nPom := 0
+	nDopr := 0
+	nUkDoprIz := 0
+	nC1 := 20 + LEN(cLMSK)
 	
 	do while !eof()
 		
@@ -699,18 +645,23 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 				nOsn := nOsnNeto + nOsnOstalo
 			endif
 		
-			nBo := round2(parobr->k3/100*MAX(nOsn, PAROBR->prosld*gPDLimit/100),gZaok2)
 		endif
 		
 		PozicOps(DOPR->poopst)
-		
+			
+		// preskoci zbirne doprinose
+		if dopr->id $ "70#80#90"
+			skip 1
+			loop 
+		endif
+
 		IF !ImaUOp("DOPR",DOPR->id) .or. !lPrikSveDopr .and. !DOPR->ID $ cPrikDopr
 			SKIP 1
 			LOOP
 		ENDIF
 		
 		if right(id,1)=="X"
-			? m
+			? cDoprLine
 		endif
 		
 		if ("BENEF" $ dopr->naz .and. nBFO == 0)
@@ -718,7 +669,7 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 			loop
 		endif
 		
-		? cLMSK+id,"-",naz
+		? cLMSK + cDoprSpace + id, "-", naz
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
 		
 		if empty(idkbenef) 
@@ -728,10 +679,15 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 				nC1:=pcol()+1
 				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
 			else
-				@ prow(),pcol()+1 SAY nBO pict gpici
+				@ prow(),pcol()+1 SAY nBo pict gpici
 				nC1:=pcol()+1
 				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
 			endif
+			
+			if dopr->id == "1X"
+				nUkDoprIz += nPom
+			endif
+
 		else
 			nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
 			if nPom0<>0
@@ -748,9 +704,11 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		endif
 		
 		if right(id,1)=="X"
-			? m
+			
+			? cDoprLine
 			?
-			nDopr+=nPom
+			nDopr += nPom
+		
 		endif
 		
 		if !lSkrivena .and. prow()>57+gPStranica
@@ -761,8 +719,92 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 		
 	enddo
 
-	m := cLMSK + "--------------------------"
 
+	nOporDoh := nBo - nUkDoprIz
+
+	// oporezivi dohodak ......
+	
+	? cMainLine
+	?  cLMSK + Lokal("2. OPOREZIVI DOHODAK ( BRUTO - dopr.IZ )")
+	@ prow(),60+LEN(cLMSK) SAY nOporDoh pict gpici
+	? cMainLine
+	
+	// razrada licnog odbitka ....
+	
+	nLicOdbitak := g_licni_odb( radn->id )
+	nKoefOdbitka := radn->klo
+
+	? cLMSK + Lokal("3. LICNI ODBITAK")
+	? cLMSK + SPACE(24) + ALLTRIM(STR(gOsnLOdb)) + " * koef. " + ;
+		ALLTRIM(STR(nKoefOdbitka)) + " = "
+	@ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
+
+	? cMainLine
+
+	nPorOsnovica := ( nOporDoh - nLicOdbitak )
+
+	?  cLMSK + Lokal("4. OSNOVICA POREZA NA DOHODAK (2 - 3)")
+	@ prow(),60+LEN(cLMSK) SAY nPorOsnovica pict gpici
+
+	? cMainLine
+
+	// razrada poreza na platu ....
+
+	? cLMSK + Lokal("5. AKONTACIJA POREZA NA DOHODAK")
+
+	select por
+	go top
+	
+	nPom:=0
+	nPor:=0
+	nC1:=30 + LEN(cLMSK)
+	nPorOl:=0
+	
+	do while !eof()
+	
+		// vrati algoritam poreza
+		cAlgoritam := get_algoritam()
+		
+		PozicOps( POR->poopst )
+		
+		IF !ImaUOp("POR",POR->id)
+			SKIP 1
+			LOOP
+		ENDIF
+		
+		if por->id <> "10"
+			skip 
+			loop
+		endif
+	
+		// obracunaj porez
+		aPor := obr_por( por->id, nPorOsnovica, 0 )
+		
+		// ispisi porez
+		nPor += isp_por( aPor, cAlgoritam, cLMSK, .t., .t. )
+		
+		skip 1
+	enddo
+
+	@ prow(),60+LEN(cLMSK) SAY nPor pict gpici
+
+	// ukupno za isplatu ....
+	nZaIsplatu := ( nOporDoh - nPor )
+	
+	?
+
+	? cMainLine
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU ( 2 - 5 )")
+	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
+
+	? cMainLine
+
+	if !lSkrivena .and. prow()>55+gPStranica
+		FF
+	endif
+
+	?
+	
 	// if prow()>31
 	if gPotp <> "D"
 		if pcount()==0
@@ -825,7 +867,6 @@ elseif (nRBRKart%2 <> 0) .and. (DUZ_STRANA - prow() < nKRedova )
 endif
 
 return
-*}
 
 
 // potpis kartice
@@ -839,384 +880,6 @@ if !lSkrivena .and. gPotp == "D"
 endif
 return
 
-
-// kartica plate bruto X
-static function KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
-local nKRedova
-local nOsnNeto
-local nOsnOstalo
-
-// koliko redova ima kartica
-nKRedova := kart_redova()
-
-Eval(bZagl)
-
-if gTipObr=="2" .and. parobr->k1<>0
-	?? "        Bod-sat:"
-	@ prow(),pcol()+1 SAY parobr->vrbod/parobr->k1*brbod pict "99999.999"
-endif
-
-if l2kolone
-	P_COND2
-	cDefDev := SET(_SET_PRINTFILE)
-	SvratiUFajl()
-endif
-
-? m
-
-? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
-
-? m
-
-private nC1 := 30 + LEN(cLMSK)
-
-nOsnNeto := 0
-nOsnOstalo := 0
-
-for i:=1 to cLDPolja
-	
-	cPom := PADL(ALLTRIM(STR(i)), 2, "0")
-	cTpFld := "I" + cPom
-	
-	select tippr
-	seek cPom
-	
-	select ld
-	
-	if tippr->(FIELDPOS("TPR_TIP")) <> 0
-	   // sracunaj neto i ostalo...
-	   if tippr->tpr_tip == "N"
-		nOsnNeto += &cTpFld
-	   elseif tippr->tpr_tip == "2"
-		nOsnOstalo += &cTpFld
-	   elseif tippr->tpr_tip == " "
-		if tippr->uneto == "D"
-			nOsnNeto += &cTpFld
-		elseif tippr->uneto == "N"
-			nOsnOstalo += &cTpFld
-		endif
-	   endif
-	else
-	   if tippr->uneto == "D"
-		nOsnNeto += &cTpFld
-	   elseif tippr->uneto == "N"
-		nOsnOstalo += &cTpFld
-	   endif
-	endif
-
-	select tippr
-	if tippr->uneto == "D"
-		PrikPrimanje()
-	endif
-next
-
-? m
-? cLMSK+ Lokal("UKUPNO NETO:")
-@ prow(), nC1 + 8 SAY _USati pict gpics
-?? SPACE(1) + Lokal("sati")
-@ prow(), 60 + LEN(cLMSK) SAY _UNeto pict gpici
-?? "", gValuta
-? m
-
-nBruto := _UNETO
-nPorDopr := 0
-select (F_POR)
-if !used()
-	O_POR
-endif
-select (F_DOPR)
-if !used()
-	O_DOPR
-endif
-select (F_KBENEF)
-if !used()
-	O_KBENEF
-endif
-
-nBO:=0
-nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
-
-select por
-go top
-
-nPom := 0
-nPor := 0
-nC1 := 30 + LEN(cLMSK)
-nPorOl := 0
-aPor := {}
-
-do while !eof()
-	
-	// uzmi algoritam
-	cAlgoritam := get_algoritam()
-	
-	PozicOps( POR->poopst )
-	
-	if !ImaUOp( "POR", POR->id )
-		skip 1
-		loop
-	endif
-	
-	// obracunaj porez
-	aPor := obr_por( por->id, nOsnNeto, nOsnOstalo )
-		
-	IF !lSkrivena
-	
-		nPom := isp_por( aPor, cAlgoritam, cLMSK )
-		
-		//? cLMSK+id,"-",naz
-		//@ prow(),pcol()+1 SAY iznos pict "99.99%"
-		//nC1:=pcol()+1
-		//@ prow(),39+LEN(cLMSK)  SAY nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)) pict gpici
-	
-	ELSE
-		
-		nPom := isp_por( aPor, cAlgoritam, cLMSK, .f. )
-		
-		//nPom:=max(dlimit,round(iznos/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2))
-	
-	ENDIF
-	
-	nPor += nPom
-	
-	skip 1
-enddo
-
-nBruto += nPor
-nPorDopr += nPor
-
-if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9() 
-	
-	// poreska olaksica
-	if alltrim(cVarPorOl)=="2"
-		nPorOl:=RADN->porol
-	elseif alltrim(cVarPorol)=="1"
-		nPorOl:=round(parobr->prosld*radn->porol/100,gZaok)
-	else
-		nPorOl:= &("_I"+cVarPorol)
-	endif
-	if !lSkrivena
-		? cLMSK+ Lokal("PORESKA OLAKSICA")
-	endif
-	if nPorOl>nPor // poreska olaksica ne moze biti veca od poreza
-		nPorOl:=nPor
-	endif
-	IF !lSkrivena
-		if cVarPorOl=="2"
-			@ prow(),pcol()+1 SAY ""
-		else
-			@ prow(),pcol()+1 SAY radn->PorOl pict "99.99%"
-		endif
-		// @ prow(),nC1 SAY parobr->prosld pict gpici
-		@ prow(),39+LEN(cLMSK) SAY nPorOl    pict gpici
-	ENDIF
-	nBruto-=nPorol
-	nPorDopr-=nPorOl
-endif
-
-if !lSkrivena
-	if radn->porol<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
-		? m
-		? cLMSK+Lokal("Ukupno Porez")
-		// @ prow(),nC1 SAY space(len(gpici))
-		@ prow(),39+LEN(cLMSK) SAY nPor-nPorOl pict gpici
-		? m
-	endif
-endif
-
-select dopr
-go top
-
-nPom:=nDopr:=0
-nC1:=20+LEN(cLMSK)
-
-do while !eof()  
-	
-	// DOPRINOSI
-	PozicOps(DOPR->poopst)
-	
-	if !ImaUOp("DOPR",DOPR->id)
-		SKIP 1
-		LOOP
-	endif
-	
-	if right(id,1)<>"X"
-		SKIP 1
-		LOOP
-	endif
-	
-	if !lSkrivena
-		? cLMSK+id,"-",naz
-		@ prow(),pcol()+1 SAY iznos pict "99.99%"
-	endif
-	
-	if empty(idkbenef) // doprinos udara na neto
-		// @ prow(),pcol()+1 SAY nBO pict gpici
-		nC1:=pcol()+1
-		nPom:=max(dlimit,round(iznos/100*nBO,gZaok2))
-		if round(iznos,4)=0 .and. dlimit>0  // fuell boss
-			nPom:=1*dlimit   // kartica plate
-		endif
-		IF !lSkrivena
-			@ prow(),39+LEN(cLMSK) SAY nPom pict gpici
-		ENDIF
-		nDopr+=nPom
-		nBruto+=nPom
-		nPorDopr+=nPom
-	else
-		nPom0:=ASCAN(aNeta,{|x| x[1]==idkbenef})
-		if nPom0<>0
-			nPom2:=parobr->k3/100*aNeta[nPom0,2]
-		else
-			nPom2:=0
-		endif
-		if round(nPom2,gZaok2)<>0
-			// @ prow(),pcol()+1 SAY nPom2 pict gpici
-			nC1:=pcol()+1
-			IF !lSkrivena
-				@ prow(),39+LEN(cLMSK) SAY nPom:=max(dlimit,round(iznos/100*nPom2,gZaok2)) pict gpici
-			ENDIF
-			nDopr+=nPom
-			nBruto+=nPom
-			nPorDopr+=nPom
-		endif
-	endif
-	skip 1
-enddo // doprinosi
-
-IF lSkrivena
-	? cLMSK+Lokal("UKUPNO POREZ:")+TRANSFORM(nPor-nPorOl,gPicI)+", " + Lokal("DOPRINOSI:")+TRANSFORM(nDopr,gPicI)+", " + Lokal("POR.+DOPR.:")+TRANSFORM(nPorDopr,gPicI)
-ELSE
-	? m
-	? cLMSK+ Lokal("UKUPNO POREZ+DOPRINOSI")
-	@ prow(),39+LEN(cLMSK) SAY nPorDopr pict gpici
-ENDIF
-
-? m
-? cLMSK+ Lokal("BRUTO IZNOS")
-@ prow(),60+LEN(cLMSK) SAY nBruto pict gpici
-? m
-SELECT LD
-
-IF !lSkrivena
-	? m
-ENDIF
-
-? cLMSK+Lokal("- OBUSTAVE :")
-? m
-private fImaNak:=.f.,nObustave:=0
-
-for i:=1 to cLDPolja
-	cPom:=padl(alltrim(str(i)),2,"0")
-	select tippr
-	seek cPom
-	if tippr->uneto=="N" .and. _i&cPom<0
-		PrikPrimanje()
-		nObustave+=abs(_i&cPom)
-	elseif tippr->uneto=="N" .and. _i&cPom>0
-		fimaNak:=.t.
-	endif
-next
-
-if nObustave>0
-	? m
-	? cLMSK+Lokal("UKUPNO OBUSTAVE:")
-	@ prow(),60+LEN(cLMSK) SAY nObustave pict gpici
-	? m
-endif
-
-if fImaNak
-	if !(nObustave>0)
-		? m
-	endif
-	? cLMSK+"+ " + Lokal("NAKNADE (primanja van neta):")
-	? m
-endif
-
-for i:=1 to cLDPolja
-	cPom:=padl(alltrim(str(i)),2,"0")
-	select tippr
-	seek cPom
-	if tippr->uneto=="N" .and. _i&cPom>0
-		PrikPrimanje()
-	endif
-next
-
-? m
-?  cLMSK+Lokal("UKUPNO ZA ISPLATU :")
-@ prow(),60+LEN(cLMSK) SAY _UIznos pict gpici
-?? "",gValuta
-? m
-
-if cVarijanta=="5"
-	// select ldsm
-	select ld
-	PushWA()
-	set order to tag "2"	   
-	hseek str(_godina,4)+str(_mjesec,2)+"1"+_idradn+_idrj
-	//hseek "1"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
-	?
-	? cLMSK+ Lokal("Od toga 1. dio:")
-	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
-	? m
-	hseek str(_godina,4)+str(_mjesec,2)+"2"+_idradn+_idrj
-	// hseek "2"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
-	? cLMSK+ Lokal("Od toga 2. dio:")
-	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
-	? m
-	select ld
-	PopWA()
-endif
-
-// potpis na kartici
-kart_potpis()
-
-if l2kolone
-	SET PRINTER TO (cDefDev) ADDITIVE
-	// SETPRC(aRCPos[1],aRCPos[2])
-	altd()
-	IF PROW()+2+nDMSK>nKRSK*(2-(nRBrKart%2))
-		aTekst:=U2Kolone(PROW()+2+nDMSK-nKRSK*(2-(nRBrKart%2)))
-		FOR i:=1 TO LEN(aTekst)
-			IF i==1
-				?? aTekst[i]
-			ELSE
-				? aTekst[i]
-			ENDIF
-		NEXT
-		SETPRC(nKRSK*(2-(nRBrKart%2))-2-nDMSK,PCOL())
-	ELSE
-		PRINTFILE(PRIVPATH+"xoutf.txt")
-	ENDIF
-endif
-
-// obrada sekvence za kraj papira
-// skrivena kartica
-if lSkrivena
-	if prow()<nKRSK+5
-		nPom:=nKRSK-PROW()
-		FOR i:=1 TO nPom
-			?
-		NEXT
-	else
-		FF
-	endif
-// 2 kartice na jedan list N - obavezno FF
-elseif c2K1L == "N"
-	FF
-// nova kartica novi list - obavezno FF
-elseif lNKNS
-	FF
-// druga kartica takodjer FF
-elseif (nRBRKart%2 == 0) 
-	FF
-// prva kartica, ali druga ne moze stati
-elseif (nRBRKart%2 <> 0) .and. (DUZ_STRANA - prow() < nKRedova )
-	--nRBRKart
-	FF
-endif
-
-return
 
 
 

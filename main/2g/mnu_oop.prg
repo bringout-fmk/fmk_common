@@ -1,11 +1,9 @@
-#include "\dev\fmk\ld\ld.ch"
+#include "ld.ch"
 
-
-/*! \fn MnuOstOp()
- *  \brief Menij ostale operacije nad obracunom
- */
+// -----------------------------------------------------------
+// Menij ostale operacije nad obracunom
+// -----------------------------------------------------------
 function MnuOstOp()
-*{
 private opc:={}
 private opcexe:={}
 
@@ -16,5 +14,4 @@ private Izbor:=1
 Menu_SC("oop")
 
 return
-*}
 
