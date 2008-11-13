@@ -1,8 +1,9 @@
 #include "ld.ch"
 
-
+// ------------------------------------------------------
+// unos obracuna plate
+// ------------------------------------------------------
 function Unos()
-*{
 local lSaveObracun
 private lNovi
 private lRadniSati
@@ -45,13 +46,19 @@ do while .t.
      			nPom+=ABS(_i&cPom) + ABS(_s&cPom)  // ako su sve nule
   		next
   		
-		if (nPom<>0)
+		if (nPom <> 0)
+			
+			// upisi tekucu varijantu obracuna
+			_varobr := gVarObracun
+			
 			Gather()
+
      		else
      			if lNovi
         			delete
      			endif
   		endif
+
 		if gListic=="D"
     			if lViseObr
       				KartPl(cRj,nMjesec,nGodina,cIdRadn,gObracun)
@@ -59,17 +66,21 @@ do while .t.
       				KartPl(cRj,nMjesec,nGodina,cIdRadn)
     			endif
   		endif
-	else //K_ESC
-  		altd()
+
+	else 
+		//K_ESC
+  		
 		if lNovi  // ako je novi zapis  .and. ESCAPE
      			delete
   		endif
-  		return
+  		
+		return
 		
 	endif
 
 	select ld
-	use  // svaki put zatvoriti tabelu ld
+	use  
+	// svaki put zatvoriti tabelu ld
 
 	Beep(1)
 
@@ -283,24 +294,26 @@ Box(,21,77)
 
 BoxC()
 return
-*}
+
+
 
 // ----------------------------------
+// ispisuje ukupno na dnu obracuna
 // ----------------------------------
 function PrikUkupno(lSaveObracun)
-*{
 
 _USati:=0
 _UNeto:=0
 _UOdbici:=0
 
-UkRadnik()  // filuje _USati,_UNeto,_UOdbici	
+UkRadnik()  
+// filuje _USati,_UNeto,_UOdbici	
 
 _UIznos:=_UNeto+_UOdbici
 
 @ m_x+19,m_y+2 SAY "Ukupno sati:"
 @ row(),col()+1 SAY _USati PICT gPics
-@ m_x+20,m_y+2 SAY "NETO iznos:"
+@ m_x+20,m_y+2 SAY "Primanja:"
 @ row(),col()+1 SAY _UNeto PICT gPici
 @ m_x+20,col()+2 SAY "Odbici:"
 @ row(),col()+1 SAY _UOdbici PICT gPici
@@ -323,13 +336,13 @@ else
 endif
 
 return
-*}
+
 
 
 // --------------------------
+// obrada sihtarice
 // --------------------------
 function UzmiSiht()
-*{
 
 O_PARAMS
 
@@ -382,11 +395,11 @@ select radsiht
 use
 
 return
-*}
 
-
+// ------------------------------------------------
+// unos tipova primanja
+// ------------------------------------------------
 function PrikUnos()
-*{
 local i
 private cIdTP:="  "
 private nRedTP:=4
@@ -450,19 +463,17 @@ for i:=1 to cLDPolja
 next
 
 return
-*}
 
-
+// --------------------------------------------------
+// validacija WHEN na unosu tipova primanja
+// --------------------------------------------------
 function WhUnos(cTP)
-*{
 tippr->(DbSeek(cTP))
 return .t.
-*}
 
 
 
 function UnosSatiPoRNal(nGodina,nMjesec,cIdRadn)
-*{
 private cRNal[8], nSati[8]
 UcitajSateRNal(nGodina,nMjesec,cIdRadn)
 @ m_x+10, m_y+2 SAY "Radni nalog" GET cRNal[1] VALID ValRNal(cRNal[1],1)
@@ -487,22 +498,18 @@ if (LASTKEY()!=K_ESC)
 endif
 @ m_x+10, m_y+2 CLEAR TO m_x+17,75
 return
-*}
 
 
 
 function ValRNal(cPom,i)
-*{
 if !EMPTY(cPom)
 	P_RNal(@cPom)
 	cRNal[i]:=cPom
 endif
 return .t.
-*}
 
 
 function UcitajSateRNal(nGodina,nMjesec,cIdRadn)
-*{
 local nArr:=SELECT()
 local i:=0
 select radsiht
@@ -519,11 +526,9 @@ for j:=i+1 to 8
 next
 select (nArr)
 return
-*}
 
 
 function SnimiSateRNal(nGodina,nMjesec,cIdRadn)
-*{
 local nArr:=SELECT()
 local nRec
 local i
@@ -544,5 +549,4 @@ for i:=1 to 8
 next
 select (nArr)
 return
-*}
 

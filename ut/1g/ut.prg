@@ -25,9 +25,108 @@ return nIzn
 // setuj obracun na tip u skladu sa zak.promjenama
 // ----------------------------------------------------------
 function set_obr_2009()
-if YEAR(DATE()) >= 2009
+
+if YEAR(DATE()) >= 2009 .and. ;
+	goModul:oDataBase:cSezona == "2009" .and. ;
+	gVarObracun <> "2"
+
+	MsgBeep("Nova je godina. Obracun je podesen u skladu sa#novim zakonskim promjenama !")
 	gVarObracun := "2"
+
 endif
+
+return
+
+
+// -----------------------------------------------
+// vraca varijantu obracuna iz tabele ld
+// -----------------------------------------------
+function get_varobr()
+return ld->varobr
+
+
+// -----------------------------------------------------
+// promjena varijante obracuna za tekuci obracun
+// -----------------------------------------------------
+function chVarObracun()
+local nLjudi
+
+if Logirati(goModul:oDataBase:cName,"DOK","CHVAROBRACUNA")
+	lLogChVarObr:=.t.
+else
+	lLogChVarObr:=.f.
+endif
+
+Box(,4,60)
+	@ m_x+1,m_y+2 SAY "Ova opcija vrsi zamjenu identifikatora varijante"
+  	@ m_x+2,m_y+2 SAY "obracuna za tekuci obracun."
+  	@ m_x+4,m_y+2 SAY "               <ESC> Izlaz"
+  	inkey(0)
+BoxC()
+
+if (LastKey() == K_ESC)
+	closeret
+	return
+endif
+
+cIdRj:=gRj
+cMjesec:=gMjesec
+cGodina:=gGodina
+cObracun:=gObracun
+cVarijanta := SPACE(1)
+
+O_RADN
+O_LD
+
+Box(,5,50)
+	@ m_x+1,m_y+2 SAY "Radna jedinica: "  GET cIdRJ
+	@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
+	@ m_x+3,m_y+2 SAY "Godina: "  GET  cGodina  pict "9999"
+	
+	if lViseObr
+  		@ m_x+4,m_y+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.f.,cObracun) VALID ValObr(.f.,cObracun)
+	endif
+	
+	@ m_x+5,m_y+2 SAY "Postavi na varijantu:" GET  cVarijanta
+
+	read
+
+	ClvBox()
+	ESC_BCR
+BoxC()
+
+select ld
+seek STR(cGodina,4)+cIdRj+STR(cMjesec,2)+BrojObracuna()
+
+EOF CRET
+
+nLjudi:=0
+
+Box(,1,12)
+  
+   do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .and. if(lViseObr,cObracun==obr,.t.)
+
+	Scatter()
+	_varobr := cVarijanta
+	Gather()
+
+ 	@ m_x+1,m_y+2 SAY ++nLjudi pict "99999"
+ 	
+	skip
+
+   enddo
+ 
+   if lLogChVarObracun
+	EventLog(nUser,goModul:oDataBase:cName,"DOK","CHVAROBRACUN",nLjudi,nil,nil,nil,cIdRj,STR(cMjesec,2),STR(cGodina,4),Date(),Date(),"","Promjena varijante obracuna za tekuci obracun")
+   endif
+
+   Beep(1)
+   inkey(1)
+
+BoxC()
+
+closeret
+
 return
 
 

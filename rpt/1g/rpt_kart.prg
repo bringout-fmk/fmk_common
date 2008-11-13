@@ -1,15 +1,17 @@
 #include "ld.ch"
 
 static DUZ_STRANA:=64
+static __var_obr
 
-
+// -------------------------------------------------------------
 // kartica plate radnika
+// -------------------------------------------------------------
 function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
 local i
 local aNeta:={}
 
 lSkrivena:=.f.
-cLMSK:=""
+private cLMSK:=""
 
 l2kolone:=.f.
 lRadniSati:=IzFmkIni("LD","RadniSati","N",KUMPATH)=="D"
@@ -173,7 +175,6 @@ bZagl:={|| ZaglKar()}
 
 nT1:=nT2:=nT3:=nT4:=0
 
-
 //-- Prikaz samo odredjenih doprinosa na kartici plate
 //-- U fmk.ini /kumpath se definisu koji dopr. da se prikazuju
 //-- Po defaultu stoji prazno - svi doprinosi
@@ -184,8 +185,7 @@ lPrikSveDopr:=(cPrikDopr=="D")
 do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and. idradn=cIdRadn .and. !( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
 
 	aNeta:={}
-
-	m:=cLMSK+"----------------------- --------  ----------------   ------------------"
+	
 	IF lViseObr .and. EMPTY(cObracun)
 		ScatterS(Godina,Mjesec,IdRJ,IdRadn)
 	ELSE
@@ -201,13 +201,25 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 	select ld
 
 	AADD(aNeta,{vposla->idkbenef,_UNeto})
+	
+	// uzmi varijantu obracuna
+	__var_obr := get_varobr()
 
-	if gPrBruto<>"X"
-		// gPrBruto$"DN"
-		KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+	if __var_obr == "2"
+		
+		// nova kartica plate
+		kartpl2(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+
 	else
-		// gPrBruto=="X"
-		KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		// stara kartica plate
+		if gPrBruto<>"X"
+			// gPrBruto$"DN"
+			KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		else
+			// gPrBruto=="X"
+			KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		endif
+	
 	endif
 
 	nT1+=_usati
@@ -239,9 +251,11 @@ else // pcount >= "4"
 endif
 
 return
-*}
+
+
 
 // ---------------------------
+// zaglavlje kartice plate
 // ---------------------------
 function ZaglKar()
 
@@ -289,16 +303,23 @@ ELSE
 		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
 	endif
 	? IF(gBodK=="1",Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
+	
+	if __var_obr == "2"
+		?? SPACE(2) + Lokal("Koef.licnog odbitka:"), radn->klo	
+	endif
+	
 	if lRadniSati
 		?? SPACE(19) + Lokal("Radni sati:   ") + ALLTRIM(STR(ld->radsat))
 	endif
 ENDIF
 
 return
-*}
 
+
+// ---------------------------------------------------
 // provjerava koliko kartica ima redova
-static function kart_redova()
+// ---------------------------------------------------
+function kart_redova()
 local nRows:=0
 local cField
 local cFIznos:="_I"
@@ -334,9 +355,12 @@ select ld
 return (nRows + nStRedova)
 
 
+// ---------------------------------------------------------------------
 // kartica plate - bruto = N .or. D
+// ---------------------------------------------------------------------
 static function KartPlDN(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 local nKRedova
+local m := _gtprline()
 
 // koliko redova ima kartica
 nKRedova := kart_redova()
@@ -829,7 +853,7 @@ return
 
 
 // potpis kartice
-static function kart_potpis()
+function kart_potpis()
 // potpis kartice
 if !lSkrivena .and. gPotp == "D"
 	?
@@ -845,6 +869,7 @@ static function KartPlX(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,aNeta)
 local nKRedova
 local nOsnNeto
 local nOsnOstalo
+local m := _gtprline()
 
 // koliko redova ima kartica
 nKRedova := kart_redova()

@@ -2,18 +2,15 @@
 
 
 function RekalkPrimanja()
-*{
 local i
 local nArrm
 local nLjudi
-
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKPRIMANJA")
 	lLogRekPrimanja:=.t.
 else
 	lLogRekPrimanja:=.f.
 endif
-
 
 Box(,4,60)
 	@ m_x+1,m_y+2 SAY "Ova opcija vrsi preracunavanja onih stavki  primanja koja"
@@ -538,12 +535,5 @@ BoxC()
 
 closeret
 return
-*}
-
-
-
-
-
-
 
 

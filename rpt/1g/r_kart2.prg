@@ -1,344 +1,20 @@
 #include "ld.ch"
 
-static DUZ_STRANA:=64
-
-// ------------------------------------------------------------
-// kartica plate radnika - varijanta 2009
-// ------------------------------------------------------------
-function KartPl2( cIdRj, cMjesec, cGodina, cIdRadn, cObrac )
-local i
-local aNeta:={}
-
-lSkrivena:=.f.
-cLMSK:=""
-
-l2kolone:=.f.
-lRadniSati:=IzFmkIni("LD","RadniSati","N",KUMPATH)=="D"
-
-if (IzFMKIni("LD","SkrivenaKartica","N",KUMPATH)=="D" .and. Pitanje(,"Stampati u formi skrivene kartice? (D/N)","D")=="D")
-	lSkrivena:=.t.
-	cLMSK:=SPACE(VAL(IzFMKINI("SkrivenaKartica","LMarginaKolona","10",KUMPATH)))
-	nIZRSK:=VAL(IzFMKINI("SkrivenaKartica","IspodZaglavljaRedova","4",KUMPATH))
-	nPZRSK:=VAL(IzFMKINI("SkrivenaKartica","PrijeZaglavljaRedova","2",KUMPATH))
-	nKRSK:=VAL(IzFMKINI("SkrivenaKartica","KarticaRedova","52",KUMPATH))
-	nDMSK:=VAL(IzFMKINI("SkrivenaKartica","DMarginaRedova","5",KUMPATH))
-	l2kolone:=(IzFMKINI("SkrivenaKartica","Dvokolonski","D",KUMPATH)=="D")
-endif
-
-cVarSort:="1"
-
-private cNKNS
-cNKNS:="N"
-
-if (PCount() < 4)
-	cIdRadn:=SPACE(_LR_)
-	cIdRj:=gRj
-	cMjesec:=gMjesec
-	cGodina:=gGodina
-	cObracun:=gObracun
-	O_PAROBR
-	O_RJ
-	O_RADN
-	O_VPOSLA
-	O_RADKR
-	O_KRED
-	O_LD
-else
-	cObracun:=cObrac
-endif
-
-if lRadniSati
-	O_RADSAT
-endif
-
-private nC1 := 20 + LEN(cLMSK)
-
-cVarijanta:=" "
-
-c2K1L:="D"
-
-if (PCount() < 4)
-	O_PARAMS
-	private cSection:="4"
-	private cHistory:=" "
-	private aHistory:={}
-	RPar("VS",@cVarSort)
-	RPar("2K",@c2K1L)
-	RPar("NK",@cNKNS)
-	cIdRadn:=SPACE(_LR_)
-	Box(,8,75)
-	@ m_x+1,m_y+2 SAY Lokal("Radna jedinica (prazno-sve rj): ")  GET cIdRJ valid empty(cidrj) .or. P_RJ(@cidrj)
-	@ m_x+2,m_y+2 SAY Lokal("Mjesec: ") GET cMjesec pict "99"
-	if lViseObr
-		@ m_x+2,col()+2 SAY Lokal("Obracun: ") GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
-	endif
-	@ m_x+3,m_y+2 SAY Lokal("Godina: ") GET cGodina pict "9999"
-	@ m_x+4,m_y+2 SAY Lokal("Radnik (prazno-svi radnici): ")  GET  cIdRadn  valid empty(cIdRadn) .or. P_Radn(@cIdRadn)
-	if !lSkrivena
-		@ m_x+5,m_y+2 SAY Lokal("Varijanta ( /5): ")  GET  cVarijanta valid cVarijanta $ " 5"
-	endif
-	@ m_x+6,m_y+2 SAY Lokal("Ako su svi radnici, sortirati po (1-sifri,2-prezime+ime)")  GET cVarSort VALID cVarSort$"12"  pict "9"
-	if !lSkrivena
-		@ m_x+7,m_y+2 SAY Lokal("Dvije kartice na jedan list ? (D/N)")  GET c2K1L VALID c2K1L $ "DN"  pict "@!"
-		@ m_x+8,m_y+2 SAY Lokal("Ispis svake kartice krece od pocetka stranice? (D/N)")  GET cNKNS VALID cNKNS$"DN"  pict "@!"
-	endif
-	read
-	clvbox()
-	ESC_BCR
-	BoxC()
-	select params
-	WPar("VS",cVarSort)
-	WPar("2K",c2K1L)
-	WPar("NK",cNKNS)
-	SELECT PARAMS
-	USE
-	if lViseObr
-		O_TIPPRN
-	else
-		O_TIPPR
-	endif
-endif
-
-PoDoIzSez( cGodina, cMjesec )
-
-if cVarijanta == "5"
-	O_LDSM
-endif
-
-SELECT LD
-
-cIdRadn := TRIM( cIdRadn )
-
-IF EMPTY(cIdRadn) .and. cVarSort=="2"
-	IF EMPTY(cIdRj)
-		IF lViseObr .and. !EMPTY(cObracun)
-			INDEX ON str(godina)+str(mjesec)+obr+SortPrez(idradn)+idrj TO "TMPLD"
-			seek str(cGodina,4)+str(cmjesec,2)+cObracun+cIdRadn
-		ELSE
-			INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
-			seek str(cGodina,4)+str(cmjesec,2)+cIdRadn
-		ENDIF
-		cIdrj:=""
-	ELSE
-		IF lViseObr .and. !EMPTY(cObracun)
-			INDEX ON str(godina)+idrj+str(mjesec)+obr+SortPrez(idradn) TO "TMPLD"
-			seek str(cGodina,4)+cidrj+str(cmjesec,2)+cObracun+cIdRadn
-		ELSE
-			INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "TMPLD"
-			seek str(cGodina,4)+cidrj+str(cmjesec,2)+cIdRadn
-		ENDIF
-	ENDIF
-ELSE
-	if empty(cidrj)
-		set order to tag (TagVO("2"))
-		seek str(cGodina,4)+str(cmjesec,2)+IF(lViseObr.and.!EMPTY(cObracun),cObracun,"")+cIdRadn
-		cIdrj:=""
-	else
-		IF PCOUNT()<4
-			SET ORDER TO TAG (TagVO("1"))
-		ENDIF
-		seek str(cGodina,4)+cidrj+str(cmjesec,2)+IF(lViseObr.and.!EMPTY(cObracun),cObracun,"")+cIdRadn
-	endif
-ENDIF
-
-EOF CRET
-
-nStrana := 0
-
-select vposla
-hseek ld->idvposla
-select rj
-hseek ld->idrj
-select ld
-
-if pcount() >= 4
-	START PRINT RET
-else
-	START PRINT CRET
-endif
-
-?
-P_12CPI
-
-IF lSkrivena
-	gRPL_Gusto()
-ENDIF
-
-ParObr( cMjesec, IF(lViseObr,cObracun,), cIdRj )
-
-private lNKNS
-lNKNS:=(cNKNS=="D")
-
-nRbrKart:=0
-
-bZagl:={|| ZaglKar()}
-
-nT1:=nT2:=nT3:=nT4:=0
-
-
-//-- Prikaz samo odredjenih doprinosa na kartici plate
-//-- U fmk.ini /kumpath se definisu koji dopr. da se prikazuju
-//-- Po defaultu stoji prazno - svi doprinosi
-
-cPrikDopr:=IzFmkIni("LD","DoprNaKartPl","D",KUMPATH)
-lPrikSveDopr:=(cPrikDopr=="D")
-
-do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and. idradn=cIdRadn .and. !( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
-
-	aNeta:={}
-
-	cMainLine := cLMSK + "----------------------- --------  ----------------   ------------------"
-	IF lViseObr .and. EMPTY(cObracun)
-		ScatterS( Godina, Mjesec, IdRJ, IdRadn)
-	ELSE
-		Scatter()
-	ENDIF
-
-	select radn
-	hseek _idradn
-	select vposla
-	hseek _idvposla
-	select rj
-	hseek _idrj
-	select ld
-
-	AADD(aNeta,{vposla->idkbenef,_UNeto})
-
-	if gPrBruto <> "X"
-		// gPrBruto$"DN"
-		_kart_d(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
-	else
-		// gPrBruto=="X"
-		_kart_d(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
-	endif
-
-	nT1+=_usati
-	nT2+=_uneto
-	nT3+=_uodbici
-	nT4+=_uiznos
-
-	select ld
-	skip 1
-enddo
-
-IF lSkrivena
-	gRPL_Normal()
-	IF !pcount()>=4 .and. (nRBrKart%2)==1
-		FF
-	ENDIF
-ENDIF
-
-if pcount()>=4  // predji na drugu stranu
-	FF
-endif
-
-END PRINT
-
-if pcount()<4
-	closeret
-else // pcount >= "4"
-	set order to tag (TagVO("1"))
-endif
-
-return
-
-
-static function ZaglKar()
-
-++nRBrKart
-
-// nova stranica odredjuje odakle ce se poceti stampati
-// gura karticu do polovine stranice ako fali redova
-IF !lSkrivena .and. !lNKNS .and. gPrBruto<>"D" .and. c2K1L=="D" .and. (nRBrKart%2)==0
-	DO WHILE prow() < 34
-		?
-	ENDDO
-ENDIF
-
-IF lSkrivena
-	FOR i:=1 TO nPZRSK
-		?
-	NEXT
-	P_12CPI
-	?? cLMSK + Lokal("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4), " ZA " + UPPER(TRIM(gTS)), gNFirma
-	? cLMSK+idradn,"-",RADNIK,"  Mat.br:",radn->matbr
-	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, cLMSK)
-	? cLMSK + Lokal("Radno mjesto:"), radn->rmjesto, Lokal("  STR.SPR:"), IDSTRSPR
-	? cLMSK + Lokal("Vrsta posla:"), idvposla, vposla->naz, Lokal("         Radi od:"), radn->datod
-	FOR i:=1 TO nIZRSK
-		?
-	NEXT
-	? cLMSK+IF(gBodK=="1", Lokal("Broj bodova :"), Lokal("Koeficijent :")), transform(brbod,"99999.99"),space(24)
-	if gMinR=="B"
-		?? Lokal("Minuli rad:"), transform(kminrad,"9999.99")
-	else
-		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
-	endif
-	? cLMSK+IF(gBodK=="1", Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
-ELSE
-	? LOKAL("OBRACUN PLATE ZA") + SPACE(1) + str(mjesec,2) + IspisObr() + "/" + str(godina,4)," ZA "+ UPPER(TRIM(gTS)), gNFirma
-	? "RJ:",idrj,rj->naz
-	? idradn,"-",RADNIK,"  Mat.br:",radn->matbr
-	ShowHiredFromTo(radn->hiredfrom, radn->hiredto, "")
-	? Lokal("Radno mjesto:"),radn->rmjesto, "  STR.SPR:",IDSTRSPR
-	? Lokal("Vrsta posla:"),idvposla,vposla->naz,"         Radi od:",radn->datod
-	? IF(gBodK=="1", Lokal("Broj bodova :"),Lokal("Koeficijent :")),transform(brbod,"99999.99"),space(24)
-	if gMinR=="B"
-		?? Lokal("Minuli rad:"), transform(kminrad,"9999.99")
-	else
-		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
-	endif
-	? IF(gBodK=="1",Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
-	?? SPACE(4), Lokal("Koef.licnog odbitka:"), radn->klo
-	if lRadniSati
-		?? SPACE(19) + Lokal("Radni sati:   ") + ALLTRIM(STR(ld->radsat))
-	endif
-ENDIF
-
-return
-
-// provjerava koliko kartica ima redova
-static function kart_redova()
-local nRows:=0
-local cField
-local cFIznos:="_I"
-local cFSati:="_S"
-local nStRedova:=23
-
-if gPrBruto == "X"
-	nStRedova := 32
-endif
-
-// ako nema potpisa standardnih redova je manje
-if gPotp=="N"
-	nStRedova:=nStRedova - 4
-endif
-
-// ispitaj standardna ld polja _I(nn), _S(nn)
-for i:=1 to cLDPolja
-	cField := PADL(ALLTRIM(STR(i)),2,"0")
-	if &(cFIznos+cField)<>0 .or. &(cFSati+cField)<>0
-		++ nRows
-	endif
-next
-
-// ispitaj kredite
-select radkr
-set order to 1
-seek str(_godina,4) + str(_mjesec,2) + _idradn
-do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn==_idradn
-	++ nRows
-	skip 
-enddo
-select ld
-return (nRows + nStRedova)
-
 
 // -------------------------------------------------
-// kartica plate - bruto = N .or. D
+// nova varijanta kartica plate
 // -------------------------------------------------
-static function _kart_d( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta)
+function kartpl2( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta)
 local nKRedova
+local cDoprSpace := SPACE(3)
+local cTprLine 
+local cDoprLine 
+local cMainLine 
+private cLMSK := ""	
+
+cTprLine := _gtprline()
+cDoprLine := _gdoprline(cDoprSpace)
+cMainLine := _gmainline()
 
 // koliko redova ima kartica
 nKRedova := kart_redova()
@@ -359,9 +35,9 @@ IF l2kolone
 	// SETPRC(0,0)
 ENDIF
 
-? cMainLine
+? cTprLine
 ? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
-? cMainLine
+? cTprLine
 
 cUneto := "D"
 nRRsati := 0 
@@ -380,13 +56,13 @@ for i:=1 to cLDPolja
 		
 		cUneto:="N"
 		
-		? cMainLine
+		? cTprLine
 		? cLMSK+Lokal("Ukupna primanja u netu:")
 		@ prow(),nC1+8  SAY  _USati  pict gpics
 		?? SPACE(1) + Lokal("sati")
 		@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
 		?? "",gValuta
-		? cMainLine
+		? cTprLine
 	
 	endif
 	
@@ -476,7 +152,7 @@ for i:=1 to cLDPolja
 					P_COND
 				ENDIF
 				
-				? cMainLine
+				? cTprLine
 				? cLMSK+"  ",Lokal("Od toga pojedinacni krediti:")
 				select radkr
 				set order to 1
@@ -490,7 +166,7 @@ for i:=1 to cLDPolja
 					skip 1
 				enddo
 				
-				? cMainLine
+				? cTprLine
 				
 				IF l2kolone
 					P_COND2
@@ -554,12 +230,12 @@ if cVarijanta=="5"
 	?
 	? cLMSK+Lokal("Od toga 1. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
-	? cMainLine
+	? cTprLine
 	hseek str(_godina,4)+str(_mjesec,2)+"2"+_idradn+_idrj
 	// hseek "2"+str(_godina,4)+str(_mjesec,2)+_idradn+_idrj
 	? cLMSK+Lokal("Od toga 2. dio:")
 	@ prow(),60+LEN(cLMSK) SAY UIznos pict gpici
-	? cMainLine
+	? cTprLine
 	select ld
 	PopWA()
 endif
@@ -572,7 +248,9 @@ if lRadniSati
 	?
 endif
 
-if gPrBruto=="D"  // prikaz bruto iznosa
+if gPrBruto=="D"  
+	
+	// prikaz bruto iznosa
 	
 	select (F_POR)
 	
@@ -591,14 +269,12 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	if !used()
 		O_KBENEF
 	endif
-	
-	cDoprSpace := SPACE(3)
-	cDoprLine := cLMSK + cDoprSpace + "----------------------- -------- ------------- -------------"
 
 	nBO:=0
 	nBFO:=0
 	
 	nOsnZaBr := nOsnNeto + nOsnOstalo
+
 	nBo := round2( ( ( nOsnZaBr ) * 1.053) / 0.69 , gZaok2 )
 
 	if UBenefOsnovu()
@@ -609,10 +285,11 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 
 	? cMainLine
 	? cLMSK + "1. BRUTO PLACA :", ;
-	    "  " + ALLTRIM(STR(nOsnZaBr)) + " * " + ;
-		"1.053 / 0.69"
+	    "  (" + ALLTRIM(STR(nOsnZaBr)) + " * " + ;
+		"1.053 ) / 0.69"
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
+	
 	? cMainLine
 	
 	IF lSkrivena
@@ -725,7 +402,7 @@ if gPrBruto=="D"  // prikaz bruto iznosa
 	// oporezivi dohodak ......
 	
 	? cMainLine
-	?  cLMSK + Lokal("2. OPOREZIVI DOHODAK ( BRUTO - dopr.IZ )")
+	?  cLMSK + Lokal("2. OPOREZIVI DOHODAK ( bruto - dopr.IZ )")
 	@ prow(),60+LEN(cLMSK) SAY nOporDoh pict gpici
 	? cMainLine
 	
@@ -867,20 +544,5 @@ elseif (nRBRKart%2 <> 0) .and. (DUZ_STRANA - prow() < nKRedova )
 endif
 
 return
-
-
-// potpis kartice
-static function kart_potpis()
-// potpis kartice
-if !lSkrivena .and. gPotp == "D"
-	?
-	? cLMSK+space(5), Lokal("   Obracunao:  "), space(30), Lokal("    Potpis:")
-	? cLMSK+space(5),"_______________", space(30) , "_______________"
-	?
-endif
-return
-
-
-
 
 

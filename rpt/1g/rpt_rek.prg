@@ -1,5 +1,8 @@
 #include "ld.ch"
 
+static __var_obr
+
+
 // ----------------------------------------
 // ----------------------------------------
 function Rekap(lSvi)
@@ -149,7 +152,9 @@ nUNeto:=0
 nUNetoOsnova:=0
 nDoprOsnova := 0
 nDoprOsnOst := 0
+nULOdbitak := 0
 nUBNOsnova:=0
+nUDoprIz := 0
 nUIznos:=0
 nUSati:=0
 nUOdbici:=0
@@ -220,15 +225,14 @@ endif
 
 ? cLinija
 
-if !lPorNaRekap
-   ? Lokal("UKUPNO ZA ISPLATU")
-   @ prow(),60 SAY nUIznos pict gpici
-   ?? "",gValuta
-else
-   ? Lokal("UKUPNO ZA ISPLATU")
-   @ prow(),42 SAY nUIznos pict gpici
-   ?? "",gValuta
+nPosY := 60
+if lPorNaRekap
+	nPosY := 42
 endif
+
+? Lokal("UKUPNO ZA ISPLATU")
+@ prow(), nPosY SAY nUIznos pict gpici
+?? "",gValuta
 
 ? cLinija
 
@@ -1196,7 +1200,9 @@ do while !eof() .and. eval(bUSlov)
 	
  	_oosnneto := 0
 	_oosnostalo := 0
- 
+
+	nBrutOsn := 0
+
  	// vrati osnovicu za neto i ostala primanja
  	for i:=1 to cLDPolja
  		
@@ -1269,8 +1275,13 @@ do while !eof() .and. eval(bUSlov)
    		endif
    		
 		// obracunaj porez
-		aPor := obr_por( por->id, _oosnneto, _oosnostalo )
-		
+		if gVarObracun == "2"
+			nBrutOsn := Round2( ((_oosnneto + _oosnostalo) * 1.053 ) / 0.69, gZaok2 )
+			aPor := obr_por( por->id, nBrutOsn, 0 )
+		else
+			aPor := obr_por( por->id, _oosnneto, _oosnostalo )
+		endif
+
 		// samo izracunaj total, ne ispisuj porez
 		nPor += isp_por( aPor, cAlgoritam, "", .f. )
 
@@ -1338,7 +1349,9 @@ do while !eof() .and. eval(bUSlov)
 	
 	nUSati += _USati   // ukupno sati
 	nUNeto += _UNeto  // ukupno neto iznos
-	
+
+	nULOdbitak += ( gOsnLOdb * radn->klo)
+
 	nUNetoOsnova += _oUNeto  
 	// ukupno neto osnova 
 	

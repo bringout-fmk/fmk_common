@@ -65,5 +65,51 @@ else
 endif
 
 return
-*}
+
+
+
+// ----------------------------------------------
+// vraca liniju za doprinose
+// ----------------------------------------------
+function _gdoprline( cDoprSpace )
+local cLine
+cLine := cLMSK
+cLine += cDoprSpace
+cLine += REPLICATE("-",23)
+cLine += SPACE(1)
+cLine += REPLICATE("-",8)
+cLine += SPACE(1)
+cLine += REPLICATE("-",13)
+cLine += SPACE(1)
+cLine += REPLICATE("-",13)
+return cLine
+
+
+
+// -------------------------------------------------
+// vraca liniju za podvlacenje tipova primanja
+// -------------------------------------------------
+function _gtprline()
+local cLine
+cLine := cLMSK 
+cLine += REPLICATE("-", 23)
+cLine += SPACE(1)
+cLine += REPLICATE("-",8)
+cLine += SPACE(2)
+cLine += REPLICATE("-",16)
+cLine += SPACE(3)
+cLine += REPLICATE("-",18)
+return cLine
+
+
+// -------------------------------------------------
+// vraca liniju za podvlacenje tipova primanja
+// -------------------------------------------------
+function _gmainline()
+local cLine
+cLine := cLMSK 
+cLine += REPLICATE("-", 52)
+cLine += SPACE(1)
+cLine += REPLICATE("-",18)
+return cLine
 

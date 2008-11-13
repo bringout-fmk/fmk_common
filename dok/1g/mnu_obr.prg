@@ -79,10 +79,13 @@ endif
 AADD(opc, "7. radnici obradjeni vise puta za isti mjesec")
 AADD(opcexe, {|| VisePuta()})
 
+AADD(opc, "8. promjeni varijantu obracuna za obracun")
+AADD(opcexe, {|| chVarObracun()})
+
+
 Menu_SC("ao")
 
 return
-*}
 
 
 
