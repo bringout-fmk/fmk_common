@@ -4,7 +4,7 @@
 // -------------------------------------------------
 // nova varijanta kartica plate
 // -------------------------------------------------
-function kartpl2( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta)
+function kartpl2( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
 local nKRedova
 local cDoprSpace := SPACE(3)
 local cTprLine 
@@ -273,20 +273,20 @@ if gPrBruto=="D"
 	nBO:=0
 	nBFO:=0
 	
-	nOsnZaBr := nOsnNeto + nOsnOstalo
+	nOsnZaBr := nOsnNeto
 
-	nBo := round2( ( ( nOsnZaBr ) * 1.053) / 0.69 , gZaok2 )
+	nBo := round2( nOsnZaBr * 1.52555  , gZaok2 )
 
 	if UBenefOsnovu()
-		nBFo := round2( ((( nOsnZaBr )-(&gBFForm)) * 1.053 / 0.69 ), gZaok2 )
+		nBFo := round2( ((( nOsnZaBr )-(&gBFForm)) * 1.52555 ), gZaok2 )
 	endif
 
 	// bruto placa iz neta...
 
 	? cMainLine
-	? cLMSK + "1. BRUTO PLACA :", ;
-	    "  (" + ALLTRIM(STR(nOsnZaBr)) + " * " + ;
-		"1.053 ) / 0.69"
+	? cLMSK + "1. BRUTO PLACA :  ", ;
+	        ALLTRIM(STR(nOsnZaBr)) + " * " + ;
+		"1.52555 = "
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -411,8 +411,8 @@ if gPrBruto=="D"
 	nLicOdbitak := g_licni_odb( radn->id )
 	nKoefOdbitka := radn->klo
 
-	? cLMSK + Lokal("3. LICNI ODBITAK")
-	? cLMSK + SPACE(24) + ALLTRIM(STR(gOsnLOdb)) + " * koef. " + ;
+	? cLMSK + Lokal("3. LICNI ODBITAK"), SPACE(14) + ;
+		ALLTRIM(STR(gOsnLOdb)) + " * koef. " + ;
 		ALLTRIM(STR(nKoefOdbitka)) + " = "
 	@ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
 
@@ -465,13 +465,20 @@ if gPrBruto=="D"
 
 	@ prow(),60+LEN(cLMSK) SAY nPor pict gpici
 
+	// ostala primanja 
+	? cMainLine
+	? cLMSK + Lokal("6. UKUPNO OSTALA PRIMANJA")
+
+	@ prow(),60+LEN(cLMSK) SAY nOsnOstalo pict gpici
+
+
 	// ukupno za isplatu ....
-	nZaIsplatu := ( nOporDoh - nPor )
+	nZaIsplatu := ( nOporDoh - nPor ) + nOsnOstalo
 	
 	?
 
 	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU ( 2 - 5 )")
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU ( 2 - 5 + 6 )")
 	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
 
 	? cMainLine

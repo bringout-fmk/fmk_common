@@ -244,11 +244,15 @@ ProizvTP()
 
 // prikaz koeficijenta benef.
 if cMjesec == cMjesecDo
+	
 	if !lGusto
 		?
 	endif
+	
 	PrikKBO()
+	
 	PrikKBOBenef()
+
 endif
 
 if cMjesec == cMjesecDo
@@ -698,8 +702,8 @@ if cTip == "S"
 	next
 else
 	cPorId := "  "
-	nOsnovica := _oosnneto
-	nOstalo := _oosnostalo
+	nOsnovica := nUNetoOsnova
+	nOstalo := nUOdbici
 endif
 
 select ops
@@ -1175,7 +1179,7 @@ do while !eof() .and. eval(bUSlov)
 
  	select radn
 	hseek _idradn
- 	select vposla
+	select vposla
 	hseek _idvposla
 
  	if ( (!empty(cOpsSt) .and. cOpsSt<>radn->idopsst)) ;
@@ -1200,8 +1204,6 @@ do while !eof() .and. eval(bUSlov)
 	
  	_oosnneto := 0
 	_oosnostalo := 0
-
-	nBrutOsn := 0
 
  	// vrati osnovicu za neto i ostala primanja
  	for i:=1 to cLDPolja
@@ -1252,7 +1254,7 @@ do while !eof() .and. eval(bUSlov)
 			endif
 		endif
  	next
-	
+
  	// obradi poreze....
 	
  	select por
@@ -1273,14 +1275,8 @@ do while !eof() .and. eval(bUSlov)
      			SKIP 1
 			LOOP
    		endif
-   		
-		// obracunaj porez
-		if gVarObracun == "2"
-			nBrutOsn := Round2( ((_oosnneto + _oosnostalo) * 1.053 ) / 0.69, gZaok2 )
-			aPor := obr_por( por->id, nBrutOsn, 0 )
-		else
-			aPor := obr_por( por->id, _oosnneto, _oosnostalo )
-		endif
+   	
+		aPor := obr_por( por->id, _oosnneto, _oosnostalo )
 
 		// samo izracunaj total, ne ispisuj porez
 		nPor += isp_por( aPor, cAlgoritam, "", .f. )
@@ -1336,12 +1332,15 @@ do while !eof() .and. eval(bUSlov)
   		nIznos:=_i&cPom
   
   		aRekap[i,2]+=nIznos  // iznos
+
   		if tippr->uneto=="N" .and. nIznos<>0
-  			if nIznos>0
+  			
+			if nIznos>0
   				nUOdbiciP+=nIznos
   			else
   				nUOdbiciM+=nIznos
   			endif
+
   		endif
  	next
 	
@@ -1350,7 +1349,7 @@ do while !eof() .and. eval(bUSlov)
 	nUSati += _USati   // ukupno sati
 	nUNeto += _UNeto  // ukupno neto iznos
 
-	nULOdbitak += ( gOsnLOdb * radn->klo)
+	nULOdbitak += ( gOsnLOdb * radn->klo )
 
 	nUNetoOsnova += _oUNeto  
 	// ukupno neto osnova 

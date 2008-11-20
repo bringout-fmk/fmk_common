@@ -4,8 +4,12 @@
 // ------------------------------------------
 // obracunaj i prikazi doprinose
 // ------------------------------------------
-function obr_doprinos( nDopr, nDopr2 )
+function obr_doprinos( nDopr, nDopr2, nOsnovica )
 local nIznos := 0
+
+if nOsnovica == nil
+	nOsnovica := 0
+endif
 
 m:="----------------------- -------- ----------- -----------"
 
@@ -21,6 +25,7 @@ nDopr:=0
 nPom2:=0
 nDopr2:=0
 nC1:=20
+nDoprIz := 0
 
 if cUmPD=="D"
 	? "----------------------- -------- ----------- ----------- ----------- -----------"
@@ -108,12 +113,18 @@ do while !eof()
 					nIznos := iznos
 				endif
 				
-        			nBOOps := round2( nIznos * parobr->k3/100 , gZaok2)
-        			
+        			if nOsnovica == 0
+					nBOOps := round2( nIznos * parobr->k3/100 , gZaok2)
+        			else
+				
+					nBOOps := nOsnovica
+				endif
+
 				@ prow(), nC1 SAY nBOOps picture gpici
         			
 				nPom := round2(max(dopr->dlimit,dopr->iznos/100*nBOOps),gZaok2)
-        			if cUmPD=="D"
+        			
+				if cUmPD=="D"
           				nBOOps2:=round2(piznos*nPK3/100,gZaok2)
           				nPom2:=round2(max(dopr->dlimit,dopr->iznos/100*nBOOps2),gZaok2)
         			endif
@@ -191,17 +202,30 @@ do while !eof()
 			else
 				nTmpOsn := nDoprOsnova
 			endif
-				
-			if "BENEF" $ dopr->naz
-           			nBo := round2(parobr->k3/100 * nUBNOsnova, gZaok2)
+		
+			if nOsnovica == 0
+				if "BENEF" $ dopr->naz
+           				nBo := round2(parobr->k3/100 * nUBNOsnova, gZaok2)
+      				else
+           				nBo := round2(parobr->k3/100 * nTmpOsn, gZaok2)
+      				endif
       			else
-           			nBo := round2(parobr->k3/100 * nTmpOsn, gZaok2)
-      			endif
-      			
+				if "BENEF" $ dopr->naz
+           				nBo := round2(1.52555 * nUBNOsnova, gZaok2)
+      				else
+           				nBo := round2(nOsnovica, gZaok2)
+      				endif
+      		
+			endif
+
 			@ prow(),nC1 SAY nBO pict gpici
 			
       			nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)
 			
+			if dopr->id == "1X"
+				nUDoprIz += nPom
+			endif
+				
       			if cUmPD=="D"
         			nPom2:=round2(max(dlimit,iznos/100*nBO2),gZaok2)
       			endif

@@ -151,7 +151,11 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. rekapitulacija                         ")
-AADD(opcexe,{|| Rekap(.f.)})
+if gVarObracun == "2"
+	AADD(opcexe,{|| Rekap2(.f.)})
+else
+	AADD(opcexe,{|| Rekap(.f.)})
+endif
 AADD(opc,"2. rekapitulacija za sve rj")
 AADD(opcexe,{|| Rekap(.t.)})
 AADD(opc,"3. rekapitulacija po koeficijentima")

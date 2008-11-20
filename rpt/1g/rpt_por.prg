@@ -3,8 +3,12 @@
 // -------------------------------------
 // obracun i prikaz poreza
 // -------------------------------------
-function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl )
+function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, nOsn )
 local cAlgoritam := ""
+
+if nOsn == nil
+	nOsn := 0
+endif
 
 select por
 go top
@@ -169,7 +173,13 @@ do while !eof()
 		        
 			  @ prow(), nC1 SAY iznos picture gpici
 		        	
-			  @ prow(), pcol()+1 SAY nPom := round2(max(por->dlimit,por->iznos/100*iznos),gZaok2) pict gpici
+			  if nOsn == 0
+			  	nPom := round2(max(por->dlimit,por->iznos/100*iznos),gZaok2)
+			  else
+			  	nPom := round2(max(por->dlimit,por->iznos/100*nOsn),gZaok2)
+			  endif
+			  
+			  @ prow(), pcol()+1 SAY nPom pict gpici
 		        
 			  if cUmPD=="D"
 		        	@ prow(),pcol()+1 SAY nPom2:=round2(max(por->dlimit,por->iznos/100*piznos),gZaok2) pict gpici
@@ -179,8 +189,12 @@ do while !eof()
 		        	nPorOps2 += nPom2
 		          else
 		        	
-				Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,iznos,idops,NLjudi())
-		          endif
+				if nOsn == 0
+					Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,iznos,idops,NLjudi())
+		          	else
+					Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,nOsn,idops,NLjudi())
+				endif
+			  endif
 		        
 			endif
 			
