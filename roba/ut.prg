@@ -83,3 +83,40 @@ if (goModul:oDataBase:cName=="FAKT")
 endif
 return
 
+
+
+// ----------------------------------
+// svedi na standardnu jedinicu mjere
+// ( npr. KOM->LIT ili KOM->KG )
+// ----------------------------------
+
+function SJMJ(nKol,cIdRoba,cJMJ)
+ LOCAL nVrati:=0, nArr:=SELECT(), aNaz:={}, cKar:="SJMJ", nKO:=1, n_Pos:=0
+  SELECT SIFV; SET ORDER TO TAG "ID"
+  HSEEK "ROBA    "+cKar+PADR(cIdRoba,15)
+  DO WHILE !EOF().and.id+oznaka+idsif=="ROBA    "+cKar+PADR(cIdRoba,15)
+    IF !EMPTY(naz)
+      AADD( aNaz , naz )
+    ENDIF
+    SKIP 1
+  ENDDO
+  IF LEN(aNaz)>0
+    // slijedi preracunavanje
+    // ----------------------
+    n_Pos := AT( "_" , aNaz[1] )
+    cPom   := ALLTRIM( SUBSTR( aNaz[1] , n_Pos+1 ) )
+    nKO    := &cPom
+    nVrati := nKol*nKO
+    cJMJ   := ALLTRIM( LEFT( aNaz[1] , n_Pos-1 ) )
+  ELSE
+    // valjda je ve† u osnovnoj JMJ
+    // ----------------------------
+    nVrati:=nKol
+  ENDIF
+  SELECT (nArr)
+return nVrati
+
+
+
+
+
