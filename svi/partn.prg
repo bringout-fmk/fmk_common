@@ -25,6 +25,7 @@ AADD(ImeKol,{PADR("PTT",5),{|| PTT},"ptt"})
 AADD(ImeKol,{PADR("Mjesto",16),{|| MJESTO},"mjesto"})
 AADD(ImeKol,{PADR("Adresa",24),{|| ADRESA},"adresa"})
 
+
 if partn->(fieldpos("_kup")) <> 0
 	
 	AADD(ImeKol, { "kup?", {|| _kup }, "_kup", ;
@@ -71,6 +72,11 @@ endif
 
 if partn->(fieldpos("FIDBR"))<>0
 	AADD(ImeKol,{padr("Partn Firma ID",20 ),{|| mobtel},"fidbr"})
+endif
+
+if partn->(fieldpos("idrefer")) <> 0
+	AADD(ImeKol,{PADR("Referent",24),{|| idrefer},"idrefer", ;
+		{|| .t.}, {|| p_refer(widrefer)} })
 endif
 
 FOR i:=1 TO LEN(ImeKol)

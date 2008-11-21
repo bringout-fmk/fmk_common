@@ -12,6 +12,7 @@ O_VALUTE
 O_RJ
 O_BANKE
 O_OPS
+O_REFER
 
 select(F_SIFK)
 
@@ -99,6 +100,7 @@ if !file(KUMPATH+"RJ.DBF")
 	AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
    	DBCREATE2(KUMPATH+'RJ.DBF',aDbf)
 endif
+
 CREATE_INDEX("ID","id",KUMPATH+"RJ")
 CREATE_INDEX("NAZ","NAZ",KUMPATH+"RJ")
 index_mcode(KUMPATH, "RJ")
@@ -117,6 +119,7 @@ AADD(aDBf,{ '_RADNIK'             , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'PTT'                 , 'C' ,   5 ,  0 })
 AADD(aDBf,{ 'MJESTO'              , 'C' ,  16 ,  0 })
 AADD(aDBf,{ 'ADRESA'              , 'C' ,  24 ,  0 })
+AADD(aDBf,{ 'IDREFER'             , 'C' ,  10 ,  0 })
 AADD(aDBf,{ 'ZIROR'               , 'C' ,  22 ,  0 })
 AADD(aDBf,{ 'DZIROR'              , 'C' ,  22 ,  0 })
 AADD(aDBf,{ 'TELEFON'             , 'C' ,  12 ,  0 })
@@ -270,6 +273,20 @@ endif
 CREATE_INDEX("ID","id",SIFPATH+"TDOK")  // Tip dokumenta
 CREATE_INDEX("NAZ","naz",SIFPATH+"TDOK")
 index_mcode(SIFPATH, "TDOK")
+
+
+// REFER
+if !file(SIFPATH+"REFER.DBF")
+   aDBf:={}
+   AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
+   AADD(aDBf,{ 'IDOPS'               , 'C' ,   4 ,  0 })
+   AADD(aDBf,{ 'NAZ'                 , 'C' ,  40 ,  0 })
+   DBCREATE2(SIFPATH+'REFER.DBF',aDbf)
+endif
+
+CREATE_INDEX("ID","id",SIFPATH+"REFER")
+CREATE_INDEX("NAZ","naz",SIFPATH+"REFER")
+
 
 // OPS
 if !file(SIFPATH+"OPS.DBF")

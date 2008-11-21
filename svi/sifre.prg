@@ -72,7 +72,14 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
-AADD(opc,"9. sifk - karakteristike")  
+AADD(opc,"9. referenti")  
+if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
+	AADD(opcexe, {|| p_refer() } )
+else
+	AADD(opcexe, {|| MsgBeep(cZabrana)})
+endif
+
+AADD(opc,"10. sifk - karakteristike")  
 if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
 	AADD(opcexe, {|| P_SifK() } )
 else
@@ -102,8 +109,11 @@ gMeniSif:=.f.
 
 CLOSERET
 return
-*}
 
+
+// ---------------------------------------------
+// da li je partner pdv obveznik
+// ---------------------------------------------
 function IsPdvObveznik(cIdPartner)
 local cIdBroj
 
@@ -120,6 +130,9 @@ else
   return .f.
 endif
 
+// ------------------------------------------
+// da li je partner INO
+// ------------------------------------------
 function IsIno(cIdPartner, lShow)
 // isti je algoritam za utvrdjivanje
 // ino partnera bio dobavljac ili kupac

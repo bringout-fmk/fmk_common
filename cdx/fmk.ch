@@ -19,6 +19,7 @@
 
 #xcommand O_OPS   => select(F_OPS);  use  (SIFPATH+"OPS")         ; set order to tag "ID"
 
+#xcommand O_REFER   => select(F_REFER);  use  (SIFPATH+"REFER")         ; set order to tag "ID"
 #xcommand O_RNAL  => select(F_RNAL);  use  (SIFPATH+"RNAL")      ; set order to tag "ID"
 
 #xcommand O_UGOV     => select(F_UGOV);  use  (KUMPATH+"UGOV")     ; set order to tag "ID"
