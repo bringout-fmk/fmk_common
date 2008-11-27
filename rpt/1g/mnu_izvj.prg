@@ -54,7 +54,11 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc,"1. specifikacija uz isplatu plata                 ")
-AADD(opcexe,{|| Specif()})
+if gVarObracun == "2"
+	AADD(opcexe,{|| SpecPl2()})
+else
+	AADD(opcexe,{|| Specif()})
+endif
 AADD(opc,"2. specifikacija po opstinama i RJ")
 AADD(opcexe,{|| Specif2()})
 AADD(opc,"3. specifikacija po rasponima primanja")

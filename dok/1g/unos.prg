@@ -271,6 +271,9 @@ Box(,21,77)
 		_USati:=0
 		_UNeto:=0
 		_UOdbici:=0
+		_UNeto2 := 0
+		_UBruto2 := 0
+		_ULicOdb := 0
 
 		UkRadnik()  	
 
@@ -309,10 +312,22 @@ _UOdbici:=0
 UkRadnik()  
 // filuje _USati,_UNeto,_UOdbici	
 
-_UIznos:=_UNeto+_UOdbici
+_UIznos := _UNeto + _UOdbici
+
+if gVarObracun == "2"
+	// daj bruto i licni odbitak
+	_ULicOdb := gOsnLOdb * radn->klo
+	_UBruto2 := Round( _UNeto * parobr->k5, gZaok )
+endif
 
 @ m_x+19,m_y+2 SAY "Ukupno sati:"
 @ row(),col()+1 SAY _USati PICT gPics
+
+if gVarObracun == "2"
+	@ m_x+19,col()+2 SAY "Koef.lic.odb.:"
+	@ row(),col()+1 SAY _ULicOdb PICT gPici
+endif
+
 @ m_x+20,m_y+2 SAY "Primanja:"
 @ row(),col()+1 SAY _UNeto PICT gPici
 @ m_x+20,col()+2 SAY "Odbici:"

@@ -1,8 +1,10 @@
 #include "ld.ch"
 
 
+// ------------------------------------------------
+// specifikacija place
+// ------------------------------------------------
 function Specif()
-*{
 local GetList:={}
 local aPom:={}
 local nGrupaPoslova:=5
@@ -155,7 +157,6 @@ else
 endif
 
 cSPBR:=padr(cSPBR,4)
-
 
 do while .t.
 	Box(,22+IF(gVarSpec=="1",0,1),75)
@@ -376,7 +377,8 @@ ENDIF
 
    nUNeto+=ld->uneto
    nUNetoOsnova+=MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
-  altd()
+  
+  
   //porez na platu i ostali porez
   SELECT POR
    GO TOP
