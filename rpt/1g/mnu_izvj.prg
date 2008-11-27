@@ -157,7 +157,11 @@ else
 	AADD(opcexe,{|| Rekap(.f.)})
 endif
 AADD(opc,"2. rekapitulacija za sve rj")
-AADD(opcexe,{|| Rekap(.t.)})
+if gVarObracun == "2"
+	AADD(opcexe,{|| Rekap2(.t.)})
+else
+	AADD(opcexe,{|| Rekap(.t.)})
+endif
 AADD(opc,"3. rekapitulacija po koeficijentima")
 AADD(opcexe,{|| RekapBod()})
 AADD(opc,"4. rekapitulacija neto primanja")

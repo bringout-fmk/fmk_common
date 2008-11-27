@@ -597,6 +597,8 @@ aDbf:={{"ID"    ,"C", 1,0},;
        {"IDOPS" ,"C", 4,0},;
        {"IZNOS" ,"N",25,4},;
        {"IZNOS2","N",25,4},;
+       {"IZNOS3","N",25,4},;
+       {"IZNOS4","N",25,4},;
        {"IZN_OST","N",25,4},;
        {"T_ST_1","N",5,2},;
        {"T_ST_2","N",5,2},;
@@ -627,9 +629,9 @@ use
 return
 
 
-// ---------------------------------------
+// ---------------------------------------------------------------
 // Popunjava tabelu OPSLD
-// ---------------------------------------
+// ---------------------------------------------------------------
 function PopuniOpsLD( cTip, cPorId, aPorezi )
 local nT_st_1 := 0
 local nT_st_2 := 0
@@ -660,11 +662,11 @@ endif
 
 // ako je stepenasta...
 if cTip == "S"
-	
+
 	// uzmi prirodu obracuna
 	cPrObr := get_pr_obracuna()
 
-	if cPrObr == "N" .or. cPrObr == " "
+	if cPrObr == "N" .or. cPrObr == " " .or. cPrObr == "B"
 		nOsnovica := _oosnneto
 	elseif cPrObr == "2"
 		nOsnovica := _oosnostalo
@@ -701,9 +703,13 @@ if cTip == "S"
 		endif
 	next
 else
+	
 	cPorId := "  "
 	nOsnovica := nUNetoOsnova
+	nOsnov3 := nPorOsnova	
+	nOsnov4 := nDoprOsnovica	
 	nOstalo := nUOdbici
+
 endif
 
 select ops
@@ -717,6 +723,8 @@ if Found()
 	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
 	replace izn_ost with izn_ost + nOstalo
 	replace ljudi with ljudi + 1
 	
@@ -753,6 +761,9 @@ else
 	replace idops with radn->idopsst
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
@@ -790,6 +801,9 @@ seek cPorId + "3" + ops->idkan
 if found()
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace ljudi with ljudi + 1
 	
 	replace izn_ost with izn_ost + nOstalo
@@ -825,6 +839,9 @@ else
 	replace idops with ops->idkan
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
@@ -862,6 +879,9 @@ if found()
 	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace ljudi with ljudi + 1
 	
 	replace izn_ost with izn_ost + nOstalo
@@ -898,6 +918,9 @@ else
 	replace idops with ops->idn0
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
@@ -939,6 +962,9 @@ if found()
 	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace ljudi with ljudi + 1
 	
 	replace izn_ost with izn_ost + nOstalo
@@ -976,6 +1002,9 @@ else
 	replace idops with radn->idopsrad
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
@@ -1013,6 +1042,9 @@ if found()
 	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace ljudi with ljudi + 1
 	
 	replace izn_ost with izn_ost + nOstalo
@@ -1049,6 +1081,9 @@ else
 	replace idops with ops->idkan
 	replace iznos with nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace izn_ost with nOstalo
 	replace ljudi with 1
 	
@@ -1086,6 +1121,9 @@ if found()
 	
 	replace iznos with iznos + nOsnovica
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace ljudi with ljudi + 1
 	
 	replace izn_ost with izn_ost + nOstalo
@@ -1123,6 +1161,9 @@ else
 	replace iznos with nOsnovica
 	replace izn_ost with nOstalo
 	replace iznos2 with iznos2 + nPorOl
+	replace iznos3 with iznos3 + nOsnov3
+	replace iznos4 with iznos4 + nOsnov4
+
 	replace ljudi with 1
 	replace t_iz_1 with nT_iz_1
 	replace t_iz_2 with nT_iz_2

@@ -3,11 +3,11 @@
 // -------------------------------------
 // obracun i prikaz poreza
 // -------------------------------------
-function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, nOsn )
+function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
 local cAlgoritam := ""
 
-if nOsn == nil
-	nOsn := 0
+if cTipPor == nil
+	cTipPor := ""
 endif
 
 select por
@@ -39,6 +39,14 @@ do while !eof()
 	
 	cAlgoritam := get_algoritam()
 	
+	// ako to nije taj tip poreza preskoci
+	if !EMPTY( cTipPor )
+		if por_tip <> cTipPor
+			skip
+			loop
+		endif
+	endif
+
 	if prow() > ( 55 + gPStranica )
 		FF
 	endif
@@ -170,14 +178,18 @@ do while !eof()
 			else
 			
 			  ? idops, ops->naz
-		        
-			  @ prow(), nC1 SAY iznos picture gpici
-		        	
-			  if nOsn == 0
-			  	nPom := round2(max(por->dlimit,por->iznos/100*iznos),gZaok2)
-			  else
-			  	nPom := round2(max(por->dlimit,por->iznos/100*nOsn),gZaok2)
+		       	  
+			  // ovo je osnovica za porez
+			  nTmpPor := iznos
+
+			  if por->por_tip == "B"
+			  	// ako je na bruto onda je ovo osnovica
+			  	nTmpPor := iznos3
 			  endif
+
+			  @ prow(), nC1 SAY nTmpPor picture gpici
+			  
+			  nPom := round2(max(por->dlimit,por->iznos/100*nTmpPor),gZaok2)
 			  
 			  @ prow(), pcol()+1 SAY nPom pict gpici
 		        
@@ -189,16 +201,12 @@ do while !eof()
 		        	nPorOps2 += nPom2
 		          else
 		        	
-				if nOsn == 0
-					Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,iznos,idops,NLjudi())
-		          	else
-					Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,nOsn,idops,NLjudi())
-				endif
+				Rekapld("POR"+por->id+idops,cgodina,cmjesec,nPom,nTmpPor,idops,NLjudi())
 			  endif
 		        
 			endif
 			
-			nOOP += iznos
+			nOOP += nTmpPor
 		        nPOLjudi += ljudi
 		        nPorOps += nPom
 		       
@@ -238,15 +246,20 @@ do while !eof()
      		? cLinija
    	else
      		
-		@ prow(),nc1 SAY nUNeto pict gpici
-     		@ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nUNeto),gZaok2) pict gpici
+		nTmpOsnova := nUNeto
+		if por->por_tip == "B"
+			nTmpOsnova := nPorOsnova
+		endif
+		
+		@ prow(),nC1 SAY nTmpOsnova pict gpici
+		@ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nTmpOsnova),gZaok2) pict gpici
      		if cUmPD=="D"
        			@ prow(),pcol()+1 SAY nPom2:=round2(max(dlimit,iznos/100*nUNeto2),gZaok2) pict gpici
        			@ prow(),pcol()+1 SAY nPom-nPom2 pict gpici
        			Rekapld("POR"+por->id,cgodina,cmjesec,nPom-nPom2,0)
        			nPor2+=nPom2
      		else
-       			Rekapld("POR"+por->id,cgodina,cmjesec,nPom,nUNeto,,"("+ALLTRIM(STR(nLjudi))+")")
+       			Rekapld("POR"+por->id,cgodina,cmjesec,nPom,nTmpOsnova,,"("+ALLTRIM(STR(nLjudi))+")")
      		endif
      		
 		nPor += nPom

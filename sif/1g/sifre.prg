@@ -199,47 +199,54 @@ return .f.
 
 
 // ------------------------------
+// sifrarnik parametri obracuna
 // ------------------------------
 function P_ParObr(cId,dx,dy)
 local nArr
 nArr:=SELECT()
-private imekol
-private kol:={}
+private imekol := {}
+private kol := {}
 
 select (F_PAROBR)
 if (!used())
 	O_PAROBR
 endif
-select (nArr)
 
-ImeKol:={  { padr("ID",8), {|| id}, "id", {|| wid:=val(wid), .t. }, {|| wid:=str(wid,2), .t.}  },;
-           { padr("Opis",10), {|| naz}, "naz" } ,;
-           { padr(IF(gBodK=="1","Vrijednost boda","Vr.koeficijenta"),15), {|| vrbod}, "vrbod" } ,;
-           { padr("Br.Sati",5), {|| k1} , "k1"  }  ,;
-           { padr("Koef2",5), {|| k2} , "k2"  }  ,;
-           { padr("Bruto osn.",6), {|| k3} , "k3"  }  ,;
-           { padr("Koef4",6), {|| k4} , "k4"  }  ,;
-           { padr("Prosj.LD",12), {|| Prosld} , "PROSLD"  }  ;
-         }
+AADD(ImeKol,{ padr("ID",8), {|| id}, "id", {|| wid:=val(wid), .t. },{|| wid:=str(wid,2), .t.}  })
+
 if lViseObr
-	ASIZE(ImeKol,LEN(ImeKol)+1)
-  	AINS(ImeKol,2)
-  	ImeKol[2] := { padr("Obracun",10) , {|| obr} , "obr" }
+  	AADD(ImeKol, { padr("Obracun",10) , {|| obr} , "obr" } )
 endif
 
-if IzFMKINI("LD","VrBodaPoRJ","N",KUMPATH)=="D"
-	ASIZE(ImeKol,LEN(ImeKol)+1)
-  	AINS(ImeKol,3-IF(lViseObr,0,1))
-  	ImeKol[3-IF(lViseObr,0,1)] := { "RJ" , {|| IDRJ} , "IDRJ" }
+if IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
+  	AADD(ImeKol, { "RJ" , {|| IDRJ} , "IDRJ" } )
 endif
 
-for i:=1 to LEN(ImeKol)
-	AADD(kol,i)
+AADD(ImeKol, { padr("Opis",10), {|| naz}, "naz" } )
+AADD(ImeKol, { padr(IF(gBodK == "1","Vrijednost boda","Vr.koeficijenta"),15),;
+	{|| vrbod}, "vrbod" } )
+
+// ako postoji polje i ako je nova varijanta obracuna
+if parobr->(FIELDPOS("K5")) <> 0 .and. gVarObracun == "2"
+	AADD(ImeKol, { padr("n.koef.1",8), {|| k5} , "k5"  } )
+	AADD(ImeKol, { padr("n.koef.2",8), {|| k6} , "k6"  } )
+endif
+
+AADD(ImeKol, { padr("Br.Sati",5), {|| k1} , "k1"  } )
+AADD(ImeKol, { padr("Koef2",5), {|| k2} , "k2"  } )
+AADD(ImeKol, { padr("Bruto osn.",6), {|| k3} , "k3"  }  )
+AADD(ImeKol, { padr("Koef4",6), {|| k4} , "k4"  } )
+AADD(ImeKol, { padr("Prosj.LD",12), {|| Prosld} , "PROSLD"  }  )
+
+for i := 1 to LEN( ImeKol )
+	AADD( kol, i )
 next
+
+select (nArr)
 
 return PostojiSifra(F_PAROBR, 1, 10, 70, Lokal("Parametri obracuna"), ;
 	@cId, dx, dy)
-*}
+
 
 
 // --------------------------------------------
@@ -295,7 +302,7 @@ return .t.
 // ---------------------------------------- 
 function v_dop_tip( cTip)
 if EMPTY(cTip)
-	msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade")
+	msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto")
 endif
 return .t.
 

@@ -275,10 +275,10 @@ if gPrBruto=="D"
 	
 	nOsnZaBr := nOsnNeto
 
-	nBo := round2( nOsnZaBr * 1.52555  , gZaok2 )
+	nBo := round2( nOsnZaBr * parobr->k5  , gZaok2 )
 
 	if UBenefOsnovu()
-		nBFo := round2( ((( nOsnZaBr )-(&gBFForm)) * 1.52555 ), gZaok2 )
+		nBFo := round2( ((( nOsnZaBr )-(&gBFForm)) * parobr->k5 ), gZaok2 )
 	endif
 
 	// bruto placa iz neta...
@@ -286,7 +286,7 @@ if gPrBruto=="D"
 	? cMainLine
 	? cLMSK + "1. BRUTO PLACA :  ", ;
 	        ALLTRIM(STR(nOsnZaBr)) + " * " + ;
-		"1.52555 = "
+		ALLTRIM(STR(parobr->k5))
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -327,8 +327,8 @@ if gPrBruto=="D"
 		PozicOps(DOPR->poopst)
 			
 		// preskoci zbirne doprinose
-		if dopr->id $ "70#80#90"
-			skip 1
+		if LEFT( dopr->id, 1 ) <> "1"
+			skip
 			loop 
 		endif
 
@@ -426,6 +426,7 @@ if gPrBruto=="D"
 	? cMainLine
 
 	// razrada poreza na platu ....
+	// u ovom dijelu idu samo porezi na bruto TIP = "B"
 
 	? cLMSK + Lokal("5. AKONTACIJA POREZA NA DOHODAK")
 
@@ -449,7 +450,8 @@ if gPrBruto=="D"
 			LOOP
 		ENDIF
 		
-		if por->id <> "10"
+		// sracunaj samo poreze na bruto
+		if por->por_tip <> "B"
 			skip 
 			loop
 		endif

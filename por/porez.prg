@@ -54,7 +54,7 @@ local i
 cAlg := get_algoritam()
 cPrObr := get_pr_obracuna()
 
-if cPrObr == "N" .or. cPrObr == " "
+if cPrObr == "N" .or. cPrObr == " " .or. cPrObr == "B"
 
 	// osnovica je neto
 	nIznos := nOsnNeto
@@ -129,9 +129,10 @@ if lIspis == .t.
 		@ prow(),pcol()+1 SAY aPor[i, 5] pict gPici
 		@ prow(),pcol()+1 SAY aPor[i, 4] pict gPici
 	else
-		cTmp := ALLTRIM(STR(aPor[i, 5])) + ;
+		cTmp := aPor[i, 2] + " " + ;
+			ALLTRIM(STR(aPor[i, 5])) + ;
 			" * " + ALLTRIM(STR(aPor[i, 3], 2)) + "%"
- 		@ prow(),pcol()+1 SAY SPACE(24) + cTmp
+ 		@ prow(),pcol()+1 SAY SPACE(10) + cTmp
 	endif
 endif
 

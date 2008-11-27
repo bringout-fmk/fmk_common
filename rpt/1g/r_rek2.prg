@@ -16,12 +16,13 @@ private cFilt1:=""
 private cNaslovRekap:=Lokal("LD: Rekapitulacija primanja")
 private aUsl1, aUsl2
 private aNetoMj
-private cDoprSpace := SPACE(2)
+private cDoprSpace := ""
 private cLmSk := ""
 
 cTpLine := _gtprline()
 cDoprLine := _gdoprline(cDoprSpace)
 cMainLine := _gmainline()
+cMainLine := REPLICATE("-", 2) + cMainLine
 
 lPorNaRekap:=IzFmkIni("LD","PoreziNaRekapitulaciji","N",KUMPATH)=="D"
 
@@ -156,6 +157,8 @@ nUNeto:=0
 nUNetoOsnova:=0
 nDoprOsnova := 0
 nDoprOsnOst := 0
+nPorOsnova := 0
+nUPorOsnova := 0
 nULOdbitak := 0
 nUBNOsnova:=0
 nUDoprIz := 0
@@ -167,6 +170,8 @@ nUOdbiciM:=0
 nLjudi:=0
 
 private aNeta:={}
+
+altd()
 
 select ld
 
@@ -255,23 +260,23 @@ ProizvTP()
 // setuje se varijabla nBO
 get_bruto()
 
-// 2. razradi doprinose
+// 2. DOPRINOSI
 private nDopr
 private nDopr2
+
+? Lokal("2. OBRACUN DOPRINOSA")
+? cMainLine
 
 cLinija := cDoprLine
 // obracunaj i prikazi doprinose
 obr_doprinos( @nDopr, @nDopr2, nBO )
 
-if cUmPD == "D"
-	P_10CPI
-endif
-
+// oporezivi dohodak
 nOporDohod := nBO - nUDoprIz 
 
 // OPOREZIVI DOHODAK UKUPNO
 ? cMainLine
-? Lokal("3. OPOREZIVI DOHODAK UKUPNO")
+? Lokal("3. OPOREZIVI DOHODAK UKUPNO (bruto - dopr.iz)")
 @ prow(), 60 SAY nOporDohod 
 
 
@@ -280,24 +285,48 @@ nOporDohod := nBO - nUDoprIz
 ? Lokal("4. LICNI ODBICI UKUPNO")
 @ prow(), 60 SAY nULOdbitak 
 
+nPorOsn := nOporDohodak - nULOdbitak
+
 // osnovica za porez na dohodak
 ? cMainLine
-? Lokal("5. OSNOVICA POREZA NA DOHODAK UKUPNO")
-@ prow(), 60 SAY nULOdbitak 
-
-nPorOsn := nOporDohodak - nULOdbitak
+? Lokal("5. OSNOVICA ZA OBRACUN POREZA NA DOHODAK (3 - 4)")
+@ prow(), 60 SAY nPorOsn 
+? cMainLine
 
 private nPor
 private nPor2 
 private nPorOps
 private nPorOps2
-	
-obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, nPorOsn )
-	
-if !lGusto
-	?
-	?
-endif
+
+nPorez1 := 0
+nPorez2 := 0
+nPorOp1 := 0
+nPorOp2 := 0
+nPorOl1 := 0
+
+// obracunaj porez na bruto
+obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
+
+nPorez1 += nPor
+nPorez2 += nPor2
+nPorOp1 += nPorOps
+nPorOp2 += nPorOps2
+nPorOl1 += nUPorOl
+
+// obracun ostalog poreza na neto
+? cMainLine
+? Lokal("6. OSNOVICA ZA OBRACUN OSTALIH POREZA (NA NETO)")
+@ prow(), 60 SAY nUNetoOsnova 
+? cMainLine
+
+// obracunaj ostali porez na neto
+obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "N" )
+
+nPorez1 += nPor
+nPorez2 += nPor2
+nPorOp1 += nPorOps
+nPorOp2 += nPorOps2
+nPorOl1 += nUPorOl
 
 ?
 
@@ -323,9 +352,9 @@ endif
 @ prow(),pcol()+1 SAY nUOdbiciP pict gpici  // dodatna primanja van neta
 ? "            " + Lokal("POREZI:")
 IF cUmPD=="D"
-	@ prow(),pcol()+1 SAY nPor-nUPorOl-nPor2    pict gpici
+	@ prow(),pcol()+1 SAY nPorez1-nPorOl1-nPorez2    pict gpici
 ELSE
-	@ prow(),pcol()+1 SAY nPor-nUPorOl    pict gpici
+	@ prow(),pcol()+1 SAY nPorez1-nPorOl1    pict gpici
 ENDIF
 ? "         " + Lokal("DOPRINOSI:")
 IF cUmPD=="D"
@@ -333,13 +362,15 @@ IF cUmPD=="D"
 ELSE
 	@ prow(),pcol()+1 SAY nDopr    pict gpici
 ENDIF
+
 ? cLinija
+
 IF cUmPD=="D"
 	? Lokal(" POTREBNA SREDSTVA:")
-	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPor-nUPorOl)+nDopr-nPor2-nDopr2    pict gpici
+	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPorez1-nPorOl1)+nDopr-nPorez2-nDopr2    pict gpici
 ELSE
 	? Lokal(" POTREBNA SREDSTVA:")
-	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPor-nUPorOl)+nDopr    pict gpici
+	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPorez1-nPorOl1)+nDopr    pict gpici
 ENDIF
 ? cLinija
 ?
@@ -426,6 +457,9 @@ do while !eof() .and. eval(bUSlov)
  	_oosnneto := 0
 	_oosnostalo := 0
 
+	// licni odbitak za radnika
+	nRadn_lod := ( gOsnLOdb * radn->klo )
+
  	// vrati osnovicu za neto i ostala primanja
  	for i:=1 to cLDPolja
  		
@@ -475,7 +509,24 @@ do while !eof() .and. eval(bUSlov)
 			endif
 		endif
  	next
- 
+
+	// br.osn za radnika
+	nRadn_bo := _oosnneto * parobr->k5 
+
+	// da bi dobio osnovicu za poreze
+	// moram vidjeti i koliko su doprinosi IZ
+	nRadn_diz := u_dopr_iz( _oosnneto, _oosnostalo )
+	
+	// osnovica za poreze
+	nRadn_posn := (nRadn_bo - nRadn_diz ) - nRadn_lod
+	
+	
+	// ovo je total poreske osnove za radnika
+	nPorOsnova := nRadn_posn
+
+	// ovo je total poreske osnove
+	nUPorOsnova += nPorOsnova
+
  	// obradi poreze....
 	
  	select por
@@ -486,8 +537,6 @@ do while !eof() .and. eval(bUSlov)
  	
 	do while !eof()  
 		
-		// porezi
-   		
 		cAlgoritam := get_algoritam()
 		
 		PozicOps( POR->poopst )
@@ -497,13 +546,15 @@ do while !eof() .and. eval(bUSlov)
 			LOOP
    		endif
    	
-		aPor := obr_por( por->id, _oosnneto, _oosnostalo )
+		if por->por_tip == "B"
+			aPor := obr_por( por->id, nRadn_posn, 0 )
+		else
+			aPor := obr_por( por->id, _oosnneto, _oosnostalo )
+		endif
 
 		// samo izracunaj total, ne ispisuj porez
 		nPor += isp_por( aPor, cAlgoritam, "", .f. )
 
-		//nPor += round2(max(dlimit,iznos/100*_oUNeto),gZaok2)
-		
 		if cAlgoritam == "S"
 			PopuniOpsLd( cAlgoritam, por->id, aPor )
 		endif
@@ -514,6 +565,7 @@ do while !eof() .and. eval(bUSlov)
 		
  	enddo
  
+ 	// napuni opsld sa ovim porezom
  	PopuniOpsLD()
 
 	nPom:=ASCAN(aNeta,{|x| x[1]==vposla->idkbenef})
@@ -554,7 +606,7 @@ do while !eof() .and. eval(bUSlov)
 	nUNeto += _UNeto  
 	// ukupno neto iznos
 
-	nULOdbitak += ( gOsnLOdb * radn->klo )
+	nULOdbitak += nRadn_lod
 
 	nUNetoOsnova += _oUNeto  
 	// ukupno neto osnova 
@@ -613,15 +665,52 @@ static function get_bruto()
 nBO := 0
 
 ? cMainLine
-? Lokal("1. BRUTO PLACA UKUPNO :")
-@ prow(), 60 SAY nBo := round2( 1.52555 * nUNetoOsnova, gZaok2) pict gpici
+? Lokal("1. BRUTO OSNOVICA UKUPNO:"), SPACE(4) + ALLTRIM(STR(parobr->k5)) + ;
+	" * " + ALLTRIM(STR(nUNetoOsnova)) + " ="
+@ prow(), 60 SAY nBo := round2( parobr->k5 * nUNetoOsnova, gZaok2) pict gpici
 ? cMainLine
 
 return 
 
 
 
+// ------------------------------------------------
+// vraca ukupno doprinosa IZ plate, 1X
+// ------------------------------------------------
+function u_dopr_iz( nOsn_neto, nOsn_ostalo )
 
+select dopr
+go top
+	
+nDopOsn := 0
+nU_dop_iz := 0
 
+do while !eof()
+		
+	// preskoci zbirne doprinose
+	if dopr->id <> "1X"
+		skip
+		loop 
+	endif
 
+	if dopr->(FIELDPOS("DOP_TIP")) <> 0
+			
+		if dopr->dop_tip == "N" .or. dopr->dop_tip == " " 
+			nDopOsn := nOsn_neto
+		elseif dopr->dop_tip == "2"
+			nDopOsn := nOsn_ostalo
+		elseif dopr->dop_tip == "P"
+			nDopOsn := nOsn_neto + nOsn_ostalo
+		endif
+		
+	endif
+		
+	nU_dop_iz += max(dlimit,round(iznos/100 * ;
+			(nDopOsn * parobr->k5), gZaok2) )
+			
+	skip 1
+		
+enddo
+
+return nU_dop_iz
 
