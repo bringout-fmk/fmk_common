@@ -156,6 +156,7 @@ nULOdbitak := 0
 nUBNOsnova:=0
 nUDoprIz := 0
 nUIznos:=0
+nPorOsnova:=0
 nUSati:=0
 nUOdbici:=0
 nUOdbiciP:=0

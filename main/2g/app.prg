@@ -253,7 +253,7 @@ public gVarObracun := " "
 // default vrijednost osnovnog licnog odbitka 
 public gOsnLOdb := 300
 public gIzdanje := SPACE(10)
-public gGodina := ALLTRIM( STR( YEAR( DATE() ) ) )
+public gGodina := YEAR( DATE() )
 public gZaok:=2
 public gZaok2:=2
 public gValuta:="KM "
