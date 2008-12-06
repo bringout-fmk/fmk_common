@@ -151,7 +151,7 @@ if fNulirati
 	fNul:=.t.
 else
 	fNul:=.f.
-endif  // kumulativ datoteke
+endif  
 
 Skloni(PRIVPATH,"LDSM.DBF",cSezona,finverse,fda,fnul)
 
