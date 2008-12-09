@@ -427,6 +427,10 @@ ImeKol:={ { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
 
 Kol:={}
 
+if OPS->(fieldpos("REG"))<>0
+	AADD( ImeKol, { padr("Region",20), {||  reg}, "reg" } )
+endif
+
 if OPS->(fieldpos("PNE"))<>0
 	AADD( ImeKol, { padr("Bez poreza:",20), {||  pne}, "pne" } )
 endif

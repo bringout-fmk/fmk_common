@@ -1,6 +1,67 @@
 #include "ld.ch"
 
 
+// -----------------------------------------------
+// vrati zadnji dan mjeseca
+// -----------------------------------------------
+static function getlday( nMonth )
+local nDay := 0
+do case
+	case nMonth = 1
+		nDay := 31
+	case nMonth = 2
+		nDay := 28
+	case nMonth = 3
+		nDay := 31
+	case nMonth = 4
+		nDay := 30
+	case nMonth = 5
+		nDay := 31
+	case nMonth = 6
+		nDay := 30
+	case nMonth = 7
+		nDay := 31
+	case nMonth = 8
+		nDay := 31
+	case nMonth = 9
+		nDay := 30
+	case nMonth = 10
+		nDay := 31
+	case nMonth = 11
+		nDay := 30
+	case nMonth = 12
+		nDay := 31
+endcase
+return nDay
+
+
+// ----------------------------------------------
+// da li je radnik u republ.srpskoj
+// gleda polje region "REG" iz opcina
+// " " ili "1" = federacija
+// "2" = rs
+// ----------------------------------------------
+static function in_rs( cOpsst, cOpsrad )
+local lRet := .f.
+local nTArea := SELECT()
+O_OPS
+select ops
+hseek cOpsrad
+if ops->reg == "2"
+	lRet := .t.
+endif
+select (nTArea)
+return lRet
+
+
+// -----------------------------------------------
+// vrati prvi dan u mjesecu
+// -----------------------------------------------
+static function getfday( nMonth )
+local nDay := 1
+return nDay
+
+
 // ------------------------------------------------
 // specifikacija place, novi obracun
 // ------------------------------------------------
@@ -18,8 +79,9 @@ local nPreskociRedova
 local cLin
 local nPom
 local aOps:={}
+local cRepSr := "N"
 private aSpec:={}
-private cFNTZ:="N"
+private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999"+IF(gZaok>0,PADR(".",gZaok+1,"9"),"")
 private gPici2:="9,999,999,999,999,999"+IF(gZaok2>0,PADR(".",gZaok2+1,"9"),"")
 private gPici3:="999,999,999,999.99"
@@ -43,11 +105,23 @@ nOstOb1:=0
 nOstOb2:=0
 nOstOb3:=0
 nOstOb4:=0
-nMjesec:=gMjesec
-nGodina:=gGodina
+
+// prvi dan mjeseca
+nDanOd := getfday( gMjesec )
+nMjesecOd:=gMjesec
+nGodinaOd:=gGodina
+// posljednji dan mjeseca
+nDanDo := getlday( gMjesec )
+nMjesecDo:=gMjesec
+nGodinaDo:=gGodina
+
+// varijable izvjestaja
+nMjesec := gMjesec
+nGodina := gGodina
+
 cObracun:=gObracun
 cMRad:="17"
-cPorOl:="33"
+cPorOl:="  "
 cBolPr:="  "
 cObust:=SPACE(60)
 cOstObav:=SPACE(60)
@@ -69,9 +143,11 @@ cDopr6:="21"
 cDopr7:="22"
 cDoprOO:=""
 cPorOO:=""
-cIspl1:=SPACE(30)
-cIspl2:=SPACE(15)
-cIspl3:=SPACE(20)  // naziv, sjediste i broj racuna isplatioca
+cFirmNaz:=SPACE(35)
+cFirmAdresa:=SPACE(35)
+cFirmOpc:=SPACE(35)  
+cFirmVD:=SPACE(50)  
+// naziv, sjediste i broj racuna isplatioca
 nLimG1:=0
 nLimG2:=0
 nLimG3:=0
@@ -97,24 +173,17 @@ private cSection:="4"
 private cHistory:=" "
 private aHistory:={}
 
-RPar("i1",@cIspl1)
-RPar("i2",@cIspl2)  
-RPar("i3",@cIspl3)
+RPar("i1",@cFirmNaz)
+cFirmNaz := PADR(cFirmNaz, 35)
+RPar("i2",@cFirmAdresa)  
+cFirmAdresa := PADR(cFirmAdresa, 35)
+RPar("i3",@cFirmOpc)
+cFirmOpc := PADR(cFirmOpc, 35)
+RPar("i0",@cFirmVD)
+cFirmVD := PADR(cFirmVD, 50)
 RPar("i4",@cMRad) 
-RPar("i5",@cPorOl)
-RPar("i6",@cBolPr)
-
-cBolPr:=TRIM(cBolPr)
-
-if (!EMPTY(cBolPr) .and. Right(cBolPr,1)<>";")
-	cBolPr:=cBolPr+";"
-endif
-
-cBolPr:=PadR(cBolPr,20)
-
 RPar("i7",@cObust)
 RPar("i8",@cOstObav)
-RPar("i9",@cFNTZ)
 RPar("d1",@cDopr1)
 RPar("d2",@cDopr2)
 RPar("d3",@cDopr3)
@@ -140,48 +209,47 @@ RPar("st",@qqOpSt)
 qqIdRj:=PadR(qqIdRj,80) 
 qqOpSt:=PadR(qqOpSt,80)
 
-// maticni broj, porezni djelovodni broj , datum isplate place
-
 cMatBr:=IzFmkIni("Specif","MatBr","--",KUMPATH)
-cPorDBR:=IzFmkIni("Specif","PorDBR","--",KUMPATH)
-cSBR:=IzFmkIni("Specif","SBR","--",KUMPATH)
-cSPBR:=IzFmkIni("Specif","SPBR","--",KUMPATH)
-cMatBR:=padr(cMatBr,13) ; cPorDBR := Padr(cPorDBR,8)
-cNOPU:=space(10)  // broj koji dodjeljuje poreska uprava
-dDatIspl:=date()
-
-if IzFmkIni('LD','StatBroj9mjesta','N',KUMPATH)=='D'
-	cSBR:=padr(cSBR,9)
-else
-	cSBR:=padr(cSBR,8)
-endif
-
-cSPBR:=padr(cSPBR,4)
+cMatBR:=padr(cMatBr,13) 
+dDatIspl := date()
 
 do while .t.
 	Box(,22+IF(gVarSpec=="1",0,1),75)
-     		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): "  GET qqIdRJ PICT "@!S20"
-     		@ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): "  GET qqOpSt PICT "@!S20"
+     		
+		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
+			GET qqIdRJ PICT "@!S20"
+     		@ m_x+ 1,col()+2 SAY "Spec.za RS" GET cRepSr ;
+			VALID cRepSr $ "DN" PICT "@!"
 
-     		@ m_x+ 3,m_y+ 2 SAY "Mjesec:"  GET  nMjesec  pict "99"
-     		if lViseObr
-       			@ m_x+ 3,col()+2 SAY "Obracun:"  GET  cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+		@ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): " ;
+		 	GET qqOpSt PICT "@!S20"
+		
+		if lViseObr
+       			@ m_x+ 2,col()+1 SAY "Obr.:" GET cObracun ;
+				WHEN HelpObr(.t.,cObracun) ;
+				VALID ValObr(.t.,cObracun)
      		endif
-     		@ m_x+ 3,col()+2 SAY "Godina:"  GET  nGodina  pict "9999"
-    		@ m_x+ 3,col()+2 SAY "Format iznosa 9.999,99 (D/N)?"  GET  cFNTZ  VALID cFNTZ$"DN" pict "@!"
-     		@ m_x+ 4,m_y+ 2 SAY "Naziv    " GET cIspl1
-     		@ m_x+ 5,m_y+ 2 SAY "sjediste " GET cIspl2
-     		@ m_x+ 6,m_y+ 2 SAY "br.racuna" GET cIspl3
-     		@ m_x+ 4,m_y+ 50 SAY "     No :" GET cNoPU
-     		@ m_x+ 5,m_y+ 50 SAY "Mat.br  :" GET cMatBR
-     		@ m_x+ 6,m_y+ 50 SAY "Por.d.br:" GET cPorDBR
-     		@ m_x+ 7,m_y+ 50 SAY "Dat.ispl:" GET dDatIspl
-     		@ m_x+ 8,m_y+ 50 SAY "Stat.broj" GET cSBR
-     		@ m_x+ 9,m_y+ 50 SAY "Stat.podb" GET cSPBR
-     		@ m_x+ 8,m_y+ 2 SAY "Sifra por.olaksice" GET cPorOl VALID LD->(FIELDPOS("I"+cPorOl))>0 .or. EMPTY(cPorOl) PICT "99"
-     		@ m_x+ 9,m_y+ 2 SAY "Sifra bolovanja 'preko 42' " GET cBolPr PICT "@!S20"
-		@ m_x+10,m_y+ 2 SAY "Obustave (nabrojati sifre - npr. 29;30;)" GET cObust  PICT "@!S20"
-     		@ m_x+11,m_y+ 2 SAY "Ostale obaveze (nabrojati sifre - npr. D->AX;D->BX;)" GET cOstObav  PICT "@!S20"
+     	
+     		@ m_x+ 3,m_y+ 2 SAY "Period od:" GET nDanOd pict "99"
+     		@ m_x+ 3,col()+1 SAY "/" GET nMjesecOd pict "99"
+     		@ m_x+ 3,col()+1 SAY "/" GET nGodinaOd pict "9999"
+     		@ m_x+ 3,col()+1 SAY "do:" GET nDanDo pict "99"
+     		@ m_x+ 3,col()+1 SAY "/" GET nMjesecDo pict "99"
+     		@ m_x+ 3,col()+1 SAY "/" GET nGodinaDo pict "9999"
+     	
+		
+     		@ m_x+ 4,m_y+ 2 SAY " Naziv: " GET cFirmNaz
+     		@ m_x+ 5,m_y+ 2 SAY "Adresa: " GET cFirmAdresa
+     		@ m_x+ 6,m_y+ 2 SAY "Opcina: " GET cFirmOpc
+     		@ m_x+ 7,m_y+ 2 SAY "Vrsta djelatnosti: " GET cFirmVD
+     		
+     		@ m_x+ 4,m_y+ 52 SAY "ID.broj :" GET cMatBR
+     		@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
+     		
+		
+		@ m_x+9,m_y+ 2 SAY "Obustave (nabrojati sifre - npr. 29;30;)" ;
+			GET cObust  PICT "@!S20"
+     		@ m_x+10,m_y+ 2 SAY "Ostale obaveze (nabrojati sifre - npr. D->AX;D->BX;)" GET cOstObav  PICT "@!S20"
      		@ m_x+12,m_y+ 2 SAY "Doprinos za penz.i inv.osig. -iz plate" GET cDopr1
      		@ m_x+13,m_y+ 2 SAY "Doprinos za zdravstv.osigur. -iz plate" GET cDopr2
      		@ m_x+14,m_y+ 2 SAY "Doprinos za osig.od nezaposl.-iz plate" GET cDopr3
@@ -217,15 +285,13 @@ do while .t.
 enddo
 
 
-WPar("i1",cIspl1)
-WPar("i2",cIspl2)
-WPar("i3",cIspl3)
+WPar("i1",cFirmNaz)
+WPar("i2",cFirmAdresa)
+WPar("i3",cFirmOpc)
+WPar("i0",cFirmVD)
 WPar("i4",cMRad)
-WPar("i5",cPorOl)
-WPar("i6",cBolPr)
 WPar("i7",cObust)
 WPar("i8",cOstObav)
-WPar("i9",cFNTZ)
 WPar("d1",cDopr1)
 WPar("d2",cDopr2)
 WPar("d3",cDopr3)
@@ -260,9 +326,6 @@ PoDoIzSez(nGodina,nMjesec)
 // fmk.ini parametri
 cPom:=KUMPATH+"fmk.ini"
 UzmiIzIni(cPom,'Specif',"MatBr",cMatBr,'WRITE')
-UzmiIzIni(cPom,'Specif',"PorDBR",cPorDBR,'WRITE')
-UzmiIzIni(cPom,'Specif',"SBR",cSBR,'WRITE')
-UzmiIzIni(cPom,'Specif',"SPBR",cSPBR,'WRITE')
 
 cIniName:=EXEPATH+'proizvj.ini'
 
@@ -270,15 +333,21 @@ cIniName:=EXEPATH+'proizvj.ini'
  // Radi DRB6 iskoristio f-ju Razrijedi()
  //   npr.:    string  ->  s t r i n g
  //
-UzmiIzIni(cIniName,'Varijable',"NAZISJ", cIspl1+", "+cIspl2 ,'WRITE')
-UzmiIzIni(cIniName,'Varijable',"NOPU", cNoPU ,'WRITE')
-UzmiIzIni(cIniName,'Varijable',"GOD",Razrijedi(str(nGodina,4)),'WRITE')
-UzmiIzIni(cIniName,'Varijable',"MJ",Razrijedi(strtran(str(nMjesec,2)," ","0")),'WRITE')
-UzmiIzIni(cIniName,'Varijable',"BRRAC",cIspl3,'WRITE')
+UzmiIzIni(cIniName,'Varijable',"NAZ", cFirmNaz ,'WRITE')
+UzmiIzIni(cIniName,'Varijable',"ADRESA", cFirmAdresa ,'WRITE')
+UzmiIzIni(cIniName,'Varijable',"OPCINA", cFirmOpc ,'WRITE')
+UzmiIzIni(cIniName,'Varijable',"VRDJ", cFirmVD ,'WRITE')
+
+UzmiIzIni(cIniName,'Varijable',"GODOD",Razrijedi(str(nGodinaOd,4)),'WRITE')
+UzmiIzIni(cIniName,'Varijable',"GODDO",Razrijedi(str(nGodinaDo,4)),'WRITE')
+
+UzmiIzIni(cIniName,'Varijable',"MJOD",Razrijedi(strtran(str(nMjesecOd,2)," ","0")),'WRITE')
+UzmiIzIni(cIniName,'Varijable',"MJDO",Razrijedi(strtran(str(nMjesecDo,2)," ","0")),'WRITE')
+
+UzmiIzIni(cIniName,'Varijable',"DANOD",Razrijedi(strtran(str(nDanOd,2)," ","0")),'WRITE')
+UzmiIzIni(cIniName,'Varijable',"DANDO",Razrijedi(strtran(str(nDanDo,2)," ","0")),'WRITE')
+
 UzmiIzIni(cIniName,'Varijable',"MATBR",Razrijedi(cMatBR),'WRITE')
-UzmiIzIni(cIniName,'Varijable',"PORDBR",Razrijedi(cPorDBR),'WRITE')
-UzmiIzIni(cIniName,'Varijable',"SBR",Razrijedi(cSBR),'WRITE')
-UzmiIzIni(cIniName,'Varijable',"SPBR",Razrijedi(cSPBR),'WRITE')
 UzmiIzIni(cIniName,'Varijable',"DATISPL",DTOC(dDatIspl),'WRITE')
 
 if lViseObr
@@ -327,7 +396,22 @@ ENDIF
    
    SELECT RADN
    HSEEK LD->idradn
-   
+  
+   // provjeri da li se radi o republici srpskoj
+   if cRepSr == "N"
+   	if in_rs( radn->idopsst, radn->idopsrad )
+		select ld
+		skip
+		loop
+	endif
+   else
+   	if !in_rs( radn->idopsst, radn->idopsrad )
+		select ld
+		skip
+		loop
+	endif
+   endif
+
    SELECT LD
    
    IF ! ( RADN->(&aUslOpSt) )
@@ -647,12 +731,27 @@ ENDIF
  // PIO iz + PIO na placu
  nPom:=nDopr1x+nDopr5x
  UzmiIzIni(cIniName,'Varijable','D20', FormNum2(nPom,16,gPici2), 'WRITE')
+
  // zdravsveno iz + zdravstveno na placu
  nPom:=nDopr2x+nDopr6x
+ nPom2 := nPom
  UzmiIzIni(cIniName,'Varijable','D21', FormNum2(nPom,16,gPici2), 'WRITE')
+ 
+ // zdravstvo za RS
+ nPom := nPom2 * 0.09
+ nD21a := nPom
+ UzmiIzIni(cIniName,'Varijable','D21a', FormNum2(nPom,16,gPici2), 'WRITE')
+
+ 
  // nezaposlenost iz + nezaposlenost na placu
  nPom:=nDopr3x+nDopr7x
+ nPom2 := nPom
  UzmiIzIni(cIniName,'Varijable','D22', FormNum2(nPom,16,gPici2), 'WRITE')
+ 
+ // nezaposlenost za RS
+ nPom := nPom2 * 0.30
+ nD22a := nPom
+ UzmiIzIni(cIniName,'Varijable','D22a', FormNum2(nPom,16,gPici2), 'WRITE')
 
  nPom=nPorNaPlatu-nPorOlaksice
  UzmiIzIni(cIniName,'Varijable','P23', FormNum2(nPom,16,gPici2), 'WRITE')
@@ -664,18 +763,34 @@ ENDIF
  nPom=nOstaleObaveze + nPorezOstali
  UzmiIzIni(cIniName,'Varijable','O14I', FormNum2(nPom,16,gPici2), 'WRITE')
 
-
-IniRefresh()
-//Odstampaj izvjestaj
+ // ukupno za RS obaveze
+ nPom := nDopr1x+nDopr5x+nD21a+nDopr3x+nDopr7x+nD22a+nPorNaPlatu
+ UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
+ 
+ IniRefresh()
+ //Odstampaj izvjestaj
 
 if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
- private cKomLin:="DelphiRB "+IzFmkIni("Specif","NazRTM","ldspec", KUMPATH)+" "+PRIVPATH+"  DUMMY 1"
+ cSpecRtm := "LDSPEC"
+ 
+ if cRepSr == "D"
+ 	cSpecRtm := cSpecRtm + "RS"
+ else
+ 	cSpecRtm := cSpecRtm + "B"
+ endif
+
+ private cKomLin := "DelphiRB " + cSpecRtm + ;
+	" " + PRIVPATH + "  DUMMY 1"
+
  cPom := alltrim(IzFmkIni("Specif","LijevaMargina","-",KUMPATH))
+ 
  if cPom!="-"
   cKomLin += " lmarg:"+cPom
  endif
+ 
  cPom := alltrim(IzFmkIni("Specif","GornjaMargina","-",KUMPATH))
+ 
  if cPom!="-"
   cKomLin += " tmarg:"+cPom
  endif
