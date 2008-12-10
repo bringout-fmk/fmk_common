@@ -153,4 +153,48 @@ endif
 return 1
 
 
+// ----------------------------------------------------------
+// promjena cijene na artiklu unutar ugovora - grupno
+// ----------------------------------------------------------
+function ug_ch_price()
+local cArtikal := SPACE(10)
+local nCijena := 0
+local nCnt
+local GetList:={}
+
+Box(,1,60)
+	@ m_x + 1, m_y + 2 SAY "Artikal:" GET cArtikal VALID !EMPTY(cArtikal)
+	@ m_x + 1, col() + 2 SAY "-> cijena:" GET nCijena PICT "99999.999"
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// ako je sve ok
+O_RUGOV
+select rugov
+go top
+
+nCnt := 0
+
+Box(,1, 50)
+do while !EOF()
+
+	if field->idroba == cArtikal
+		replace field->cijena with nCijena
+		
+		++nCnt
+		@ m_x + 1, m_y + 2 SAY "zamjenjeno ukupno: " + ALLTRIM(STR(nCnt))
+	endif
+	
+	skip
+
+enddo
+BoxC()
+
+return
+
+
 

@@ -8,10 +8,12 @@ function SifUgovori()
 private Opc:={}
 private opcexe:={}
 
-AADD(Opc, "1. ugovori                      ")
+AADD(Opc, "1. ugovori                                    ")
 AADD(opcexe, {|| P_Ugov() })
 AADD(Opc, "2. parametri ugovora")
 AADD(opcexe, {|| DFTParUg(.f.) })
+AADD(Opc, "3. grupna zamjena cijene artikla u ugovoru")
+AADD(opcexe, {|| ug_ch_price() })
 private Izbor:=1
 
 Menu_SC("mugo")
