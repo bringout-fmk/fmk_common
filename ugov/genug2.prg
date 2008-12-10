@@ -10,19 +10,21 @@
 // ------------------------------
 // parametri generacije ugovora
 // ------------------------------
-static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt )
+static function g_ug_params(dDatObr, dDatGen, dDatVal, dDatLUpl, cKtoDug, cKtoPot, cOpis, cIdArt, nGenCh, cDestin, cDatLFakt, dLFakt )
 local dPom
 local nX := 2
 local nBoxLen := 20
 
 dDatGen := DATE()
 
+// datum posljednjeg fakturisanja
+dLFakt := g_lst_fakt()
 // datum posljenje uplate u fin
 dDatLUpl := CToD("")
 // konto kupac
-cKtoDug := PADR("2120", 7)
+cKtoDug := PADR("2110", 7)
 // konto dobavljac
-cKtoPot := PADR("5430", 7)
+cKtoPot := PADR("5410", 7)
 // opis
 cOpis := PADR("", 100)
 // artikal
@@ -96,6 +98,10 @@ if is_dest()
 	nX += 1
 	
 	@ m_x + nX, m_y + 2 SAY PADL("Gledati datum zadnjeg fakturisanja ?", nBoxLen + 16) GET cDatLFakt VALID cDatLFakt $ "DN" PICT "@!"
+	
+	nX += 1
+	
+	@ m_x + nX, m_y + 2 SAY PADL("Datum zadnjeg fakturisanja ?", nBoxLen + 16) GET dLFakt 
 
 else
 	cDestin := nil
@@ -143,6 +149,7 @@ local cDestin
 local nGenCh
 local cGenTipDok := ""
 local cDatLFakt
+local dLFakt
 
 // otvori tabele
 o_ugov()
@@ -150,7 +157,7 @@ o_ugov()
 // otvori parametre generacije
 lSetParams := .t.
 
-if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt ) == 0
+if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDug, @cKtoPot, @cOpis, @cIdArt, @nGenCh, @cDestin, @cDatLFakt, @dLFakt ) == 0
 	return
 endif
 
@@ -232,7 +239,7 @@ do while !EOF()
 	select ugov
 	
 	// provjeri da li treba fakturisati ???
-	if !treba_generisati( ugov->id, dDatObr, cDatLFakt )
+	if !treba_generisati( ugov->id, dDatObr, cDatLFakt, dLFakt )
 		skip
 		loop
 	endif
@@ -334,7 +341,7 @@ return cFirma
 // ------------------------------------------
 // da li partnera treba generisati
 // ------------------------------------------
-static function treba_generisati( cUgovId, dDatObr, cDatLFakt )
+static function treba_generisati( cUgovId, dDatObr, cDatLFakt, dLFakt )
 local nPMonth
 local nPYear
 local i
@@ -347,6 +354,7 @@ if cDatLFakt == nil
 	cDatLFakt := "N"
 endif
 
+
 PushWa()
 
 dPom := dDatObr
@@ -356,9 +364,11 @@ SEEK cUgovId
 
 
 // pogledaj datum zadnjeg fakturisanja....
-if cDatLFakt == "D" .and. !EMPTY( ugov->dat_l_fakt )
-	PopWa()
-	return .f.
+if cDatLFakt == "D" 
+	if !EMPTY( ugov->dat_l_fakt ) .and. ugov->dat_l_fakt < dLFakt
+		PopWa()
+		return .f.
+	endif
 endif
 
 // istekao je krajnji rok trajanja ugovora
@@ -952,3 +962,15 @@ BrisiPripr()
 return
 
 
+// ------------------------------------------------
+// vraca datum zadnjeg fakturisanja
+// ------------------------------------------------
+static function g_lst_fakt()
+local nTArea := SELECT()
+local dGen
+select gen_ug
+set order to tag "dat_obr"
+go bottom
+dGen := field->dat_gen
+select (nTArea)
+return dGen
