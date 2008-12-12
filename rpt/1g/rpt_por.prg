@@ -47,7 +47,7 @@ do while !eof()
 		endif
 	endif
 
-	if prow() > ( 55 + gPStranica )
+	if prow() > ( 53 + gPStranica )
 		FF
 	endif
 

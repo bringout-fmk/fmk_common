@@ -127,7 +127,7 @@ select ld
 
 START PRINT CRET
 ?
-P_10CPI
+P_12CPI
 
 if IzFMKIni("LD","RekapitulacijaGustoPoVisini","N",KUMPATH)=="D"
 	lGusto:=.t.
@@ -237,6 +237,8 @@ if IzFmkIni("LD","Rekap_ZaIsplatuRasclanitiPoTekRacunima","N",KUMPATH)=="D" .and
 	PoTekRacunima()
 endif
 
+nstr()
+
 ? cTpLine
 
 nPosY := 60
@@ -256,6 +258,8 @@ endif
 
 ProizvTP()
 
+nstr()
+
 // 1. BRUTO IZNOS
 // setuje se varijabla nBO
 get_bruto()
@@ -274,16 +278,21 @@ obr_doprinos( @nDopr, @nDopr2, nBO )
 // oporezivi dohodak
 nOporDohod := nBO - nUDoprIz 
 
+nstr()
+
 // OPOREZIVI DOHODAK UKUPNO
 ? cMainLine
 ? Lokal("3. OPOREZIVI DOHODAK UKUPNO (bruto - dopr.iz)")
 @ prow(), 60 SAY nOporDohod 
 
+nstr()
 
 // LICNI ODBITCI
 ? cMainLine
 ? Lokal("4. LICNI ODBICI UKUPNO")
 @ prow(), 60 SAY nULOdbitak 
+
+nstr()
 
 nPorOsn := nOporDohodak - nULOdbitak
 
@@ -330,15 +339,7 @@ nPorOl1 += nUPorOl
 
 ?
 
-if prow() > 55 + gpStranica
-	FF
-endif
-
 cLinija := "---------------------------------"
-
-if prow() > 49 + gPStranica
-	FF
-endif
 
 ? cLinija
 ? "     " + Lokal("NETO PRIMANJA:")
@@ -382,8 +383,7 @@ endif
 ? Lokal("Prosjecni neto/satu je"),alltrim(transform(nUNeto,gpici)),"/",alltrim(str(nUSati)),"=",alltrim(transform(nUNeto/nUsati,gpici)),"*",alltrim(transform(parobr->k1,"999")),"=",alltrim(transform(nUneto/nUsati*parobr->k1,gpici))
 
 
-
-P_10CPI
+P_12CPI
 ?
 ?
 ?  PADC("     " + Lokal("Obradio:") + "                                 " + Lokal("Direktor:") + "    ",80)
@@ -408,6 +408,13 @@ END PRINT
 #endif
 
 CLOSERET
+return
+
+
+static function nstr()
+if prow() > 52 + gpStranica
+	FF
+endif
 return
 
 
