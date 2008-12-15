@@ -384,7 +384,7 @@ object ppReport: TppReport
       Font.Size = 8
       Font.Style = []
       Lines.Strings = (
-        '#U017#')
+        '#N19I#')
       TextAlignment = taRightJustified
       Transparent = True
       mmHeight = 3704
