@@ -287,6 +287,9 @@ public gFSpec:=PADR("SPEC.TXT",12)
 public gReKrOs:="X"
 public gReKrKP:="1"
 public gVarPP:="1"
+public gPotpRpt:="N"
+public gPotp1:=PADR("PADL('Potpis:',70)",150)
+public gPotp2:=PADR("PADL('_________________',70)",150)
 public _LR_:=6
 public _LK_:=6
 public lViseObr:=.f.
@@ -338,6 +341,10 @@ Rpar("aH",@gAHonorar)
 Rpar("z2",@gZaok2)
 Rpar("zo",@gZaok)
 Rpar("lo",@gOsnLOdb)
+Rpar("pr",@gPotpRpt)
+Rpar("P1",@gPotp1)
+Rpar("P2",@gPotp2)
+
 //Rpar("tB",@gTabela)
 
 select (F_PARAMS)

@@ -239,11 +239,7 @@ ENDIF
 @ prow(),pcol()+1 SAY  nT2 pict gpici
 ? m
 ?
-if IsFakultet()
-	ShowPPFakultet()
-else
-	ShowPPDef()
-endif
+p_potpis()
 ?
 ?
 FF

@@ -176,7 +176,10 @@ return
 function SetPrikaz()
 private GetList:={}
 
-Box(,7,77)
+gPotp1 := PADR(gPotp1, 150)
+gPotp2 := PADR(gPotp2, 150)
+
+Box(,9,77)
 	@ m_x+1,m_y+2 SAY "Krediti-rekap.po 'na osnovu' (D/N/X)?" GET gReKrOs VALID gReKrOs $ "DNX" PICT "@!"
       	@ m_x+2,m_y+2 SAY "Na kraju obrade odstampati listic D/N:" GET gListic  pict "@!" valid glistic $ "DN"
       	@ m_x+3,m_y+2 SAY "Prikaz bruto iznosa na kartici radnika (D/N/X) " GET gPrBruto pict "@!" valid gPrBruto $ "DNX"
@@ -184,7 +187,15 @@ Box(,7,77)
       	@ m_x+5,m_y+2 SAY "Varijanta kartice plate za kredite (1/2) ?" GET gReKrKP VALID gReKrKP$"12"
       	@ m_x+6,m_y+2 SAY "Opis osnovnih podataka za obracun (1-bodovi/2-koeficijenti) ?" GET gBodK VALID gBodK$"12"
       	@ m_x+7,m_y+2 SAY "Pregled plata: varijanta izvjestaja (1/2)" GET gVarPP VALID gVarPP$"12"
-      	read
+      	@ m_x+8,m_y+2 SAY "Potpisi na svim izvjestajima (D/N)" GET gPotpRpt VALID gPotpRpt$"DN" PICT "@!"
+	read
+	
+	if gPotpRpt == "D"
+      		@ m_x+9,m_y+2 SAY "red 1:" GET gPotp1 PICT "@S25"
+      		@ m_x+9,col()+1 SAY "red 2:" GET gPotp2 PICT "@S25"
+		read
+	endif
+
 BoxC()
 
 if (LastKey()<>K_ESC)
@@ -192,9 +203,15 @@ if (LastKey()<>K_ESC)
       	Wpar("kp",gReKrKP)
       	Wpar("pp",gVarPP)
       	Wpar("li",gListic)
-      	WPar("pb", gPrBruto)   // set formula
-      	WPar("po", gPotp)   // potp4is na listicu
+      	WPar("pb",gPrBruto)   
+	// set formula
+      	WPar("po",gPotp)   
+	// potp4is na listicu
       	Wpar("rk",gReKrOs)
+      	Wpar("pr",gPotpRpt)
+      	Wpar("P1",gPotp1)
+      	Wpar("P2",gPotp2)
+
       	//Wpar("tB",gTabela)
 endif
 

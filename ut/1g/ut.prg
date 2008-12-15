@@ -1,5 +1,27 @@
 #include "ld.ch"
 
+// --------------------------------
+// ispisuje potpis
+// --------------------------------
+function p_potpis()
+private cP1 := gPotp1
+private cP2 := gPotp2
+
+if gPotpRpt == "N"
+	return
+endif
+
+if !EMPTY(gPotp1)
+	? &cP1	
+endif
+
+if !EMPTY(gPotp2)
+	? &cP2
+endif
+
+return
+
+
 
 // ------------------------------------------------
 // vraca ukupnu vrijednost licnog odbitka
