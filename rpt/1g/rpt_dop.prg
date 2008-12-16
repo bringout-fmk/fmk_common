@@ -112,9 +112,12 @@ do while !eof()
 				else
 					nIznos := iznos
 				endif
-				
+		
+
+				altd()
+
         			if nOsnovica == 0
-					nBOOps := round2( nIznos * parobr->k3/100 , gZaok2)
+					nBOOps := bruto_osn( nIznos, cRTipRada )
         			else
 				
 					nBOOps := nOsnovica
@@ -211,8 +214,8 @@ do while !eof()
       				endif
       			else
 				if "BENEF" $ dopr->naz
-           				nBo := round2(parobr->k5 * nUBNOsnova, gZaok2)
-      				else
+           				nBo := bruto_osn( nUBNOsnova, cRTipRada )
+				else
            				nBo := round2(nOsnovica, gZaok2)
       				endif
       		

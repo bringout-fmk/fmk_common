@@ -80,6 +80,7 @@ local cLin
 local nPom
 local aOps:={}
 local cRepSr := "N"
+local cRTipRada := " "
 private aSpec:={}
 private cFNTZ:="D"
 private gPici:="9,999,999,999,999,999"+IF(gZaok>0,PADR(".",gZaok+1,"9"),"")
@@ -217,8 +218,10 @@ do while .t.
 	Box(,22+IF(gVarSpec=="1",0,1),75)
      		
 		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
-			GET qqIdRJ PICT "@!S20"
-     		@ m_x+ 1,col()+2 SAY "Spec.za RS" GET cRepSr ;
+			GET qqIdRJ PICT "@!S15"
+     		@ m_x+ 1,col()+1 SAY "Djelatnost" GET cRTipRada ;
+			VALID cRTipRada $ " #D#N#R#S#U" PICT "@!"
+		@ m_x+ 1,col()+1 SAY "Spec.za RS" GET cRepSr ;
 			VALID cRepSr $ "DN" PICT "@!"
 
 		@ m_x+ 2,m_y+ 2 SAY "Opstina stanov.(prazno-sve): " ;
@@ -396,7 +399,13 @@ ENDIF
    
    SELECT RADN
    HSEEK LD->idradn
-  
+ 
+   if cRTipRada <> radn->tiprada
+   	select ld
+	skip
+	loop
+   endif
+
    // provjeri da li se radi o republici srpskoj
    if cRepSr == "N"
    	if in_rs( radn->idopsst, radn->idopsrad )
@@ -470,7 +479,8 @@ ENDIF
  
  // prvo doprinosi i bruto osnova ....
 
- nBrutoOsnova := round(PAROBR->k5 * nUNetoOsnova, gZaok2)
+ nBrutoOsnova := bruto_osn( nUNetoOsnova, cRTipRada )
+
  // ukupno bruto
  nPom := nBrutoOsnova
 
@@ -545,6 +555,8 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','D12_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
  nPom:=nKD7X
  UzmiIzIni(cIniName,'Varijable','D12_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+ altd()
 
  nDopr1X := round2(nBrutoOsnova * nkD1X / 100, gZaok2)
  nDopr2X := round2(nBrutoOsnova * nkD2X / 100, gZaok2)
@@ -705,7 +717,9 @@ ENDIF
        nDopr5x+nDopr6x+nDopr7x+;
        nPorNaPlatu+nPorezOstali-;
        nPorOlaksice+nOstaleOBaveze;
+ 
  // ukupno obaveze
+ 
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice
@@ -772,13 +786,20 @@ ENDIF
 
 if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 
- cSpecRtm := "LDSPEC"
+ cSpecRtm := "SPEC"
  
  if cRepSr == "D"
  	cSpecRtm := cSpecRtm + "RS"
  else
  	cSpecRtm := cSpecRtm + "B"
  endif
+
+ if EMPTY( cRTipRada )
+ 	cRTipRada := "N"
+ endif
+
+ // "SPECBN", "SPECBR" ...
+ cSpecRtm := cSpecRtm + cRTipRada
 
  private cKomLin := "DelphiRB " + cSpecRtm + ;
 	" " + PRIVPATH + "  DUMMY 1"

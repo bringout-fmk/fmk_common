@@ -273,20 +273,20 @@ if gPrBruto=="D"
 	nBO:=0
 	nBFO:=0
 	
+	cRTipRada := radn->tiprada
 	nOsnZaBr := nOsnNeto
 
-	nBo := round2( nOsnZaBr * parobr->k5  , gZaok2 )
+	nBo := bruto_osn( nOsnZaBr, cRTipRada )
 
 	if UBenefOsnovu()
-		nBFo := round2( ((( nOsnZaBr )-(&gBFForm)) * parobr->k5 ), gZaok2 )
+		nTmp2 := nOsnZaBr - (&gBFForm)
+		nBFo := bruto_osn( nTmp2, cRTipRada )
 	endif
 
 	// bruto placa iz neta...
 
 	? cMainLine
-	? cLMSK + "1. BRUTO PLACA :  ", ;
-	        ALLTRIM(STR(nOsnZaBr)) + " * " + ;
-		ALLTRIM(STR(parobr->k5))
+	? cLMSK + "1. BRUTO PLACA :  ", bruto_isp( nOsnZaBr, cRTipRada )
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	

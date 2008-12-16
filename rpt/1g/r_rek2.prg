@@ -35,6 +35,7 @@ cMjesecDo:=cMjesec
 nStrana:=0
 aUkTr:={}
 nBO := 0
+cRTipRada := " "
 
 if lSvi==nil
 	lSvi:=.f.
@@ -171,8 +172,6 @@ nLjudi:=0
 
 private aNeta:={}
 
-altd()
-
 select ld
 
 if cMjesec!=cMjesecDo
@@ -262,7 +261,7 @@ nstr()
 
 // 1. BRUTO IZNOS
 // setuje se varijabla nBO
-get_bruto()
+get_bruto( cRTipRada )
 
 // 2. DOPRINOSI
 private nDopr
@@ -442,6 +441,13 @@ do while !eof() .and. eval(bUSlov)
 	select vposla
 	hseek _idvposla
 
+	// provjeri tip rada
+	if cRTipRada <> radn->tiprada
+		select ld
+		skip 1
+		loop
+	endif
+
  	if ( (!empty(cOpsSt) .and. cOpsSt<>radn->idopsst)) ;
 		.or. ((!empty(cOpsRad) .and. cOpsRad<>radn->idopsrad))
 		
@@ -518,7 +524,7 @@ do while !eof() .and. eval(bUSlov)
  	next
 
 	// br.osn za radnika
-	nRadn_bo := _oosnneto * parobr->k5 
+	nRadn_bo := bruto_osn( _oosnneto, cRTipRada ) 
 
 	// da bi dobio osnovicu za poreze
 	// moram vidjeti i koliko su doprinosi IZ
@@ -572,9 +578,7 @@ do while !eof() .and. eval(bUSlov)
 		
  	enddo
  
- 	// napuni opsld sa ovim porezom
- 	PopuniOpsLD()
-
+ 	
 	nPom:=ASCAN(aNeta,{|x| x[1]==vposla->idkbenef})
  	
 	if nPom==0
@@ -652,6 +656,9 @@ do while !eof() .and. eval(bUSlov)
 			SELECT (nTObl)
 		ENDIF
 	ENDIF
+	
+	// napuni opsld sa ovim porezom
+ 	PopuniOpsLD()
 
 	IF RADN->isplata == "TR"  // isplata na tekuci racun
 		Rekapld( "IS_"+RADN->idbanka , cGodina , cMjesecDo ,_UIznos , 0 , RADN->idbanka , RADN->brtekr , RADNIK , .t. )
@@ -667,14 +674,13 @@ return
 // ----------------------------------------------------------
 // ispisuje i vraca bruto osnovicu za daljnji obracun
 // ----------------------------------------------------------
-static function get_bruto()
+static function get_bruto( cRTipRada )
 
-nBO := 0
+nBO := bruto_osn( nUNetoOsnova, cRTipRada )
 
 ? cMainLine
-? Lokal("1. BRUTO OSNOVICA UKUPNO:"), SPACE(4) + ALLTRIM(STR(parobr->k5)) + ;
-	" * " + ALLTRIM(STR(nUNetoOsnova)) + " ="
-@ prow(), 60 SAY nBo := round2( parobr->k5 * nUNetoOsnova, gZaok2) pict gpici
+? Lokal("1. BRUTO OSNOVICA UKUPNO:"), SPACE(4) + bruto_isp( nUNetoOsnova, cRTipRada )
+@ prow(), 60 SAY nBO pict gpici
 ? cMainLine
 
 return 
