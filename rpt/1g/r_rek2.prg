@@ -272,7 +272,7 @@ private nDopr2
 
 cLinija := cDoprLine
 // obracunaj i prikazi doprinose
-obr_doprinos( @nDopr, @nDopr2, nBO )
+obr_doprinos( @nDopr, @nDopr2 )
 
 // oporezivi dohodak
 nOporDohod := nBO - nUDoprIz 

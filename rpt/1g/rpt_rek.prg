@@ -717,10 +717,10 @@ if cTip == "S"
 else
 	altd()	
 	cPorId := "  "
-	nOsnovica := nUNetoOsnova
+	nOsnovica := _ouneto
 	nOsnov3 := nPorOsnova	
-	nOsnov4 := nDoprOsnovica	
-	nOstalo := nUOdbici
+	nOsnov4 := _oosnneto	
+	nOstalo := _uodbici
 
 endif
 

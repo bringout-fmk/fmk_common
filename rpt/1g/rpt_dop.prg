@@ -4,12 +4,8 @@
 // ------------------------------------------
 // obracunaj i prikazi doprinose
 // ------------------------------------------
-function obr_doprinos( nDopr, nDopr2, nOsnovica )
+function obr_doprinos( nDopr, nDopr2 )
 local nIznos := 0
-
-if nOsnovica == nil
-	nOsnovica := 0
-endif
 
 m:="----------------------- -------- ----------- -----------"
 
@@ -113,16 +109,8 @@ do while !eof()
 					nIznos := iznos
 				endif
 		
-
-				altd()
-
-        			if nOsnovica == 0
-					nBOOps := bruto_osn( nIznos, cRTipRada )
-        			else
+				nBOOps := bruto_osn( nIznos, cRTipRada )
 				
-					nBOOps := nOsnovica
-				endif
-
 				@ prow(), nC1 SAY nBOOps picture gpici
         			
 				nPom := round2(max(dopr->dlimit,dopr->iznos/100*nBOOps),gZaok2)
@@ -206,21 +194,12 @@ do while !eof()
 				nTmpOsn := nDoprOsnova
 			endif
 		
-			if nOsnovica == 0
-				if "BENEF" $ dopr->naz
-           				nBo := round2(parobr->k3/100 * nUBNOsnova, gZaok2)
-      				else
-           				nBo := round2(parobr->k3/100 * nTmpOsn, gZaok2)
-      				endif
+			if "BENEF" $ dopr->naz
+           			nBO := bruto_osn( nUBNOsnova, cRTipRada )
       			else
-				if "BENEF" $ dopr->naz
-           				nBo := bruto_osn( nUBNOsnova, cRTipRada )
-				else
-           				nBo := round2(nOsnovica, gZaok2)
-      				endif
-      		
-			endif
-
+           			nBO := bruto_osn( nTmpOsn, cRTipRada )
+      			endif
+      			
 			@ prow(),nC1 SAY nBO pict gpici
 			
       			nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)
