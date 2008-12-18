@@ -36,6 +36,7 @@ nStrana:=0
 aUkTr:={}
 nBO := 0
 cRTipRada := " "
+nKoefLO := 0
 
 if lSvi==nil
 	lSvi:=.f.
@@ -159,6 +160,7 @@ nUNetoOsnova:=0
 nDoprOsnova := 0
 nDoprOsnOst := 0
 nPorOsnova := 0
+nURadn_bo := 0
 nUPorOsnova := 0
 nULOdbitak := 0
 nUBNOsnova:=0
@@ -261,7 +263,7 @@ nstr()
 
 // 1. BRUTO IZNOS
 // setuje se varijabla nBO
-get_bruto( cRTipRada )
+get_bruto( nURadn_bo )
 
 // 2. DOPRINOSI
 private nDopr
@@ -425,6 +427,7 @@ local i
 local cTpr
 
 nPorol := 0
+nRadn_bo := 0
 nPor := 0
 aNetoMj:={}
 
@@ -438,11 +441,14 @@ do while !eof() .and. eval(bUSlov)
 
  	select radn
 	hseek _idradn
+
 	select vposla
 	hseek _idvposla
 
 	// provjeri tip rada
-	if cRTipRada <> radn->tiprada
+	if radn->tiprada == "I" .and. EMPTY( cRTipRada ) 
+		// ovo je u redu...
+	elseif ( cRTipRada <> radn->tiprada )
 		select ld
 		skip 1
 		loop
@@ -472,6 +478,8 @@ do while !eof() .and. eval(bUSlov)
 
 	// licni odbitak za radnika
 	nRadn_lod := ( gOsnLOdb * radn->klo )
+
+	nKoefLO := nRadn_lod
 
  	// vrati osnovicu za neto i ostala primanja
  	for i:=1 to cLDPolja
@@ -523,12 +531,17 @@ do while !eof() .and. eval(bUSlov)
 		endif
  	next
 
+	altd()
+
 	// br.osn za radnika
-	nRadn_bo := bruto_osn( _oosnneto, cRTipRada ) 
+	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO ) 
+	
+	// ukupno bruto osnova
+	nURadn_bo += nRadn_bo
 
 	// da bi dobio osnovicu za poreze
 	// moram vidjeti i koliko su doprinosi IZ
-	nRadn_diz := u_dopr_iz( _oosnneto, _oosnostalo )
+	nRadn_diz := u_dopr_iz( nRadn_bo , cRTipRada )
 	
 	// osnovica za poreze
 	nRadn_posn := (nRadn_bo - nRadn_diz ) - nRadn_lod
@@ -674,12 +687,12 @@ return
 // ----------------------------------------------------------
 // ispisuje i vraca bruto osnovicu za daljnji obracun
 // ----------------------------------------------------------
-static function get_bruto( cRTipRada )
+static function get_bruto( nIznos )
 
-nBO := bruto_osn( nUNetoOsnova, cRTipRada )
+nBO := nIznos
 
 ? cMainLine
-? Lokal("1. BRUTO OSNOVICA UKUPNO:"), SPACE(4) + bruto_isp( nUNetoOsnova, cRTipRada )
+? Lokal("1. BRUTO OSNOVICA UKUPNO:")
 @ prow(), 60 SAY nBO pict gpici
 ? cMainLine
 
@@ -690,36 +703,27 @@ return
 // ------------------------------------------------
 // vraca ukupno doprinosa IZ plate, 1X
 // ------------------------------------------------
-function u_dopr_iz( nOsn_neto, nOsn_ostalo )
+function u_dopr_iz( nDopOsn, cRTipRada )
 
 select dopr
 go top
 	
-nDopOsn := 0
 nU_dop_iz := 0
 
 do while !eof()
-		
+	
+	if dopr->tiprada <> cRTipRada 
+		skip
+		loop
+	endif
+	
 	// preskoci zbirne doprinose
 	if dopr->id <> "1X"
 		skip
 		loop 
 	endif
 
-	if dopr->(FIELDPOS("DOP_TIP")) <> 0
-			
-		if dopr->dop_tip == "N" .or. dopr->dop_tip == " " 
-			nDopOsn := nOsn_neto
-		elseif dopr->dop_tip == "2"
-			nDopOsn := nOsn_ostalo
-		elseif dopr->dop_tip == "P"
-			nDopOsn := nOsn_neto + nOsn_ostalo
-		endif
-		
-	endif
-		
-	nU_dop_iz += max(dlimit,round(iznos/100 * ;
-			(nDopOsn * parobr->k5), gZaok2) )
+	nU_dop_iz += round2((iznos/100) * nDopOsn, gZaok2)
 			
 	skip 1
 		

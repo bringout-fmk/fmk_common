@@ -27,7 +27,7 @@ AADD(ImeKol, { Lokal(padr("MinR%", 5)), {|| kminrad}, "kminrad" })
 if RADN->(FIELDPOS("KLO")) <> 0
    AADD(ImeKol, { Lokal(padr("Koef.l.odb.", 15)), {|| klo}, "klo" })
    AADD(ImeKol, { Lokal(padr("Tip rada", 15)), {|| tiprada}, "tiprada", ;
-   	{|| .t.}, {|| wtiprada $ " #N#S#R" .or. MsgTipRada() } })
+   	{|| .t.}, {|| wtiprada $ " #I#S#R#D#U#" .or. MsgTipRada() } })
 endif
 
 AADD(ImeKol, { Lokal(padr("StrSpr",6)), {|| padc(Idstrspr,6)}, "idstrspr", {||.t.}, {|| P_StrSpr(@wIdStrSpr)} } )
@@ -189,14 +189,17 @@ return .f.
 // poruka - informacije o dostupnim tipovima rada
 // -------------------------------------------------------
 function MsgTipRada()
-Box(,5,50)
-	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: N - nesamostalni rad")
- 	@ m_x+2,m_y+2 SAY Lokal("                 S - samostalni rad")
- 	@ m_x+3,m_y+2 SAY Lokal("                 R - rezident")
- 	@ m_x+4,m_y+2 SAY Lokal("                 U - ugovor o radu")
- 	@ m_x+5,m_y+2 SAY Lokal("                 P - poslodavac")
+
+Box(,6,50)
+	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: ' ' - nesamostalni rad    ")
+ 	@ m_x+2,m_y+2 SAY Lokal("                 'I' - nes.rad isti neto")
+ 	@ m_x+3,m_y+2 SAY Lokal("                 'S' - samostalni rad")
+ 	@ m_x+4,m_y+2 SAY Lokal("                 'R' - rezident")
+ 	@ m_x+5,m_y+2 SAY Lokal("                 'U' - ugovor o radu")
+ 	@ m_x+6,m_y+2 SAY Lokal("                 'P' - poslodavac")
  	inkey(0)
 BoxC()
+
 return .f.
 
 
@@ -736,7 +739,7 @@ if !used()
 endif
 select (nArr)
 
-AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+AADD(ImeKol, { padr("Id",2), {|| id}, "id" } )
 AADD(ImeKol, { padr("Naziv",20), {||  naz}, "naz" } )
 AADD(ImeKol, { padr("Iznos",20), {||  iznos}, "iznos" } )
 
@@ -745,7 +748,7 @@ if DOPR->(FIELDPOS("DOP_TIP")) <> 0
 endif
 
 if DOPR->(FIELDPOS("TIPRADA")) <> 0
-	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #N#S#R" .or. MsgTipRada() } }  )
+	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#R#D#U#" .or. MsgTipRada() } }  )
 endif
 
 AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )

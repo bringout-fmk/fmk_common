@@ -4,10 +4,12 @@
 // ----------------------------------------
 // vraca bruto osnovu
 // ----------------------------------------
-function bruto_osn( nIzn, cTipRada )
+function bruto_osn( nIzn, cTipRada, nLOdb )
 local nBrt := 0
 
-altd()
+if nLOdb = nil
+	nLOdb := 0
+endif
 
 // stari obracun
 if gVarObracun <> "2"
@@ -19,6 +21,10 @@ do case
 	// nesamostalni rad
 	case cTipRada $ " #N"
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
+	// nesamostalni rad, isti neto
+	case cTipRada == "I"
+		nBrt := ROUND2( ( (nIzn - nLOdb) / 0.9 + nLOdb ) ;
+			/ 0.69  ,gZaok2)
 	// samostalni rad
 	case cTipRada == "S"
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
@@ -30,7 +36,7 @@ do case
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
 	// ugovor o radu
 	case cTipRada == "U"
-		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
+		nBrt := ROUND2( nIzn / 0.8912 ,gZaok2 )
 endcase
 
 return nBrt
@@ -39,14 +45,24 @@ return nBrt
 // ----------------------------------------
 // ispisuje bruto obracun
 // ----------------------------------------
-function bruto_isp( nNeto, cTipRada )
+function bruto_isp( nNeto, cTipRada, nLOdb )
 local cPrn := ""
+
+if nLOdb = nil
+	nLOdb := 0
+endif
 
 do case
 	// nesamostalni rad
 	case cTipRada $ " #N"
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 			ALLTRIM(STR(parobr->k5)) + " ="
+
+	// nesamostalni rad - isti neto
+	case cTipRada == "I"
+		cPrn := ALLTRIM(STR(nNeto)) + " - " + ALLTRIM(STR(nLOdb)) + ;
+			" / 0.9 + " + ALLTRIM(STR(nLOdb)) + " / 0.69 = "
+
 	// samostalni rad
 	case cTipRada == "S"
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
@@ -64,8 +80,7 @@ do case
 
 	// ugovor o radu
 	case cTipRada == "U"
-		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
-			ALLTRIM(STR(parobr->k5)) + " ="
+		cPrn := ALLTRIM(STR(nNeto)) + " / 0.8912 ="
 	
 endcase
 

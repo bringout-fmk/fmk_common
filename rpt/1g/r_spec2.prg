@@ -220,7 +220,7 @@ do while .t.
 		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
 			GET qqIdRJ PICT "@!S15"
      		@ m_x+ 1,col()+1 SAY "Djelatnost" GET cRTipRada ;
-			VALID cRTipRada $ " #D#N#R#S#U" PICT "@!"
+			VALID cRTipRada $ " #D#R#S#U" PICT "@!"
 		@ m_x+ 1,col()+1 SAY "Spec.za RS" GET cRepSr ;
 			VALID cRepSr $ "DN" PICT "@!"
 
@@ -389,6 +389,7 @@ ENDIF
  nUNeto:=0
  nUNetoOsnova:=0
  nPorNaPlatu:=0
+ nKoefLO := 0
  nURadnika:=0
  nULicOdbitak := 0
  //nBrutoOsnova := 0
@@ -399,8 +400,12 @@ ENDIF
    
    SELECT RADN
    HSEEK LD->idradn
- 
-   if cRTipRada <> radn->tiprada
+   cRTR := radn->tiprada
+
+   if cRTR == "I" .and. EMPTY(cRTipRada)
+   	// ovo je uredu...
+	// jer je i ovo nesamostalni rad
+   elseif cRTipRada <> radn->tiprada
    	select ld
 	skip
 	loop
@@ -428,7 +433,9 @@ ENDIF
      LOOP
    ENDIF
   
-   nULicOdbitak += ( gOsnLOdb * radn->klo )
+   nKoefLO := (gOsnLOdb * radn->klo)
+
+   nULicOdbitak += nKoefLO
 
    nP77 := IF( !EMPTY(cMRad)  , LD->&("I"+cMRad)  , 0 )
    nP78 := IF( !EMPTY(cPorOl) , LD->&("I"+cPorOl) , 0 )
@@ -474,12 +481,13 @@ ENDIF
    ENDIF
 
    nUNeto+=ld->uneto
-   nUNetoOsnova+=MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
+   nNetoOsn:=MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
+   nUNetoOsnova+=nNetoOsn
   
  
  // prvo doprinosi i bruto osnova ....
 
- nBrutoOsnova := bruto_osn( nUNetoOsnova, cRTipRada )
+ nBrutoOsnova += bruto_osn( nNetoOsn, cRTR, nKoefLO )
 
  // ukupno bruto
  nPom := nBrutoOsnova
@@ -500,7 +508,7 @@ ENDIF
          nBOO += aOps[i,3]
        ENDIF
      NEXT
-     nBOO := ROUND( PAROBR->k5 * nBOO ,gZaok2 )
+     nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
    ELSE
      nBOO := nBrutoOsnova
    ENDIF
@@ -590,7 +598,8 @@ ENDIF
  nPom:=nDopr7X
  UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- 
+ altd()
+
  // osnovica za porez na platu
  nPorOsnovica := nBrutoOsnova - nUKDoprIZ - nULicOdbitak
  
@@ -794,7 +803,7 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
  	cSpecRtm := cSpecRtm + "B"
  endif
 
- if EMPTY( cRTipRada )
+ if EMPTY( cRTipRada ) 
  	cRTipRada := "N"
  endif
 

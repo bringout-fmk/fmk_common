@@ -163,6 +163,7 @@ nUOdbici:=0
 nUOdbiciP:=0
 nUOdbiciM:=0
 nLjudi:=0
+nKoefLO:=0
 
 private aNeta:={}
 
@@ -492,7 +493,7 @@ Box(,10+IF(IsRamaGlas(),1,0),75)
 
 		if gVarObracun == "2"
 			@ m_x+2,m_y+2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
-				VALID cRTipRada $ " #N#S#R#D#U" PICT "@!" 
+				VALID cRTipRada $ " #S#R#D#U#" PICT "@!" 
 		endif
 		
 		@ m_x+3,m_y+2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
@@ -611,6 +612,7 @@ aDbf:={{"ID"    ,"C", 1,0},;
        {"IZNOS2","N",25,4},;
        {"IZNOS3","N",25,4},;
        {"IZNOS4","N",25,4},;
+       {"BR_OSN","N",25,4},;
        {"IZN_OST","N",25,4},;
        {"T_ST_1","N",5,2},;
        {"T_ST_2","N",5,2},;
@@ -659,6 +661,7 @@ local i
 local nPom
 local nOsnovica := 0
 local nOstalo := 0
+local nBrOsnova := 0
 
 if cTip == nil
 	cTip := ""
@@ -721,7 +724,7 @@ else
 	nOsnov3 := nPorOsnova	
 	nOsnov4 := _oosnneto	
 	nOstalo := _uodbici
-
+	nBrOsnova := nRadn_bo 
 endif
 
 select ops
@@ -738,6 +741,7 @@ if Found()
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
 	replace izn_ost with izn_ost + nOstalo
+	replace br_osn with br_osn + nBrOsnova
 	replace ljudi with ljudi + 1
 	
 	replace t_iz_1 with t_iz_1 + nT_iz_1
@@ -775,6 +779,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
 	replace ljudi with 1
@@ -815,6 +820,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
 	
@@ -853,6 +859,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
 	replace ljudi with 1
@@ -893,6 +900,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
 	
@@ -932,6 +940,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
 	replace ljudi with 1
@@ -976,6 +985,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
 	
@@ -1016,6 +1026,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
 	replace ljudi with 1
@@ -1056,6 +1067,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
 	
@@ -1095,6 +1107,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
 	replace ljudi with 1
@@ -1135,6 +1148,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
 	
@@ -1175,6 +1189,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with 1
 	replace t_iz_1 with nT_iz_1
@@ -1221,6 +1236,7 @@ local cTpr
 nPorOl:=0
 nUPorOl:=0
 aNetoMj:={}
+nRadn_bo := 0
 
 do while !eof() .and. eval(bUSlov)
 	

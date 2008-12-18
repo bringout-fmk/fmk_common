@@ -43,6 +43,13 @@ do while !eof()
       		loop 
   	endif
 
+	if gVarObracun == "2"
+		if dopr->tiprada <> cRTipRada
+			skip 
+			loop
+		endif
+	endif
+
  	if right(id,1)=="X"
      		? cLinija
   	endif
@@ -109,8 +116,12 @@ do while !eof()
 					nIznos := iznos
 				endif
 		
-				nBOOps := bruto_osn( nIznos, cRTipRada )
-				
+				if gVarObracun == "2"
+					nBOOps := br_osn
+				else
+					nBOOps := bruto_osn( nIznos, cRTipRada, nKoefLO )
+				endif
+
 				@ prow(), nC1 SAY nBOOps picture gpici
         			
 				nPom := round2(max(dopr->dlimit,dopr->iznos/100*nBOOps),gZaok2)
@@ -180,7 +191,7 @@ do while !eof()
 			nPom := nDoprOps
     		else
      			// doprinosi nisu po opstinama
-      			
+
 			if dopr->(FIELDPOS("DOP_TIP")) <> 0
 			  if dopr->dop_tip == "N" .or. ;
 				dopr->dop_tip == " "
@@ -194,12 +205,17 @@ do while !eof()
 				nTmpOsn := nDoprOsnova
 			endif
 		
-			if "BENEF" $ dopr->naz
-           			nBO := bruto_osn( nUBNOsnova, cRTipRada )
-      			else
-           			nBO := bruto_osn( nTmpOsn, cRTipRada )
+			if gVarObracun == "2"
+				nBo := nURadn_bo
+			else
+
+			 if "BENEF" $ dopr->naz
+           			nBO := bruto_osn( nUBNOsnova, cRTipRada, nKoefLO )
+      			 else
+           			nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
+      			 endif
       			endif
-      			
+			
 			@ prow(),nC1 SAY nBO pict gpici
 			
       			nPom:=round2(max(dlimit,iznos/100*nBO),gZaok2)

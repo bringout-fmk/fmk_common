@@ -41,9 +41,11 @@ ENDIF
 
 cUneto := "D"
 nRRsati := 0 
-
 nOsnNeto := 0
 nOsnOstalo := 0
+nLicOdbitak := g_licni_odb( radn->id )
+nKoefOdbitka := radn->klo
+cRTipRada := radn->tiprada
 
 for i:=1 to cLDPolja
 	
@@ -81,9 +83,17 @@ for i:=1 to cLDPolja
 				
 				RSati:=_s&cPom
 				
-				@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
+				nRSTmp := bruto_osn( _i&cPom, cRTipRada, ;
+					nLicOdbitak )
+
+				@ prow(),60+LEN(cLMSK) SAY nRsTmp pict gpici
 				@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
-				@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
+				if gVarObracuna == "2"
+					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k5)/100)-_i&cPom))
+				else
+					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
+				endif
+
 				if type(cDJ)="C"
 					cTPNaz:=left(tippr->naz,nDJ-1)+&cDJ
 				elseif type(cPom)="N"
@@ -273,20 +283,19 @@ if gPrBruto=="D"
 	nBO:=0
 	nBFO:=0
 	
-	cRTipRada := radn->tiprada
 	nOsnZaBr := nOsnNeto
-
-	nBo := bruto_osn( nOsnZaBr, cRTipRada )
+	
+	nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 	if UBenefOsnovu()
 		nTmp2 := nOsnZaBr - (&gBFForm)
-		nBFo := bruto_osn( nTmp2, cRTipRada )
+		nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )
 	endif
 
 	// bruto placa iz neta...
 
 	? cMainLine
-	? cLMSK + "1. BRUTO PLACA :  ", bruto_isp( nOsnZaBr, cRTipRada )
+	? cLMSK + "1. BRUTO PLACA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -311,7 +320,14 @@ if gPrBruto=="D"
 	nC1 := 20 + LEN(cLMSK)
 	
 	do while !eof()
-		
+	
+		if cRTipRada == "I" .and. EMPTY(dopr->tiprada)
+			// ovo je uredu...
+		elseif dopr->tiprada <> cRTipRada
+			skip
+			loop
+		endif
+
 		if dopr->(FIELDPOS("DOP_TIP")) <> 0
 			
 			if dopr->dop_tip == "N" .or. dopr->dop_tip == " " 
@@ -408,8 +424,6 @@ if gPrBruto=="D"
 	
 	// razrada licnog odbitka ....
 	
-	nLicOdbitak := g_licni_odb( radn->id )
-	nKoefOdbitka := radn->klo
 
 	? cLMSK + Lokal("3. LICNI ODBITAK"), SPACE(14) + ;
 		ALLTRIM(STR(gOsnLOdb)) + " * koef. " + ;
@@ -419,6 +433,11 @@ if gPrBruto=="D"
 	? cMainLine
 
 	nPorOsnovica := ( nOporDoh - nLicOdbitak )
+	
+	// ako je negativna onda je 0
+	if nPorOsnovica < 0
+		nPorOsnovica := 0
+	endif
 
 	?  cLMSK + Lokal("4. OSNOVICA POREZA NA DOHODAK (2 - 3)")
 	@ prow(),60+LEN(cLMSK) SAY nPorOsnovica pict gpici
