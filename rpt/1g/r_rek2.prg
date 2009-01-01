@@ -307,7 +307,9 @@ private nPor
 private nPor2 
 private nPorOps
 private nPorOps2
+private nUZaIspl
 
+nUZaIspl := 0
 nPorez1 := 0
 nPorez2 := 0
 nPorOp1 := 0
@@ -323,6 +325,8 @@ nPorOp1 += nPorOps
 nPorOp2 += nPorOps2
 nPorOl1 += nUPorOl
 
+nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM
+
 // obracun ostalog poreza na neto
 ? cMainLine
 ? Lokal("6. OSNOVICA ZA OBRACUN OSTALIH POREZA (NA NETO)")
@@ -337,6 +341,12 @@ nPorez2 += nPor2
 nPorOp1 += nPorOps
 nPorOp2 += nPorOps2
 nPorOl1 += nUPorOl
+
+// ukupno za isplatu
+? cMainLine
+? Lokal("7. UKUPNO ZA ISPLATU (op.doh - porez + odbici):")
+@ prow(), 60 SAY nUZaIspl
+? cMainLine
 
 ?
 

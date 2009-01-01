@@ -112,9 +112,6 @@ function SetObracun()
 local nX := 1
 private GetList:={}
 
-// setuj obracun u skladu sa zak.promjenama
-set_obr_2009()
-
 cVarPorol:=PADR(cVarPorol,2)
 
 Box(, 17, 77)
@@ -166,6 +163,7 @@ if (LastKey()<>K_ESC)
       	Wpar("vs",gVarSpec)
       	Wpar("Si",gSihtarica)
       	Wpar("aH",gAHonorar)
+	Wpar("ov",gvarObracun)
 endif
 
 return

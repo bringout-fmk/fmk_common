@@ -364,7 +364,7 @@ ELSE
 ENDIF
 
 // setuj gVarObracun na vrijednost prema tekucim zak.promjenama
-set_obr_2009()
+// set_obr_2009()
 
 return
 
