@@ -189,6 +189,11 @@ do while !eof()
 
 			  @ prow(), nC1 SAY nTmpPor picture gpici
 			  
+			  // osnovica ne moze biti negativna
+			  if nTmpPor < 0
+			  	nTmpPor := 0
+			  endif
+
 			  nPom := round2(max(por->dlimit,por->iznos/100*nTmpPor),gZaok2)
 			  
 			  @ prow(), pcol()+1 SAY nPom pict gpici
@@ -251,6 +256,10 @@ do while !eof()
 			nTmpOsnova := nPorOsnova
 		endif
 		
+		if nTmpOsnova < 0
+			nTmpOsnova := 0
+		endif
+
 		@ prow(),nC1 SAY nTmpOsnova pict gpici
 		@ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nTmpOsnova),gZaok2) pict gpici
      		if cUmPD=="D"
@@ -376,10 +385,15 @@ do while !eof()
 	
 	// obracunaj porez
 	aPor := obr_por( por->id, nOsnovica, 0 )
-		
-	// ispisi porez
-	nPor += isp_por( aPor, cAlgoritam, "", .f., .t. )
-		
+	
+	nTmp := isp_por( aPor, cAlgoritam, "", .f., .t. )
+	
+	if nTmp < 0
+		nTmp := 0
+	endif
+
+	nPor += nTmp
+	
 	skip 1
 enddo
 

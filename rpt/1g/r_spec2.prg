@@ -106,6 +106,7 @@ nOstOb1:=0
 nOstOb2:=0
 nOstOb3:=0
 nOstOb4:=0
+nPorOsnovica:=0
 
 // prvi dan mjeseca
 nDanOd := getfday( gMjesec )
@@ -392,9 +393,6 @@ ENDIF
  nKoefLO := 0
  nURadnika:=0
  nULicOdbitak := 0
- //nBrutoOsnova := 0
- //nUkDoprIZ := 0
- //nPorOsnovica := 0
 
  DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
    
@@ -486,8 +484,8 @@ ENDIF
   
  
  // prvo doprinosi i bruto osnova ....
-
- nBrutoOsnova += bruto_osn( nNetoOsn, cRTR, nKoefLO )
+ nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO )
+ nBrutoOsnova += nPojBrOsn
 
  // ukupno bruto
  nPom := nBrutoOsnova
@@ -573,6 +571,9 @@ ENDIF
  nDopr6X := round2(nBrutoOsnova * nkD6X / 100, gZaok2)
  nDopr7X := round2(nBrutoOsnova * nkD7X / 100, gZaok2)
 
+ nPojDoprIZ := round2((nPojBrOsn * nkD1X /100), gZaok2 ) + ;
+ 		round2((nPojBrOsn * nkD2X / 100), gZaok2) + ;
+		round2((nPojBrOsn* nkD3X / 100), gZaok2 )
 
  // iznos doprinosa
  
@@ -598,11 +599,20 @@ ENDIF
  nPom:=nDopr7X
  UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- altd()
-
- // osnovica za porez na platu
- nPorOsnovica := nBrutoOsnova - nUKDoprIZ - nULicOdbitak
+ nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
+ if nPojPorOsn >= 0
+
+ 	// osnovica za porez na platu
+ 	//nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
+ 	nPorOsnovica += nPojPorOsn
+ endif
+
+ // osnovica mora biti veca od 0
+ if nPorOsnovica < 0
+ 	nPorOsnovica := 0
+ endif
+
  // resetuj varijable
  nPorNaPlatu := 0
  nPorezOstali := 0
@@ -728,8 +738,21 @@ ENDIF
        nPorOlaksice+nOstaleOBaveze;
  
  // ukupno obaveze
- 
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
+
+ // ukupno na ruke
+ nPom := ((nBrutoOsnova - nUkDoprIZ) - nPorNaPlatu ) - nObustave
+ nUNaRuke := nPom
+ UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
+ 
+ // ukupno ostalo
+ nPom := 0
+ nUUsluge := nPom
+ UzmiIzIni(cIniName,'Varijable','UNUS', FormNum2(nPom,16,gPici2), 'WRITE')
+
+ // ukupno ostalo
+ nPom := nUNaRuke + nUUsluge
+ UzmiIzIni(cIniName,'Varijable','UNUK', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice
  nPom := nPom + nUNETO + nPorOlaksice

@@ -556,9 +556,12 @@ do while !eof() .and. eval(bUSlov)
 	// osnovica za poreze
 	nRadn_posn := (nRadn_bo - nRadn_diz ) - nRadn_lod
 	
-	
 	// ovo je total poreske osnove za radnika
 	nPorOsnova := nRadn_posn
+
+	if nPorOsnova < 0
+		nPorOsnova := 0
+	endif
 
 	// ovo je total poreske osnove
 	nUPorOsnova += nPorOsnova
@@ -589,7 +592,14 @@ do while !eof() .and. eval(bUSlov)
 		endif
 
 		// samo izracunaj total, ne ispisuj porez
-		nPor += isp_por( aPor, cAlgoritam, "", .f. )
+		
+		nTmpP := isp_por( aPor, cAlgoritam, "", .f. )
+		
+		if nTmpP < 0 
+			nTmpP := 0
+		endif
+
+		nPor += nTmpP
 
 		if cAlgoritam == "S"
 			PopuniOpsLd( cAlgoritam, por->id, aPor )

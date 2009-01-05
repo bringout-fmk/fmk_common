@@ -138,6 +138,10 @@ endif
 
 nTotal += aPor[i, 4]
 
+if nTotal < 0
+	nTotal := 0
+endif
+
 return nTotal
 
 
