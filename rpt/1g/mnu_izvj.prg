@@ -59,6 +59,7 @@ if gVarObracun == "2"
 else
 	AADD(opcexe,{|| Specif()})
 endif
+
 AADD(opc,"2. specifikacija po opstinama i RJ")
 AADD(opcexe,{|| Specif2()})
 AADD(opc,"3. specifikacija po rasponima primanja")
@@ -71,7 +72,6 @@ AADD(opc,"6. specif.prosjecnog neta po strucnoj spremi")
 AADD(opcexe,{|| Specif3()})
 AADD(opc,"7. specifikacija primanja po RJ")
 AADD(opcexe,{|| SpecPrimRj()})
-
 
 Menu_SC("spec")
 return

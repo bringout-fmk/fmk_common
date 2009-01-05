@@ -945,7 +945,7 @@ RETURN cVrati
 // -----------------------------------
 // IZvjestaj o OBracunatim DOPrinosima
 // -----------------------------------
-PROC IzObDop()
+function IzObDop()
  cIdRj    := gRj
  cGodina  := gGodina
  cObracun := gObracun
@@ -1083,6 +1083,10 @@ FUNCTION FFor7()
  xNetoUk:=xDoprUk:=0
  cRadnik := RADN->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,32))
  cIdRadn := IDRADN
+ if gVarObracun == "2"
+ 	nKLO := radn->klo
+	cTipRada := radn->tiprada
+ endif
  FOR i:=cMjesecOd TO cMjesecDo
    cPom:="xneto"+ALLTRIM(STR(i)); &cPom:=0
    cPom:="xdopr"+ALLTRIM(STR(i)); &cPom:=0
@@ -1101,7 +1105,7 @@ FUNCTION FFor7()
    xnetoUk += _uneto
    // doprinos
    PoDoIzSez(godina,mjesec)
-   nDopr   := IzracDopr(cDopr)
+   nDopr   := IzracDopr(cDopr, nKLO, cTipRada)
    cPom    := "xdopr"+ALLTRIM(STR(mjesec))
    &cPom   := nDopr
    xdoprUk += nDopr
@@ -1124,12 +1128,28 @@ FUNC SubTot7()
 RETURN aVrati
 
 
-FUNC IzracDopr(cDopr)
- LOCAL nArr:=SELECT(), nDopr:=0, nPom:=0, nPom2:=0, nPom0:=0, nBO:=0
-  ParObr(mjesec,IF(lViseObr,cObracun,),cIdRj)
-  nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
-  SELECT DOPR; GO TOP
-  DO WHILE !EOF()  // doprinosi
+FUNC IzracDopr(cDopr, nKLO, cTipRada)
+LOCAL nArr:=SELECT(), nDopr:=0, nPom:=0, nPom2:=0, nPom0:=0, nBO:=0
+  
+if nKLO == nil
+	nKLO := 0
+endif
+if cTipRada == nil
+	cTipRada := ""
+endif
+
+ParObr(mjesec,IF(lViseObr,cObracun,),cIdRj)
+  
+if gVarObracun == "2"
+	nBo:=bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo) 
+else
+  	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
+endif
+
+SELECT DOPR
+GO TOP
+
+DO WHILE !EOF()  // doprinosi
    IF !(id $ cDopr); SKIP 1; LOOP; ENDIF
    PozicOps(DOPR->poopst)   // ? mozda ovo rusi koncepciju zbog sorta na LD-u
    IF !ImaUOp("DOPR",DOPR->id)

@@ -159,76 +159,90 @@ nPocRec:=RECNO()
 
 FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
 
-IF nDio==2; GO (nPocRec); ENDIF
+	IF nDio==2
+		GO (nPocRec)
+	ENDIF
 
-Eval(bZagl)
+	Eval(bZagl)
 
-nT1:=nT2:=nT3:=nT4:=0
-nRbr:=0
-do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.;
-         !( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
- IF lViseObr .and. EMPTY(cObracun)
-   ScatterS(godina,mjesec,idrj,idradn)
- else
-   Scatter()
- endif
- select radn; hseek _idradn; select ld
- if nIznosTO = 0      // isplata plate
-   if !lSviRadnici .and. !(empty(radn->isplata) .or. radn->isplata="BL")
-      skip
-      loop
-   endif
- else               // isplata toplog obroka
-   if !(&qqImaTO)
-      skip
-      loop
-   endif
- endif
- if prow()>62+gpStranica; FF; Eval(bZagl); endif
- ? str(++nRbr,4)+".",idradn, RADNIK
+	nT1:=nT2:=nT3:=nT4:=0
+	nRbr:=0
+	do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
+ 		IF lViseObr .and. EMPTY(cObracun)
+   			ScatterS(godina,mjesec,idrj,idradn)
+ 		else
+   			Scatter()
+ 		endif
+ 		select radn
+		hseek _idradn
+		select ld
+ 		if nIznosTO = 0      // isplata plate
+   			if !lSviRadnici .and. !(empty(radn->isplata) .or. radn->isplata="BL")
+      				skip
+     				loop
+   			endif
+ 		else               // isplata toplog obroka
+   			if !(&qqImaTO)
+      				skip
+      				loop
+   			endif
+ 		endif
+ 		
+		if prow()>62+gpStranica
+			FF
+			Eval(bZagl)
+		endif
+ 		
+		? str(++nRbr,4)+".",idradn, RADNIK
  
- nC1:=pcol()+1
- IF nIznosTO<>0
-   _uiznos:=nIznosTO
- ENDIF
- if cprikizn=="D"
-   if nProcenat<>100
-    IF nDio==1
-      @ prow(),pcol()+1 SAY round(_uiznos*nprocenat/100,nzkk) pict gpici
-    ELSE
-      @ prow(),pcol()+1 SAY ROUND(_uiznos,nzkk)-round(_uiznos*nprocenat/100,nzkk) pict gpici
-    ENDIF
-   else
-    @ prow(),pcol()+1 SAY _uiznos pict gpici
-   endif
- else
-  @ prow(),pcol()+1 SAY space(len(gpici))
- endif
- @ prow(),pcol()+4 SAY replicate("_",22)
- if cProred=="D"
-   ?
- endif
- nT1+=_usati; nT2+=_uneto; nT3+=_uodbici
- IF  NPROCENAT<>100
-   IF nDio==1
-     nT4 += round(_uiznos*nprocenat/100,nzkk)
-   ELSE
-     nT4 += ( round(_uiznos,nzkk) - round(_uiznos*nprocenat/100,nzkk) )
-   ENDIF
- ELSE
-   nT4+=_uiznos
- ENDIF
- skip
-enddo
+ 		nC1:=pcol()+1
+ 		IF nIznosTO<>0
+   			_uiznos:=nIznosTO
+ 		ENDIF
+ 		if cprikizn=="D"
+   			if nProcenat<>100
+    				IF nDio==1
+      					@ prow(),pcol()+1 SAY round(_uiznos*nprocenat/100,nzkk) pict gpici
+    				ELSE
+      					@ prow(),pcol()+1 SAY ROUND(_uiznos,nzkk)-round(_uiznos*nprocenat/100,nzkk) pict gpici
+    				ENDIF
+   			else
+    				@ prow(),pcol()+1 SAY _uiznos pict gpici
+   			endif
+ 		else
+  			@ prow(),pcol()+1 SAY space(len(gpici))
+ 		endif
+ 		
+		@ prow(),pcol()+4 SAY replicate("_",22)
+ 		if cProred=="D"
+   			?
+ 		endif
+ 		nT1+=_usati; nT2+=_uneto; nT3+=_uodbici
+ 		IF  NPROCENAT<>100
+   			IF nDio==1
+     				nT4 += round(_uiznos*nprocenat/100,nzkk)
+  			ELSE
+     				nT4 += ( round(_uiznos,nzkk) - round(_uiznos*nprocenat/100,nzkk) )
+   			ENDIF
+ 		ELSE
+   			nT4+=_uiznos
+ 		ENDIF
+ 		
+		skip
+	enddo
 
-if prow()>60+gpStranica; FF; Eval(bZagl); endif
-? m
-? SPACE(1) + Lokal("UKUPNO:")
-if cprikizn=="D"
-  @ prow(),nC1 SAY  nT4 pict gpici
-endif
-? m
-FF
+	if prow()>60+gpStranica
+		FF
+		Eval(bZagl)
+	endif
+	
+	? m
+	? SPACE(1) + Lokal("UKUPNO:")
+	if cprikizn=="D"
+  		@ prow(),nC1 SAY  nT4 pict gpici
+	endif
+	? m
+	FF
 
 NEXT
 

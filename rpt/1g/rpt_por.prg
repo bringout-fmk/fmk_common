@@ -331,3 +331,57 @@ endif
 
 return
 
+
+
+// ----------------------------------------------------
+// izracunaj porez na osnovu tipa
+// ----------------------------------------------------
+function izr_porez( nOsnovica, cTipPor )
+local nPor
+local nPom
+local nPorOl
+local cAlgoritam
+local aPor
+
+if cTipPor == nil
+	cTipPor := ""
+endif
+
+O_POR
+
+select por
+go top
+	
+nPom:=0
+nPor:=0
+nPorOl:=0
+
+do while !eof()
+	
+	// vrati algoritam poreza
+	cAlgoritam := get_algoritam()
+	
+	PozicOps( POR->poopst )
+	
+	IF !ImaUOp("POR",POR->id)
+		SKIP 1
+		LOOP
+	ENDIF
+		
+	// sracunaj samo poreze na bruto
+	if !EMPTY(cTipPor) .and. por->por_tip <> cTipPor
+		skip 
+		loop
+	endif
+	
+	// obracunaj porez
+	aPor := obr_por( por->id, nOsnovica, 0 )
+		
+	// ispisi porez
+	nPor += isp_por( aPor, cAlgoritam, "", .f., .t. )
+		
+	skip 1
+enddo
+
+return nPor
+
