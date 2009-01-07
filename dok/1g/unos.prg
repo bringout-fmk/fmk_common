@@ -103,6 +103,8 @@ O_PAROBR
 O_RADN
 O_VPOSLA
 O_STRSPR
+O_DOPR
+O_POR
 O_KBENEF
 O_OPS
 O_RJ
@@ -315,9 +317,29 @@ UkRadnik()
 _UIznos := _UNeto + _UOdbici
 
 if gVarObracun == "2"
+
+	nKLO := radn->klo
+	cTipRada := radn->tiprada
+
 	// daj bruto i licni odbitak
-	_ULicOdb := gOsnLOdb * radn->klo
-	_UBruto2 := Round( _UNeto * parobr->k5, gZaok )
+	_ULicOdb := gOsnLOdb * nKLO
+	
+	// bruto osnova
+	_UBruto2 := bruto_osn( _UNeto, cTipRada, nKLO ) 
+
+	// uiznos je sada sa uracunatim brutom i ostalim
+	
+	// ukupno doprinosi IZ place
+	nUDoprIZ := u_dopr_iz( _Ubruto2, cTipRada )
+	
+	// poreska osnovica
+	nPorOsnovica := ( (_UBruto2 - nUDoprIz) - _ulicodb )
+	
+	// porez
+	nPorez := izr_porez( nPorOsnovica, "B" )
+		
+	_uiznos := ((_UBruto2 - nUDoprIz) - nPorez ) + _UOdbici
+	
 endif
 
 @ m_x+19,m_y+2 SAY "Ukupno sati:"

@@ -17,10 +17,15 @@ cVarSort:="2"
 O_KBENEF
 O_VPOSLA
 O_RJ
+O_DOPR
+O_POR
 O_RADN
 O_LD
-O_PARAMS
+O_PAROBR
 
+ParObr(cMjesec,IF(lViseObr,cObracun,),cIdRj)
+
+O_PARAMS
 private cSection:="4"
 private cHistory:=" "
 private aHistory:={}
@@ -139,7 +144,7 @@ Eval(bZagl)
 
 nRbr:=0
 nT2a:=nT2b:=0
-nT1:=nT2:=nT3:=nT3b:=nT4:=0
+nT1:=nT2:=nT3:=nT3b:=nT4:=nT5:=0
 nVanP:=0  // van neta plus
 nVanM:=0  // van neta minus
 do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
@@ -208,12 +213,15 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
  
  	? str(++nRbr,4)+".",idradn, RADNIK
  	nC1:=pcol()+1
- 	@ prow(),pcol()+1 SAY _usati  pict gpics
- 	if gVarPP=="2"
+ 	
+	@ prow(),pcol()+1 SAY _usati  pict gpics
+ 	
+	if gVarPP=="2"
    		@ prow(),pcol()+1 SAY _uneto-nMinuli  pict gpici
    		@ prow(),pcol()+1 SAY nMinuli  pict gpici
  	endif
- 	@ prow(),pcol()+1 SAY _uneto  pict gpici
+ 	
+	@ prow(),pcol()+1 SAY _uneto  pict gpici
  	
 	if gVarPP=="2"
    		@ prow(),pcol()+1 SAY nVanP   pict gpici
@@ -222,11 +230,39 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
    		@ prow(),pcol()+1 SAY nVanP+nVanM   pict gpici
  	endif
  	
-	@ prow(),pcol()+1 SAY _uiznos pict gpici
+	if gVarObracun <> "2"
+		@ prow(),pcol()+1 SAY _uiznos pict gpici
+ 		if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
+   			@ prow(),pcol()+1 SAY "ERR"
+ 		endif
+	else
+		// novi obracun
+		
+		nTRec := RECNO()
 
- 	if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
-   		@ prow(),pcol()+1 SAY "ERR"
- 	endif
+		// koef.licnog odbitka
+		nKLO := radn->klo
+		// tip rada
+		cTipRada := radn->tiprada
+		// bruto osnovica
+		nBrutoOsn := bruto_osn( _uneto, cTipRada, nKLO )
+		// ukupno doprinosi IZ place
+		nUDoprIZ := u_dopr_iz( nBrutoOsn, cTipRada )
+		// ukupni licni odbitak
+		nOdbitak := g_licni_odb( radn->id )
+		// poreska osnovica
+		nPorOsnovica := ( (nBrutoOsn - nUDoprIz) - nOdbitak )
+		// porez
+		nPorez := izr_porez( nPorOsnovica, "B" )
+		
+		nZaIspl := ((nBrutoOsn - nUDoprIz) - nPorez ) + (nVanP + nVanM)
+	
+		@ prow(),pcol()+1 SAY nZaIspl pict gpici
+		
+		select ld
+		go (nTRec)
+
+	endif
 
   	nT1+=_usati
   	nT2a+=_uneto-nMinuli
@@ -235,6 +271,10 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	nT3+=nVanP
 	nT3b+=nVanM
 	nT4+=_uiznos
+
+	if gVarObracun == "2"
+		nT5 += nZaIspl
+	endif
  	
 	skip
 enddo
@@ -262,7 +302,11 @@ ELSE
   @ prow(),pcol()+1 SAY  nT3+nT3b pict gpici
 ENDIF
 
-@ prow(),pcol()+1 SAY  nT4 pict gpici
+if gVarObracun == "2"
+	@ prow(),pcol()+1 SAY  nT5 pict gpici
+else
+	@ prow(),pcol()+1 SAY  nT4 pict gpici
+endif
 ? m
 FF
 END PRINT
@@ -292,11 +336,11 @@ if !empty(cKBenef)
 endif
 ? m
 IF gVarPP=="2"
-  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
-  ? Lokal("     *      *                                  *       *     rad   *   rad     *           * Primanja  * Obustave *           *")
+  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
+  ? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
 ELSE
-  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati *   Neto    *  Odbici   * ZA ISPLATU*")
-  ? "     *      *                                  *       *           *           *           *"
+  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    *  Odbici   * ZA ISPLATU*")
+  ? "     *      *                                  *         *           *           *           *"
 ENDIF
 ? m
 return
