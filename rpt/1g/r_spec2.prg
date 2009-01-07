@@ -742,6 +742,7 @@ ENDIF
 
  // ukupno na ruke
  nPom := ((nBrutoOsnova - nUkDoprIZ) - nPorNaPlatu ) - nObustave
+ nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave
  nUNaRuke := nPom
  UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
  
