@@ -11,7 +11,7 @@ object ppReport: TppReport
   PrinterSetup.mmPaperHeight = 297000
   PrinterSetup.mmPaperWidth = 210000
   PrinterSetup.PaperSize = 256
-  Template.FileName = 'H:\sigma\LDSPECRS.RTM'
+  Template.FileName = 'H:\sigma\SPECRSN.RTM'
   Template.Format = ftASCII
   Units = utMillimeters
   AfterPrint = ppReportPreviewFormClose
@@ -376,7 +376,7 @@ object ppReport: TppReport
     end
     object ppMemo10: TppMemo
       UserName = 'Memo10'
-      Caption = '#U017#'
+      Caption = '#UNUK#'
       CharWrap = False
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clBlack
@@ -384,7 +384,7 @@ object ppReport: TppReport
       Font.Size = 8
       Font.Style = []
       Lines.Strings = (
-        '#N19I#')
+        '#UNUK#')
       TextAlignment = taRightJustified
       Transparent = True
       mmHeight = 3704
@@ -882,7 +882,7 @@ object ppReport: TppReport
     end
     object ppMemo57: TppMemo
       UserName = 'Memo57'
-      Caption = '#N19I#'
+      Caption = '#UNR#'
       CharWrap = False
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clBlack
@@ -890,7 +890,7 @@ object ppReport: TppReport
       Font.Size = 8
       Font.Style = []
       Lines.Strings = (
-        '#N19I#')
+        '#UNR#')
       TextAlignment = taRightJustified
       Transparent = True
       mmHeight = 3969
@@ -3117,6 +3117,29 @@ object ppReport: TppReport
       mmTop = 27252
       mmWidth = 93927
       BandType = 4
+    end
+    object ppMemo21: TppMemo
+      UserName = 'Memo101'
+      Caption = '#UNUS#'
+      CharWrap = False
+      Font.Charset = EASTEUROPE_CHARSET
+      Font.Color = clBlack
+      Font.Name = 'SC Tahoma'
+      Font.Size = 8
+      Font.Style = []
+      Lines.Strings = (
+        '#UNUS#')
+      TextAlignment = taRightJustified
+      Transparent = True
+      mmHeight = 3704
+      mmLeft = 57415
+      mmTop = 75142
+      mmWidth = 24606
+      BandType = 4
+      mmBottomOffset = 0
+      mmOverFlowOffset = 0
+      mmStopPosition = 0
+      mmLeading = 0
     end
   end
   object ppFooterBand1: TppFooterBand
