@@ -11,6 +11,8 @@ if nLOdb = nil
 	nLOdb := 0
 endif
 
+altd()
+
 // stari obracun
 if gVarObracun <> "2"
 	nBrt := ROUND2( nIzn * ( parobr->k3 / 100 ), gZaok2 )

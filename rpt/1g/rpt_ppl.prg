@@ -230,40 +230,11 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
    		@ prow(),pcol()+1 SAY nVanP+nVanM   pict gpici
  	endif
  	
-	if gVarObracun <> "2"
-		@ prow(),pcol()+1 SAY _uiznos pict gpici
- 		if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
-   			@ prow(),pcol()+1 SAY "ERR"
- 		endif
-	else
-		// novi obracun
-		
-		nTRec := RECNO()
-
-		// koef.licnog odbitka
-		nKLO := radn->klo
-		// tip rada
-		cTipRada := radn->tiprada
-		// bruto osnovica
-		nBrutoOsn := bruto_osn( _uneto, cTipRada, nKLO )
-		// ukupno doprinosi IZ place
-		nUDoprIZ := u_dopr_iz( nBrutoOsn, cTipRada )
-		// ukupni licni odbitak
-		nOdbitak := g_licni_odb( radn->id )
-		// poreska osnovica
-		nPorOsnovica := ( (nBrutoOsn - nUDoprIz) - nOdbitak )
-		// porez
-		nPorez := izr_porez( nPorOsnovica, "B" )
-		
-		nZaIspl := ((nBrutoOsn - nUDoprIz) - nPorez ) + (nVanP + nVanM)
+	@ prow(),pcol()+1 SAY _uiznos pict gpici
+ 	if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
+   		@ prow(),pcol()+1 SAY "ERR"
+ 	endif
 	
-		@ prow(),pcol()+1 SAY nZaIspl pict gpici
-		
-		select ld
-		go (nTRec)
-
-	endif
-
   	nT1+=_usati
   	nT2a+=_uneto-nMinuli
   	nT2b+=nMinuli
@@ -271,11 +242,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	nT3+=nVanP
 	nT3b+=nVanM
 	nT4+=_uiznos
-
-	if gVarObracun == "2"
-		nT5 += nZaIspl
-	endif
- 	
+	
 	skip
 enddo
 
@@ -302,11 +269,8 @@ ELSE
   @ prow(),pcol()+1 SAY  nT3+nT3b pict gpici
 ENDIF
 
-if gVarObracun == "2"
-	@ prow(),pcol()+1 SAY  nT5 pict gpici
-else
-	@ prow(),pcol()+1 SAY  nT4 pict gpici
-endif
+@ prow(),pcol()+1 SAY  nT4 pict gpici
+
 ? m
 FF
 END PRINT

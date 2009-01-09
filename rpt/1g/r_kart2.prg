@@ -488,7 +488,7 @@ if gPrBruto=="D"
 
 	// ostala primanja 
 	? cMainLine
-	? cLMSK + Lokal("6. UKUPNO OSTALA PRIMANJA")
+	? cLMSK + Lokal("6. UKUPNO ODBICI IZ PLATE")
 
 	@ prow(),60+LEN(cLMSK) SAY nOsnOstalo pict gpici
 

@@ -318,6 +318,9 @@ _UIznos := _UNeto + _UOdbici
 
 if gVarObracun == "2"
 
+	
+	altd()
+
 	nKLO := radn->klo
 	cTipRada := radn->tiprada
 
@@ -325,7 +328,7 @@ if gVarObracun == "2"
 	_ULicOdb := gOsnLOdb * nKLO
 	
 	// bruto osnova
-	_UBruto2 := bruto_osn( _UNeto, cTipRada, nKLO ) 
+	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb ) 
 
 	// uiznos je sada sa uracunatim brutom i ostalim
 	

@@ -541,8 +541,6 @@ do while !eof() .and. eval(bUSlov)
 		endif
  	next
 
-	altd()
-
 	// br.osn za radnika
 	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO ) 
 	
@@ -731,12 +729,16 @@ go top
 nU_dop_iz := 0
 
 do while !eof()
-	
-	if dopr->tiprada <> cRTipRada 
-		skip
+
+	altd()
+	// provjeri tip rada
+	if EMPTY( dopr->tiprada ) .and. cRTipRada == "I" 
+		// ovo je u redu...
+	elseif ( cRTipRada <> dopr->tiprada )
+		skip 
 		loop
 	endif
-	
+
 	// preskoci zbirne doprinose
 	if dopr->id <> "1X"
 		skip
