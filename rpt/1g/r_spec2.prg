@@ -78,6 +78,7 @@ local k:=0
 local nPreskociRedova
 local cLin
 local nPom
+local uNaRuke
 local aOps:={}
 local cRepSr := "N"
 local cRTipRada := " "
@@ -107,6 +108,7 @@ nOstOb2:=0
 nOstOb3:=0
 nOstOb4:=0
 nPorOsnovica:=0
+uNaRuke := 0
 
 // prvi dan mjeseca
 nDanOd := getfday( gMjesec )
@@ -487,6 +489,9 @@ ENDIF
  nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO )
  nBrutoOsnova += nPojBrOsn
 
+ // ukupno na ruke sto ide radniku...
+ //uNaRuke += ld->_uiznos
+
  // ukupno bruto
  nPom := nBrutoOsnova
 
@@ -741,9 +746,9 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno na ruke
- nPom := ((nBrutoOsnova - nUkDoprIZ) - nPorNaPlatu ) - nObustave
- nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave
- nUNaRuke := nPom
+ //nPom := ((nBrutoOsnova - nUkDoprIZ) - nPorNaPlatu ) - nObustave
+ //nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave
+ nPom := nUNETO
  UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
  
  // ukupno ostalo
@@ -752,7 +757,7 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','UNUS', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno ostalo
- nPom := nUNaRuke + nUUsluge
+ nPom := nUNETO
  UzmiIzIni(cIniName,'Varijable','UNUK', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice

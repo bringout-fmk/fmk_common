@@ -356,7 +356,7 @@ cLinija := "---------------------------------"
 ? "     " + Lokal("NETO PRIMANJA:")
 @ prow(),pcol()+1 SAY nUNeto pict gpici
 ?? "(" + Lokal("za isplatu:")
-@ prow(),pcol()+1 SAY nUNeto+nUOdbiciM pict gpici
+@ prow(),pcol()+1 SAY nUZaIspl pict gpici
 ?? "," + Lokal("Obustave:")
 @ prow(),pcol()+1 SAY -nUOdbiciM pict gpici
 ?? ")"
