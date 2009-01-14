@@ -123,11 +123,12 @@ return
 
 
 function PrikaziBox(lSaveObracun)
-*{
+local nULicOdb
 private cIdRj
 private cGodina
 private cIdRadn
 private cMjesec
+
 
 cIdRadn:=SPACE(6)
 cIdRj:=gRj
@@ -194,6 +195,14 @@ Box(,21,77)
 	ESC_BCR
 
 	select radn
+	
+	if gVarObracun == "2"
+		nULicOdb := ( radn->klo * gOsnLOdb )
+		if lViseObr .and. cObracun <> "1"
+			nULicOdb := 0
+		endif
+	endif
+
 	select ld
 	
 	if gAHonorar == "D"
@@ -216,7 +225,10 @@ Box(,21,77)
   		_idrj:=cIdRj
 		_idradn:=cIdRadn
 		_mjesec:=cMjesec
-  		if lViseObr
+  		if gVarObracun == "2"
+			_ulicodb := nULicOdb
+		endif
+		if lViseObr
 			_obr := cObracun
 		endif
 		if gAHonorar == "D"
@@ -247,7 +259,12 @@ Box(,21,77)
 	else
  		@ m_x+3,col()+2 SAY Lokal("Koef.minulog rada") GET _kminrad pict "99.99%" valid FillKMinRad()
 	endif
-	@ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
+	if gVarObracun == "2"
+		@ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "999.99"
+		@ m_x + 4, col()+1 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
+	else
+		@ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
+	endif
 	read
 	if (IsRamaGlas() .and. RadnikJeProizvodni())
 		UnosSatiPoRNal(cGodina,cMjesec,cIdRadn)
@@ -318,17 +335,21 @@ _UIznos := _UNeto + _UOdbici
 
 if gVarObracun == "2"
 
-	
-	altd()
-
 	nKLO := radn->klo
 	cTipRada := radn->tiprada
+	nSPr_koef := 0
+	// samostalni djelatnik
+	if cTipRada == "S"
+		if radn->(FIELDPOS("SP_KOEF")) <> 0
+			nSPr_koef := radn->sp_koef
+		endif
+	endif
 
 	// daj bruto i licni odbitak
-	_ULicOdb := gOsnLOdb * nKLO
+	//_ULicOdb := gOsnLOdb * nKLO
 	
 	// bruto osnova
-	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb ) 
+	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef ) 
 
 	// uiznos je sada sa uracunatim brutom i ostalim
 	

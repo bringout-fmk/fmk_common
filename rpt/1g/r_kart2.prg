@@ -35,17 +35,18 @@ IF l2kolone
 	// SETPRC(0,0)
 ENDIF
 
-? cTprLine
-? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
-? cTprLine
-
 cUneto := "D"
 nRRsati := 0 
 nOsnNeto := 0
 nOsnOstalo := 0
-nLicOdbitak := g_licni_odb( radn->id )
+//nLicOdbitak := g_licni_odb( radn->id )
+nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
 cRTipRada := radn->tiprada
+
+? cTprLine
+? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
+? cTprLine
 
 for i:=1 to cLDPolja
 	
@@ -424,11 +425,19 @@ if gPrBruto=="D"
 	
 	// razrada licnog odbitka ....
 	
+	if nLicOdbitak > 0
 
-	? cLMSK + Lokal("3. LICNI ODBITAK"), SPACE(14) + ;
+	  ? cLMSK + Lokal("3. LICNI ODBITAK"), SPACE(14) + ;
 		ALLTRIM(STR(gOsnLOdb)) + " * koef. " + ;
 		ALLTRIM(STR(nKoefOdbitka)) + " = "
-	@ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
+	  @ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
+	
+	else
+	  
+          ? cLMSK + Lokal("3. LICNI ODBITAK")
+	  @ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
+	
+	endif
 
 	? cMainLine
 

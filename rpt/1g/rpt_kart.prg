@@ -194,6 +194,7 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 
 	select radn
 	hseek _idradn
+ 	cRTRada := radn->tiprada
 	select vposla
 	hseek _idvposla
 	select rj
@@ -207,9 +208,13 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 
 	if __var_obr == "2"
 		
-		// nova kartica plate
-		kartpl2(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
-
+		if cRTRada == "S"
+			// kartica plate samostalni poduzetnik	
+			kartpls(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		else
+			// nova kartica plate
+			kartpl2(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		endif
 	else
 		// stara kartica plate
 		if gPrBruto<>"X"

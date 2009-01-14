@@ -493,7 +493,7 @@ Box(,10+IF(IsRamaGlas(),1,0),75)
 
 		if gVarObracun == "2"
 			@ m_x+2,m_y+2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
-				VALID cRTipRada $ " #S#R#D#U#" PICT "@!" 
+				VALID cRTipRada $ " #S#N#P#U#" PICT "@!" 
 		endif
 		
 		@ m_x+3,m_y+2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"

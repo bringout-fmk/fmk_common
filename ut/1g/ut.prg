@@ -3,15 +3,21 @@
 
 // ----------------------------------------
 // vraca bruto osnovu
+// nIzn - ugovoreni neto iznos
+// cTipRada - vrsta/tip rada
+// nLOdb - iznos licnog odbitka
+// nSKoef - koeficijent kod samostalnih poslodavaca
 // ----------------------------------------
-function bruto_osn( nIzn, cTipRada, nLOdb )
+function bruto_osn( nIzn, cTipRada, nLOdb, nSKoef )
 local nBrt := 0
 
 if nLOdb = nil
 	nLOdb := 0
 endif
 
-altd()
+if nSKoef = nil
+	nSKoef := 0
+endif
 
 // stari obracun
 if gVarObracun <> "2"
@@ -21,20 +27,25 @@ endif
 
 do case
 	// nesamostalni rad
-	case cTipRada $ " #N"
+	case EMPTY(cTipRada)
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
 	// nesamostalni rad, isti neto
 	case cTipRada == "I"
-		nBrt := ROUND2( ( (nIzn - nLOdb) / 0.9 + nLOdb ) ;
-			/ 0.69  ,gZaok2)
-	// samostalni rad
+		// ako je ugovoreni iznos manji od odbitka
+		if (nIzn < nLOdb )
+			nBrt := ROUND2( nIzn * parobr->k6, gZaok2 )
+		else
+			nBrt := ROUND2( ( (nIzn - nLOdb) / 0.9 + nLOdb ) ;
+				/ 0.69  ,gZaok2)
+		endif
+	// samostalni poslodavci
 	case cTipRada == "S"
-		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
-	// rezident
-	case cTipRada == "R"
-		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
-	// samostalni poslodavac
-	case cTipRada == "D"
+		nBrt := ROUND2( nIzn * nSKoef ,gZaok2 )
+	// predsjednicki clanovi
+	case cTipRada == "P"
+		nBrt := ROUND2( nIzn * parobr->k5, gZaok2)
+	// nerezidenti
+	case cTipRada == "N"
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
 	// ugovor o radu
 	case cTipRada == "U"
@@ -47,16 +58,20 @@ return nBrt
 // ----------------------------------------
 // ispisuje bruto obracun
 // ----------------------------------------
-function bruto_isp( nNeto, cTipRada, nLOdb )
+function bruto_isp( nNeto, cTipRada, nLOdb, nSKoef )
 local cPrn := ""
 
 if nLOdb = nil
 	nLOdb := 0
 endif
 
+if nSKoef = nil
+	nSKoef := 0
+endif
+
 do case
 	// nesamostalni rad
-	case cTipRada $ " #N"
+	case EMPTY(cTipRada)
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 			ALLTRIM(STR(parobr->k5)) + " ="
 
@@ -64,19 +79,23 @@ do case
 	case cTipRada == "I"
 		cPrn := ALLTRIM(STR(nNeto)) + " - " + ALLTRIM(STR(nLOdb)) + ;
 			" / 0.9 + " + ALLTRIM(STR(nLOdb)) + " / 0.69 = "
+		if ( nNeto < nLOdb )
+			cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
+				ALLTRIM(STR(parobr->k6)) + " ="
 
-	// samostalni rad
+		endif
+	// samostalni poslodavci
 	case cTipRada == "S"
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
-			ALLTRIM(STR(parobr->k5)) + " ="
+			ALLTRIM(STR(nSKoef)) + " ="
 	
-	// samostalni poslodavac
-	case cTipRada == "D"
+	// clanovi predsjednistva
+	case cTipRada == "P"
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 			ALLTRIM(STR(parobr->k5)) + " ="
-	
-	// rezident
-	case cTipRada == "R"
+
+	// nerezidenti
+	case cTipRada == "N"
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 			ALLTRIM(STR(parobr->k5)) + " ="
 

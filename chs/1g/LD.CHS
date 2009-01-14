@@ -25,7 +25,7 @@ A N3        N 12 2
 A IDRJ      C 2 0
 A KLO       N 5 2
 A TIPRADA   C 1 0
-
+A SP_KOEF   N 5 2
 
 *_RADN
 A KMINRAD   N 5 2

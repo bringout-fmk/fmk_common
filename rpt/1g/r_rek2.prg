@@ -487,8 +487,10 @@ do while !eof() .and. eval(bUSlov)
 	_oosnostalo := 0
 
 	// licni odbitak za radnika
-	nRadn_lod := ( gOsnLOdb * radn->klo )
-
+	//nRadn_lod := ( gOsnLOdb * radn->klo )
+	
+	nRadn_lod := _ulicodb 
+	
 	nKoefLO := nRadn_lod
 
  	// vrati osnovicu za neto i ostala primanja
@@ -540,9 +542,14 @@ do while !eof() .and. eval(bUSlov)
 			endif
 		endif
  	next
+	
+	nRSpr_koef := 0
+	if radn->tiprada == "S"
+		nRSpr_koef := radn->sp_koef	
+	endif
 
 	// br.osn za radnika
-	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO ) 
+	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO, nRSpr_koef ) 
 	
 	// ukupno bruto osnova
 	nURadn_bo += nRadn_bo

@@ -223,7 +223,7 @@ do while .t.
 		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
 			GET qqIdRJ PICT "@!S15"
      		@ m_x+ 1,col()+1 SAY "Djelatnost" GET cRTipRada ;
-			VALID cRTipRada $ " #D#R#S#U" PICT "@!"
+			VALID cRTipRada $ " #S#N#P#U" PICT "@!"
 		@ m_x+ 1,col()+1 SAY "Spec.za RS" GET cRepSr ;
 			VALID cRepSr $ "DN" PICT "@!"
 
@@ -401,7 +401,11 @@ ENDIF
    SELECT RADN
    HSEEK LD->idradn
    cRTR := radn->tiprada
-
+   nRSpr_koef := 0
+   if cRTR == "S"
+	nRSpr_koef := radn->sp_koef
+   endif
+	
    if cRTR == "I" .and. EMPTY(cRTipRada)
    	// ovo je uredu...
 	// jer je i ovo nesamostalni rad
@@ -433,7 +437,8 @@ ENDIF
      LOOP
    ENDIF
   
-   nKoefLO := (gOsnLOdb * radn->klo)
+   //nKoefLO := (gOsnLOdb * radn->klo)
+   nKoefLO := ld->ulicodb
 
    nULicOdbitak += nKoefLO
 
@@ -486,7 +491,7 @@ ENDIF
   
  
  // prvo doprinosi i bruto osnova ....
- nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO )
+ nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
  nBrutoOsnova += nPojBrOsn
 
  // ukupno na ruke sto ide radniku...
@@ -745,10 +750,8 @@ ENDIF
  // ukupno obaveze
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- // ukupno na ruke
- //nPom := ((nBrutoOsnova - nUkDoprIZ) - nPorNaPlatu ) - nObustave
- //nPom := nUNETO + nBolPreko + nPorOlaksice - nObustave
- nPom := nUNETO
+ nPom := nBrutoOsnova
+ nUUNR := nPom
  UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
  
  // ukupno ostalo
@@ -757,7 +760,7 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','UNUS', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno ostalo
- nPom := nUNETO
+ nPom := nUUNR + nUUsluge
  UzmiIzIni(cIniName,'Varijable','UNUK', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // ukupno placa_i_obaveze = obaveze + ukupno_neto + poreskeolaksice
