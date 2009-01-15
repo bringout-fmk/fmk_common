@@ -211,6 +211,9 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 		if cRTRada == "S"
 			// kartica plate samostalni poduzetnik	
 			kartpls(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		elseif cRTRada == "U"
+			// kartica plate ugovor o djelu
+			kartplu(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
 		else
 			// nova kartica plate
 			kartpl2(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)

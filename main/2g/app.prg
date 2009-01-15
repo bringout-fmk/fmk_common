@@ -252,6 +252,12 @@ public gObracun := " "
 public gVarObracun := " "
 // default vrijednost osnovnog licnog odbitka 
 public gOsnLOdb := 300
+
+// trosak kod ugovora o djelu
+public gUgTrosk := 20
+// trosak kod autorskog honorara
+public gAhTrosk := 30
+
 public gIzdanje := SPACE(10)
 public gGodina := YEAR( DATE() )
 public gZaok:=2
@@ -344,6 +350,8 @@ Rpar("lo",@gOsnLOdb)
 Rpar("pr",@gPotpRpt)
 Rpar("P1",@gPotp1)
 Rpar("P2",@gPotp2)
+Rpar("t1",@gUgTrosk)
+Rpar("t2",@gAhTrosk)
 
 //Rpar("tB",@gTabela)
 

@@ -49,7 +49,11 @@ do case
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
 	// ugovor o radu
 	case cTipRada == "U"
-		nBrt := ROUND2( nIzn / 0.8912 ,gZaok2 )
+		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 ,gZaok2 )
+	// autorski honorar
+	case cTipRada == "A"
+		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 ,gZaok2 )
+
 endcase
 
 return nBrt
@@ -101,8 +105,12 @@ do case
 
 	// ugovor o radu
 	case cTipRada == "U"
-		cPrn := ALLTRIM(STR(nNeto)) + " / 0.8912 ="
+		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 ="
 	
+	// autorski honorar
+	case cTipRada == "A"
+		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 ="
+
 endcase
 
 return cPrn
