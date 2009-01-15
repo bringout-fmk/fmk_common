@@ -27,7 +27,7 @@ AADD(ImeKol, { Lokal(padr("MinR%", 5)), {|| kminrad}, "kminrad" })
 if RADN->(FIELDPOS("KLO")) <> 0
    AADD(ImeKol, { Lokal(padr("Koef.l.odb.", 15)), {|| klo}, "klo" })
    AADD(ImeKol, { Lokal(padr("Tip rada", 15)), {|| tiprada}, "tiprada", ;
-   	{|| .t.}, {|| wtiprada $ " #I#S#N#P#U#" .or. MsgTipRada() } })
+   	{|| .t.}, {|| wtiprada $ " #I#A#S#N#P#U#" .or. MsgTipRada() } })
    if RADN->(FIELDPOS("SP_KOEF")) <> 0
    	AADD(ImeKol, { Lokal(padr("prop.koef", 15)), {|| sp_koef}, "sp_koef" })
    endif
@@ -194,13 +194,14 @@ return .f.
 // -------------------------------------------------------
 function MsgTipRada()
 
-Box(,6,50)
+Box(,7,50)
 	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: ' ' - nesamostalni rad      ")
  	@ m_x+2,m_y+2 SAY Lokal("                 'I' - nes.rad isti neto")
  	@ m_x+3,m_y+2 SAY Lokal("                 'S' - samostalni poslodavci")
  	@ m_x+4,m_y+2 SAY Lokal("                 'N' - nerezident FBiH")
  	@ m_x+5,m_y+2 SAY Lokal("                 'U' - ugovor o djelu")
- 	@ m_x+6,m_y+2 SAY Lokal("                 'P' - clanovi predsj. itd...")
+ 	@ m_x+6,m_y+2 SAY Lokal("                 'A' - autorski honorar")
+ 	@ m_x+7,m_y+2 SAY Lokal("                 'P' - clanovi predsj. itd...")
  	inkey(0)
 BoxC()
 
@@ -752,7 +753,7 @@ if DOPR->(FIELDPOS("DOP_TIP")) <> 0
 endif
 
 if DOPR->(FIELDPOS("TIPRADA")) <> 0
-	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#" .or. MsgTipRada() } }  )
+	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#A#" .or. MsgTipRada() } }  )
 endif
 
 AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )

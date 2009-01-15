@@ -760,3 +760,37 @@ enddo
 
 return nU_dop_iz
 
+// ------------------------------------------------
+// vraca ukupno doprinosa NA plate, 2X
+// ------------------------------------------------
+function u_dopr_na( nDopOsn, cRTipRada )
+
+select dopr
+go top
+	
+nU_dop_na := 0
+
+do while !eof()
+
+	// provjeri tip rada
+	if EMPTY( dopr->tiprada ) .and. cRTipRada == "I" 
+		// ovo je u redu...
+	elseif ( cRTipRada <> dopr->tiprada )
+		skip 
+		loop
+	endif
+
+	// preskoci zbirne doprinose
+	if dopr->id <> "2X"
+		skip
+		loop 
+	endif
+
+	nU_dop_na += round2((iznos/100) * nDopOsn, gZaok2)
+			
+	skip 1
+		
+enddo
+
+return nU_dop_na
+

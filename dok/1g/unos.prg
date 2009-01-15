@@ -338,12 +338,16 @@ if gVarObracun == "2"
 	nKLO := radn->klo
 	cTipRada := radn->tiprada
 	nSPr_koef := 0
+	nTrosk := 0
+	nBrOsn := 0
+
 	// samostalni djelatnik
 	if cTipRada == "S"
 		if radn->(FIELDPOS("SP_KOEF")) <> 0
 			nSPr_koef := radn->sp_koef
 		endif
 	endif
+	
 
 	// daj bruto i licni odbitak
 	//_ULicOdb := gOsnLOdb * nKLO
@@ -351,26 +355,47 @@ if gVarObracun == "2"
 	// bruto osnova
 	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef ) 
 
+	nBrOsn := _UBruto2
+
+	altd()
+
+	// ugovor o djelu
+	if cTipRada == "U"
+		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
+		nBrOsn := _UBruto2 - nTrosk 
+	endif
+
+	// autorski honorar
+	if cTipRada == "A"
+		nTrosk := ROUND2( _UBruto2 * (gAhTrosk / 100), gZaok2 )
+		nBrOsn := _UBruto2 - nTrosk
+	endif
+
 	// uiznos je sada sa uracunatim brutom i ostalim
 	
 	// ukupno doprinosi IZ place
-	nUDoprIZ := u_dopr_iz( _Ubruto2, cTipRada )
+	nUDoprIZ := u_dopr_iz( nBrOsn, cTipRada )
 	
 	// poreska osnovica
-	nPorOsnovica := ( (_UBruto2 - nUDoprIz) - _ulicodb )
+	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
 	
 	// porez
 	nPorez := izr_porez( nPorOsnovica, "B" )
 		
-	_uiznos := ((_UBruto2 - nUDoprIz) - nPorez ) + _UOdbici
+	_uiznos := ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici
 	
+	if cTipRada $ "U#A"
+		// kod ovih vrsta dodaj i troskove
+		_uIznos := ROUND2(_uiznos + nTrosk, 1)
+	endif
+
 endif
 
 @ m_x+19,m_y+2 SAY "Ukupno sati:"
 @ row(),col()+1 SAY _USati PICT gPics
 
 if gVarObracun == "2"
-	@ m_x+19,col()+2 SAY "Koef.lic.odb.:"
+	@ m_x+19,col()+2 SAY "Uk.lic.odb.:"
 	@ row(),col()+1 SAY _ULicOdb PICT gPici
 endif
 

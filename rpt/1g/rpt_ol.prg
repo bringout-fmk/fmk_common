@@ -4,9 +4,9 @@ static DUZ_STRANA:=64
 static __var_obr
 
 // -------------------------------------------------------------
-// kartica plate radnika
+// obracunski list radnika
 // -------------------------------------------------------------
-function KartPl(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
+function r_obrlist(cIdRj, cMjesec, cGodina, cIdRadn, cObrac)
 local i
 local aNeta:={}
 
@@ -211,8 +211,11 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 		if cRTRada == "S"
 			// kartica plate samostalni poduzetnik	
 			kartpls(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
-		elseif cRTRada $ "AU"
-			// kartica plate autorski honorar - ugovor o djelu
+		elseif cRTRada == "A"
+			// kartica plate autorski honorar
+			kartpla(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
+		elseif cRTRada == "U"
+			// kartica plate ugovor o djelu
 			kartplu(cIdRj,cMjesec,cGodina,cIdRadn,cObrac,@aNeta)
 		elseif cRTRada == "P"
 			// kartica plate clanovi predsjednistva
@@ -268,7 +271,7 @@ return
 // ---------------------------
 // zaglavlje kartice plate
 // ---------------------------
-function ZaglKar()
+function Zagl_ol()
 
 ++nRBrKart
 
@@ -330,7 +333,7 @@ return
 // ---------------------------------------------------
 // provjerava koliko kartica ima redova
 // ---------------------------------------------------
-function kart_redova()
+function ol_redova()
 local nRows:=0
 local cField
 local cFIznos:="_I"
@@ -864,7 +867,7 @@ return
 
 
 // potpis kartice
-function kart_potpis()
+function ol_potpis()
 // potpis kartice
 if !lSkrivena .and. gPotp == "D"
 	?

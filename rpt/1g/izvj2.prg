@@ -1160,7 +1160,18 @@ SELECT DOPR
 GO TOP
 
 DO WHILE !EOF()  // doprinosi
-   IF !(id $ cDopr); SKIP 1; LOOP; ENDIF
+  if gVarObracun == "2"
+   if cTipRada == "I" .and. EMPTY( dopr->tiprada )
+   	// ovo je uredu !
+   elseif dopr->tiprada <> cTipRada 
+   	skip 1
+	loop
+   endif
+  endif 
+   IF !(id $ cDopr)
+   	SKIP 1
+	LOOP
+   ENDIF
    PozicOps(DOPR->poopst)   // ? mozda ovo rusi koncepciju zbog sorta na LD-u
    IF !ImaUOp("DOPR",DOPR->id)
      SKIP 1; LOOP

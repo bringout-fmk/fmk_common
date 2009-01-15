@@ -43,16 +43,16 @@ do case
 		nBrt := ROUND2( nIzn * nSKoef ,gZaok2 )
 	// predsjednicki clanovi
 	case cTipRada == "P"
-		nBrt := ROUND2( nIzn * parobr->k5, gZaok2)
+		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 , gZaok2)
 	// nerezidenti
 	case cTipRada == "N"
-		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
-	// ugovor o radu
+		nBrt := ROUND2( nIzn * parobr->k5 , gZaok2 )
+	// ugovor o djelu
 	case cTipRada == "U"
-		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 ,gZaok2 )
+		nBrt := ROUND2( (nIzn / 0.8912) , gZaok2 )
 	// autorski honorar
 	case cTipRada == "A"
-		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 ,gZaok2 )
+		nBrt := ROUND2( (nIzn / 0.9048) , gZaok2 )
 
 endcase
 
@@ -95,21 +95,20 @@ do case
 	
 	// clanovi predsjednistva
 	case cTipRada == "P"
-		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
-			ALLTRIM(STR(parobr->k5)) + " ="
+		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 =" 
 
 	// nerezidenti
 	case cTipRada == "N"
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 			ALLTRIM(STR(parobr->k5)) + " ="
 
-	// ugovor o radu
+	// ugovor o djelu
 	case cTipRada == "U"
-		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 ="
+		cPrn := ALLTRIM(STR(nNeto)) + " / 0.8912 ="
 	
 	// autorski honorar
 	case cTipRada == "A"
-		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 ="
+		cPrn := ALLTRIM(STR(nNeto)) + " / 0.9048 ="
 
 endcase
 

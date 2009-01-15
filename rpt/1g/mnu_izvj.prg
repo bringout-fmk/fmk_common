@@ -25,6 +25,11 @@ if gAHonorar == "D"
 	AADD(opcexe,{|| mnu_ahon()})
 endif
 
+if gVarObracun == "2"
+	AADD(opc,"O. obracunski listovi")
+	AADD(opcexe,{|| notimp() })
+endif
+
 Menu_SC("izvj")
 
 return

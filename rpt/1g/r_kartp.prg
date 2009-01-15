@@ -4,7 +4,7 @@
 // -------------------------------------------------
 // nova varijanta kartica plate
 // -------------------------------------------------
-function kartplu( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
+function kartplp( cIdRj, cMjesec, cGodina, cIdRadn, cObrac, aNeta )
 local nKRedova
 local cDoprSpace := SPACE(3)
 local cTprLine 
@@ -25,7 +25,6 @@ cUneto := "D"
 nRRsati := 0 
 nOsnNeto := 0
 nOsnOstalo := 0
-//nLicOdbitak := g_licni_odb( radn->id )
 nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
 cRTipRada := radn->tiprada
@@ -84,40 +83,15 @@ nBO:=0
 nBFO:=0
 nBSaTr:=0
 nTrosk:=0
-nTrProc:=0
+
 nOsnZaBr := nOsnNeto
-
-// bruto sa troskovima
-nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
-
-// troskovi su
-if cRTipRada == "U"
-	// ugovor o djelu
-	nTrProc := gUgTrosk
-else
-	// autorski honorar
-	nTrProc := gAhTrosk
-endif
-
-nTrosk := nBSaTr * ( nTrProc / 100 )
-
-// bruto osnovica za obracun doprinosa i poreza
-nBo :=  nBSaTr - nTrosk 
+	
+nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 // bruto placa iz neta...
 
 ? cMainLine
-? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak)
-
-@ prow(),60+LEN(cLMSK) SAY nBSaTr pict gpici
-
-? cMainLine
-? cLMSK + "2. TROSKOVI :  ", " 1 * " + ALLTRIM( STR( nTrProc )) + "% ="
-
-@ prow(),60+LEN(cLMSK) SAY nTrosk pict gpici
-
-? cMainLine
-? cLMSK + "3. BRUTO BEZ TROSKOVA :  ", "(1 - 2) ="
+? cLMSK + "1. BRUTO NAKNADA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 @ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -138,7 +112,7 @@ nC1 := 20 + LEN(cLMSK)
 	
 do while !eof()
 	
-	if dopr->tiprada <> cRTipRada
+	if dopr->tiprada <> "P"
 		skip
 		loop
 	endif
@@ -222,7 +196,7 @@ nOporDoh := nBo - nUkDoprIz
 // oporezivi dohodak ......
 	
 ? cMainLine
-?  cLMSK + Lokal("4. NETO IZNOS NAKNADE ( bruto - dopr.IZ )")
+?  cLMSK + Lokal("2. NETO IZNOS NAKNADE ( bruto - dopr.IZ )")
 @ prow(),60+LEN(cLMSK) SAY nOporDoh pict gpici
 
 ? cMainLine
@@ -237,7 +211,7 @@ endif
 // razrada poreza na platu ....
 // u ovom dijelu idu samo porezi na bruto TIP = "B"
 
-? cLMSK + Lokal("5. AKONTACIJA POREZA NA DOHODAK")
+? cLMSK + Lokal("3. AKONTACIJA POREZA NA DOHODAK")
 
 select por
 go top
@@ -277,12 +251,12 @@ enddo
 @ prow(),60+LEN(cLMSK) SAY nPor pict gpici
 
 // ukupno za isplatu ....
-nZaIsplatu := ROUND2( ( nOporDoh - nPor ) + nTrosk , 1 )
+nZaIsplatu := ( nOporDoh - nPor ) 
 	
 ?
 
 ? cMainLine
-?  cLMSK + Lokal("UKUPNO ZA ISPLATU ( 4 - 5 + 2 )")
+? cLMSK + Lokal("UKUPNO ZA ISPLATU ( 4 - 5 )")
 @ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
 
 ? cMainLine
