@@ -1083,6 +1083,8 @@ FUNCTION FFor7()
  xNetoUk:=xDoprUk:=0
  cRadnik := RADN->(padr(  trim(naz)+" ("+trim(imerod)+") "+ime,32))
  cIdRadn := IDRADN
+ nKLO := 0
+ cTipRada := ""
  if gVarObracun == "2"
  	nKLO := radn->klo
 	cTipRada := radn->tiprada
@@ -1128,20 +1130,28 @@ FUNC SubTot7()
 RETURN aVrati
 
 
-FUNC IzracDopr(cDopr, nKLO, cTipRada)
+// ------------------------------------------
+// izracunava doprinose
+// ------------------------------------------
+function IzracDopr(cDopr, nKLO, cTipRada, nSpr_koef )
 LOCAL nArr:=SELECT(), nDopr:=0, nPom:=0, nPom2:=0, nPom0:=0, nBO:=0
   
 if nKLO == nil
 	nKLO := 0
 endif
+
 if cTipRada == nil
 	cTipRada := ""
+endif
+
+if nSPr_koef == nil
+	nSPr_koef := 0
 endif
 
 ParObr(mjesec,IF(lViseObr,cObracun,),cIdRj)
   
 if gVarObracun == "2"
-	nBo:=bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo) 
+	nBo:=bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo, nSPr_koef ) 
 else
   	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
 endif
