@@ -6,7 +6,7 @@
 function Main()
 *{
 local i,j,ii
-local cNprog[16],cMProg[16],cTProg[16]
+local cNprog[17],cMProg[17],cTProg[17]
 
 SetSCGvars()
 
@@ -63,7 +63,7 @@ if file("install.mem")
     fMem:=.t.
 endif
 
-@ 1,1 SAY PADC("Instalacija FMK - SIGMA-COM software 02.02, 05.95-15.03.07", 77) COLOR "I"
+@ 1,1 SAY PADC("Instalacija FMK - SIGMA-COM software 03.00, 05.95-20.01.08", 77) COLOR "I"
 
 
 cFMkInst:="D"
@@ -85,7 +85,7 @@ if LastKey() == ASC(CHR(27))
 	return
 endif
 
-nPrograma:=11
+nPrograma:=12
 
 if !fmem
  cProg1:=cProg2:=cProg3:=cProg4:=cProg5:=cProg6:=cProg7:=cProg8:=cProg9:=cProg10:=cProg11:=cProg12:=cProg16:="N"
@@ -109,7 +109,8 @@ cNPROG[7]:="KAM"
 cNPROG[8]:="SII"
 cNPROG[9]:="EPDV"
 cNPROG[10]:="RNAL"
-cNPROG[11]:="ADMIN"
+cNPROG[11]:="PORLD"
+cNPROG[12]:="ADMIN"
 
 // {to zna~i da ovo indicira da li program koristi podatke drugog programa
 // - master programa. Tako je master programa koji prenosi iz KALK u FIN -
@@ -124,7 +125,8 @@ cMProg[7]:="KAM"
 cMPROG[8]:="SII"
 cMPROG[9]:="EPDV"
 cMPROG[10]:="RNAL"
-cMPROG[11]:="ADMIN"
+cMPROG[11]:="PORLD"
+cMPROG[12]:="ADMIN"
 
 // cTProgi title koji se pojavljuje u BAT-u
 cTProg[1]:="FIN  - Finansijsko"
@@ -137,6 +139,7 @@ cTPROG[7]:="KAM - kamate"
 cTPROG[8]:="SII  - Sitan inventar"
 cTPROG[9]:="EPDV - KUF/KIF, P-PDV"
 cTPROG[10]:="RNAL - nalozi za pr."
+cTPROG[12]:="PORLD - porodilje"
 cTPROG[11]:="ADMIN - administracija"
 
 if cFmkInst=="N"
@@ -548,7 +551,7 @@ next
 cls
 beep(1)
 cMedij:="A"
-@ 20,1 SAY "Arhiviranje ce se vrsiti na Floppy/ZIP/CD izmjenljivu jedinicu A/B/D/E/F/G/H" GET cMedij pict "@!"  valid cMedij $ "ABDEFGH"
+@ 20,1 SAY "Arhiviranje ce se vrsiti na Floppy/ZIP/CD/USB A/D/E/F/G/H/I/J/K/L..." GET cMedij pict "@!"  valid cMedij $ "ADEFGHIJKLMNOPRSTYWUVZ"
 read
 
 fwrite(nH,":C"+cFMkString+cRs+NL)
@@ -567,7 +570,7 @@ fwrite(nH,"cd "+cBDir2+NL)
 fwrite(nH,"echo MENI: ARHIVIRANJE SVIH PODATAKA"+NL)
 fwrite(nH,"echo -------------------------------"+NL)
 if cMedij>"B"
-fwrite(nH,"echo  1. Arhiviranje na CD/ZIP medije"+NL)
+fwrite(nH,"echo  1. Arhiviranje na USB medije"+NL)
 else
 fwrite(nH,"echo  1. Arhiviranje na flopy diskete "+NL)
 endif
@@ -609,7 +612,7 @@ fwrite(nH,"goto ASVE"+NL)
 fwrite(nH,":FDDFOR"+NL)
 fwrite(nH,"cls"+NL)
 if cMedij>"B"
-fwrite(nH,"echo Stavite ZIP/CD i pritisnite neku tipku za pocetak formatiranja"+NL)
+fwrite(nH,"echo Stavite USB i pritisnite neku tipku za pocetak formatiranja"+NL)
 else
 fwrite(nH,"echo Stavite floppy disketu i pritisnite neku tipku za pocetak formatiranja"+NL)
 endif
@@ -622,7 +625,7 @@ fwrite(nH,"goto ASVE"+NL)
 fwrite(nH,":FDDDIR"+NL)
 fwrite(nH,"cls"+NL)
 if cMedij>"B"
-fwrite(nH,"echo Stavite ZIP/CD u ureðaj i pritisnite neku tipku radi pregleda sadrzaja"+NL)
+fwrite(nH,"echo Stavite USB u ureðaj i pritisnite neku tipku radi pregleda sadrzaja"+NL)
 else
 fwrite(nH,"echo Stavite floppy disketu i pritisnite neku tipku radi pregleda sadrzaja diskete"+NL)
 endif
@@ -656,7 +659,7 @@ fwrite(nH,"goto ANAFDD"+NL)
 fwrite(nH,":ANAFDDS"+NL)
 fwrite(nH,"cls"+NL)
 if cMedij>"B"
-  fwrite(nH,"echo Stavite ZIP/CD u ureðaj i pritisnite neku tipku za pocetak arhiviranja"+NL)
+  fwrite(nH,"echo Stavite USB u ureðaj i pritisnite neku tipku za pocetak arhiviranja"+NL)
   else
   fwrite(nH,"echo Stavite floppy disketu i pritisnite neku tipku za pocetak arhiviranja"+NL)
 endif
@@ -681,7 +684,7 @@ endif
 fwrite(nH,":ANAFDDT"+NL)
 fwrite(nH,"cls"+NL)
 if cMedij>"B"
-fwrite(nH,"echo Stavite ZIP/CD u ureðaj i pritisnite neku tipku za pocetak arhiviranja"+NL)
+fwrite(nH,"echo Stavite USB u ureðaj i pritisnite neku tipku za pocetak arhiviranja"+NL)
 else
 fwrite(nH,"echo Stavite floppy disketu i pritisnite neku tipku za pocetak arhiviranja"+NL)
 endif
