@@ -82,6 +82,10 @@ AADD(opcexe, {|| VisePuta()})
 AADD(opc, "8. promjeni varijantu obracuna za obracun")
 AADD(opcexe, {|| chVarObracun()})
 
+if IzFmkIni("LD","RadniSati","N",KUMPATH) == "D"
+	AADD(opc, "R. pregled/ispravka radnih sati radnika")
+	AADD(opcexe, {|| edRadniSati()})
+endif
 
 Menu_SC("ao")
 

@@ -73,14 +73,15 @@ for i:=1 to cLDPolja
 
 		if _i&cpom<>0 .or. _s&cPom<>0
 			
-			// uvodi se djoker # : Primjer: Naziv tipa primanja
+			// uvodi se djoker # : Primjer: 
+			// Naziv tipa primanja
 			// je: REDOVAN RAD BOD #RADN->N1 -> naci RADN->N1
 			// i ispisati REDOVAN RAD BOD 12.0
 			
 			nDJ:=at("#",tippr->naz)
 			cTPNaz:=tippr->naz
 			
-			if nDJ<>0
+			if nDJ <> 0
 				
 				RSati:=_s&cPom
 				
@@ -89,16 +90,15 @@ for i:=1 to cLDPolja
 
 				@ prow(),60+LEN(cLMSK) SAY nRsTmp pict gpici
 				@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
-				if gVarObracuna == "2"
-					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k5)/100)-_i&cPom))
-				else
-					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
-				endif
+				
+				@ prow(), pcol()+48 SAY "-" + ;
+					ALLTRIM(STR(( nRSTmp -_i&cPom)))
 
-				if type(cDJ)="C"
-					cTPNaz:=left(tippr->naz,nDJ-1)+&cDJ
+				if type(cPom)="C"
+					cTPNaz := LEFT(tippr->naz,nDJ-1) + &nPom
 				elseif type(cPom)="N"
-					cTPNAZ:=left(tippr->naz,nDJ-1)+alltrim(str(&cDJ))
+					cTPNAZ := LEFT(tippr->naz,nDJ-1) + ;
+						alltrim(str( &cPom ))
 				endif
 			endif
 			
@@ -111,7 +111,9 @@ for i:=1 to cLDPolja
 				?? " s"
 				
 				if tippr->id=="01" .and. lRadniSati
+					
 					nRRSati:=_s&cPom
+					
 					@ prow(),60+LEN(cLMSK) SAY _i&cPom * parobr->k3/100 pict gpici
 					@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
 					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
@@ -444,7 +446,7 @@ if gPrBruto=="D"
 	nPorOsnovica := ( nOporDoh - nLicOdbitak )
 	
 	// ako je negativna onda je 0
-	if nPorOsnovica < 0
+	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id )
 		nPorOsnovica := 0
 	endif
 

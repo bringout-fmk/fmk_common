@@ -1,6 +1,28 @@
 #include "ld.ch"
 
 
+// --------------------------------------------
+// da li je radnik oporeziv ?
+// --------------------------------------------
+function radn_oporeziv( cRadn )
+local lRet := .t.
+local nTArea := SELECT()
+
+if radn->(FIELDPOS("OPOR")) <> 0
+	select radn
+	seek cRadn
+	// nije oporeziv ako je "N"
+	if field->opor == "N"
+		lRet := .f.
+	endif
+endif
+
+select (nTArea)
+
+return lRet 
+
+
+
 // ----------------------------------------
 // vraca bruto osnovu
 // nIzn - ugovoreni neto iznos
@@ -114,6 +136,16 @@ endcase
 
 return cPrn
 
+// ---------------------------------------------------
+// validacija tipa rada na uslovima izvjestaja
+// ---------------------------------------------------
+function val_tiprada( cTR )
+if cTR $ " #I#S#P#U#N#A"
+	return .t.
+else
+	return .f.
+endif
+return
 
 
 // --------------------------------

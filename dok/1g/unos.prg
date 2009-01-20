@@ -260,7 +260,7 @@ Box(,21,77)
  		@ m_x+3,col()+2 SAY Lokal("Koef.minulog rada") GET _kminrad pict "99.99%" valid FillKMinRad()
 	endif
 	if gVarObracun == "2"
-		@ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "999.99"
+		@ m_x + 4, m_y + 2 SAY "Lic.odb:" GET _ulicodb PICT "9999.99"
 		@ m_x + 4, col()+1 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
 	else
 		@ m_x+4,m_y+2 SAY Lokal("Vrsta posla koji radnik obavlja") GET _IdVPosla valid (empty(_idvposla) .or. P_VPosla(@_IdVPosla,4,43)) .and. FillVPosla()
@@ -276,7 +276,8 @@ Box(,21,77)
 	read
 	
 	if lRadniSati
-		FillRadSati(cIdRadn,_radSat)
+		nSatiPreth := 0
+		nSatiPreth := FillRadSati( cIdRadn, _radSat )
 	endif
 	
 	if gSihtarica=="D"
@@ -305,7 +306,12 @@ Box(,21,77)
 	endif
 	
 	PrikUkupno(@lSaveObracun)
-		
+	
+	if lRadniSati
+		// ako nije sacuvan obracun ponisti i radne sate
+		delRadSati( cIdRadn, nSatiPreth )
+	endif
+	
 	if lLogUnos
 		if lNovi
 			EventLog(nUser,goModul:oDataBase:cName,"DOK","UNOS",ld->uiznos,nil,nil,nil,STR(cMjesec,2),ALLTRIM(cIdRadn),STR(cGodina,4),Date(),Date(),"", Lokal("Obracunata plata za radnika"))
@@ -357,8 +363,6 @@ if gVarObracun == "2"
 
 	nBrOsn := _UBruto2
 
-	altd()
-
 	// ugovor o djelu
 	if cTipRada == "U"
 		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
@@ -378,7 +382,11 @@ if gVarObracun == "2"
 	
 	// poreska osnovica
 	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
-	
+
+	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id )
+		nPorOsnovica := 0
+	endif
+
 	// porez
 	nPorez := izr_porez( nPorOsnovica, "B" )
 		

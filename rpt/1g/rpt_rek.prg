@@ -493,7 +493,7 @@ Box(,10+IF(IsRamaGlas(),1,0),75)
 
 		if gVarObracun == "2"
 			@ m_x+2,m_y+2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
-				VALID cRTipRada $ " #S#N#P#U#" PICT "@!" 
+				VALID val_tiprada( cRTipRada ) PICT "@!" 
 		endif
 		
 		@ m_x+3,m_y+2 SAY "Radne jedinice: "  GET  qqRJ PICT "@!S25"
@@ -537,7 +537,7 @@ nArr:=SELECT()
 Box(,8+IF(IsRamaGlas(),1,0),75)
 	if gVarObracun == "2"
 		@ m_x+1,m_y+2 SAY "Vrsta djelatnosti: "  GET cRTipRada ;
-			VALID cRTipRada $ " #N#S#R#D#U" PICT "@!" 
+			VALID val_tiprada( cRTipRada ) PICT "@!" 
 	endif
 	@ m_x+2,m_y+2 SAY "Radna jedinica: "  GET cIdRJ
 	@ m_x+3,m_y+2 SAY "Za mjesece od:"  GET  cmjesec  pict "99" VALID {|| cMjesecDo:=cMjesec,.t.}

@@ -564,7 +564,7 @@ do while !eof() .and. eval(bUSlov)
 	// ovo je total poreske osnove za radnika
 	nPorOsnova := nRadn_posn
 
-	if nPorOsnova < 0
+	if nPorOsnova < 0 .or. !radn_oporeziv( radn->id )
 		nPorOsnova := 0
 	endif
 

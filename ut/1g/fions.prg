@@ -661,19 +661,88 @@ if radn->kminrad<>_kminrad
   	endif
 endif
 return .t.
-*}
+
+
+// -------------------------------------------------
+// ispravka pregled radnih sati
+// -------------------------------------------------
+function edRadniSati()
+private ImeKol := {}
+private Kol := {}
+
+PushWa()
+
+O_RADSAT
+select radsat
+set order to tag "1"
+
+private Imekol:={}
+AADD(ImeKol, {"radn",         {|| IdRadn   } } )
+AADD(ImeKol, {"ime i prezime", {|| g_naziv(IdRadn) } } )
+AADD(ImeKol, {"sati",          {|| sati   } } )
+AADD(ImeKol, {"status",        {|| status   } } )
+
+Kol:={}
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol,i)
+next
+
+Box(,18,60)
+	ObjDbedit("RadSat",18,60,{|| key_handler()},"Pregled radnih sati za radnike","", , , , )
+Boxc()
+
+PopwA()
+
+return
+
+
+
+// ---------------------------------------
+// key handler za radne sate
+// ---------------------------------------
+static function key_handler()
+
+do case
+	case CH == K_F2
+		
+		Box(,1,40)
+			nSati := field->sati
+			@ m_x+1,m_y+2 SAY "novi sati:" GET nSati
+			read
+		BoxC()
+		if LastKey() == K_ESC
+			return DE_CONT
+		else
+			replace field->sati with nSati
+			return DE_REFRESH
+		endif
+
+	case CH == K_CTRL_T
+		if Pitanje(,"izbrisati stavku ?","N") == "D"
+			delete
+			return DE_REFRESH
+		endif
+		
+endcase
+
+return DE_CONT
+
+
 
 function FillRadSati(cIdRadnik,nRadniSati)
-*{
+
+// uzmi prethodne sate...
+cSatiPredhodni:=GetStatusRSati(cIdRadnik)	
+
 if Pitanje(, Lokal("Unos placenih sati (D/N)?"),"D")=="N"
-	return
+	return VAL(cSatiPredhodni)
 endif
 
 nPlacenoRSati:=0
 cOdgovor:="D"
 
 Box(,9,48)
-	cSatiPredhodni:=GetStatusRSati(cIdRadnik)	
 	@ m_x+1,m_y+2 SAY Lokal("Radnik:   ") + ALLTRIM(cIdRadnik)
 	@ m_x+2,m_y+2 SAY Lokal("Ostalo iz predhodnih obracuna: ") + ALLTRIM(cSatiPredhodni) + " sati"
 	@ m_x+3,m_y+2 SAY "-----------------------------------------------"
@@ -692,25 +761,32 @@ Box(,9,48)
 		MsgBeep(Lokal("Promjene nisu sacuvane !!!"))
 	endif
 BoxC()
-return
-*}
+
+return VAL(cSatiPredhodni)
+
+
 
 function GetStatusRSati(cIdRadn)
-*{
 local nArr
+local nSati := 0
 nArr:=SELECT()
 
 select radsat
 hseek cIdRadn
-nSati:=field->sati
+
+if FOUND() .and. field->idradn == cIdRadn
+	nSati:=field->sati
+endif
 
 select (nArr)
 
 return STR(nSati)
-*}
 
-function UbaciURadneSate(cIdRadn,nIznosSati)
-*{
+
+
+
+function UbaciURadneSate( cIdRadn, nIznosSati )
+
 local nArr
 nArr:=SELECT()
 
@@ -718,18 +794,41 @@ select radsat
 hseek cIdRadn
 
 if Found()
+
 	nPredhodniSati:=field->sati
 	replace field->sati with nIznosSati+nPredhodniSati
+
 else
+
 	append blank
 	replace field->idradn with cIdRadn
 	replace field->sati with nIznosSati
+
 endif
 
 select (nArr)
 
 return
-*}
+
+// ---------------------------------
+// upisi u iznos radne sate
+// ---------------------------------
+function delRadSati( cIdRadn, nIznos )
+
+local nArr
+nArr:=SELECT()
+
+select radsat
+hseek cIdRadn
+
+if Found()
+	replace field->sati with nIznos
+endif
+
+select (nArr)
+
+return
+
 
 function FillVPosla()
 *{
@@ -742,6 +841,17 @@ if radn->idvposla<>_idvposla
 endif
 return .t.
 *}
+
+
+// vraca naziv radnika
+function g_naziv( cRadn )
+local cStr := ""
+local nTArea := SELECT()
+select radn
+seek cRadn
+cStr := ALLTRIM(radn->ime) + " " + ALLTRIM(radn->naz)
+select (nTArea)
+return cStr
 
 
 ******************************

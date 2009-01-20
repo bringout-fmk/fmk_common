@@ -31,7 +31,10 @@ if RADN->(FIELDPOS("KLO")) <> 0
    if RADN->(FIELDPOS("SP_KOEF")) <> 0
    	AADD(ImeKol, { Lokal(padr("prop.koef", 15)), {|| sp_koef}, "sp_koef" })
    endif
-   
+   if RADN->(FIELDPOS("OPOR")) <> 0
+   	AADD(ImeKol, { Lokal(padr("oporeziv", 15)), {|| opor}, "opor" })
+   endif
+  
 endif
 
 AADD(ImeKol, { Lokal(padr("StrSpr",6)), {|| padc(Idstrspr,6)}, "idstrspr", {||.t.}, {|| P_StrSpr(@wIdStrSpr)} } )

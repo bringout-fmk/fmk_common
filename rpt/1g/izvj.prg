@@ -2364,16 +2364,18 @@ FUNCTION NLjudi()
 RETURN "("+ALLTRIM(STR(opsld->ljudi))+")"
 
 
-FUNC ImaUOp(cPD,cSif)
- LOCAL lVrati:=.t.
-  IF OPS->(FIELDPOS("DNE"))<>0
-    IF UPPER(cPD)="P"   // porez
-      lVrati := ! ( cSif $ OPS->pne )
-    ELSE                // doprinos
-      lVrati := ! ( cSif $ OPS->dne )
-    ENDIF
-  ENDIF
-RETURN lVrati
+function ImaUOp( cPD, cSif )
+local lVrati:=.t.
+if ops->(FIELDPOS("DNE")) <> 0
+	if UPPER(cPD) = "P"
+		// porez
+      		lVrati := ! ( cSif $ OPS->pne )
+    	else                
+		// doprinos
+      		lVrati := ! ( cSif $ OPS->dne )
+    	endif
+endif
+return lVrati
 
 
 // ---------------------------

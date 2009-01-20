@@ -223,7 +223,7 @@ do while .t.
 		@ m_x+ 1,m_y+ 2 SAY "Radna jedinica (prazno-sve): " ;
 			GET qqIdRJ PICT "@!S15"
      		@ m_x+ 1,col()+1 SAY "Djelatnost" GET cRTipRada ;
-			VALID cRTipRada $ " #S#N#P#U" PICT "@!"
+			VALID val_tiprada( cRTipRada ) PICT "@!"
 		@ m_x+ 1,col()+1 SAY "Spec.za RS" GET cRepSr ;
 			VALID cRepSr $ "DN" PICT "@!"
 
@@ -611,7 +611,7 @@ ENDIF
 
  nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
- if nPojPorOsn >= 0
+ if nPojPorOsn >= 0 .and. radn_oporeziv( radn->id )
 
  	// osnovica za porez na platu
  	//nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak
