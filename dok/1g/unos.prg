@@ -390,7 +390,7 @@ if gVarObracun == "2"
 	// porez
 	nPorez := izr_porez( nPorOsnovica, "B" )
 		
-	_uiznos := ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici
+	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, 1 )
 	
 	if cTipRada $ "U#A"
 		// kod ovih vrsta dodaj i troskove
