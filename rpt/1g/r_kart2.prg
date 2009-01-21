@@ -505,7 +505,7 @@ if gPrBruto=="D"
 
 
 	// ukupno za isplatu ....
-	nZaIsplatu := ( nOporDoh - nPor ) + nOsnOstalo
+	nZaIsplatu := ROUND2( ( nOporDoh - nPor ) + nOsnOstalo, 1 )
 	
 	?
 
