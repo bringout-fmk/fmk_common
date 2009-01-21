@@ -2380,31 +2380,42 @@ return lVrati
 
 // ---------------------------
 // ---------------------------
-FUNCTION PozicOps(cSR)
- LOCAL nArr:=SELECT(), cO:=""
-  IF cSR=="1"      // stanovanja
-    cO:=RADN->idopsst
-  ELSEIF cSR=="2"  // rada
-    cO:=RADN->idopsrad
-  *ELSEIF cSR=="3"  // kanton stanovanja
-  *  PushWa(); select ops; set order to tag "KAN"; seek rand->idopsst; cO:=ops->IDKAN;  PopWa()
-  *ELSEIF cSR=="4"  // kanton rada
-  *  PushWa(); select ops; set order to tag "KAN"
-  *  seek rand->idopsrad; cO:=ops->IDKAN;  PopWa()
-  *ELSEIF cSR=="5"  // entitet stanovanja
-  *  PushWa(); select ops; set order to tag "IDN0"; seek rand->idopsst; cO:=ops->idn0;  PopWa()
-  *ELSEIF cSR=="6"  // entitet rada
-  *  PushWa(); select ops; set order to tag "IDN0"; seek rand->idopsrad; cO:=ops->idn0;  PopWa()
-  ELSE             // " "
-    cO:=CHR(255)
-  ENDIF
-  SELECT (F_OPS)
-  IF !USED()
-    O_OPS
-  ENDIF
-  SEEK cO
-  SELECT (nArr)
-RETURN
+function PozicOps(cSR)
+local nArr:=SELECT()
+local cO:=""
+
+if cSR == "1"      
+	// opstina stanovanja
+    	cO := radn->idopsst
+elseif cSR == "2"  
+	// opstina rada
+	cO := radn->idopsrad
+
+//elseif cSR=="3"  // kanton stanovanja
+//  *  PushWa(); select ops; set order to tag "KAN"; seek rand->idopsst; cO:=ops->IDKAN;  PopWa()
+//  *ELSEIF cSR=="4"  // kanton rada
+//  *  PushWa(); select ops; set order to tag "KAN"
+//  *  seek rand->idopsrad; cO:=ops->IDKAN;  PopWa()
+//  *ELSEIF cSR=="5"  // entitet stanovanja
+//  *  PushWa(); select ops; set order to tag "IDN0"; seek rand->idopsst; cO:=ops->idn0;  PopWa()
+//  *ELSEIF cSR=="6"  // entitet rada
+//  *  PushWa(); select ops; set order to tag "IDN0"; seek rand->idopsrad; cO:=ops->idn0;  PopWa()
+
+else
+	// " "
+    	cO := CHR(255)
+endif
+
+select (F_OPS)
+
+if !USED()
+	O_OPS
+endif
+
+seek cO
+
+select (nArr)
+return
 
 // ----------------------------------------
 // ----------------------------------------
