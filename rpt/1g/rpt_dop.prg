@@ -204,16 +204,25 @@ do while !eof()
 			else
 				nTmpOsn := nDoprOsnova
 			endif
-		
+			
+			altd()
+
 			if gVarObracun == "2"
+
 				nBo := nURadn_bo
+				
+				// ako je beneficirani
+				if "BENEF" $ dopr->naz
+					nBo := nURadn_bbo
+				endif
+
 			else
 
-			 if "BENEF" $ dopr->naz
+			   if "BENEF" $ dopr->naz
            			nBO := bruto_osn( nUBNOsnova, cRTipRada, nKoefLO )
-      			 else
+      			   else
            			nBO := bruto_osn( nTmpOsn, cRTipRada, nKoefLO )
-      			 endif
+      			   endif
       			endif
 			
 			@ prow(),nC1 SAY nBO pict gpici
@@ -259,7 +268,7 @@ do while !eof()
     		endif
   	endif 
 
-	if right(id,1)=="X"
+	if right(id,1)=="X" .or. "BENEF" $ dopr->naz
     		? cLinija
     		IF !lGusto
       			?

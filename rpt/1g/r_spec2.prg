@@ -99,6 +99,9 @@ qqOpSt:=""
 
 nPorOlaksice:=0
 nBrutoOsnova:=0
+nBrutoOsBenef := 0
+nPojBrOsn := 0
+nPojBrBenef := 0
 nOstaleObaveze:=0
 nBolPreko:=0
 nPorezOstali:=0
@@ -492,7 +495,17 @@ ENDIF
  
  // prvo doprinosi i bruto osnova ....
  nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+ 
  nBrutoOsnova += nPojBrOsn
+ 
+ // beneficirani radnici
+ if UBenefOsnovu()
+ 	
+	nPojBrBenef := bruto_osn( nNetoOsn - IF(!EMPTY(gBFForm),&gBFForm,0), cRTR, nKoefLO, nRSpr_koef )
+ 	
+ 	nBrutoOsBenef += nPojBrBenef
+ endif
+ 
 
  // ukupno na ruke sto ide radniku...
  //uNaRuke += ld->_uiznos
@@ -571,8 +584,6 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','D12_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
  nPom:=nKD7X
  UzmiIzIni(cIniName,'Varijable','D12_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
-
- altd()
 
  nDopr1X := round2(nBrutoOsnova * nkD1X / 100, gZaok2)
  nDopr2X := round2(nBrutoOsnova * nkD2X / 100, gZaok2)

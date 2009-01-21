@@ -1025,6 +1025,11 @@ function IzObDop()
 
  cSort := "OPS->idkan+SortPre2()+str(mjesec)"
  cFilt := "godina==cGodina .and. mjesec>=cMjesecOd .and. mjesec<=cMjesecDo"
+ 
+ if cDopr == "71;"
+	cFilt += " .and. radn->k4 = 'BF'"
+ endif
+ 
  IF !EMPTY(cIdRj)
    cFilt += " .and. idrj=cIdRJ"
  ENDIF
@@ -1117,11 +1122,11 @@ FUNCTION FFor7()
 RETURN .t.
 
 
-PROCEDURE FSvaki7()
+function FSvaki7()
 RETURN
 
 
-FUNC SubTot7()
+function SubTot7()
  LOCAL aVrati:={.f.,""}
   IF lSubTot7 .or. EOF()
     aVrati := { .t. , "UKUPNO KANTON '"+IF(EOF(),cKanton,cSubTot7)+"'" }
@@ -1134,7 +1139,7 @@ RETURN aVrati
 // izracunava doprinose
 // ------------------------------------------
 function IzracDopr(cDopr, nKLO, cTipRada, nSpr_koef )
-LOCAL nArr:=SELECT(), nDopr:=0, nPom:=0, nPom2:=0, nPom0:=0, nBO:=0
+LOCAL nArr:=SELECT(), nDopr:=0, nPom:=0, nPom2:=0, nPom0:=0, nBO:=0, nBFOsn:=0
   
 if nKLO == nil
 	nKLO := 0
@@ -1152,6 +1157,12 @@ ParObr(mjesec,IF(lViseObr,cObracun,),cIdRj)
   
 if gVarObracun == "2"
 	nBo:=bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo, nSPr_koef ) 
+	if UBenefOsnovu()
+		if !EMPTY(gBFForm)
+			gBFForm := STRTRAN(gBFForm,"_","")
+		endif
+		nBFOsn := bruto_osn(_UNeto - IF(!EMPTY(gBFForm), &gBFForm,0), cTipRada, nKlo, nSPr_koef)
+	endif
 else
   	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
 endif
@@ -1176,10 +1187,14 @@ DO WHILE !EOF()  // doprinosi
    IF !ImaUOp("DOPR",DOPR->id)
      SKIP 1; LOOP
    ENDIF
-   // if right(id,1)<>"X"
-   //   SKIP 1; LOOP
-   // endif
-   nPom:=max(dlimit,round(iznos/100*nBO,gZaok2))
+   
+   if "BENEF" $ dopr->naz
+   	// beneficirani
+	nPom:=max(dlimit,round(iznos/100*nBFOsn,gZaok2))
+   else
+   	nPom:=max(dlimit,round(iznos/100*nBO,gZaok2))
+   endif
+
    if round(iznos,4)=0 .and. dlimit>0  // fuell boss
      // kartica plate
      nPom:=1*dlimit   

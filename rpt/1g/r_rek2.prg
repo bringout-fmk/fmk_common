@@ -161,6 +161,7 @@ nDoprOsnova := 0
 nDoprOsnOst := 0
 nPorOsnova := 0
 nURadn_bo := 0
+nURadn_bbo := 0
 nUPorOsnova := 0
 nULOdbitak := 0
 nUBNOsnova:=0
@@ -438,6 +439,7 @@ local cTpr
 
 nPorol := 0
 nRadn_bo := 0
+nRadn_bbo := 0
 nPor := 0
 aNetoMj:={}
 
@@ -553,6 +555,12 @@ do while !eof() .and. eval(bUSlov)
 	
 	// ukupno bruto osnova
 	nURadn_bo += nRadn_bo
+
+	if UBenefOsnovu()
+		// beneficirani
+		nRadn_bbo := bruto_osn( _oosnneto - if(!Empty(gBFForm), &gBFForm, 0), radn->tiprada, nKoefLO, nRSpr_koef )
+		nURadn_bbo += nRadn_bbo
+	endif
 
 	// da bi dobio osnovicu za poreze
 	// moram vidjeti i koliko su doprinosi IZ
@@ -737,7 +745,6 @@ nU_dop_iz := 0
 
 do while !eof()
 
-	altd()
 	// provjeri tip rada
 	if EMPTY( dopr->tiprada ) .and. cRTipRada == "I" 
 		// ovo je u redu...

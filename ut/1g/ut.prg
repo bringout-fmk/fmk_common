@@ -47,6 +47,8 @@ if gVarObracun <> "2"
 	return nBrt
 endif
 
+altd()
+
 do case
 	// nesamostalni rad
 	case EMPTY(cTipRada)
@@ -54,7 +56,7 @@ do case
 	// nesamostalni rad, isti neto
 	case cTipRada == "I"
 		// ako je ugovoreni iznos manji od odbitka
-		if (nIzn < nLOdb )
+		if (nIzn < nLOdb ) 
 			nBrt := ROUND2( nIzn * parobr->k6, gZaok2 )
 		else
 			nBrt := ROUND2( ( (nIzn - nLOdb) / 0.9 + nLOdb ) ;
@@ -105,7 +107,7 @@ do case
 	case cTipRada == "I"
 		cPrn := ALLTRIM(STR(nNeto)) + " - " + ALLTRIM(STR(nLOdb)) + ;
 			" / 0.9 + " + ALLTRIM(STR(nLOdb)) + " / 0.69 = "
-		if ( nNeto < nLOdb )
+		if ( nNeto < nLOdb ) 
 			cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 				ALLTRIM(STR(parobr->k6)) + " ="
 
