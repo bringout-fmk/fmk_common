@@ -27,7 +27,7 @@ endif
 
 if gVarObracun == "2"
 	AADD(opc,"O. obracunski listovi")
-	AADD(opcexe,{|| notimp() })
+	AADD(opcexe,{|| r_obr_list() })
 endif
 
 Menu_SC("izvj")

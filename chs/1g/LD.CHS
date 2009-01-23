@@ -10,6 +10,9 @@ C VRBOD  N   15  4    VRBOD  N  15  5
 A IDRJ C 2 0
 A K5  N 12 6
 A K6  N 12 6
+A K7  N 12 6
+A K8  N 12 6
+A MINLD  N 12 6
 
 *RADN
 A KMINRAD   N 5 2
@@ -27,6 +30,7 @@ A KLO       N 5 2
 A TIPRADA   C 1 0
 A SP_KOEF   N 5 2
 A OPOR      C 1 0
+A TROSK     C 1 0
 
 *_RADN
 A KMINRAD   N 5 2

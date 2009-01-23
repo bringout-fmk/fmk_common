@@ -346,6 +346,18 @@ if gVarObracun == "2"
 	nSPr_koef := 0
 	nTrosk := 0
 	nBrOsn := 0
+	cOpor := " "
+	cTrosk := " "
+
+	// radnik oporeziv ?
+	if radn->(FIELDPOS("opor")) <> 0
+		cOpor := radn->opor
+	endif
+	
+	// koristi troskove ?
+	if radn->(FIELDPOS("trosk")) <> 0
+		cTrosk := radn->trosk
+	endif
 
 	// samostalni djelatnik
 	if cTipRada == "S"
@@ -359,18 +371,18 @@ if gVarObracun == "2"
 	//_ULicOdb := gOsnLOdb * nKLO
 	
 	// bruto osnova
-	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef ) 
+	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
 
 	nBrOsn := _UBruto2
 
 	// ugovor o djelu
-	if cTipRada == "U"
+	if cTipRada == "U" .and. cTrosk <> "N"
 		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
 		nBrOsn := _UBruto2 - nTrosk 
 	endif
 
 	// autorski honorar
-	if cTipRada == "A"
+	if cTipRada == "A" .and. cTrosk <> "N"
 		nTrosk := ROUND2( _UBruto2 * (gAhTrosk / 100), gZaok2 )
 		nBrOsn := _UBruto2 - nTrosk
 	endif
@@ -389,12 +401,17 @@ if gVarObracun == "2"
 
 	// porez
 	nPorez := izr_porez( nPorOsnovica, "B" )
-		
+
+	// nema poreza
+	if cOpor == "N"
+		nPorez := 0
+	endif
+
 	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, 1 )
 	
-	if cTipRada $ "U#A"
+	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove
-		_uIznos := ROUND2(_uiznos + nTrosk, 1)
+		_uIznos := ROUND2( _uiznos + nTrosk, 1 )
 	endif
 
 endif

@@ -160,6 +160,8 @@ nUNetoOsnova:=0
 nDoprOsnova := 0
 nDoprOsnOst := 0
 nPorOsnova := 0
+nPorNROsnova := 0
+nUPorNROsnova := 0
 nURadn_bo := 0
 nURadn_bbo := 0
 nUPorOsnova := 0
@@ -316,9 +318,18 @@ nPorez2 := 0
 nPorOp1 := 0
 nPorOp2 := 0
 nPorOl1 := 0
+nTOsnova := 0
 
 // obracunaj porez na bruto
-obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
+nTOsnova := obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
+
+// ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI
+// rijec je o radnicima koji nemaju poreza
+if nTOsnova > nPorOsn
+	? Lokal("!!! razlika osnovice poreza (radi radnika bez poreza):")
+	@ prow(), 60 SAY ( nPorOsn - nTOsnova ) pict gpici
+	?
+endif
 
 nPorez1 += nPor
 nPorez2 += nPor2
@@ -330,12 +341,12 @@ nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM
 
 // obracun ostalog poreza na neto
 ? cMainLine
-? Lokal("6. OSNOVICA ZA OBRACUN OSTALIH POREZA (NA NETO)")
-@ prow(), 60 SAY nUNetoOsnova 
+? Lokal("6. OSNOVICA ZA OBRACUN OSTALIH NAKNADA (NETO NA RUKE)")
+@ prow(), 60 SAY nOporDohod - nPor 
 ? cMainLine
 
 // obracunaj ostali porez na neto
-obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "N" )
+obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "R" )
 
 nPorez1 += nPor
 nPorez2 += nPor2
@@ -351,7 +362,7 @@ nPorOl1 += nUPorOl
 
 ?
 
-cLinija := "---------------------------------"
+cLinija := "--------------------------------------------"
 
 ? cLinija
 ? "     " + Lokal("NETO PRIMANJA:")
@@ -363,13 +374,16 @@ cLinija := "---------------------------------"
 ?? ")"
 ? " " + Lokal("PRIMANJA VAN NETA:")
 @ prow(),pcol()+1 SAY nUOdbiciP pict gpici  // dodatna primanja van neta
-? "            " + Lokal("POREZI:")
+? cLinija
+? " " + Lokal("OPOREZIVI DOHODAK (1):")
+@ prow(),pcol()+1 SAY nOporDohod pict gpici
+? "            " + Lokal("POREZI (2):")
 IF cUmPD=="D"
 	@ prow(),pcol()+1 SAY nPorez1-nPorOl1-nPorez2    pict gpici
 ELSE
 	@ prow(),pcol()+1 SAY nPorez1-nPorOl1    pict gpici
 ENDIF
-? "         " + Lokal("DOPRINOSI:")
+? "         " + Lokal("DOPRINOSI (3):")
 IF cUmPD=="D"
 	@ prow(),pcol()+1 SAY nDopr-nDopr2    pict gpici
 ELSE
@@ -379,11 +393,11 @@ ENDIF
 ? cLinija
 
 IF cUmPD=="D"
-	? Lokal(" POTREBNA SREDSTVA:")
-	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPorez1-nPorOl1)+nDopr-nPorez2-nDopr2    pict gpici
+	? Lokal(" POTREBNA SREDSTVA (1 + 2 + 3):")
+	@ prow(),pcol()+1 SAY nOporDohod+(nPorez1-nPorOl1)+nDopr-nPorez2-nDopr2    pict gpici
 ELSE
-	? Lokal(" POTREBNA SREDSTVA:")
-	@ prow(),pcol()+1 SAY nUNeto+nUOdbiciP+(nPorez1-nPorOl1)+nDopr    pict gpici
+	? Lokal(" POTREBNA SREDSTVA (1 + 2 + 3):")
+	@ prow(),pcol()+1 SAY nOporDohod+(nPorez1-nPorOl1)+nDopr    pict gpici
 ENDIF
 ? cLinija
 ?
@@ -567,7 +581,7 @@ do while !eof() .and. eval(bUSlov)
 	nRadn_diz := u_dopr_iz( nRadn_bo , cRTipRada )
 	
 	// osnovica za poreze
-	nRadn_posn := (nRadn_bo - nRadn_diz ) - nRadn_lod
+	nRadn_posn := ROUND2( (nRadn_bo - nRadn_diz ) - nRadn_lod, gZaok2 )
 	
 	// ovo je total poreske osnove za radnika
 	nPorOsnova := nRadn_posn
@@ -611,7 +625,7 @@ do while !eof() .and. eval(bUSlov)
 		if nTmpP < 0 
 			nTmpP := 0
 		endif
-
+	
 		nPor += nTmpP
 
 		if cAlgoritam == "S"
@@ -623,7 +637,12 @@ do while !eof() .and. eval(bUSlov)
 		skip
 		
  	enddo
- 
+	
+ 	// porez na ruke osnova
+	// BRUTO - DOPR_IZ - POREZ
+	nPorNROsnova := ROUND2 ( (nRadn_bo - nRadn_diz) - nPor, gZaok2 )
+	nUPorNROsnova += nPorNROsnova
+
  	
 	nPom:=ASCAN(aNeta,{|x| x[1]==vposla->idkbenef})
  	

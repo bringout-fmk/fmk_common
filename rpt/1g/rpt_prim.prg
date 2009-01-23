@@ -240,8 +240,6 @@ ENDIF
 ? m
 ?
 p_potpis()
-?
-?
 FF
 END PRINT
 CLOSERET

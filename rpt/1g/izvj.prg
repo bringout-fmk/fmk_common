@@ -91,7 +91,7 @@ if tippr->(found()) .and. tippr->aktivan=="D"
 endif
 
 
-FUNCTION KumPrim(cIdRadn,cIdPrim)
+function KumPrim(cIdRadn,cIdPrim)
  LOCAL j:=0, nVrati:=0, nOdGod:=0, nDoGod:=0
  cPom77:=cIdPrim
   IF cIdRadn==NIL; cIdRadn:=""; ENDIF
@@ -121,10 +121,6 @@ local cTPNaz, cUmPD:="N", nKrug:=1
 
 fPorNaRekap:=IzFmkIni("LD","PoreziNaRekapitulaciji","N",KUMPATH)=="D"
 
-#ifdef CPOR
- cUmPD:="D"
-#endif
-
 cIdRj:=gRj; cmjesec:=gMjesec; cGodina:=gGodina
 cObracun:=gObracun
 cMjesecDo:=cMjesec
@@ -144,18 +140,7 @@ O_VPOSLA
 O_OPS
 O_RADKR
 O_KRED
-
-#ifdef CPOR
- IF Pitanje(,"Izvjestaj se pravi za isplacene(D) ili neisplacene(N) radnike?","D")=="D"
-   lIsplaceni:=.t.
-   O_LD
- ELSE
-   lIsplaceni:=.f.
-   select (F_LDNO)  ; usex (KUMPATH+"LDNO") alias LD; set order to 1
- ENDIF
-#else
- O_LD
-#endif
+O_LD
 
 cIdRadn:=space(_LR_); cStrSpr:=space(3); cOpsSt:=space(4); cOpsRad :=space(4)
 
@@ -347,11 +332,7 @@ aDbf:={    {"GODINA"     ,  "C" , 4, 0 } ,;
            {"iznos1"     ,  "N" , 25, 4} ,;
            {"iznos2"     ,  "N" , 25, 4} ;
         }
-#ifdef CPOR
-  AADD( aDbf , {"idpartner"  ,  "C" , 10, 0} )
-#else
-  AADD( aDbf , {"idpartner"  ,  "C" ,  6, 0} )
-#endif
+AADD( aDbf , {"idpartner"  ,  "C" ,  6, 0} )
 
 DBCREATE2(KUMPATH+"REKLD",aDbf)
 
@@ -2390,17 +2371,6 @@ if cSR == "1"
 elseif cSR == "2"  
 	// opstina rada
 	cO := radn->idopsrad
-
-//elseif cSR=="3"  // kanton stanovanja
-//  *  PushWa(); select ops; set order to tag "KAN"; seek rand->idopsst; cO:=ops->IDKAN;  PopWa()
-//  *ELSEIF cSR=="4"  // kanton rada
-//  *  PushWa(); select ops; set order to tag "KAN"
-//  *  seek rand->idopsrad; cO:=ops->IDKAN;  PopWa()
-//  *ELSEIF cSR=="5"  // entitet stanovanja
-//  *  PushWa(); select ops; set order to tag "IDN0"; seek rand->idopsst; cO:=ops->idn0;  PopWa()
-//  *ELSEIF cSR=="6"  // entitet rada
-//  *  PushWa(); select ops; set order to tag "IDN0"; seek rand->idopsrad; cO:=ops->idn0;  PopWa()
-
 else
 	// " "
     	cO := CHR(255)
@@ -2476,13 +2446,13 @@ RETURN cT
 
 
 
-PROC SvratiUFajl()
+function SvratiUFajl()
   FERASE(PRIVPATH+"xoutf.txt")
   SET PRINTER TO (PRIVPATH+"xoutf.txt")
 RETURN
 
 
-FUNC U2Kolone(nViska)
+function U2Kolone(nViska)
  LOCAL cImeF, nURed
  IF "U" $ TYPE("cLMSK"); cLMSK:=""; ENDIF
  nSirKol:=80+LEN(cLMSK)
@@ -2501,10 +2471,6 @@ RETURN aR
 
 
 function SetRadnGodObr()
-*{
-
-
 return
-*}
 
 

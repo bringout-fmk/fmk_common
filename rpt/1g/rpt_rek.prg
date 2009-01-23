@@ -158,6 +158,8 @@ nUBNOsnova:=0
 nUDoprIz := 0
 nUIznos:=0
 nPorOsnova:=0
+nPorNROsnova:=0
+nUPorNROsnova:=0
 nUSati:=0
 nUOdbici:=0
 nUOdbiciP:=0
@@ -612,6 +614,9 @@ aDbf:={{"ID"    ,"C", 1,0},;
        {"IZNOS2","N",25,4},;
        {"IZNOS3","N",25,4},;
        {"IZNOS4","N",25,4},;
+       {"IZNOS5","N",25,4},;
+       {"IZNOS6","N",25,4},;
+       {"IZNOS7","N",25,4},;
        {"BR_OSN","N",25,4},;
        {"IZN_OST","N",25,4},;
        {"T_ST_1","N",5,2},;
@@ -662,6 +667,8 @@ local nPom
 local nOsnovica := 0
 local nOstalo := 0
 local nBrOsnova := 0
+local nOsnov5 := 0
+local nOsnov4 := 0
 
 if cTip == nil
 	cTip := ""
@@ -718,11 +725,11 @@ if cTip == "S"
 		endif
 	next
 else
-	altd()	
 	cPorId := "  "
 	nOsnovica := _ouneto
 	nOsnov3 := nPorOsnova	
 	nOsnov4 := _oosnneto	
+	nOsnov5 := nPorNROsnova	
 	nOstalo := _uodbici
 	nBrOsnova := nRadn_bo 
 endif
@@ -740,6 +747,7 @@ if Found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace izn_ost with izn_ost + nOstalo
 	replace br_osn with br_osn + nBrOsnova
 	replace ljudi with ljudi + 1
@@ -779,6 +787,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
@@ -820,6 +829,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
@@ -859,6 +869,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
@@ -900,6 +911,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
@@ -940,6 +952,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
@@ -985,6 +998,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
@@ -1026,6 +1040,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
@@ -1067,6 +1082,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
@@ -1107,6 +1123,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace izn_ost with nOstalo
@@ -1148,6 +1165,7 @@ if found()
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with ljudi + 1
@@ -1189,6 +1207,7 @@ else
 	replace iznos2 with iznos2 + nPorOl
 	replace iznos3 with iznos3 + nOsnov3
 	replace iznos4 with iznos4 + nOsnov4
+	replace iznos5 with iznos5 + nOsnov5
 	replace br_osn with br_osn + nBrOsnova
 
 	replace ljudi with 1

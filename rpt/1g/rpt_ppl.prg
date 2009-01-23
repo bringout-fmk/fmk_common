@@ -272,6 +272,9 @@ ENDIF
 @ prow(),pcol()+1 SAY  nT4 pict gpici
 
 ? m
+?
+? p_potpis()
+
 FF
 END PRINT
 CLOSERET

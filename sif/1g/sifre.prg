@@ -25,14 +25,21 @@ AADD(ImeKol, { padr( IF(gBodK=="1", Lokal("Br.bodova"), Lokal("Koeficij.")), 10)
 AADD(ImeKol, { Lokal(padr("MinR%", 5)), {|| kminrad}, "kminrad" })
 
 if RADN->(FIELDPOS("KLO")) <> 0
+   
    AADD(ImeKol, { Lokal(padr("Koef.l.odb.", 15)), {|| klo}, "klo" })
    AADD(ImeKol, { Lokal(padr("Tip rada", 15)), {|| tiprada}, "tiprada", ;
    	{|| .t.}, {|| wtiprada $ " #I#A#S#N#P#U#" .or. MsgTipRada() } })
+   
    if RADN->(FIELDPOS("SP_KOEF")) <> 0
    	AADD(ImeKol, { Lokal(padr("prop.koef", 15)), {|| sp_koef}, "sp_koef" })
    endif
+   
    if RADN->(FIELDPOS("OPOR")) <> 0
    	AADD(ImeKol, { Lokal(padr("oporeziv", 15)), {|| opor}, "opor" })
+   endif
+   
+   if RADN->(FIELDPOS("TROSK")) <> 0
+   	AADD(ImeKol, { Lokal(padr("koristi trosk.", 15)), {|| trosk}, "trosk" })
    endif
   
 endif
@@ -245,11 +252,20 @@ if parobr->(FIELDPOS("K5")) <> 0 .and. gVarObracun == "2"
 	AADD(ImeKol, { padr("n.koef.2",8), {|| k6} , "k6"  } )
 endif
 
+if parobr->(FIELDPOS("K7")) <> 0 .and. gVarObracun == "2"
+	AADD(ImeKol, { padr("n.koef.3",8), {|| k7} , "k7"  } )
+	AADD(ImeKol, { padr("n.koef.4",8), {|| k8} , "k8"  } )
+endif
+
 AADD(ImeKol, { padr("Br.Sati",5), {|| k1} , "k1"  } )
 AADD(ImeKol, { padr("Koef2",5), {|| k2} , "k2"  } )
 AADD(ImeKol, { padr("Bruto osn.",6), {|| k3} , "k3"  }  )
 AADD(ImeKol, { padr("Koef4",6), {|| k4} , "k4"  } )
 AADD(ImeKol, { padr("Prosj.LD",12), {|| Prosld} , "PROSLD"  }  )
+
+if parobr->(FIELDPOS("MINLD")) <> 0 .and. gVarObracun == "2"
+	AADD(ImeKol, { padr("Min.LD",12), {|| minld} , "minld"  } )
+endif
 
 for i := 1 to LEN( ImeKol )
 	AADD( kol, i )
@@ -315,7 +331,7 @@ return .t.
 // ---------------------------------------- 
 function v_dop_tip( cTip)
 if EMPTY(cTip)
-	msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto")
+	msgbeep("Tip moze biti:##prazno - standardno#N - neto#2 - ostale naknade#P - neto + ostale naknade#B - bruto#R - neto na ruke")
 endif
 return .t.
 

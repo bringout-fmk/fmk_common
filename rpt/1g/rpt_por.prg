@@ -5,6 +5,7 @@
 // -------------------------------------
 function obr_porez( nPor, nPor2, nPorOps, nPorOps2, nUPorOl, cTipPor )
 local cAlgoritam := ""
+local nOsnova := 0
 
 if cTipPor == nil
 	cTipPor := ""
@@ -185,6 +186,9 @@ do while !eof()
 			  if por->por_tip == "B"
 			  	// ako je na bruto onda je ovo osnovica
 			  	nTmpPor := iznos3
+			  elseif por->por_tip == "R"
+			  	// ako je na ruke onda je osnovica
+				nTmpPor := iznos5
 			  endif
 
 			  @ prow(), nC1 SAY nTmpPor picture gpici
@@ -212,7 +216,10 @@ do while !eof()
 			endif
 			
 			nOOP += nTmpPor
-		        nPOLjudi += ljudi
+		        
+			nOsnova += nTmpPor
+
+			nPOLjudi += ljudi
 		        nPorOps += nPom
 		       
 		        if cAlgoritam <> "S"
@@ -253,12 +260,16 @@ do while !eof()
      		
 		nTmpOsnova := nUNeto
 		if por->por_tip == "B"
-			nTmpOsnova := nPorOsnova
+			nTmpOsnova := nUPorOsnova
+		elseif por->por_tip == "R"
+			nTmpOsnova := nUPorNROsnova
 		endif
 		
 		if nTmpOsnova < 0
 			nTmpOsnova := 0
 		endif
+		
+		nOsnova := nTmpOsnova
 
 		@ prow(),nC1 SAY nTmpOsnova pict gpici
 		@ prow(),pcol()+1 SAY nPom:=round2(max(dlimit,iznos/100*nTmpOsnova),gZaok2) pict gpici
@@ -277,55 +288,6 @@ do while !eof()
 	skip
 enddo
 
-/*
-if round2(nUPorOl,2)<>0 .and. gDaPorOl=="D" .and. !Obr2_9()
-	? Lokal("PORESKE OLAKSICE")
-   	select por
-	go top
-   	nPOlOps:=0
-   	if !empty(poopst)
-      		if poopst=="1"
-       			?? Lokal(" (po opst.stan)")
-      		else
-       			?? Lokal(" (po opst.rada)")
-      		endif
-      		nPOlOps:=0
-      		select opsld
-      		seek por->poopst
-      		do while !eof() .and. id==por->poopst
-         		If prow()>55+gPStranica
-           			FF
-         		endif
-         		select ops
-			hseek opsld->idops
-			select opsld
-         		IF !ImaUOp("POR",POR->id)
-           			SKIP 1
-				LOOP
-         		ENDIF
-         		? idops, ops->naz
-         		@ prow(), nc1 SAY parobr->prosld picture gpici
-         		@ prow(), pcol()+1 SAY round2(iznos2,gZaok2)    picture gpici
-         		Rekapld("POROL"+por->id+opsld->idops,cgodina,cmjesec,round2(iznos2,gZaok2),0,opsld->idops,NLjudi())
-         		skip
-         		if prow()>62+gPStranica
-				FF
-			endif
-      		enddo
-      		select por
-      		? cLinija
-      		? Lokal("UKUPNO POR.OL")
-   	endif
-   	
-	@ prow(),nC1 SAY parobr->prosld  pict gpici
-   	@ prow(),pcol()+1 SAY round2(nUPorOl,gZaok2)    pict gpici
-   	Rekapld("POROL"+por->id,cgodina,cmjesec,round2(nUPorOl,gZaok2),0,,"("+ALLTRIM(STR(nLjudi))+")")
-   	if !empty(poopst)
-   		? cLinija
-   	endif
-endif
-*/
-
 ? cLinija
 ? Lokal("Ukupno Porez")
 @ prow(),nC1 SAY space(len(gpici))
@@ -338,7 +300,7 @@ endif
 
 ? cLinija
 
-return
+return nOsnova
 
 
 

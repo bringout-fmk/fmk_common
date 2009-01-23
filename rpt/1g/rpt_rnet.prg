@@ -253,6 +253,8 @@ FOR j:=1 TO 3
 NEXT
 
 IF cVarijanta!="3"
+ ?
+ ? p_potpis()
  FF
  END PRINT
  CLOSERET

@@ -110,6 +110,8 @@ start print cret
 	? m
 	? Lokal("UKUPNO:") + "   ", SPACE(LEN(rnal->naz)), TRANSFORM(nUkPlata,"9999999.99")
 	? m
+	?
+	? p_potpis()
 
 	FF
 

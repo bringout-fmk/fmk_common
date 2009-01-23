@@ -437,6 +437,8 @@ elseif nRptVar1 == 2
 endif
 
 ? cLine
+?
+? p_potpis()
 
 FF
 END PRINT

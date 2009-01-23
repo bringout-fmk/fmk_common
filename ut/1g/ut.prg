@@ -23,14 +23,15 @@ return lRet
 
 
 
-// ----------------------------------------
+// ---------------------------------------------------------
 // vraca bruto osnovu
 // nIzn - ugovoreni neto iznos
 // cTipRada - vrsta/tip rada
 // nLOdb - iznos licnog odbitka
 // nSKoef - koeficijent kod samostalnih poslodavaca
-// ----------------------------------------
-function bruto_osn( nIzn, cTipRada, nLOdb, nSKoef )
+// cTrosk - ugovori o djelu i ahon, korsiti troskove ?
+// ---------------------------------------------------------
+function bruto_osn( nIzn, cTipRada, nLOdb, nSKoef, cTrosk )
 local nBrt := 0
 
 if nLOdb = nil
@@ -41,13 +42,15 @@ if nSKoef = nil
 	nSKoef := 0
 endif
 
+if cTrosk == nil
+	cTrosk := ""
+endif
+
 // stari obracun
 if gVarObracun <> "2"
 	nBrt := ROUND2( nIzn * ( parobr->k3 / 100 ), gZaok2 )
 	return nBrt
 endif
-
-altd()
 
 do case
 	// nesamostalni rad
@@ -86,7 +89,7 @@ return nBrt
 // ----------------------------------------
 // ispisuje bruto obracun
 // ----------------------------------------
-function bruto_isp( nNeto, cTipRada, nLOdb, nSKoef )
+function bruto_isp( nNeto, cTipRada, nLOdb, nSKoef, cTrosk )
 local cPrn := ""
 
 if nLOdb = nil
@@ -95,6 +98,10 @@ endif
 
 if nSKoef = nil
 	nSKoef := 0
+endif
+
+if cTrosk == nil
+	cTrosk := ""
 endif
 
 do case
@@ -138,6 +145,7 @@ endcase
 
 return cPrn
 
+
 // ---------------------------------------------------
 // validacija tipa rada na uslovima izvjestaja
 // ---------------------------------------------------
@@ -147,6 +155,7 @@ if cTR $ " #I#S#P#U#N#A"
 else
 	return .f.
 endif
+
 return
 
 
