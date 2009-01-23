@@ -222,6 +222,9 @@
 #define F_REKLDP   214
 #define F_IZDANJA  215
 #define F_RNAL	   216
+#define F_PRIPNO   233
+#define F_LDNO	   234
+#define F_RJES	   235
 
 //kam
 #define F_KAMPRIPR 204
