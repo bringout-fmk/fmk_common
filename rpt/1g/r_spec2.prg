@@ -148,6 +148,8 @@ cDopr3:="12"
 cDopr5:="20"
 cDopr6:="21"
 cDopr7:="22"
+cDDoprPio:=SPACE(100)
+cDDoprZdr:=SPACE(100)
 cDoprOO:=""
 cPorOO:=""
 cFirmNaz:=SPACE(35)
@@ -197,6 +199,8 @@ RPar("d3",@cDopr3)
 RPar("d5",@cDopr5)
 RPar("d6",@cDopr6)
 RPar("d7",@cDopr7)
+RPar("d8",@cDDoprPio)
+RPar("d9",@cDDoprZdr)
 RPar("a1",@ccOO1)
 RPar("a2",@ccOO2)
 RPar("a3",@ccOO3)
@@ -256,32 +260,38 @@ do while .t.
      		@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
      		
 		
-		@ m_x+9,m_y+ 2 SAY "Obustave (nabrojati sifre - npr. 29;30;)" ;
+		@ m_x+8,m_y+ 2 SAY "Obustave (nabrojati sifre - npr. 29;30;)" ;
 			GET cObust  PICT "@!S20"
-     		@ m_x+10,m_y+ 2 SAY "Ostale obaveze (nabrojati sifre - npr. D->AX;D->BX;)" GET cOstObav  PICT "@!S20"
-     		@ m_x+12,m_y+ 2 SAY "Doprinos za penz.i inv.osig. -iz plate" GET cDopr1
-     		@ m_x+13,m_y+ 2 SAY "Doprinos za zdravstv.osigur. -iz plate" GET cDopr2
-     		@ m_x+14,m_y+ 2 SAY "Doprinos za osig.od nezaposl.-iz plate" GET cDopr3
-     		@ m_x+15,m_y+ 2 SAY "Doprinos za penz.i inv.osig. -na platu" GET cDopr5
-     		@ m_x+16,m_y+ 2 SAY "Doprinos za zdravstv.osigur. -na platu" GET cDopr6
-     		@ m_x+17,m_y+ 2 SAY "Doprinos za osig.od nezaposl.-na platu" GET cDopr7
-     		@ m_x+18,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
-     		@ m_x+19,m_y+ 2 SAY " 1." GET ccOO1
-     		@ m_x+19,m_y+30 GET cnOO1
-     		@ m_x+20,m_y+ 2 SAY " 2." GET ccOO2
-     		@ m_x+20,m_y+30 GET cnOO2
-     		@ m_x+21,m_y+ 2 SAY " 3." GET ccOO3
-     		@ m_x+21,m_y+30 GET cnOO3
-     		@ m_x+22,m_y+ 2 SAY " 4." GET ccOO4
-     		@ m_x+22,m_y+30 GET cnOO4
-     		if gVarSpec=="2"
+     		@ m_x+9,m_y+ 2 SAY "Ostale obaveze (nabrojati sifre - npr. D->AX;D->BX;)" GET cOstObav  PICT "@!S20"
+     		@ m_x+10,m_y+ 2 SAY "Dopr.pio (iz)" GET cDopr1
+     		@ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
+     		@ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
+     		@ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
+     		@ m_x+12,m_y+ 2 SAY "Dopr.nez (iz)" GET cDopr3
+     		@ m_x+12,col()+ 2 SAY "Dopr.nez (na)" GET cDopr7
+     		
+     		@ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
+     		@ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
+		
+		@ m_x+16,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
+     		@ m_x+18,m_y+ 2 SAY " 1." GET ccOO1
+     		@ m_x+18,m_y+30 GET cnOO1
+     		@ m_x+19,m_y+ 2 SAY " 2." GET ccOO2
+     		@ m_x+19,m_y+30 GET cnOO2
+     		@ m_x+20,m_y+ 2 SAY " 3." GET ccOO3
+     		@ m_x+20,m_y+30 GET cnOO3
+     		@ m_x+21,m_y+ 2 SAY " 4." GET ccOO4
+     		@ m_x+21,m_y+30 GET cnOO4
+     		
+		if gVarSpec=="2"
        			@ m_x+23,m_y+2 SAY "Limit za gr.posl.1" GET nLimG1 PICT "9999.99"
        			@ m_x+23,m_y+29 SAY "2" GET nLimG2 PICT "9999.99"
        			@ m_x+23,m_y+39 SAY "3" GET nLimG3 PICT "9999.99"
        			@ m_x+23,m_y+49 SAY "4" GET nLimG4 PICT "9999.99"
        			@ m_x+23,m_y+59 SAY "5" GET nLimG5 PICT "9999.99"
      		endif
-     		read
+     		
+		read
      		clvbox()
      		ESC_BCR
    	BoxC()
@@ -307,6 +317,8 @@ WPar("d3",cDopr3)
 WPar("d5",cDopr5)
 WPar("d6",cDopr6)
 WPar("d7",cDopr7)
+WPar("d8",cDDoprPio)
+WPar("d9",cDDoprZdr)
 WPar("a1",ccOO1)
 WPar("a2",ccOO2)
 WPar("a3",ccOO3)
@@ -371,6 +383,11 @@ cDoprOO1:=Izrezi("D->",2,@cnOO1)
 cDoprOO2:=Izrezi("D->",2,@cnOO2)
 cDoprOO3:=Izrezi("D->",2,@cnOO3)
 cDoprOO4:=Izrezi("D->",2,@cnOO4)
+
+// dodatni doprinos pio
+cDodDoprP := Izrezi("D->",2,@cDDoprPio)
+// dodatni doprinos zdr
+cDodDoprZ := Izrezi("D->",2,@cDDoprZdr)
 
 ParObr(nMjesec,cObracun,LEFT(qqIdRJ,2))
 
@@ -513,6 +530,9 @@ ENDIF
  // ukupno bruto
  nPom := nBrutoOsnova
 
+ nDodDoprZ := 0
+ nDodDoprP := 0
+
  UzmiIzIni(cIniName,'Varijable','U017',FormNum2(nPom,16,gPici2),'WRITE')
 
  SELECT DOPR
@@ -533,6 +553,27 @@ ENDIF
    ELSE
      nBOO := nBrutoOsnova
    ENDIF
+
+   // dodatni doprinos PIO
+   IF ID $ cDodDoprP
+   	if "BENEF" $ NAZ
+		// beneficirani	
+		nDodDoprP += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
+	else
+		nDodDoprP += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
+        endif
+   ENDIF
+   
+   // dodatni doprinos ZDR
+   IF ID $ cDodDoprZ
+   	if "BENEF" $ NAZ
+		// beneficirani	
+		nDodDoprZ += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
+	else
+		nDodDoprZ += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
+        endif
+   ENDIF
+  
 
    IF ID $ cDoprOO1  // Ostale obaveze - 1
      IF EMPTY(ccOO1) .and. nOstOb1==0; ccOO1:=NAZ; ENDIF
@@ -611,7 +652,7 @@ ENDIF
  nPom:=nDopr3X
  UzmiIzIni(cIniName,'Varijable','D11_3I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- nPom:=nDopr5X+nDopr6X+nDopr7X
+ nPom:=nDopr5X+nDopr6X+nDopr7X+nDodDoprP+nDodDoprZ
  UzmiIzIni(cIniName,'Varijable','D12I',FormNum2(nPom,16,gPici2) , 'WRITE')
  nPom:=nDopr5X
  UzmiIzIni(cIniName,'Varijable','D12_1I', FormNum2(nPom,16,gPici2), 'WRITE')
@@ -619,6 +660,13 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','D12_2I', FormNum2(nPom,16,gPici2), 'WRITE')
  nPom:=nDopr7X
  UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(nPom,16,gPici2), 'WRITE')
+
+ // dodatni doprinos zdr i pio
+ nPom:=nDodDoprP
+ UzmiIzIni(cIniName,'Varijable','DPI', FormNum2(nPom,16,gPici2), 'WRITE')
+ 
+ nPom:=nDodDoprZ
+ UzmiIzIni(cIniName,'Varijable','DZI', FormNum2(nPom,16,gPici2), 'WRITE')
 
  nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
