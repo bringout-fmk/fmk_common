@@ -291,9 +291,9 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
 		SKIP 1
  	ENDDO
 
- 	nkD1X := Ocitaj( F_DOPR , cDopr1 , "iznos" , .t. )
- 	nkD2X := Ocitaj( F_DOPR , cDopr2 , "iznos" , .t. )
- 	nkD3X := Ocitaj( F_DOPR , cDopr3 , "iznos" , .t. )
+ 	nkD1X := get_dopr(cDopr1, "S")
+ 	nkD2X := get_dopr(cDopr2, "S")
+ 	nkD3X := get_dopr(cDopr3, "S")
 
 	//stope na bruto
  

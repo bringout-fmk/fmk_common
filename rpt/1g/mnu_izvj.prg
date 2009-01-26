@@ -67,7 +67,7 @@ private Izbor:=1
 AADD(opc,"1. specifikacija za samostalne poduzetnike     ")
 AADD(opcexe,{|| SpecPlS()})
 AADD(opc,"2. specifikacija ostale samostalne djelatnosti")
-AADD(opcexe,{|| NotImp()})
+AADD(opcexe,{|| SpecPlU()})
 
 Menu_SC("spec2")
 

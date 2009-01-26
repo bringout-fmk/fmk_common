@@ -29,6 +29,7 @@ nOsnOstalo := 0
 nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
 cRTipRada := radn->tiprada
+cTrosk := radn->trosk
 
 for i:=1 to cLDPolja
 	
@@ -88,7 +89,7 @@ nTrProc:=0
 nOsnZaBr := nOsnNeto
 
 // bruto sa troskovima
-nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak )
+nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
 
 // troskovi su
 if cRTipRada == "U"
@@ -97,6 +98,10 @@ if cRTipRada == "U"
 else
 	// autorski honorar
 	nTrProc := gAhTrosk
+endif
+
+if cTrosk == "N"
+	nTProc := 0
 endif
 
 nTrosk := nBSaTr * ( nTrProc / 100 )

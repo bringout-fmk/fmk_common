@@ -1,5 +1,36 @@
 #include "ld.ch"
 
+// ------------------------------------------
+// vraca iznos doprinosa po tipu rada
+// ------------------------------------------
+function get_dopr(cDopr, cTipRada)
+local nTArea := SELECT()
+local nIzn := 0
+
+if cTipRada == nil
+	cTipRada := " "
+endif
+
+O_DOPR
+go top
+seek cDopr
+do while !EOF() .and. dopr->id == cDopr
+	
+	if dopr->tiprada <> cTipRada
+		skip
+		loop
+	endif
+	
+	nIzn := dopr->iznos
+	
+	exit
+
+enddo
+
+select (nTArea)
+return nIzn
+
+
 
 // --------------------------------------------
 // da li je radnik oporeziv ?
