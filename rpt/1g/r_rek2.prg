@@ -339,9 +339,13 @@ nPorOl1 += nUPorOl
 
 nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM
 
+? cMainLine
+? Lokal("6. UKUPNO ZA ISPLATU (NETO NA RUKE)")
+@ prow(), 60 SAY nOporDohod - nPor 
+
 // obracun ostalog poreza na neto
 ? cMainLine
-? Lokal("6. OSNOVICA ZA OBRACUN OSTALIH NAKNADA (NETO NA RUKE)")
+? Lokal("7. OSNOVICA ZA OBRACUN OSTALIH NAKNADA (6)")
 @ prow(), 60 SAY nOporDohod - nPor 
 ? cMainLine
 
@@ -354,9 +358,14 @@ nPorOp1 += nPorOps
 nPorOp2 += nPorOps2
 nPorOl1 += nUPorOl
 
+? cMainLine
+? Lokal("8. UKUPNI ODBICI IZ PLATE:")
+@ prow(), 60 SAY nUOdbiciM
+? cMainLine
+
 // ukupno za isplatu
 ? cMainLine
-? Lokal("7. UKUPNO ZA ISPLATU (op.doh - porez + odbici):")
+? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + odbici):")
 @ prow(), 60 SAY nUZaIspl
 ? cMainLine
 

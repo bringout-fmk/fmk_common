@@ -24,8 +24,6 @@ return
 // ---------------------------------------------------------
 static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt )
 
-altd()
-
 if EMPTY(cRadnik) 
 	if cTipRpt == "2"
 		// GIP
@@ -317,19 +315,19 @@ do while !EOF()
 	? cLine
 
 	? "UKUPNO:"
-	@ prow(), nPoc - 1  SAY nUPrihod
-	@ prow(), pcol()+1 SAY nUPrihOst
-	@ prow(), pcol()+1 SAY nUBruto
-	@ prow(), pcol()+1 SAY nUDopSt
-	@ prow(), pcol()+1 SAY nUDopPio
-	@ prow(), pcol()+1 SAY nUDopZdr
-	@ prow(), pcol()+1 SAY nUDopNez
-	@ prow(), pcol()+1 SAY nUDopUk
-	@ prow(), pcol()+1 SAY nUNeto
-	@ prow(), pcol()+1 SAY nUKLO
-	@ prow(), pcol()+1 SAY nULOdb
-	@ prow(), pcol()+1 SAY nUOsnPor
-	@ prow(), pcol()+1 SAY nUIznPor
+	@ prow(), nPoc SAY STR(nUPrihod,12,2)
+	@ prow(), pcol()+1 SAY STR(nUPrihOst,12,2)
+	@ prow(), pcol()+1 SAY STR(nUBruto,12,2)
+	@ prow(), pcol()+1 SAY STR(nUDopSt,12,2)
+	@ prow(), pcol()+1 SAY STR(nUDopPio,12,2)
+	@ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
+	@ prow(), pcol()+1 SAY STR(nUDopNez,12,2)
+	@ prow(), pcol()+1 SAY STR(nUDopUk,12,2)
+	@ prow(), pcol()+1 SAY STR(nUNeto,12,2)
+	@ prow(), pcol()+1 SAY STR(nUKLO,12,2)
+	@ prow(), pcol()+1 SAY STR(nULOdb,12,2)
+	@ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
+	@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
 
 	? cLine
 

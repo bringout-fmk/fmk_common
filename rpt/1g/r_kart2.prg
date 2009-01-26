@@ -497,9 +497,16 @@ if gPrBruto=="D"
 
 	@ prow(),60+LEN(cLMSK) SAY nPor pict gpici
 
+	// neto na ruke
+	? cMainLine
+	? cLMSK + Lokal("6. UKUPNO ZA ISPLATU (2 - 5)")
+
+	@ prow(),60+LEN(cLMSK) SAY ROUND2(nOporDoh - nPor, 1) pict gpici
+
+
 	// ostala primanja 
 	? cMainLine
-	? cLMSK + Lokal("6. UKUPNO ODBICI IZ PLATE")
+	? cLMSK + Lokal("7. UKUPNO ODBICI IZ PLATE")
 
 	@ prow(),60+LEN(cLMSK) SAY nOsnOstalo pict gpici
 
@@ -510,7 +517,7 @@ if gPrBruto=="D"
 	?
 
 	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU ( 2 - 5 + 6 )")
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA ODBICIMA ( 2 - 5 + 7 )")
 	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
 
 	? cMainLine
