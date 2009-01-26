@@ -17,11 +17,15 @@ AADD(opc,"3. pregledi")
 AADD(opcexe,{|| MnuIzvP()})
 AADD(opc,"4. specifikacije")
 AADD(opcexe,{|| MnuIzvS()})
+if gVarObracun == "2"
+	AADD(opc,"4i. specifikacije spec.tipovi rada")
+	AADD(opcexe,{|| m_spec_o()})
+endif
 AADD(opc,"5. ostali izvjestaji")
 AADD(opcexe,{|| MnuIzvO()})
 
 if gAHonorar == "D"
-	AADD(opc,"6. autorski honorari - izvjestaji")
+	AADD(opc,"A. autorski honorari - izvjestaji")
 	AADD(opcexe,{|| mnu_ahon()})
 endif
 
@@ -49,6 +53,26 @@ AADD(opcexe,{|| UKartPl()})
 
 Menu_SC("kart")
 return
+
+
+
+// -----------------------------------------
+// menij - izvjestaji specifikacije 2
+// -----------------------------------------
+function m_spec_o()
+private opc:={}
+private opcexe:={}
+private Izbor:=1
+
+AADD(opc,"1. specifikacija za samostalne poduzetnike     ")
+AADD(opcexe,{|| SpecPlS()})
+AADD(opc,"2. specifikacija ostale samostalne djelatnosti")
+AADD(opcexe,{|| NotImp()})
+
+Menu_SC("spec2")
+
+return
+
 
 // -----------------------------------------
 // menij - izvjestaji specifikacije

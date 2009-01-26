@@ -122,7 +122,17 @@ if gPrBruto=="D"
 	nBo := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
 	? cMainLine
-	? cLMSK + "1. BRUTO OSNOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
+	? cLMSK + "1. OSNOVA ZA OBRACUN:"
+
+	@ prow(),60+LEN(cLMSK) SAY nOsnZaBr pict gpici
+	
+	? cMainLine
+	? cLMSK + "2. PROPISANI KOEFICIJENT:"
+
+	@ prow(),60+LEN(cLMSK) SAY nRPrKoef pict gpici
+	
+	? cMainLine
+	? cLMSK + "3. BRUTO OSNOVA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nRPrKoef )
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -221,8 +231,8 @@ if gPrBruto=="D"
 	enddo
 	
 	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU ( 2 - 5 + 6 )")
-	@ prow(),60+LEN(cLMSK) SAY nBO pict gpici
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU")
+	@ prow(),60+LEN(cLMSK) SAY nOsnZaBr pict gpici
 
 	? cMainLine
 

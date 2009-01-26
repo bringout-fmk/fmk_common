@@ -4,7 +4,7 @@
 // -----------------------------------------------
 // vrati zadnji dan mjeseca
 // -----------------------------------------------
-static function getlday( nMonth )
+function getlday( nMonth )
 local nDay := 0
 do case
 	case nMonth = 1
@@ -41,7 +41,7 @@ return nDay
 // " " ili "1" = federacija
 // "2" = rs
 // ----------------------------------------------
-static function in_rs( cOpsst, cOpsrad )
+function in_rs( cOpsst, cOpsrad )
 local lRet := .f.
 local nTArea := SELECT()
 O_OPS
@@ -57,7 +57,7 @@ return lRet
 // -----------------------------------------------
 // vrati prvi dan u mjesecu
 // -----------------------------------------------
-static function getfday( nMonth )
+function getfday( nMonth )
 local nDay := 1
 return nDay
 
@@ -532,6 +532,8 @@ ENDIF
 
  nDodDoprZ := 0
  nDodDoprP := 0
+ nkDopZX := 0
+ nkDopPX := 0
 
  UzmiIzIni(cIniName,'Varijable','U017',FormNum2(nPom,16,gPici2),'WRITE')
 
@@ -556,7 +558,10 @@ ENDIF
 
    // dodatni doprinos PIO
    IF ID $ cDodDoprP
-   	if "BENEF" $ NAZ
+ 	
+	nkDopPX += iznos
+   	
+	if "BENEF" $ NAZ
 		// beneficirani	
 		nDodDoprP += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
 	else
@@ -566,7 +571,10 @@ ENDIF
    
    // dodatni doprinos ZDR
    IF ID $ cDodDoprZ
-   	if "BENEF" $ NAZ
+	
+	nkDopZX += iznos
+   	
+	if "BENEF" $ NAZ
 		// beneficirani	
 		nDodDoprZ += round2(MAX(DLIMIT,nBrutoOsBenef*iznos / 100), gZaok2)
 	else
@@ -617,7 +625,7 @@ ENDIF
  nPom:=nKD3X
  UzmiIzIni(cIniName,'Varijable','D11_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
 
- nPom:=nKD5X+nKD6X+nKD7X
+ nPom:=nKD5X+nKD6X+nKD7X+nkDopZX+nkDopPX
  UzmiIzIni(cIniName,'Varijable','D12B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
  nPom:=nKD5X
  UzmiIzIni(cIniName,'Varijable','D12_1B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
@@ -625,6 +633,12 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','D12_2B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
  nPom:=nKD7X
  UzmiIzIni(cIniName,'Varijable','D12_3B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+ nPom:=nkDopPX
+ UzmiIzIni(cIniName,'Varijable','D12_4B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
+
+ nPom:=nkDopZX
+ UzmiIzIni(cIniName,'Varijable','D12_5B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
 
  nDopr1X := round2(nBrutoOsnova * nkD1X / 100, gZaok2)
  nDopr2X := round2(nBrutoOsnova * nkD2X / 100, gZaok2)
@@ -663,10 +677,10 @@ ENDIF
 
  // dodatni doprinos zdr i pio
  nPom:=nDodDoprP
- UzmiIzIni(cIniName,'Varijable','DPI', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_4I', FormNum2(nPom,16,gPici2), 'WRITE')
  
  nPom:=nDodDoprZ
- UzmiIzIni(cIniName,'Varijable','DZI', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_5I', FormNum2(nPom,16,gPici2), 'WRITE')
 
  nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
@@ -894,8 +908,8 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
  	cSpecRtm := cSpecRtm + "B"
  endif
 
- if EMPTY( cRTipRada ) 
- 	cRTipRada := "N"
+ if cRTipRada == "I"
+ 	cRTipRada := ""
  endif
 
  // "SPECBN", "SPECBR" ...
