@@ -121,10 +121,18 @@ EOF CRET
 
 nStrana:=0
 IF gVarPP=="2"
-  m:="----- ------ ---------------------------------- " + "-"+REPL("-", LEN(gPicS)) + " ----------- ----------- ----------- ----------- ----------- -----------"
+	m:="----- ------ ---------------------------------- " + "-"+REPL("-", LEN(gPicS)) + " ----------- ----------- ----------- ----------- ----------- -----------"
 ELSE
-  m:="----- ------ ---------------------------------- " + "-"+REPL("-", LEN(gPicS)) + " ----------- ----------- -----------"
+  	m:="----- ------ ---------------------------------- " + "-"+REPL("-", LEN(gPicS)) + " ----------- ----------- -----------"
 ENDIF
+
+if gVarObracun == "2"
+	m += " " + REPLICATE("-", 11) 
+	m += " " + REPLICATE("-", 11) 
+	m += " " + REPLICATE("-", 11) 
+	m += " " + REPLICATE("-", 11) 
+	m += " " + REPLICATE("-", 11) 
+endif
 
 if cPrBruto == "D"
 	m += " " + REPLICATE("-", 12)
@@ -147,6 +155,13 @@ nT2a:=nT2b:=0
 nT1:=nT2:=nT3:=nT3b:=nT4:=nT5:=0
 nVanP:=0  // van neta plus
 nVanM:=0  // van neta minus
+
+nULicOdb := 0
+nUBruto := 0
+nUDoprIz := 0
+nUPorez := 0
+nUOpDoh := 0
+
 do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
 	
 	if lViseObr .and. EMPTY(cObracun)
@@ -211,6 +226,53 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
     		Eval(bZagl)
  	endif
  
+	cRTipRada := ""
+	nPrKoef := 0
+	cOpor := ""
+	cTrosk := ""
+	nLicOdb := 0
+
+	if gVarObracun == "2"
+		
+		select ld
+
+		cRTipRada := radn->tiprada
+		nPrKoef := radn->sp_koef
+		cOpor := radn->opor
+		cTrosk := radn->trosk
+		nLicOdb := _ulicodb
+		
+		// napravi mali obracun
+		nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef )
+		
+		nBrOsn := nBO
+
+		if cRTipRada == "A" .and. cTrosk <> "N"
+			nTrosk := nBO * (gAhTrosk / 100)
+			nBrOsn := nBO - nTrosk
+		elseif cRTipRada == "U" .and. cTrosk <> "N"
+			nTrosk := nBO * (gUgTrosk / 100)
+			nBrOsn := nBO - nTrosk
+		endif
+
+
+		// doprinosi iz
+		nDoprIz := u_dopr_iz( nBrOsn, cRTipRada )
+		
+		// oporezivi dohodak
+		nOporDoh := nBrOsn - nDoprIZ
+		
+		// porez
+		nPorez := 0
+		if cOpor <> "N" .and. cRTipRada <> "S"
+			nPorez := izr_porez( nOporDoh - nLicOdb, "B" )
+		endif
+		
+
+	endif
+
+	select ld
+
  	? str(++nRbr,4)+".",idradn, RADNIK
  	nC1:=pcol()+1
  	
@@ -223,6 +285,19 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
  	
 	@ prow(),pcol()+1 SAY _uneto  pict gpici
  	
+	if gVarObracun == "2"
+		// bruto placa	
+		@ prow(),pcol()+1 SAY nBrOsn pict gpici
+		// doprinosi iz
+		@ prow(),pcol()+1 SAY nDoprIz pict gpici
+		// oporezivi dohodak
+		@ prow(),pcol()+1 SAY nOporDoh pict gpici
+		// licni odbici
+		@ prow(),pcol()+1 SAY nLicOdb pict gpici
+		// porez 10%
+		@ prow(),pcol()+1 SAY nPorez pict gpici
+	endif
+
 	if gVarPP=="2"
    		@ prow(),pcol()+1 SAY nVanP   pict gpici
    		@ prow(),pcol()+1 SAY nVanM   pict gpici
@@ -242,7 +317,15 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	nT3+=nVanP
 	nT3b+=nVanM
 	nT4+=_uiznos
-	
+
+	if gVarObracun == "2"
+		nULicOdb += nLicOdb
+		nUBruto += nBrOsn
+		nUDoprIz += nDoprIz	
+		nUPorez += nPorez
+		nUOpDoh += nOporDoh
+	endif
+
 	skip
 enddo
 
@@ -262,6 +345,14 @@ ENDIF
 
 @ prow(),pcol()+1 SAY  nT2 pict gpici
 
+if gVarObracun == "2"
+	@ prow(),pcol()+1 SAY nUBruto pict gpici
+	@ prow(),pcol()+1 SAY nUDoprIz pict gpici
+	@ prow(),pcol()+1 SAY nUOpDoh pict gpici
+	@ prow(),pcol()+1 SAY nULicOdb pict gpici
+	@ prow(),pcol()+1 SAY nUPorez pict gpici
+endif
+
 IF gVarPP="2"
   @ prow(),pcol()+1 SAY  nT3 pict gpici
   @ prow(),pcol()+1 SAY  nT3b pict gpici
@@ -278,12 +369,22 @@ ENDIF
 FF
 END PRINT
 CLOSERET
+return
 
 
+
+// --------------------------------------
+// zaglavlje izvjestaja
+// --------------------------------------
 function ZPregPl()
 
 ?
-P_COND
+
+if gVarObracun == "2"
+	P_COND2
+else
+	P_COND
+endif
 ? UPPER(gTS)+":",gnFirma
 ?
 if empty(cidrj)
@@ -302,14 +403,28 @@ if !empty(cKBenef)
   ? Lokal("Stopa beneficiranog r.st:"),ckbenef,"-",kbenef->naz,":",kbenef->iznos
 endif
 ? m
-IF gVarPP=="2"
-  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
-  ? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
-ELSE
-  ? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    *  Odbici   * ZA ISPLATU*")
-  ? "     *      *                                  *         *           *           *           *"
-ENDIF
+
+if gVarObracun == "2"
+	IF gVarPP=="2"
+  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
+  		? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
+	ELSE
+  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    * Bruto pl. * Dopr (iz) * Opor.doh. * L.odbici  *  Porez    *  Odbici   * ZA ISPLATU*")
+  		      ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *   2 - 3   *           * (4-5)x10% *           *   4 - 6   *"
+  		      ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *    (5)    *   (6)     *   (7)     *    (8)    *"
+	ENDIF
+
+else
+	IF gVarPP=="2"
+  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
+  		? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
+	ELSE
+  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    *  Odbici   * ZA ISPLATU*")
+  		? "     *      *                                  *         *           *           *           *"
+	ENDIF
+endif
 ? m
+
 return
 
 

@@ -366,10 +366,6 @@ if gVarObracun == "2"
 		endif
 	endif
 	
-
-	// daj bruto i licni odbitak
-	//_ULicOdb := gOsnLOdb * nKLO
-	
 	// bruto osnova
 	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
 
@@ -412,6 +408,11 @@ if gVarObracun == "2"
 	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove
 		_uIznos := ROUND2( _uiznos + nTrosk, 1 )
+	endif
+
+	if cTipRada $ "S"
+		// neto je za isplatu
+		_uIznos := _UNeto
 	endif
 
 endif
