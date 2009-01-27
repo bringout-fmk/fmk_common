@@ -29,28 +29,34 @@ if EMPTY(cRadnik)
 		// GIP
 	  if EMPTY(cRj)
 		INDEX ON str(godina)+SortPrez(idradn)+str(mjesec)+idrj TO "TMPLD"
+		go top
 		seek str(cGodina,4)
 		
 	  else
 		INDEX ON str(godina)+idrj+SortPrez(idradn)+str(mjesec) TO "TMPLD"
+		go top
 		seek str(cGodina,4)+cRj
 	  endif
 
 	else
 	  if EMPTY(cRj)
 		INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
+		go top
 		seek str(cGodina,4)+str(cMjesec,2)+cRadnik
 		
 	  else
 		INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "TMPLD"
+		go top
 		seek str(cGodina,4)+cRj+str(cMjesec,2)+cRadnik
 	  endif
 	endif
 else
 	if EMPTY(cRj)
 		set order to tag (TagVO("2"))
+		go top
 		seek str(cGodina,4)+str(cMjesec,2)+cRadnik
 	else
+		go top
 		seek str(cGodina,4)+cRj+str(cMjesec,2)+cRadnik
 	endif
 ENDIF
@@ -684,18 +690,22 @@ local aPrim := {}
 // prihodi ostali
 local nPrihOst := 0
 
-altd()
-
 if !EMPTY( cPrihodi )
 	aPrim := TokToNiz( cPrihodi , ";" )
 endif
 
 select ld
 
-do while !eof() .and. field->mjesec <= cMjesecDo ;
-	.and. field->mjesec >= cMjesec ;
-	.and. field->godina = cGodina  
-	
+do while !eof() .and. field->godina = cGodina  
+
+	if field->mjesec > cMjesecDo .or. ;
+		field->mjesec < cMjesec 
+		
+		skip
+		loop
+
+	endif
+
 	cT_radnik := field->idradn
 
 	if !EMPTY(cRadnik)
