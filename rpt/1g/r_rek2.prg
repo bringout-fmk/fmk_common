@@ -250,8 +250,8 @@ if lPorNaRekap
 	nPosY := 42
 endif
 
-? Lokal("Ukupno za isplatu:")
-@ prow(), nPosY SAY nUIznos pict gpici
+? Lokal("Ukupno (neto sa obustavama):")
+@ prow(), nPosY SAY nUNeto + nUOdbiciP + nUOdbici pict gpici
 ?? "",gValuta
 
 ? cTpLine
