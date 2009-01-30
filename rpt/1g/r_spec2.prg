@@ -426,7 +426,7 @@ ENDIF
 	nRSpr_koef := radn->sp_koef
    endif
 	
-   if cRTR == "I" .and. EMPTY(cRTipRada)
+   if cRTR $ "I#N" .and. EMPTY(cRTipRada)
    	// ovo je uredu...
 	// jer je i ovo nesamostalni rad
    elseif cRTipRada <> radn->tiprada
@@ -908,7 +908,7 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
  	cSpecRtm := cSpecRtm + "B"
  endif
 
- if cRTipRada == "I"
+ if cRTipRada $ "I#N"
  	cRTipRada := ""
  endif
 

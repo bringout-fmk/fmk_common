@@ -1,6 +1,75 @@
 #include "ld.ch"
 
 
+// ------------------------------------------------
+// vraca ukupno doprinosa IZ plate, 1X
+// ------------------------------------------------
+function u_dopr_iz( nDopOsn, cRTipRada )
+
+select dopr
+go top
+	
+nU_dop_iz := 0
+
+do while !eof()
+
+	// provjeri tip rada
+	if EMPTY( dopr->tiprada ) .and. cRTipRada $ "I#N" 
+		// ovo je u redu...
+	elseif ( cRTipRada <> dopr->tiprada )
+		skip 
+		loop
+	endif
+
+	// preskoci zbirne doprinose
+	if dopr->id <> "1X"
+		skip
+		loop 
+	endif
+
+	nU_dop_iz += round2((iznos/100) * nDopOsn, gZaok2)
+			
+	skip 1
+		
+enddo
+
+return nU_dop_iz
+
+// ------------------------------------------------
+// vraca ukupno doprinosa NA plate, 2X
+// ------------------------------------------------
+function u_dopr_na( nDopOsn, cRTipRada )
+
+select dopr
+go top
+	
+nU_dop_na := 0
+
+do while !eof()
+
+	// provjeri tip rada
+	if EMPTY( dopr->tiprada ) .and. cRTipRada $ "I#N" 
+		// ovo je u redu...
+	elseif ( cRTipRada <> dopr->tiprada )
+		skip 
+		loop
+	endif
+
+	// preskoci zbirne doprinose
+	if dopr->id <> "2X"
+		skip
+		loop 
+	endif
+
+	nU_dop_na += round2((iznos/100) * nDopOsn, gZaok2)
+			
+	skip 1
+		
+enddo
+
+return nU_dop_na
+
+
 // ------------------------------------------
 // obracunaj i prikazi doprinose
 // ------------------------------------------
@@ -44,7 +113,9 @@ do while !eof()
   	endif
 
 	if gVarObracun == "2"
-		if dopr->tiprada <> cRTipRada
+		if EMPTY(dopr->tiprada) .and. cRTipRada $ " #I#N"
+			// ovo je ok
+		elseif dopr->tiprada <> cRTipRada
 			skip 
 			loop
 		endif
@@ -205,8 +276,6 @@ do while !eof()
 				nTmpOsn := nDoprOsnova
 			endif
 			
-			altd()
-
 			if gVarObracun == "2"
 
 				nBo := nURadn_bo

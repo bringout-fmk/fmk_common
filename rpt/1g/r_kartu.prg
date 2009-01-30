@@ -112,7 +112,7 @@ nBo :=  nBSaTr - nTrosk
 // bruto placa iz neta...
 
 ? cMainLine
-? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak)
+? cLMSK + "1. BRUTO SA TROSKOVIMA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
 
 @ prow(),60+LEN(cLMSK) SAY nBSaTr pict gpici
 

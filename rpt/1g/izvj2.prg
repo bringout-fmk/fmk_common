@@ -940,6 +940,7 @@ RETURN cVrati
 // IZvjestaj o OBracunatim DOPrinosima
 // -----------------------------------
 function IzObDop()
+local cTipRada := " "
  cIdRj    := gRj
  cGodina  := gGodina
  cObracun := gObracun
@@ -979,6 +980,7 @@ function IzObDop()
  cNazDopr  := PADR(cNazDopr,40)
 
  Box("#Uslovi za izvjestaj o obracunatim doprinosima",8,75)
+  @ m_x+1,m_y+2   SAY "Tip rada: "   GET cTipRada valid val_tiprada(cTipRada)
   @ m_x+2,m_y+2   SAY "Radna jedinica (prazno-sve): "   GET cIdRJ
   @ m_x+3,m_y+2   SAY "Mjesec od: "                     GET cMjesecOd PICT "99"
   @ m_x+3,col()+2 SAY "do"                              GET cMjesecDo PICT "99"
@@ -1023,7 +1025,15 @@ function IzObDop()
  if cDopr == "71;"
 	cFilt += " .and. radn->k4 = 'BF'"
  endif
- 
+
+ if gVarObracun == "2"
+ 	if EMPTY(cTipRada)
+		cFilt += " .and. radn->tiprada $ ' #N#I' "
+	else
+		cFilt += " .and. radn->tiprada == " + cm2str(cTipRada)
+	endif
+ endif
+
  IF !EMPTY(cIdRj)
    cFilt += " .and. idrj=cIdRJ"
  ENDIF
@@ -1166,7 +1176,7 @@ GO TOP
 
 DO WHILE !EOF()  // doprinosi
   if gVarObracun == "2"
-   if cTipRada == "I" .and. EMPTY( dopr->tiprada )
+   if cTipRada $ "I#N" .and. EMPTY( dopr->tiprada )
    	// ovo je uredu !
    elseif dopr->tiprada <> cTipRada 
    	skip 1

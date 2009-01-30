@@ -174,6 +174,8 @@ nUOdbici:=0
 nUOdbiciP:=0
 nUOdbiciM:=0
 nLjudi:=0
+nUBBTrosk := 0
+nURTrosk := 0
 
 private aNeta:={}
 
@@ -263,6 +265,17 @@ endif
 ProizvTP()
 
 nstr()
+
+if cRTipRada $ "A#U"
+
+ ? cMainLine
+ ? Lokal("a) UKUPNI BRUTO SA TROSKOVIMA ")
+ @ prow(), 60 SAY STR( nUBBTrosk, 12, 2 ) 
+ ? Lokal("b) UKUPNI TROSKOVI ")
+ @ prow(), 60 SAY STR( nURTrosk, 12 , 2 ) 
+
+endif
+
 
 // 1. BRUTO IZNOS
 // setuje se varijabla nBO
@@ -481,7 +494,7 @@ do while !eof() .and. eval(bUSlov)
 	hseek _idvposla
 
 	// provjeri tip rada
-	if radn->tiprada == "I" .and. EMPTY( cRTipRada ) 
+	if radn->tiprada $ "I#N" .and. EMPTY( cRTipRada ) 
 		// ovo je u redu...
 	elseif ( cRTipRada <> radn->tiprada )
 		select ld
@@ -511,12 +524,11 @@ do while !eof() .and. eval(bUSlov)
  	_oosnneto := 0
 	_oosnostalo := 0
 
-	// licni odbitak za radnika
-	//nRadn_lod := ( gOsnLOdb * radn->klo )
-	
 	nRadn_lod := _ulicodb 
 	
 	nKoefLO := nRadn_lod
+
+	cTrosk := radn->trosk
 
  	// vrati osnovicu za neto i ostala primanja
  	for i:=1 to cLDPolja
@@ -574,8 +586,29 @@ do while !eof() .and. eval(bUSlov)
 	endif
 
 	// br.osn za radnika
-	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO, nRSpr_koef ) 
-	
+	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO, nRSpr_koef, cTrosk ) 
+	nTrosk := 0
+
+	if radn->tiprada $ "A#U"
+		if cTrosk <> "N"
+			if radn->tiprada == "A"
+				nTrosk := gAHTrosk
+			elseif radn->tiprada == "U"
+				nTrosk := gUgTrosk
+			endif
+		endif
+	endif
+
+	// troskovi za ugovore i honorare
+	nRTrosk := nRadn_bo * ( nTrosk / 100 )
+	// ukupno bez troskova
+	nUBBTrosk += nRadn_bo
+	// ukupno troskovi
+	nURTrosk += nRTrosk
+
+	// troskove uzmi ako postoje, i to je osnovica
+	nRadn_bo := nRadn_bo - nRTrosk
+
 	// ukupno bruto osnova
 	nURadn_bo += nRadn_bo
 
@@ -753,79 +786,15 @@ static function get_bruto( nIznos )
 nBO := nIznos
 
 ? cMainLine
-? Lokal("1. BRUTO OSNOVICA UKUPNO:")
+if cRTiprada $ "A#U"
+	? Lokal("1. BRUTO OSNOVICA (bruto sa troskovima - troskovi):")
+else
+	? Lokal("1. BRUTO OSNOVICA UKUPNO:")
+endif
 @ prow(), 60 SAY nBO pict gpici
 ? cMainLine
 
 return 
 
 
-
-// ------------------------------------------------
-// vraca ukupno doprinosa IZ plate, 1X
-// ------------------------------------------------
-function u_dopr_iz( nDopOsn, cRTipRada )
-
-select dopr
-go top
-	
-nU_dop_iz := 0
-
-do while !eof()
-
-	// provjeri tip rada
-	if EMPTY( dopr->tiprada ) .and. cRTipRada == "I" 
-		// ovo je u redu...
-	elseif ( cRTipRada <> dopr->tiprada )
-		skip 
-		loop
-	endif
-
-	// preskoci zbirne doprinose
-	if dopr->id <> "1X"
-		skip
-		loop 
-	endif
-
-	nU_dop_iz += round2((iznos/100) * nDopOsn, gZaok2)
-			
-	skip 1
-		
-enddo
-
-return nU_dop_iz
-
-// ------------------------------------------------
-// vraca ukupno doprinosa NA plate, 2X
-// ------------------------------------------------
-function u_dopr_na( nDopOsn, cRTipRada )
-
-select dopr
-go top
-	
-nU_dop_na := 0
-
-do while !eof()
-
-	// provjeri tip rada
-	if EMPTY( dopr->tiprada ) .and. cRTipRada == "I" 
-		// ovo je u redu...
-	elseif ( cRTipRada <> dopr->tiprada )
-		skip 
-		loop
-	endif
-
-	// preskoci zbirne doprinose
-	if dopr->id <> "2X"
-		skip
-		loop 
-	endif
-
-	nU_dop_na += round2((iznos/100) * nDopOsn, gZaok2)
-			
-	skip 1
-		
-enddo
-
-return nU_dop_na
 

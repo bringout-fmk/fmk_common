@@ -82,6 +82,11 @@ AADD(opcexe, {|| VisePuta()})
 AADD(opc, "8. promjeni varijantu obracuna za obracun")
 AADD(opcexe, {|| chVarObracun()})
 
+if gVarObracun == "2"
+	AADD(opc, "9. unos datuma isplate placa")
+	AADD(opcexe, {|| unos_disp()})
+endif
+
 if IzFmkIni("LD","RadniSati","N",KUMPATH) == "D"
 	AADD(opc, "R. pregled/ispravka radnih sati radnika")
 	AADD(opcexe, {|| edRadniSati()})

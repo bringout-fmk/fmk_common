@@ -243,7 +243,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 		nLicOdb := _ulicodb
 		
 		// napravi mali obracun
-		nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef )
+		nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
 		
 		nBrOsn := nBO
 

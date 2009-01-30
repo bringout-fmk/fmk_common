@@ -199,23 +199,6 @@ Box(,3,50)
 BoxC()
 return .f.
 
-// -------------------------------------------------------
-// poruka - informacije o dostupnim tipovima rada
-// -------------------------------------------------------
-function MsgTipRada()
-
-Box(,7,50)
-	@ m_x+1,m_y+2 SAY Lokal("Vazece sifre su: ' ' - nesamostalni rad      ")
- 	@ m_x+2,m_y+2 SAY Lokal("                 'I' - nes.rad isti neto")
- 	@ m_x+3,m_y+2 SAY Lokal("                 'S' - samostalni poslodavci")
- 	@ m_x+4,m_y+2 SAY Lokal("                 'N' - nerezident FBiH")
- 	@ m_x+5,m_y+2 SAY Lokal("                 'U' - ugovor o djelu")
- 	@ m_x+6,m_y+2 SAY Lokal("                 'A' - autorski honorar")
- 	@ m_x+7,m_y+2 SAY Lokal("                 'P' - clanovi predsj. itd...")
- 	inkey(0)
-BoxC()
-
-return .f.
 
 
 // ------------------------------

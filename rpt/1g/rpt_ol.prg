@@ -6,6 +6,7 @@
 static function o_tables()
 
 O_PAROBR
+O_OBRACUNI
 O_PARAMS
 O_RJ
 O_RADN
@@ -694,6 +695,11 @@ if !EMPTY( cPrihodi )
 	aPrim := TokToNiz( cPrihodi , ";" )
 endif
 
+lDatIsp := .f.
+if obracuni->(FIELDPOS("DAT_ISPL")) <> 0
+	lDatIsp := .t.
+endif
+
 select ld
 
 do while !eof() .and. field->godina = cGodina  
@@ -789,11 +795,21 @@ do while !eof() .and. field->godina = cGodina
 		nIDopr11 := round2((nBruto + nPrihOst) * nDopr11 / 100, gZaok2)
 		nIDopr12 := round2((nBruto + nPrihOst) * nDopr12 / 100, gZaok2)
 		nIDopr1X := round2((nBruto + nPrihOst) * nDopr1X / 100, gZaok2)
- 
+ 		
+		select ld
+ 		
+		dDatIspl := DATE()
+ 		// ako se ocitava datum isplate
+		if lDatIsp 
+			dDatIspl := g_isp_date( field->idrj, ;
+						field->godina, ;
+						field->mjesec )
+		endif
+
 		// ubaci u tabelu podatke
 		_ins_tbl( cT_radnik, ;
 				"placa", ;
-				DATE(), ;
+				dDatIspl, ;
 				ld->mjesec, ;
 				nBruto, ;
 				nPrihOst, ;

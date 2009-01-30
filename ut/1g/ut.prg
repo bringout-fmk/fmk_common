@@ -1,5 +1,31 @@
 #include "ld.ch"
 
+
+// -------------------------------------------------------
+// poruka - informacije o dostupnim tipovima rada
+// -------------------------------------------------------
+function MsgTipRada()
+local x := 1
+Box(,7,65)
+ @ m_x+x,m_y+2 SAY Lokal("Vazece sifre su: ' ' - zateceni neto (bez promjene ugovora o radu)")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'N' - neto placa (neto + porez)")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'I' - neto-neto placa (zagarantovana)")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'S' - samostalni poslodavci")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'U' - ugovor o djelu")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'A' - autorski honorar")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'P' - clan.predsj., upr.odbor, itd...")
+ inkey(0)
+BoxC()
+
+return .f.
+
+
 // ------------------------------------------
 // vraca iznos doprinosa po tipu rada
 // ------------------------------------------
@@ -87,6 +113,9 @@ do case
 	// nesamostalni rad
 	case EMPTY(cTipRada)
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
+	// neto placa (neto + porez )
+	case cTipRada == "N"
+		nBrt := ROUND2( nIzn * parobr->k6 , gZaok2 )
 	// nesamostalni rad, isti neto
 	case cTipRada == "I"
 		// ako je ugovoreni iznos manji od odbitka
@@ -96,22 +125,30 @@ do case
 			nBrt := ROUND2( ( (nIzn - nLOdb) / 0.9 + nLOdb ) ;
 				/ 0.69  ,gZaok2)
 		endif
+	
 	// samostalni poslodavci
 	case cTipRada == "S"
 		nBrt := ROUND2( nIzn * nSKoef ,gZaok2 )
+	
 	// predsjednicki clanovi
 	case cTipRada == "P"
 		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 , gZaok2)
-	// nerezidenti
-	case cTipRada == "N"
-		nBrt := ROUND2( nIzn * parobr->k5 , gZaok2 )
+	
 	// ugovor o djelu
-	case cTipRada == "U"
-		nBrt := ROUND2( (nIzn / 0.8912) , gZaok2 )
-	// autorski honorar
-	case cTipRada == "A"
-		nBrt := ROUND2( (nIzn / 0.9048) , gZaok2 )
+	case cTipRada $ "A#U"
 
+		if cTipRada == "U"
+			nTr := gUgTrosk
+		else
+			nTr := gAHTrosk
+		endif
+
+		if cTrosk == "N"
+			nTr := 0
+		endif
+		
+		nBrt := ROUND2( nIzn / ( ((100 - nTr) * 0.96 * 0.90 + nTr )/100 ) , gZaok2 )
+	
 endcase
 
 return nBrt
@@ -140,6 +177,11 @@ do case
 	case EMPTY(cTipRada)
 		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 			ALLTRIM(STR(parobr->k5)) + " ="
+	
+	// nerezidenti
+	case cTipRada == "N"
+		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
+			ALLTRIM(STR(parobr->k6)) + " ="
 
 	// nesamostalni rad - isti neto
 	case cTipRada == "I"
@@ -159,18 +201,23 @@ do case
 	case cTipRada == "P"
 		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 =" 
 
-	// nerezidenti
-	case cTipRada == "N"
-		cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
-			ALLTRIM(STR(parobr->k5)) + " ="
 
 	// ugovor o djelu
-	case cTipRada == "U"
-		cPrn := ALLTRIM(STR(nNeto)) + " / 0.8912 ="
+	case cTipRada $ "A#U"
 	
-	// autorski honorar
-	case cTipRada == "A"
-		cPrn := ALLTRIM(STR(nNeto)) + " / 0.9048 ="
+		if cTipRada == "U"
+			nTr := gUgTrosk
+		else
+			nTr := gAHTrosk
+		endif
+
+		if cTrosk == "N"
+			nTr := 0
+		endif
+		
+		nProc := ( ((100 - nTr) * 0.96 * 0.90 + nTr ) / 100 ) 
+	
+		cPrn := ALLTRIM(STR(nNeto)) + " / " + ALLTRIM(STR(nProc,12,6)) + " ="
 
 endcase
 
