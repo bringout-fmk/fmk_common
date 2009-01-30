@@ -270,9 +270,9 @@ if cRTipRada $ "A#U"
 
  ? cMainLine
  ? Lokal("a) UKUPNI BRUTO SA TROSKOVIMA ")
- @ prow(), 60 SAY STR( nUBBTrosk, 12, 2 ) 
+ @ prow(), 60 SAY nUBBTrosk PICT gPicI 
  ? Lokal("b) UKUPNI TROSKOVI ")
- @ prow(), 60 SAY STR( nURTrosk, 12 , 2 ) 
+ @ prow(), 60 SAY nURTrosk PICT gPici 
 
 endif
 
@@ -300,14 +300,14 @@ nstr()
 // OPOREZIVI DOHODAK UKUPNO
 ? cMainLine
 ? Lokal("3. OPOREZIVI DOHODAK UKUPNO (bruto - dopr.iz)")
-@ prow(), 60 SAY nOporDohod 
+@ prow(), 60 SAY nOporDohod PICT gPici
 
 nstr()
 
 // LICNI ODBITCI
 ? cMainLine
 ? Lokal("4. LICNI ODBICI UKUPNO")
-@ prow(), 60 SAY nULOdbitak 
+@ prow(), 60 SAY nULOdbitak PICT gPici
 
 nstr()
 
@@ -316,7 +316,7 @@ nPorOsn := nOporDohodak - nULOdbitak
 // osnovica za porez na dohodak
 ? cMainLine
 ? Lokal("5. OSNOVICA ZA OBRACUN POREZA NA DOHODAK (3 - 4)")
-@ prow(), 60 SAY nPorOsn 
+@ prow(), 60 SAY nPorOsn PICT gPici
 ? cMainLine
 
 private nPor
@@ -340,7 +340,7 @@ nTOsnova := obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
 // rijec je o radnicima koji nemaju poreza
 if nTOsnova > nPorOsn
 	? Lokal("!!! razlika osnovice poreza (radi radnika bez poreza):")
-	@ prow(), 60 SAY ( nPorOsn - nTOsnova ) pict gpici
+	@ prow(), 60 SAY nPorOsn - nTOsnova pict gpici
 	?
 endif
 
@@ -354,12 +354,12 @@ nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM
 
 ? cMainLine
 ? Lokal("6. UKUPNO ZA ISPLATU (NETO NA RUKE)")
-@ prow(), 60 SAY nOporDohod - nPor 
+@ prow(), 60 SAY nOporDohod - nPor PICT gpici 
 
 // obracun ostalog poreza na neto
 ? cMainLine
 ? Lokal("7. OSNOVICA ZA OBRACUN OSTALIH NAKNADA (6)")
-@ prow(), 60 SAY nOporDohod - nPor 
+@ prow(), 60 SAY nOporDohod - nPor PICT gpici 
 ? cMainLine
 
 // obracunaj ostali porez na neto
@@ -373,13 +373,18 @@ nPorOl1 += nUPorOl
 
 ? cMainLine
 ? Lokal("8. UKUPNI ODBICI IZ PLATE:")
-@ prow(), 60 SAY nUOdbiciM
+@ prow(), 60 SAY nUOdbiciM PICT gpici
 ? cMainLine
 
 // ukupno za isplatu
 ? cMainLine
-? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + odbici):")
-@ prow(), 60 SAY nUZaIspl
+if cRTipRada $ "A#U"
+	? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + troskovi):")
+	@ prow(), 60 SAY nUZaIspl+nURTrosk PICT gpici
+else
+	? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + odbici):")
+	@ prow(), 60 SAY nUZaIspl PICT gpici
+endif
 ? cMainLine
 
 ?
