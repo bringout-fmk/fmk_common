@@ -553,7 +553,7 @@ AADD( aTxt, { "Neto placa", "(6-11)", "", "12" })
 AADD( aTxt, { "Faktor licnog", "odbitka", "", "13" })
 AADD( aTxt, { "Iznos odbitka", "(13 x 300)", "", "14" })
 AADD( aTxt, { "Osnovica", "poreza (12-14)", "", "15" })
-AADD( aTxt, { "Iznos", "poreza", "(16 x 0.1)",  "16" })
+AADD( aTxt, { "Iznos", "poreza", "(15 x 0.1)",  "16" })
 AADD( aTxt, { "Iznos place", "za isplatu", "(12-16)", "17" })
 
 for i := 1 to LEN( aLines )

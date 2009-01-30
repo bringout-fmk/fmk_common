@@ -101,7 +101,7 @@ else
 endif
 
 if cTrosk == "N"
-	nTProc := 0
+	nTrProc := 0
 endif
 
 nTrosk := nBSaTr * ( nTrProc / 100 )
