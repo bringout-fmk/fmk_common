@@ -5,8 +5,8 @@
 // ---------------------------------------
 static function o_tables()
 
-O_PAROBR
 O_OBRACUNI
+O_PAROBR
 O_PARAMS
 O_RJ
 O_RADN
@@ -26,8 +26,7 @@ return
 static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt )
 
 if EMPTY(cRadnik) 
-	if cTipRpt == "2"
-		// GIP
+	if cTipRpt $ "1#2"
 	  if EMPTY(cRj)
 		INDEX ON str(godina)+SortPrez(idradn)+str(mjesec)+idrj TO "TMPLD"
 		go top
@@ -185,8 +184,7 @@ cPredJMB := PADR(cPredJMB, 13)
 Box("#OBRACUNSKI LISTOVI RADNIKA", 15, 75)
 
 @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-@ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET cMjesec pict "99" ;
-	VALID {|| cMjesecDo := cMjesec, .t. }
+@ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET cMjesec pict "99"
 @ m_x + 2, col() + 2 SAY "do:" GET cMjesecDo pict "99" ;
 	VALID cMjesecDo >= cMjesec
 @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina pict "9999"
@@ -383,7 +381,7 @@ nCntPrint := 0
 do while !EOF()
 
 	cT_radnik := field->idradn
-	nMjesec := field->mjesec
+	//nMjesec := field->mjesec
 
 	// zaglavlje izvjestaja
 	olp_zaglavlje( cT_radnik )
@@ -395,8 +393,8 @@ do while !EOF()
 
 	nCount := 0
 
-	do while !EOF() .and. field->idradn == cT_radnik ;
-		.and. IF(cMjesec<>cMjesecDo, field->mjesec = nMjesec, .t.)
+	do while !EOF() .and. field->idradn == cT_radnik 
+	//	.and. IF(cMjesec<>cMjesecDo, field->mjesec = nMjesec, .t.)
 
 		? PADL( ALLTRIM( STR(++nCount)), 3 ) + ")"
 
@@ -695,9 +693,9 @@ if !EMPTY( cPrihodi )
 	aPrim := TokToNiz( cPrihodi , ";" )
 endif
 
-lDatIsp := .f.
-if obracuni->(FIELDPOS("DAT_ISPL")) <> 0
-	lDatIsp := .t.
+lDatIspl := .f.
+if obracuni->(fieldpos("DAT_ISPL")) <> 0
+	lDatIspl := .t.
 endif
 
 select ld
@@ -727,7 +725,7 @@ do while !eof() .and. field->godina = cGodina
 	select radn
 	seek cT_radnik
 	
-	if !(radn->tiprada $ " #I") 
+	if !(radn->tiprada $ " #I#N") 
 		select ld
 		skip
 		loop
@@ -795,15 +793,12 @@ do while !eof() .and. field->godina = cGodina
 		nIDopr11 := round2((nBruto + nPrihOst) * nDopr11 / 100, gZaok2)
 		nIDopr12 := round2((nBruto + nPrihOst) * nDopr12 / 100, gZaok2)
 		nIDopr1X := round2((nBruto + nPrihOst) * nDopr1X / 100, gZaok2)
- 		
-		select ld
- 		
+
 		dDatIspl := DATE()
- 		// ako se ocitava datum isplate
-		if lDatIsp 
+		if lDatIspl 
 			dDatIspl := g_isp_date( field->idrj, ;
-						field->godina, ;
-						field->mjesec )
+					field->godina, ;
+					field->mjesec )
 		endif
 
 		// ubaci u tabelu podatke
