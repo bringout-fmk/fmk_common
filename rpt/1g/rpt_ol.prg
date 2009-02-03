@@ -690,7 +690,7 @@ local aPrim := {}
 local nPrihOst := 0
 
 if !EMPTY( cPrihodi )
-	aPrim := TokToNiz( cPrihodi , ";" )
+	aPrim := TokToNiz( ALLTRIM( cPrihodi ) , ";" )
 endif
 
 lDatIspl := .f.
@@ -751,7 +751,10 @@ do while !eof() .and. field->godina = cGodina
 		// koliki je iznos prihoda
 		if !EMPTY( cPrihodi )
 			for i := 1 to LEN( aPrim )
-				nPrihOst += &aPrim[i] 
+				if EMPTY( aPrim[i] )
+					loop
+				endif
+				nPrihOst += &(aPrim[i]) 
 			next
 		endif
 

@@ -9,7 +9,7 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc,"1. kartice                               ")
+AADD(opc,"1. kartice                                           ")
 AADD(opcexe,{|| MnuIzvK()})
 AADD(opc,"2. rekapitulacije")
 AADD(opcexe,{|| MnuIzvR()})
@@ -30,9 +30,13 @@ if gAHonorar == "D"
 endif
 
 if gVarObracun == "2"
-	AADD(opc,"O. obracunski listovi")
+	
+	AADD(opc,"-----------------------------------------")
+	AADD(opcexe,{|| nil})
+
+	AADD(opc,"O. obracunski listovi (obrasci OLP i GIP)")
 	AADD(opcexe,{|| r_obr_list() })
-	AADD(opc,"P. akontacije poreza")
+	AADD(opc,"P. akontacije poreza (obrasci ASD i AUG)")
 	AADD(opcexe,{|| r_ak_list() })
 endif
 
