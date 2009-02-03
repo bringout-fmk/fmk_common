@@ -109,6 +109,11 @@ if gVarObracun <> "2"
 	return nBrt
 endif
 
+//if cTipRada $ " #I#N"
+	// da li je minimalac ?
+//	nIzn := MAX( nIzn, parobr->minld )
+//endif
+
 do case
 	// nesamostalni rad
 	case EMPTY(cTipRada)
@@ -171,6 +176,11 @@ endif
 if cTrosk == nil
 	cTrosk := ""
 endif
+
+//if cTipRada $ " #I#N"
+	// minimalac ?
+//	nNeto := MAX( nNeto, parobr->minld )
+//endif
 
 do case
 	// nesamostalni rad

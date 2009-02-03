@@ -32,6 +32,8 @@ endif
 if gVarObracun == "2"
 	AADD(opc,"O. obracunski listovi")
 	AADD(opcexe,{|| r_obr_list() })
+	AADD(opc,"P. akontacije poreza")
+	AADD(opcexe,{|| r_ak_list() })
 endif
 
 Menu_SC("izvj")

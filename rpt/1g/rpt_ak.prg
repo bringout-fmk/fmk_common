@@ -5,14 +5,11 @@
 // ---------------------------------------
 static function o_tables()
 
+O_OBRACUNI
 O_PAROBR
 O_PARAMS
 O_RJ
 O_RADN
-O_KBENEF
-O_VPOSLA
-O_TIPPR
-O_KRED
 O_DOPR
 O_POR
 O_LD
@@ -22,17 +19,17 @@ return
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
-static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo )
+static function ld_sort( cRj, cGodina, cMjesec )
 
 if EMPTY(cRj)
-	INDEX ON str(godina)+SortPrez(idradn)+str(mjesec)+idrj TO "TMPLD"
+	INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
 	go top
-	seek str(cGodina,4)
+	seek str(cGodina,4)+str(cMjesec,2)
 		
 else
-	INDEX ON str(godina)+idrj+SortPrez(idradn)+str(mjesec) TO "TMPLD"
+	INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "TMPLD"
 	go top
-	seek str(cGodina,4)+cRj
+	seek str(cGodina,4)+cRj+str(cMjesec,2)
 endif
 
 return
@@ -43,7 +40,7 @@ return
 // ---------------------------------------------
 static function _ins_tbl( cJMB, cRadnNaz, nPrihod, ;
 		nRashod, nDohodak, nDopZdr, ;
-		nOsn_por, nIzn_por, nDoprPio )
+		nOsn_por, nIzn_por, nDopPio )
 
 local nTArea := SELECT()
 
@@ -92,12 +89,9 @@ return
 // akontacija poreza po odbitku....
 // ------------------------------------------
 function r_ak_list()
-local i
-local cRj := SPACE(60)
-local cRadnik := SPACE(_LR_) 
+local cRj := SPACE(65)
 local cIdRj
 local cMjesec
-local cMjesecDo
 local cGodina
 local cDopr1X := "1X"
 local cDopr2X := "2X"
@@ -109,7 +103,6 @@ cre_tmp_tbl()
 cIdRj := gRj
 cMjesec := gMjesec
 cGodina := gGodina
-cMjesecDo := cMjesec
 
 cPredNaz := SPACE(50)
 cPredAdr := SPACE(50)
@@ -132,19 +125,17 @@ cPredJMB := PADR(cPredJMB, 13)
 
 Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 12, 75)
 
-@ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj PICT "@!S25"
-@ m_x + 2, m_y + 2 SAY "Za mjesece od:" GET cMjesec pict "99"
-@ m_x + 2, col() + 2 SAY "do:" GET cMjesecDo pict "99" ;
-	VALID cMjesecDo >= cMjesec
+@ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj pict "@S25"
+@ m_x + 2, m_y + 2 SAY "Za mjesec:" GET cMjesec pict "99"
 @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina pict "9999"
 @ m_x + 5, m_y + 2 SAY "   Doprinos zdr: " GET cDopr1X
 @ m_x + 6, m_y + 2 SAY "   Doprinos pio: " GET cDopr2X
 
 @ m_x + 8, m_y + 2 SAY "Naziv preduzeca: " GET cPredNaz pict "@S30"
-@ m_x + 9, col()+1 SAY "JID: " GET cPredJMB
-@ m_x + 10, m_y + 2 SAY "Adresa: " GET cPredAdr pict "@S30"
+@ m_x + 8, col()+1 SAY "JID: " GET cPredJMB
+@ m_x + 9, m_y + 2 SAY "Adresa: " GET cPredAdr pict "@S30"
 
-@ m_x + 12, m_y + 2 SAY "(1) povremene samost.dj. (2) druge samost.dj." ;
+@ m_x + 11, m_y + 2 SAY "(1) povremene samost.dj. (2) druge samost.dj." ;
 	GET cTipRada ;
 	VALID cTipRada $ "1#2" 
 
@@ -169,14 +160,22 @@ WPar("i2", cPredAdr)
 select ld
 
 // sortiraj tabelu i postavi filter
-ld_sort( cRj, cGodina, cMjesec, cMjesecDo )
+ld_sort( cRj, cGodina, cMjesec )
 
 // nafiluj podatke obracuna
-fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
+fill_data( cRj, cGodina, cMjesec, ;
 	cDopr1X, cDopr2X, cTipRada )
 
+
+dDatIspl := DATE()
+if obracuni->(fieldpos("DAT_ISPL")) <> 0
+	dDatIspl := g_isp_date( "  ", cGodina, cMjesec )
+endif
+
+cPeriod := ALLTRIM(STR(cMjesec)) + "/" + ALLTRIM(STR(cGodina))
+
 // printaj obracunski list
-ak_print( cMjesec, cMjesecDo, cTipRada )
+ak_print( dDatIspl, cPeriod, cTipRada )
 
 return
 
@@ -185,9 +184,10 @@ return
 // ----------------------------------------------
 // stampa akontacije ....
 // ----------------------------------------------
-static function ak_print( cMjesec, cMjesecDo, cTipRada )
+static function ak_print( dDatIspl, cPeriod, cTipRada )
 local cLine := ""
 local nPageNo := 0
+local nPoc := 1
 
 O_R_EXP
 select r_export
@@ -197,11 +197,10 @@ START PRINT CRET
 ? "#%LANDS#"
 
 // zaglavlje izvjestaja
-ak_zaglavlje( ++nPageNo, cTipRada, "" )
-P_COND2
+ak_zaglavlje( ++nPageNo, cTipRada, dDatIspl, cPeriod )
+P_COND
 // zaglavlje tabele
-cLine := ak_t_header()
-
+cLine := ak_t_header( cTipRada )
 
 nUprihod := 0
 nUrashod:= 0
@@ -211,58 +210,89 @@ nUDopZdr := 0
 nUOsnPor := 0
 nUIznPor := 0
 
+// sracunaj samo total
+do while !EOF()
+	nUPrihod += prihod
+	nURashod += rashod
+	nUDohodak += dohodak
+	nUDopPio += dop_pio
+	nUDopZdr += dop_zdr
+	nUOsnPor += osn_por
+	nUIznPor += izn_por
+	skip
+enddo
+
+go top
+
+// sada ispisi izvjestaj
 do while !EOF()
 
-	if prow() > 54
-		// nova strana
+	? jmb
+	@ prow(), pcol() + 1 SAY PADR( naziv, 30 )
+	if cTipRada == "1"
+		@ prow(), nPoc:=pcol()+1 SAY STR(prihod,12,2)
+		@ prow(), pcol()+1 SAY STR(rashod,12,2)
+		@ prow(), pcol()+1 SAY STR(dohodak,12,2)
+	else
+		@ prow(), nPoc:=pcol()+1 SAY STR(dohodak,12,2)
+	endif
+	@ prow(), pcol()+1 SAY STR(dop_zdr,12,2)
+	@ prow(), pcol()+1 SAY STR(osn_por,12,2)
+	@ prow(), pcol()+1 SAY STR(izn_por,12,2)
+	@ prow(), pcol()+1 SAY STR(dop_pio,12,2)
+
+	if ( nPageNo = 1 .and. prow() > 38 ) .or. ;
+		( nPageNo <> 1 .and. prow() > 40 )
+		
+		? cLine
+
+		? "UKUPNO ZA SVE STRANICE:"
+		
+		if cTipRada == "1"
+			@ prow(), nPoc SAY STR(nUPrihod,12,2)
+			@ prow(), pcol()+1 SAY STR(nUrashod,12,2)
+			@ prow(), pcol()+1 SAY STR(nUdohodak,12,2)
+		else
+			@ prow(), nPoc SAY STR(nUdohodak,12,2)
+		endif
+		@ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
+		@ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
+		@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
+		@ prow(), pcol()+1 SAY STR(nUDopPio,12,2)
+
+		? cLine
+		
+		if nPageNo = 1
+			ak_potpis()
+		endif
+
 		FF
-		ak_zaglavlje( ++nPageNo, cTipRada, "" )
-		P_COND2
-		ak_t_header()
+	
+		ak_zaglavlje( ++nPageNo, cTipRada, dDatIspl, cPeriod )
+		P_COND
+		ak_t_header( cTipRada )
+	
 	endif
 
-	? jmb
-
-	@ prow(), pcol() + 1 SAY PADR( naziv, 30 )
-
-	@ prow(), nPoc:=pcol()+1 SAY STR(prihod,12,2)
-	
-	nUPrihod += prihod
-	
-	@ prow(), pcol()+1 SAY STR(rashod,12,2)
-	
-	nUrashod += rashod
-	
-	@ prow(), pcol()+1 SAY STR(dohodak,12,2)
-	
-	nUDohodak += dohodak
-	
-	@ prow(), pcol()+1 SAY STR(dop_zdr,12,2)
-	
-	nUDopZdr += dop_zdr
-	
-	@ prow(), pcol()+1 SAY STR(osn_por,12,2)
-
-	nUOsnPor += osn_por
-	
-	@ prow(), pcol()+1 SAY STR(izn_por,12,2)
-	
-	nUIznPor += izn_por
-	
-	@ prow(), pcol()+1 SAY STR(dop_pio,12,2)
-	
-	nUDopPio += dop_pio
-	
 	skip
 enddo
 
 ? cLine
 
 ? "UKUPNO:"
-@ prow(), nPoc SAY STR(nUPrihod,12,2)
-@ prow(), pcol()+1 SAY STR(nUrashod,12,2)
-@ prow(), pcol()+1 SAY STR(nUdohodak,12,2)
-@ prow(), pcol()+1 SAY STR(nUDopSt,12,2)
+
+if cTipRada == "1"
+	
+	@ prow(), nPoc SAY STR(nUPrihod,12,2)
+	@ prow(), pcol()+1 SAY STR(nUrashod,12,2)
+	@ prow(), pcol()+1 SAY STR(nUdohodak,12,2)
+
+else
+	
+	@ prow(), nPoc SAY STR(nUdohodak,12,2)
+
+endif
+
 @ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
 @ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
 @ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
@@ -270,23 +300,23 @@ enddo
 
 ? cLine
 
-at_potpis()
+ak_potpis()
 
 FF
 END PRINT
 
 return
 
+
 // ---------------------------------------
 // potpis za obrazac GIP
 // ---------------------------------------
-static function at_potpis()
+static function ak_potpis()
 
 P_12CPI
 P_COND
 ? "Upoznat sam sa sankicajama propisanim Zakonom o Poreznoj upravi FBIH i izjavljujem"
-? "da su svi podaci navedeni u ovoj prijavi tacni, potpuni i jasni"
-? SPACE(80) + "Potpis poreznog obveznika", SPACE(5) + "Datum:"
+? "da su svi podaci navedeni u ovoj prijavi tacni, potpuni i jasni", SPACE(10) + "Potpis poreznog obveznika", SPACE(5) + "Datum:"
 
 return
 
@@ -294,7 +324,7 @@ return
 // ----------------------------------------
 // stampa headera tabele
 // ----------------------------------------
-static function at_t_header()
+static function ak_t_header( cVRada )
 local aLines := {}
 local aTxt := {}
 local i 
@@ -306,23 +336,35 @@ local cTxt4 := ""
 
 AADD( aLines, { REPLICATE("-", 13) } )
 AADD( aLines, { REPLICATE("-", 30) } )
-AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
+if cVRada == "1"
+	AADD( aLines, { REPLICATE("-", 12) } )
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
 AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
 
-AADD( aTxt, { "JMB poreznog", "obveznika", "", "7" })
-AADD( aTxt, { "Prezime i ime", "poreznog obveznika", "", "8" })
-AADD( aTxt, { "Iznos", "prihoda", "", "9" })
-AADD( aTxt, { "Iznos", "rashoda", "(20% ili 30%)", "10" })
-AADD( aTxt, { "Iznos", "dohotka", "(9 - 10)", "11" })
-AADD( aTxt, { "Zdravstveno", "osiguranje", "(11 x 0.04)", "12" })
-AADD( aTxt, { "Osnovica", "za porez", "(11 - 12)", "13" })
-AADD( aTxt, { "Iznos", "poreza", "(13 x 0.1)", "14" })
-AADD( aTxt, { "PIO", "", "(11 x 0.06)", "15" })
+if cVRada == "1"
+	AADD( aTxt, { "JMB poreznog", "obveznika", "", "7" })
+	AADD( aTxt, { "Prezime i ime", "poreznog obveznika", "", "8" })	
+	AADD( aTxt, { "Iznos", "prihoda", "", "9" })
+	AADD( aTxt, { "Iznos", "rashoda", "(20% ili 30%)", "10" })
+	AADD( aTxt, { "Iznos", "dohotka", "(9 - 10)", "11" })
+	AADD( aTxt, { "Zdravstveno", "osiguranje", "(11 x 0.04)", "12" })
+	AADD( aTxt, { "Osnovica", "za porez", "(11 - 12)", "13" })
+	AADD( aTxt, { "Iznos", "poreza", "(13 x 0.1)", "14" })
+	AADD( aTxt, { "PIO", "", "(11 x 0.06)", "15" })
+else
+	AADD( aTxt, { "JMB poreznog", "obveznika", "", "6" })
+	AADD( aTxt, { "Prezime i ime", "poreznog obveznika", "", "7" })	
+	AADD( aTxt, { "Iznos", "dohotka", "", "8" })
+	AADD( aTxt, { "Zdravstveno", "osiguranje", "(8 x 0.04)", "9" })
+	AADD( aTxt, { "Osnovica", "za porez", "(8 - 9)", "10" })
+	AADD( aTxt, { "Iznos", "poreza", "(10 x 0.1)", "11" })
+	AADD( aTxt, { "PIO", "", "(8 x 0.06)", "12" })
+endif
 
 for i := 1 to LEN( aLines )
 	cLine += aLines[ i, 1 ] + SPACE(1)
@@ -356,7 +398,7 @@ return cLine
 // ----------------------------------------
 // stampa zaglavlja izvjestaja
 // ----------------------------------------
-static function at_zaglavlje( nPage, cDatIspl, cTipRada )
+static function ak_zaglavlje( nPage, cTipRada, dDIspl, cPeriod )
 local cObrazac 
 local cInfo
 
@@ -366,7 +408,6 @@ if cTipRada == "1"
 elseif cTipRada == "2"
 	cObrazac := "Obrazac ASD-1032"
 	cInfo := "NA PRIHODE OD DRUGIH SAMOSTALNIH DJELATNOSTI"
-	cInfo := 
 endif
 
 ?
@@ -381,8 +422,8 @@ P_10CPI
 P_COND
 
 if cTipRada == "1"
-	? "1) Vrsta prijave:"
-	? "   a) Povremene samostalne djelatnosti   b) autorski honorari"
+	? "  1) Vrsta prijave:"
+	? "     a) Povremene samostalne djelatnosti   b) autorski honorari"
 	?
 else
 	?
@@ -392,7 +433,8 @@ endif
 P_12CPI
 
 ? PADR( "Naziv: " + cPredNaz, 60 ), "JIB/JMB: " + cPredJmb 
-? PADR( "Adresa: " + cPredAdr, 60 ), "Datum isplate: " + cDatIspl
+? PADR( "Adresa: " + cPredAdr, 60 ), "Datum isplate: " + DTOC(dDIspl), ;
+	"Period: " + cPeriod
 
 ?
 P_10CPI
@@ -406,34 +448,29 @@ return
 // ---------------------------------------------------------
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
-static function fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
-	cDopr1X, cDopr2X, cTipRada )
-local i
+static function fill_data( cRj, cGodina, cMjesec, ;
+	cDopr1X, cDopr2X, cVRada )
+
 local cPom
 
 select ld
 
-do while !eof() .and. field->godina = cGodina  
-
-	if field->mjesec > cMjesecDo .or. ;
-		field->mjesec < cMjesec 
-		
-		skip
-		loop
-
-	endif
+do while !eof() .and. field->godina = cGodina .and. ;
+	field->mjesec = cMjesec
 
 	cT_radnik := field->idradn
-
-	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec )
-
+	
 	select radn
 	seek cT_radnik
 	
 	// uzmi samo odgovarajuce tipove rada
-	if cTipRada == "1" .and. !(radn->tiprada $ "A#U") .or. ;
-		cTipRada == "2" .and. !(radn->tiprada $ "P")
+	if ( cVRada == "1" .and. !(radn->tiprada $ "A#U") )
+		select ld
+		skip
+		loop
+	endif
+	
+	if ( cVRada == "2" .and. !(radn->tiprada $ "P") )
 		select ld
 		skip
 		loop
@@ -441,6 +478,9 @@ do while !eof() .and. field->godina = cGodina
 
 	cR_jmb := radn->matbr
 	cR_naziv := ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ) 
+	
+	// samo pozicionira bazu PAROBR na odgovarajuci zapis
+	ParObr( cMjesec )
 
 	select ld
 
@@ -453,9 +493,8 @@ do while !eof() .and. field->godina = cGodina
 	nPorIzn := 0
 	nTrosk := 0
 
-	do while !eof() .and. field->mjesec <= cMjesecDo ;
-		.and. field->mjesec >= cMjesec ;
-		.and. field->godina = cGodina  ;
+	do while !eof() .and. field->godina = cGodina ;
+		.and. field->mjesec = cMjesec ;
 		.and. field->idradn == cT_radnik
 
 		nNeto := field->uneto
@@ -468,6 +507,8 @@ do while !eof() .and. field->godina = cGodina
 		
 		nL_odb := field->ulicodb
 		
+		nTrosk := 0
+
 		if cTipRada == "A"
 			nTrosk := gAhTrosk
 		elseif cTipRada == "U"
@@ -495,13 +536,15 @@ do while !eof() .and. field->godina = cGodina
 		select ld
 		
 		// ocitaj doprinose, njihove iznose
-		nDopr1X := g_dopr( cDopr1X, cTipRada )
-		nDopr2X := g_dopr( cDopr2X, cTipRada )
+		nDopr1X := get_dopr( cDopr1X, cTipRada )
+		nDopr2X := get_dopr( cDopr2X, cTipRada )
 		
 		// izracunaj doprinose
 		nIDopr1X := round2( nDohodak * nDopr1X / 100, gZaok2 )
 		nIDopr2X := round2( nDohodak * nDopr2X / 100, gZaok2 )
  
+ 		select ld
+
 		// ubaci u tabelu podatke
 		_ins_tbl( cR_jmb, ; 
 				cR_naziv, ;

@@ -404,7 +404,12 @@ if gVarObracun == "2"
 	endif
 
 	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, 1 )
-	
+
+	// ako je minimalac - ide ista isplata...
+	//if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
+	//	_uIznos := _UNeto
+	//endif
+
 	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove
 		_uIznos := ROUND2( _uiznos + nTrosk, 1 )

@@ -501,7 +501,16 @@ if gPrBruto=="D"
 	? cMainLine
 	? cLMSK + Lokal("6. UKUPNO ZA ISPLATU (2 - 5)")
 
-	@ prow(),60+LEN(cLMSK) SAY ROUND2(nOporDoh - nPor, 1) pict gpici
+	nUkIspl := ROUND2(nOporDoh - nPor, 1)
+
+	// minimalac
+	//if cRTipRada $ " #I#N"
+	//	if nOsnZaBr < parobr->minld
+	//		nUkIspl := nOsnZaBr
+	//	endif
+	//endif
+
+	@ prow(),60+LEN(cLMSK) SAY nUkIspl pict gpici
 
 
 	// ostala primanja 
@@ -512,7 +521,7 @@ if gPrBruto=="D"
 
 
 	// ukupno za isplatu ....
-	nZaIsplatu := ROUND2( ( nOporDoh - nPor ) + nOsnOstalo, 1 )
+	nZaIsplatu := ROUND2( nUkIspl + nOsnOstalo, 1 )
 	
 	?
 
