@@ -818,7 +818,7 @@ ENDIF
  nPom:=nDopr1X+nDopr2x+nDopr3x+;
        nDopr5x+nDopr6x+nDopr7x+;
        nPorNaPlatu+nPorezOstali-;
-       nPorOlaksice+nOstaleOBaveze;
+       nPorOlaksice+nOstaleOBaveze+nDodDoprP+nDodDoprZ;
  
  // ukupno obaveze
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
@@ -857,11 +857,11 @@ ENDIF
  UzmiIzIni(cIniName,'Varijable','N19I', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // PIO iz + PIO na placu
- nPom:=nDopr1x+nDopr5x
+ nPom:=nDopr1x+nDopr5x+nDodDoprP
  UzmiIzIni(cIniName,'Varijable','D20', FormNum2(nPom,16,gPici2), 'WRITE')
 
  // zdravsveno iz + zdravstveno na placu
- nPom:=nDopr2x+nDopr6x
+ nPom:=nDopr2x+nDopr6x+nDodDoprZ
  nPom2 := nPom
  UzmiIzIni(cIniName,'Varijable','D21', FormNum2(nPom,16,gPici2), 'WRITE')
  
