@@ -332,9 +332,13 @@ nPorOp1 := 0
 nPorOp2 := 0
 nPorOl1 := 0
 nTOsnova := 0
+nPorB := 0
+nPorR := 0
 
 // obracunaj porez na bruto
 nTOsnova := obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "B" )
+
+nPorB := nPor
 
 // ako je stvarna osnova veca od ove BRUTO - DOPRIZ - ODBICI
 // rijec je o radnicima koji nemaju poreza
@@ -365,6 +369,7 @@ nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM
 // obracunaj ostali porez na neto
 obr_porez( @nPor, @nPor2, @nPorOps, @nPorOps2, @nUPorOl, "R" )
 
+nPorR := nPor
 nPorez1 += nPor
 nPorez2 += nPor2
 nPorOp1 += nPorOps
@@ -404,13 +409,15 @@ cLinija := "--------------------------------------------"
 ? cLinija
 ? " " + Lokal("OPOREZIVI DOHODAK (1):")
 @ prow(),pcol()+1 SAY nOporDohod pict gpici
-? "            " + Lokal("POREZI (2):")
+? "         " + Lokal("POREZ 10% (2):")
 IF cUmPD=="D"
-	@ prow(),pcol()+1 SAY nPorez1-nPorOl1-nPorez2    pict gpici
+	@ prow(),pcol()+1 SAY nPorB-nPorOl1-nPorez2    pict gpici
 ELSE
-	@ prow(),pcol()+1 SAY nPorez1-nPorOl1    pict gpici
+	@ prow(),pcol()+1 SAY nPorB-nPorOl1    pict gpici
 ENDIF
-? "         " + Lokal("DOPRINOSI (3):")
+? "     " + Lokal("OSTALI POREZI (3):")
+@ prow(),pcol()+1 SAY nPorR pict gpici
+? "         " + Lokal("DOPRINOSI (4):")
 IF cUmPD=="D"
 	@ prow(),pcol()+1 SAY nDopr-nDopr2    pict gpici
 ELSE
@@ -420,11 +427,11 @@ ENDIF
 ? cLinija
 
 IF cUmPD=="D"
-	? Lokal(" POTREBNA SREDSTVA (1 + 2 + 3):")
-	@ prow(),pcol()+1 SAY nOporDohod+(nPorez1-nPorOl1)+nDopr-nPorez2-nDopr2    pict gpici
+	? Lokal(" POTREBNA SREDSTVA (1 + 3 + 4):")
+	@ prow(),pcol()+1 SAY nOporDohod+(nPorR)+nDopr-nPorez2-nDopr2    pict gpici
 ELSE
-	? Lokal(" POTREBNA SREDSTVA (1 + 2 + 3):")
-	@ prow(),pcol()+1 SAY nOporDohod+(nPorez1-nPorOl1)+nDopr    pict gpici
+	? Lokal(" POTREBNA SREDSTVA (1 + 3 + 4):")
+	@ prow(),pcol()+1 SAY nOporDohod+(nPorR)+nDopr    pict gpici
 ENDIF
 ? cLinija
 ?

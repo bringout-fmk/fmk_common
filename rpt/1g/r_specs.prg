@@ -132,9 +132,9 @@ do while .t.
 			VALID P_RADN(@cRadn)
      		
 		
-		@ m_x+10,m_y+ 2 SAY "          Doprinos pio:" GET cDopr1
-     		@ m_x+11,m_y+ 2 SAY "    Doprinos zdravstvo:" GET cDopr2
-     		@ m_x+12,m_y+ 2 SAY "Doprinos nezaposlenost:" GET cDopr3
+		@ m_x+10,m_y+ 2 SAY "          Doprinos pio (iz+na):" GET cDopr1
+     		@ m_x+11,m_y+ 2 SAY "    Doprinos zdravstvo (iz+na):" GET cDopr2
+     		@ m_x+12,m_y+ 2 SAY "Doprinos nezaposlenost (iz+na):" GET cDopr3
      		
 		read
      		

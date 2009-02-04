@@ -113,8 +113,8 @@ do while .t.
      		@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
      		
 		
-     		@ m_x+9,m_y+ 2 SAY "      Doprinos pio (na)" GET cDopr1
-     		@ m_x+10,m_y+ 2 SAY "Doprinos zdravstvo (iz)" GET cDopr2
+     		@ m_x+9,m_y+ 2 SAY "Doprinos zdravstvo (iz)" GET cDopr1
+     		@ m_x+10,m_y+ 2 SAY "     Doprinos pio (na)" GET cDopr2
 		
 		read
      		clvbox()
