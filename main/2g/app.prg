@@ -177,7 +177,11 @@ AADD(opc,"------------------------------------")
 AADD(opcexe, nil)
 // najcesece koristenje opcije
 AADD(opc,   Lokal("A. rekapitulacija"))
-AADD(opcexe, {|| Rekap(.t.)})
+if gVarObracun == "2"
+	AADD(opcexe, {|| Rekap2(.t.)})
+else
+	AADD(opcexe, {|| Rekap(.t.)})
+endif
 AADD(opc,   Lokal("B. kartica plate")) 
 AADD(opcexe, {|| KartPl()})
 AADD(opc,"------------------------------------")
@@ -284,7 +288,7 @@ public gMRM:=0
 public gMRZ:=0
 public gPDLimit:=0
 public gSetForm:="1"
-public gPrBruto:="N"
+public gPrBruto:="D"
 public gMinR:="%"
 public gPotp:="D"
 public gBodK:="1"

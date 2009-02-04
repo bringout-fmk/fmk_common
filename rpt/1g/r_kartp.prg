@@ -1,5 +1,7 @@
 #include "ld.ch"
 
+static DUZ_STRANA := 64
+
 
 // -------------------------------------------------
 // nova varijanta kartica plate

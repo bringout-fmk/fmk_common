@@ -1,5 +1,6 @@
 #include "ld.ch"
 
+static DUZ_STRANA := 64
 
 // -------------------------------------------------
 // kartica plate - samostalni poduzetnik

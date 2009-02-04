@@ -54,7 +54,7 @@ local i
 cAlg := get_algoritam()
 cPrObr := get_pr_obracuna()
 
-if cPrObr == "N" .or. cPrObr == " " .or. cPrObr == "B" .or. cPrObr == "R"
+if cPrObr == "N" .or. cPrObr == " " .or. cPrObr == "B" 
 
 	// osnovica je neto
 	nIznos := nOsnNeto
