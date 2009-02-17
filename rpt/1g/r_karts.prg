@@ -29,7 +29,7 @@ nOsnOstalo := 0
 //nLicOdbitak := g_licni_odb( radn->id )
 nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
-cRTipRada := radn->tiprada
+cRTipRada := g_tip_rada( ld->idradn, ld->idrj ) 
 nRPrKoef := 0
 if radn->(FIELDPOS("SP_KOEF")) <> 0
 	nRPrKoef := radn->sp_koef

@@ -220,7 +220,7 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
    
 	SELECT RADN
    	HSEEK LD->idradn
-   	cRTR := radn->tiprada
+   	cRTR := g_tip_rada(ld->idradn, ld->idrj)
    
    	// ugovor o djelu, aut.honorar i predsjednici
    	if !(cRTR $ "U#A#P")

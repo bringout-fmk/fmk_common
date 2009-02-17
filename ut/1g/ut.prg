@@ -1,6 +1,32 @@
 #include "ld.ch"
 
 
+// -----------------------------------------------------------
+// vraca tip rada za radnika i gleda i radnu jedinicu
+// -----------------------------------------------------------
+function g_tip_rada( cRadn, cRj )
+local cTipRada := " "
+local nTArea := SELECT()
+
+select rj
+go top
+seek cRJ
+
+if rj->(fieldpos("tiprada")) <> 0
+	cTipRada := rj->tiprada
+endif
+
+// ako je prazno tip rada, gledaj sifrarnik radnika
+if EMPTY( cTipRada )
+	select radn
+	go top
+	seek cRadn
+	cTipRada := radn->tiprada
+endif
+
+select (nTArea)
+return cTipRada
+
 // -------------------------------------------------------
 // poruka - informacije o dostupnim tipovima rada
 // -------------------------------------------------------

@@ -46,7 +46,7 @@ local lRet := .f.
 local nTArea := SELECT()
 O_OPS
 select ops
-hseek cOpsrad
+hseek cOpsst
 if ops->reg == "2"
 	lRet := .t.
 endif
@@ -420,7 +420,7 @@ ENDIF
    
    SELECT RADN
    HSEEK LD->idradn
-   cRTR := radn->tiprada
+   cRTR := g_tip_rada( ld->idradn, ld->idrj )
    nRSpr_koef := 0
    if cRTR == "S"
 	nRSpr_koef := radn->sp_koef
@@ -429,7 +429,7 @@ ENDIF
    if cRTR $ "I#N" .and. EMPTY(cRTipRada)
    	// ovo je uredu...
 	// jer je i ovo nesamostalni rad
-   elseif cRTipRada <> radn->tiprada
+   elseif cRTipRada <> cRTR
    	select ld
 	skip
 	loop

@@ -1096,7 +1096,7 @@ FUNCTION FFor7()
  cTipRada := ""
  if gVarObracun == "2"
  	nKLO := radn->klo
-	cTipRada := radn->tiprada
+	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
  endif
  FOR i:=cMjesecOd TO cMjesecDo
    cPom:="xneto"+ALLTRIM(STR(i)); &cPom:=0

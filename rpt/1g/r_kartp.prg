@@ -29,7 +29,7 @@ nOsnNeto := 0
 nOsnOstalo := 0
 nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
-cRTipRada := radn->tiprada
+cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 for i:=1 to cLDPolja
 	

@@ -393,11 +393,10 @@ return DE_CONT
 // -----------------------------------------------
 // -----------------------------------------------
 function P_RJ(cId,dx,dy)
-*{
 local nArr
 nArr:=SELECT()
-private imekol
-private kol
+private imekol := {}
+private kol := {}
 
 select (F_RJ)
 if (!used())
@@ -405,19 +404,22 @@ if (!used())
 endif
 select (nArr)
 
-ImeKol:={{padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} },;
-          {padr("Naziv",35), {||  naz}, "naz" }                       ;
-       }
-Kol:={1,2}
+AADD(ImeKol, { padr("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wid)} } )
+AADD(ImeKol, { padr("Naziv",35), {||  naz}, "naz" } )
+
+if rj->(FieldPos("TIPRADA")) <> 0
+	AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada"  } )
+endif
+
+for i:=1 to LEN(ImeKol)
+	AADD(Kol, i)
+next
 
 return PostojiSifra(F_RJ, 1, 10, 55, Lokal("Lista radnih jedinica"), @cId, dx, dy)
-*}
 
 
-// ------------------------------------
-// ------------------------------------
+
 function P_Ops(cId,dx,dy)
-*{
 local nArr
 local i:=0
 nArr:=SELECT()

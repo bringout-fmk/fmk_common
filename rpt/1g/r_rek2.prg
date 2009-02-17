@@ -505,10 +505,14 @@ do while !eof() .and. eval(bUSlov)
 	select vposla
 	hseek _idvposla
 
+	select ld
+
+	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+
 	// provjeri tip rada
-	if radn->tiprada $ "I#N" .and. EMPTY( cRTipRada ) 
+	if cTipRada $ "I#N" .and. EMPTY( cRTipRada ) 
 		// ovo je u redu...
-	elseif ( cRTipRada <> radn->tiprada )
+	elseif ( cRTipRada <> cTipRada )
 		select ld
 		skip 1
 		loop
@@ -537,7 +541,7 @@ do while !eof() .and. eval(bUSlov)
 	_oosnostalo := 0
 
 	nRadn_lod := _ulicodb 
-	
+
 	nKoefLO := nRadn_lod
 
 	cTrosk := radn->trosk
@@ -593,19 +597,19 @@ do while !eof() .and. eval(bUSlov)
  	next
 	
 	nRSpr_koef := 0
-	if radn->tiprada == "S"
+	if cTipRada == "S"
 		nRSpr_koef := radn->sp_koef	
 	endif
 
 	// br.osn za radnika
-	nRadn_bo := bruto_osn( _oosnneto, radn->tiprada , nKoefLO, nRSpr_koef, cTrosk ) 
+	nRadn_bo := bruto_osn( _oosnneto, cTipRada , nKoefLO, nRSpr_koef, cTrosk ) 
 	nTrosk := 0
 
-	if radn->tiprada $ "A#U"
+	if cTipRada $ "A#U"
 		if cTrosk <> "N"
-			if radn->tiprada == "A"
+			if cTipRada == "A"
 				nTrosk := gAHTrosk
-			elseif radn->tiprada == "U"
+			elseif cTipRada == "U"
 				nTrosk := gUgTrosk
 			endif
 		endif
@@ -626,13 +630,13 @@ do while !eof() .and. eval(bUSlov)
 
 	if UBenefOsnovu()
 		// beneficirani
-		nRadn_bbo := bruto_osn( _oosnneto - if(!Empty(gBFForm), &gBFForm, 0), radn->tiprada, nKoefLO, nRSpr_koef )
+		nRadn_bbo := bruto_osn( _oosnneto - if(!Empty(gBFForm), &gBFForm, 0), cTipRada, nKoefLO, nRSpr_koef )
 		nURadn_bbo += nRadn_bbo
 	endif
 
 	// da bi dobio osnovicu za poreze
 	// moram vidjeti i koliko su doprinosi IZ
-	nRadn_diz := u_dopr_iz( nRadn_bo , cRTipRada )
+	nRadn_diz := u_dopr_iz( nRadn_bo , cTipRada )
 	
 	// osnovica za poreze
 	nRadn_posn := ROUND2( (nRadn_bo - nRadn_diz ) - nRadn_lod, gZaok2 )

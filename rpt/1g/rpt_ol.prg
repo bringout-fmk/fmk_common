@@ -718,6 +718,8 @@ do while !eof() .and. field->godina = cGodina
 			loop
 		endif
 	endif
+	
+	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
 	ParObr( cMjesec )
@@ -725,7 +727,7 @@ do while !eof() .and. field->godina = cGodina
 	select radn
 	seek cT_radnik
 	
-	if !(radn->tiprada $ " #I#N") 
+	if !( cTipRada $ " #I#N") 
 		select ld
 		skip
 		loop
@@ -759,7 +761,6 @@ do while !eof() .and. field->godina = cGodina
 		endif
 
 		nNeto := field->uneto
-		cTipRada := radn->tiprada
 		nKLO := radn->klo
 		nL_odb := field->ulicodb
 		

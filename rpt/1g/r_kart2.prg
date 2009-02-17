@@ -43,7 +43,7 @@ nOsnOstalo := 0
 //nLicOdbitak := g_licni_odb( radn->id )
 nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
-cRTipRada := radn->tiprada
+cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 ? cTprLine
 ? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")

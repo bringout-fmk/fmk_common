@@ -258,6 +258,8 @@ do while !EOF() .and. field->godina == cYear ;
 		
 		Scatter()
 		
+		_r_bank := radn->idbanka
+		_r_tr := radn->brtekr
 		_r_ime := radn->ime
 		_r_prezime := radn->naz
 		_r_imeoca := radn->imerod
@@ -308,6 +310,8 @@ local nUTo := 0
 local cLine
 
 select _tmp
+// postavi index po bankama
+index on r_bank + r_ime + r_prezime tag "bank"
 go top
 
 // setuj liniju...
@@ -317,6 +321,8 @@ START PRINT CRET
 
 // stampaj header
 _p_header( cLine, nRptVar1, nRptVar2, cMFrom, cMTo, cYear )
+
+cBank := "X"
 
 do while !EOF()
 
@@ -335,6 +341,13 @@ do while !EOF()
 		
 		? 
 		
+	endif
+
+	if cBank <> field->r_bank
+		? REPLICATE("-", 30)
+		? "Banka: " + field->r_bank 
+		? REPLICATE("-", 30)
+		cBank := r_bank
 	endif
 
 	// r.br
@@ -559,6 +572,8 @@ return
 static function _cre_tmp()
 local aDbf := {}
 
+AADD(aDbf, { "r_bank", "C", 6, 0 })
+AADD(aDbf, { "r_tr", "C", 25, 0 })
 AADD(aDbf, { "r_ime", "C", 30, 0 })
 AADD(aDbf, { "r_prezime", "C", 30, 0 })
 AADD(aDbf, { "r_imeoca", "C", 30, 0 })

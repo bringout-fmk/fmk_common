@@ -192,9 +192,10 @@ do while !eof() .and. cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and
 		Scatter()
 	ENDIF
 
+ 	cRTRada := g_tip_rada( _idradn, _idrj )
+
 	select radn
 	hseek _idradn
- 	cRTRada := radn->tiprada
 	select vposla
 	hseek _idvposla
 	select rj

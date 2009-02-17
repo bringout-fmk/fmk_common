@@ -197,7 +197,12 @@ Box(,21,77)
 	select radn
 	
 	if gVarObracun == "2"
+		cTR := g_tip_rada( cIdRadn, cIdRj )
 		nULicOdb := ( radn->klo * gOsnLOdb )
+		// ovi tipovi nemaju odbitka !
+		if cTR $ "A#U#S"
+			nULicOdb := 0
+		endif
 		if lViseObr .and. cObracun <> "1"
 			nULicOdb := 0
 		endif
@@ -342,7 +347,7 @@ _UIznos := _UNeto + _UOdbici
 if gVarObracun == "2"
 
 	nKLO := radn->klo
-	cTipRada := radn->tiprada
+	cTipRada := g_tip_rada( _idradn, _idrj )
 	nSPr_koef := 0
 	nTrosk := 0
 	nBrOsn := 0
@@ -365,7 +370,12 @@ if gVarObracun == "2"
 			nSPr_koef := radn->sp_koef
 		endif
 	endif
-	
+
+	// ako su ovi tipovi primanja - nema odbitka !
+	if cTipRada $ "A#U#P#S"
+		_ULicOdb := 0
+	endif
+
 	// bruto osnova
 	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
 

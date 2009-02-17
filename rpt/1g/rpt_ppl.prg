@@ -236,7 +236,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 		
 		select ld
 
-		cRTipRada := radn->tiprada
+		cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 		nPrKoef := radn->sp_koef
 		cOpor := radn->opor
 		cTrosk := radn->trosk

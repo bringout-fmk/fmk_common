@@ -459,18 +459,19 @@ do while !eof() .and. field->godina = cGodina .and. ;
 	field->mjesec = cMjesec
 
 	cT_radnik := field->idradn
-	
+	cT_tiprada := g_tip_rada( field->idradn, field->idrj )
+
 	select radn
 	seek cT_radnik
 	
 	// uzmi samo odgovarajuce tipove rada
-	if ( cVRada == "1" .and. !(radn->tiprada $ "A#U") )
+	if ( cVRada == "1" .and. !(cT_tiprada $ "A#U") )
 		select ld
 		skip
 		loop
 	endif
 	
-	if ( cVRada == "2" .and. !(radn->tiprada $ "P") )
+	if ( cVRada == "2" .and. !(cT_tiprada $ "P") )
 		select ld
 		skip
 		loop
@@ -499,8 +500,6 @@ do while !eof() .and. field->godina = cGodina .and. ;
 
 		nNeto := field->uneto
 		
-		cTipRada := radn->tiprada
-
 		cTrosk := radn->trosk
 		
 		nKLO := radn->klo
@@ -509,14 +508,14 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		
 		nTrosk := 0
 
-		if cTipRada == "A"
+		if cT_tiprada == "A"
 			nTrosk := gAhTrosk
-		elseif cTipRada == "U"
+		elseif cT_tiprada == "U"
 			nTrosk := gUgTrosk
 		endif
 
 		// prihod
-		nPrihod := bruto_osn( nNeto, cTipRada, nL_odb, nil, cTrosk ) 
+		nPrihod := bruto_osn( nNeto, cT_tiprada, nL_odb, nil, cTrosk ) 
 		
 		// rashod
 		nRashod := nPrihod * (nTrosk / 100)
@@ -525,7 +524,7 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		nDohodak := nPrihod - nRashod
 
 		// ukupno dopr iz 
-		nDoprIz := u_dopr_iz( nDohodak, cTipRada )
+		nDoprIz := u_dopr_iz( nDohodak, cT_tiprada )
 		
 		// osnovica za porez
 		nPorOsn := ( nDohodak - nDoprIz ) - nL_odb
@@ -536,8 +535,8 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		select ld
 		
 		// ocitaj doprinose, njihove iznose
-		nDopr1X := get_dopr( cDopr1X, cTipRada )
-		nDopr2X := get_dopr( cDopr2X, cTipRada )
+		nDopr1X := get_dopr( cDopr1X, cT_tipRada )
+		nDopr2X := get_dopr( cDopr2X, cT_tipRada )
 		
 		// izracunaj doprinose
 		nIDopr1X := round2( nDohodak * nDopr1X / 100, gZaok2 )
