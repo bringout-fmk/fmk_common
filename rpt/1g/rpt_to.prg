@@ -20,25 +20,28 @@ local nAcontAmount := 70.00
 local nRptVar1 := 1
 local nRptVar2 := 1
 local nDays := 7.5
+local cKred := SPACE(6)
+
+O_KRED
 
 __PAGE_LEN := 60
 
 if _get_vars( @cRj, @cMonthFrom, @cMonthTo, @cYear, @nDays, ;
 		@cHours, @nHourLimit, @nMinHrLimit, @nKoef, @nAcontAmount, ;
-		@nRptVar1, @nRptVar2 ) == 0
+		@nRptVar1, @nRptVar2, @cKred ) == 0
 	return
 endif
 
 // generisi listu...
 if _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
-	cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount ) == 0
+	cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred ) == 0
 
 	return
 endif
 
 
 // printaj izvjestaj....
-_print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2 )
+_print_list( cMonthFrom, cMonthTo, cYear, nRptVar1, nRptVar2, cKred )
 
 close all
 
@@ -51,7 +54,7 @@ return
 static function _get_vars( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
 				cHours, nHourLimit, nMinHrLimit, ;
 				nKoef, nAcontAmount, ;
-				nRptVar1, nRptVar2 )
+				nRptVar1, nRptVar2, cKred )
 local nTArea := SELECT()
 local nBoxX := 20
 local nBoxY := 70
@@ -76,6 +79,7 @@ RPar( "k1", @nKoef )
 RPar( "a1", @nAcontAmount )
 RPar( "v1", @nRptVar1 )
 RPar( "v2", @nRptVar2 )
+RPar( "kr", @cKred )
 
 Box(, nBoxX, nBoxY )
 	
@@ -95,8 +99,10 @@ Box(, nBoxX, nBoxY )
 
 	@ m_x + nX, m_y + 2 SAY "Godina:" GET cYear PICT "9999" VALID !EMPTY(cYear)
 	
-	nX += 2
+	@ m_x + nX, col() + 1 SAY "Banka (prazno-sve):" GET cKred VALID EMPTY(cKred) .or. P_Kred(@cKred)
 
+	nX += 2
+	
 	@ m_x + nX, m_y + 2 SAY "Sati primanja koja uticnu na isplatu:" GET cHours PICT "@S30" VALID !EMPTY(cHours)
 
 	nX += 2
@@ -170,6 +176,7 @@ WPar( "k1", nKoef )
 WPar( "a1", nAcontAmount )
 WPar( "v1", nRptVar1 )
 WPar( "v2", nRptVar2 )
+WPar( "kr", cKred )
 
 select (nTArea)
 
@@ -181,7 +188,7 @@ return 1
 // generise listu radnika... prema parmetrima
 // ----------------------------------------------------
 static function _gen_list( cRj, cMonthFrom, cMonthTo, cYear, nDays, ;
-		cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount )
+		cHours, nHourLimit, nMinHrLimit, nKoef, nAcontAmount, cKred )
 
 local cIdRadn
 local aHours := {}
@@ -193,6 +200,7 @@ local nCount := 0
 aHours := TokToNiz( ALLTRIM(cHours), ";" )
 
 O_RJ
+O_KRED
 O_RADN
 O_LD
 
@@ -221,6 +229,12 @@ do while !EOF() .and. field->godina == cYear ;
 	set order to tag "1"
 	go top
 	seek cIdRadn
+
+	if !EMPTY(cKred) .and. cKred <> radn->idbanka
+		select ld
+		skip 1
+		loop
+	endif
 
 	select ld
 
@@ -300,13 +314,17 @@ return nCount
 // -----------------------------------------
 // printanje liste iz _tmp tabele
 // -----------------------------------------
-static function _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2 )
+static function _print_list( cMFrom, cMTo, cYear, nRptVar1, nRptVar2, cKred )
 
 local nRbr := 0
 local nUSati := 0
 local nUTotal := 0
 local nUAcont := 0
 local nUTo := 0
+local nUBSati := 0
+local nUBTotal := 0
+local nUBAcont := 0
+local nUBTo := 0
 local cLine
 
 select _tmp
@@ -322,7 +340,7 @@ START PRINT CRET
 // stampaj header
 _p_header( cLine, nRptVar1, nRptVar2, cMFrom, cMTo, cYear )
 
-cBank := "X"
+cBank := "XYX"
 
 do while !EOF()
 
@@ -343,11 +361,36 @@ do while !EOF()
 		
 	endif
 
-	if cBank <> field->r_bank
-		? REPLICATE("-", 30)
-		? "Banka: " + field->r_bank 
-		? REPLICATE("-", 30)
+	if nRptVar1 == 1 .and. cBank <> field->r_bank
+		
+		if cBank <> "XYX"
+			
+			// total za banku pojedinacnu
+			
+			? cLine
+			? PADR("Ukupno za banku:", 37)
+			
+			?? nUBSati
+			?? nUBTo
+			?? nUBAcont
+			?? nUBTotal
+		
+			? cLine
+
+		endif
+		
+		? "Banka: " + field->r_bank + " - " + ;
+			Ocitaj(F_KRED, field->r_bank, "NAZ" )
+		? REPLICATE("-", 50)
+		
 		cBank := r_bank
+		
+		// resetuj varijable
+		nUBTo := 0
+		nUBAcont := 0
+		nUBTotal := 0
+		nUBSati := 0
+
 	endif
 
 	// r.br
@@ -366,6 +409,7 @@ do while !EOF()
 		?? field->r_hours
 	
 		nUSati += field->r_hours
+		nUBSati += field->r_hours
 
 		?? " "
 	
@@ -373,6 +417,7 @@ do while !EOF()
 		?? field->r_to
 	
 		nUTo += field->r_to
+		nUBTo += field->r_to
 
 		?? " "
 	
@@ -380,7 +425,7 @@ do while !EOF()
 		?? field->r_acont
 
 		nUAcont += field->r_acont
-		
+		nUBAcont += field->r_acont
 
 		?? " "
 	
@@ -388,6 +433,12 @@ do while !EOF()
 		?? field->r_total
 
 		nUTotal += field->r_total
+		nUBTotal += field->r_total
+		
+		?? " "
+
+		// ziro racun u banci
+		?? field->r_tr
 
 	else
 
@@ -400,7 +451,8 @@ do while !EOF()
 			?? _get_mp()
 
 			nUAcont += field->r_acont
-			
+			nUBAcont += field->r_acont
+
 		else
 		
 			// isplata ostatka
@@ -409,7 +461,8 @@ do while !EOF()
 			?? _get_mp()
 		
 			nUTotal += field->r_total
-			
+			nUBTotal += field->r_total
+
 		endif
 	
 	endif
@@ -422,6 +475,15 @@ enddo
 // print total
 
 _new_page()
+
+if nRptVar1 == 1
+	? cLine
+	? PADR("Ukupno za banku:", 37)
+	?? nUBSati
+	?? nUBTo
+	?? nUBAcont
+	?? nUBTotal
+endif
 
 ? cLine
 
@@ -486,6 +548,9 @@ if nVar1 == 1
 	cTmp += " "
 	// razlika
 	cTmp += REPLICATE("-", 12)
+	cTmp += " "
+	// racun 
+	cTmp += REPLICATE("-", 30)
 
 else
 	
@@ -537,7 +602,8 @@ if nVar1 == 1
 	cTmp += PADC("Akontacija", 12)
 	cTmp += " "
 	cTmp += PADC("Razlika", 12)
-
+	cTmp += " "
+	cTmp += PADC("Tekuci racun", 30)
 else
 
 	cTmp += PADC(cPom, 12)
@@ -556,6 +622,7 @@ endif
 
 ?
 
+P_COND
 // header tablele
 ? cLine
 ? cTmp
@@ -573,7 +640,7 @@ static function _cre_tmp()
 local aDbf := {}
 
 AADD(aDbf, { "r_bank", "C", 6, 0 })
-AADD(aDbf, { "r_tr", "C", 25, 0 })
+AADD(aDbf, { "r_tr", "C", 30, 0 })
 AADD(aDbf, { "r_ime", "C", 30, 0 })
 AADD(aDbf, { "r_prezime", "C", 30, 0 })
 AADD(aDbf, { "r_imeoca", "C", 30, 0 })
