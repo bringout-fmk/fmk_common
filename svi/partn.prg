@@ -58,7 +58,7 @@ if partn->(fieldpos("MOBTEL"))<>0
 	AADD(ImeKol,{padr("MobTel",20 ),{|| mobtel},"mobtel"})
 endif
 
-if partn->(fieldpos("IDOPS"))<>0 .and. (F_OPS)->(USED())
+if partn->(fieldpos("IDOPS"))<>0 
 	AADD (ImeKol,{padr("Opcina",20 ),{|| idops},"idops",{|| .t.},{||P_Ops(@widops)}})
 endif
 
