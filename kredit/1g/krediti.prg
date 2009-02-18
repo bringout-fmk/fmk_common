@@ -250,28 +250,40 @@ return nRet
 
 
 function SumKredita()
-*{
 local fUsed:=.t.
+local cTRada := " "
 PushWa()
 select (F_RADKR)
 if !Used()
 	fUsed:=.f.
  	O_RADKR
 endif
+
+if gVarObracun == "2"
+	cTRada := g_tip_rada( _idradn, _idrj )
+	if cTRada $ "A#U#P#S"
+		
+		PopWa()
+		return 0
+	endif
+endif
+
 seek str(_godina,4)+str(_mjesec,2)+_idradn
+
 nIznos:=0
+
 do while !eof() .and. _godina==godina .and. _mjesec=mjesec .and. idradn=_idradn
 	niznos+=iznos
   	replace Placeno with Iznos
  	skip
 enddo
+
 if !fUsed
 	select radkr
 	use
 endif
 PopWa()
 return nIznos
-*}
 
 
 function Okreditu(_idradn, cIdkred, cNaOsnovu, _mjesec, _godina)

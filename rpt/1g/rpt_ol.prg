@@ -750,6 +750,15 @@ do while !eof() .and. field->godina = cGodina
 		.and. field->godina = cGodina  ;
 		.and. field->idradn == cT_radnik
 
+		
+		// uvijek provjeri tip rada, ako ima vise obracuna
+		cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+		
+		if !( cTipRada $ " #I#N") 
+			skip
+			loop
+		endif
+		
 		// koliki je iznos prihoda
 		if !EMPTY( cPrihodi )
 			for i := 1 to LEN( aPrim )

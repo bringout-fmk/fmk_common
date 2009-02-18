@@ -498,6 +498,20 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		.and. field->mjesec = cMjesec ;
 		.and. field->idradn == cT_radnik
 
+		// uvijek provjeri tip rada
+		cT_tiprada := g_tip_rada( field->idradn, field->idrj )
+		
+		// uzmi samo odgovarajuce tipove rada
+		if ( cVRada == "1" .and. !(cT_tiprada $ "A#U") )
+			skip
+			loop
+		endif
+	
+		if ( cVRada == "2" .and. !(cT_tiprada $ "P") )
+			skip
+			loop
+		endif
+
 		nNeto := field->uneto
 		
 		cTrosk := radn->trosk
