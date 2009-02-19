@@ -1,5 +1,12 @@
 #include "ld.ch"
 
+// -------------------------------------------------------------------
+// lista tipova rada koji se mogu prikazivati pod jednim izvjestajem 
+// ili koji ce koristiti iste doprinose
+// -------------------------------------------------------------------
+function tr_list()
+return "I#N"
+
 
 // -----------------------------------------------------------
 // vraca tip rada za radnika i gleda i radnu jedinicu
@@ -32,12 +39,14 @@ return cTipRada
 // -------------------------------------------------------
 function MsgTipRada()
 local x := 1
-Box(,7,65)
+Box(,10,66)
  @ m_x+x,m_y+2 SAY Lokal("Vazece sifre su: ' ' - zateceni neto (bez promjene ugovora o radu)")
  ++x
  @ m_x+x,m_y+2 SAY Lokal("                 'N' - neto placa (neto + porez)")
  ++x
  @ m_x+x,m_y+2 SAY Lokal("                 'I' - neto-neto placa (zagarantovana)")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 -------------------------------------------------")
  ++x
  @ m_x+x,m_y+2 SAY Lokal("                 'S' - samostalni poslodavci")
  ++x
@@ -46,6 +55,11 @@ Box(,7,65)
  @ m_x+x,m_y+2 SAY Lokal("                 'A' - autorski honorar")
  ++x
  @ m_x+x,m_y+2 SAY Lokal("                 'P' - clan.predsj., upr.odbor, itd...")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 -------------------------------------------------")
+ ++x
+ @ m_x+x,m_y+2 SAY Lokal("                 'R' - obracun za rs")
+
  inkey(0)
 BoxC()
 
@@ -165,7 +179,11 @@ do case
 	case cTipRada == "P"
 		nBrt := ROUND2( (nIzn * 1.11111) / 0.96 , gZaok2)
 	
-	// ugovor o djelu
+	// republika srpska
+	case cTipRada == "R"
+		nBrt := ROUND2( (nIzn - 24) / 0.63848 , gZaok2)
+	
+	// ugovor o djelu i autorski honorar
 	case cTipRada $ "A#U"
 
 		if cTipRada == "U"
@@ -236,8 +254,11 @@ do case
 	// clanovi predsjednistva
 	case cTipRada == "P"
 		cPrn := ALLTRIM(STR(nNeto)) + " * 1.11111 / 0.96 =" 
-
-
+	
+	// republika srpska
+	case cTipRada == "R"
+		cPrn := ALLTRIM(STR(nNeto)) + " - 24 / 0.63848 =" 
+	
 	// ugovor o djelu
 	case cTipRada $ "A#U"
 	
@@ -264,7 +285,7 @@ return cPrn
 // validacija tipa rada na uslovima izvjestaja
 // ---------------------------------------------------
 function val_tiprada( cTR )
-if cTR $ " #I#S#P#U#N#A"
+if cTR $ " #I#S#P#U#N#A#R"
 	return .t.
 else
 	return .f.

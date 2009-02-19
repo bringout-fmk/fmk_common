@@ -510,7 +510,7 @@ do while !eof() .and. eval(bUSlov)
 	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 	// provjeri tip rada
-	if cTipRada $ "I#N" .and. EMPTY( cRTipRada ) 
+	if cTipRada $ tr_list() .and. EMPTY( cRTipRada ) 
 		// ovo je u redu...
 	elseif ( cRTipRada <> cTipRada )
 		select ld

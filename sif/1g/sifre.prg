@@ -28,7 +28,7 @@ if RADN->(FIELDPOS("KLO")) <> 0
    
    AADD(ImeKol, { Lokal(padr("Koef.l.odb.", 15)), {|| klo}, "klo" })
    AADD(ImeKol, { Lokal(padr("Tip rada", 15)), {|| tiprada}, "tiprada", ;
-   	{|| .t.}, {|| wtiprada $ " #I#A#S#N#P#U#" .or. MsgTipRada() } })
+   	{|| .t.}, {|| wtiprada $ " #I#A#S#N#P#U#R" .or. MsgTipRada() } })
    
    if RADN->(FIELDPOS("SP_KOEF")) <> 0
    	AADD(ImeKol, { Lokal(padr("prop.koef", 15)), {|| sp_koef}, "sp_koef" })
@@ -757,7 +757,7 @@ if DOPR->(FIELDPOS("DOP_TIP")) <> 0
 endif
 
 if DOPR->(FIELDPOS("TIPRADA")) <> 0
-	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#A#" .or. MsgTipRada() } }  )
+	AADD(ImeKol, { padr("tip rada", 10), {|| tiprada}, "tiprada", {|| .t.}, {|| wtiprada $ " #I#S#N#P#U#A#R" .or. MsgTipRada() } }  )
 endif
 
 AADD(ImeKol, { padr("KBenef",5), {|| padc(idkbenef,5)}, "idkbenef", {|| .t.}, {|| empty(widkbenef) .or. P_KBenef(@widkbenef) } } )

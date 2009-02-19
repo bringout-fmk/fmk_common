@@ -325,7 +325,7 @@ if gPrBruto=="D"
 	
 	do while !eof()
 	
-		if cRTipRada $ "I#N" .and. EMPTY(dopr->tiprada)
+		if cRTipRada $ tr_list() .and. EMPTY(dopr->tiprada)
 			// ovo je uredu...
 		elseif dopr->tiprada <> cRTipRada
 			skip

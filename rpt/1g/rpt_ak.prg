@@ -20,17 +20,17 @@ return
 // sortiranje tabele LD
 // ---------------------------------------------------------
 static function ld_sort( cRj, cGodina, cMjesec )
+local cFilter := ""
 
-if EMPTY(cRj)
-	INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
+if !EMPTY(cRj)
+	cFilter := Parsiraj(cRj, "IDRJ")
+	set filter to &cFilter
 	go top
-	seek str(cGodina,4)+str(cMjesec,2)
-		
-else
-	INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "TMPLD"
-	go top
-	seek str(cGodina,4)+cRj+str(cMjesec,2)
 endif
+
+index on str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
+go top
+seek str(cGodina,4)+str(cMjesec,2)	
 
 return
 

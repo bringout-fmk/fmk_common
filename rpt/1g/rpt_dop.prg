@@ -14,7 +14,7 @@ nU_dop_iz := 0
 do while !eof()
 
 	// provjeri tip rada
-	if EMPTY( dopr->tiprada ) .and. cRTipRada $ "I#N" 
+	if EMPTY( dopr->tiprada ) .and. cRTipRada $ tr_list() 
 		// ovo je u redu...
 	elseif ( cRTipRada <> dopr->tiprada )
 		skip 
@@ -48,7 +48,7 @@ nU_dop_na := 0
 do while !eof()
 
 	// provjeri tip rada
-	if EMPTY( dopr->tiprada ) .and. cRTipRada $ "I#N" 
+	if EMPTY( dopr->tiprada ) .and. cRTipRada $ tr_list() 
 		// ovo je u redu...
 	elseif ( cRTipRada <> dopr->tiprada )
 		skip 
@@ -113,7 +113,7 @@ do while !eof()
   	endif
 
 	if gVarObracun == "2"
-		if EMPTY(dopr->tiprada) .and. cRTipRada $ " #I#N"
+		if EMPTY(dopr->tiprada) .and. cRTipRada $ tr_list()
 			// ovo je ok
 		elseif dopr->tiprada <> cRTipRada
 			skip 

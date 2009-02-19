@@ -24,42 +24,30 @@ return
 // sortiranje tabele LD
 // ---------------------------------------------------------
 static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt )
+local cFilter := ""
+
+if !EMPTY(cRj)
+	cFilter := Parsiraj(cRj,"IDRJ")
+	set filter to &cFilter
+	go top
+endif
+
 
 if EMPTY(cRadnik) 
 	if cTipRpt $ "1#2"
-	  if EMPTY(cRj)
 		INDEX ON str(godina)+SortPrez(idradn)+str(mjesec)+idrj TO "TMPLD"
-		go top
+	   	go top
 		seek str(cGodina,4)
-		
-	  else
-		INDEX ON str(godina)+idrj+SortPrez(idradn)+str(mjesec) TO "TMPLD"
-		go top
-		seek str(cGodina,4)+cRj
-	  endif
-
 	else
-	  if EMPTY(cRj)
 		INDEX ON str(godina)+str(mjesec)+SortPrez(idradn)+idrj TO "TMPLD"
 		go top
 		seek str(cGodina,4)+str(cMjesec,2)+cRadnik
-		
-	  else
-		INDEX ON str(godina)+idrj+str(mjesec)+SortPrez(idradn) TO "TMPLD"
-		go top
-		seek str(cGodina,4)+cRj+str(cMjesec,2)+cRadnik
-	  endif
 	endif
 else
-	if EMPTY(cRj)
-		set order to tag (TagVO("2"))
-		go top
-		seek str(cGodina,4)+str(cMjesec,2)+cRadnik
-	else
-		go top
-		seek str(cGodina,4)+cRj+str(cMjesec,2)+cRadnik
-	endif
-ENDIF
+	set order to tag (TagVO("2"))
+	go top
+	seek str(cGodina,4)+str(cMjesec,2)+cRadnik
+endif
 
 return
 
