@@ -376,7 +376,16 @@ do while !EOF()
 			?? nUBTotal
 		
 			? cLine
+			
+			? p_potpis()
 
+			FF
+
+			P_10CPI
+
+			_p_header( cLine, nRptVar1, nRptVar2, ;
+				cMFrom, cMTo, cYear )
+		
 		endif
 		
 		? "Banka: " + field->r_bank + " - " + ;
@@ -438,7 +447,7 @@ do while !EOF()
 		?? " "
 
 		// ziro racun u banci
-		?? field->r_tr
+		?? SPACE(5), field->r_tr
 
 	else
 
@@ -516,6 +525,7 @@ endif
 ? p_potpis()
 
 FF
+
 END PRINT
 
 return

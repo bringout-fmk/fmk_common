@@ -306,14 +306,16 @@ if gPotpRpt == "N"
 endif
 
 if !EMPTY(gPotp1)
-	? &cP1	
+	?
+	QQOUT(&cP1)	
 endif
 
 if !EMPTY(gPotp2)
-	? &cP2
+	? 
+	QQOUT(&cP2)
 endif
 
-return
+return ""
 
 
 
