@@ -96,6 +96,7 @@ local cGodina
 local cDopr1X := "1X"
 local cDopr2X := "2X"
 local cTipRada := "1"
+local cVarPrn := "2"
 
 // kreiraj pomocnu tabelu
 cre_tmp_tbl()
@@ -123,7 +124,7 @@ RPar("i2",@cPredAdr)
 cPredJMB := IzFmkIni("Specif","MatBr","--",KUMPATH)
 cPredJMB := PADR(cPredJMB, 13)
 
-Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 12, 75)
+Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75)
 
 @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj pict "@S25"
 @ m_x + 2, m_y + 2 SAY "Za mjesec:" GET cMjesec pict "99"
@@ -138,6 +139,8 @@ Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 12, 75)
 @ m_x + 11, m_y + 2 SAY "(1) povremene samost.dj. (2) druge samost.dj." ;
 	GET cTipRada ;
 	VALID cTipRada $ "1#2" 
+
+@ m_x + 12, m_y + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
 
 read
 	
@@ -174,8 +177,15 @@ endif
 
 cPeriod := ALLTRIM(STR(cMjesec)) + "/" + ALLTRIM(STR(cGodina))
 
-// printaj obracunski list
-ak_print( dDatIspl, cPeriod, cTipRada )
+if cVarPrn == "1" 
+	// printaj obracunski list
+	ak_print( dDatIspl, cPeriod, cTipRada )
+endif
+
+if cVarPrn == "2"
+	// printaj u delphi
+	ak_d_print( dDatIspl, cPeriod, cTipRada )
+endif
 
 return
 
@@ -306,6 +316,79 @@ FF
 END PRINT
 
 return
+
+
+// ----------------------------------------------
+// stampa akontacije delphirb ....
+// ----------------------------------------------
+static function ak_d_print( dDatIspl, cPeriod, cTipRada )
+local cLine := ""
+local nPageNo := 0
+local nPoc := 1
+local cIni := EXEPATH + "proizvj.ini"
+local cRtmFile := ""
+
+private cKom := ""
+
+O_R_EXP
+select r_export
+index on naziv tag "1"
+go top
+
+// upisi podatke za header
+UzmiIzIni( cIni, "Varijable", "ISP_NAZ", cPredNaz, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "ISP_ADR", cPredAdr, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "ISP_JMB", cPredJMB, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "ISP_PER", cPeriod, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "ISP_DAT", DTOC(dDatIspl), "WRITE" )
+
+nUprihod := 0
+nUrashod:= 0
+nUdohodak := 0
+nUDopPio := 0
+nUDopZdr := 0
+nUOsnPor := 0
+nUIznPor := 0
+
+// sracunaj samo total
+do while !EOF()
+	nUPrihod += prihod
+	nURashod += rashod
+	nUDohodak += dohodak
+	nUDopPio += dop_pio
+	nUDopZdr += dop_zdr
+	nUOsnPor += osn_por
+	nUIznPor += izn_por
+	skip
+enddo
+
+// upisi totale
+UzmiIzIni( cIni, "Varijable", "TOT_PRIH", nUPrihod, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "TOT_RAS", nURashod, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "TOT_DOH", nUDohodak, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "TOT_ZDR", nUDopZdr, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "TOT_OP", nUOsnPor, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "TOT_IP", nUIznPor, "WRITE" )
+UzmiIzIni( cIni, "Varijable", "TOT_PIO", nUDopPio, "WRITE" )
+
+select r_export
+use
+
+if cTipRada == "1"
+	cRtm := "aug1031"
+else
+	cRtm := "asd1032"
+endif
+
+cKom := "delphirb " + cRtm + " " + PRIVPATH + "  r_export  1" 
+
+if pitanje(,"Aktivirati drb (D/N)", "D") == "D"
+	run &cKom
+endif
+
+return
+
+
 
 
 // ---------------------------------------
