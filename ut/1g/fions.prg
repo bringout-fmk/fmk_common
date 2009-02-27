@@ -672,6 +672,7 @@ private Kol := {}
 
 PushWa()
 
+O_RADN
 O_RADSAT
 select radsat
 set order to tag "1"

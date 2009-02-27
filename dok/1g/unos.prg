@@ -312,7 +312,7 @@ Box(,21,77)
 	
 	PrikUkupno(@lSaveObracun)
 	
-	if lRadniSati
+	if lRadniSati .and. lSaveObracun == .f.
 		// ako nije sacuvan obracun ponisti i radne sate
 		delRadSati( cIdRadn, nSatiPreth )
 	endif
@@ -416,9 +416,9 @@ if gVarObracun == "2"
 	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, 1 )
 
 	// ako je minimalac - ide ista isplata...
-	//if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
-	//	_uIznos := _UNeto
-	//endif
+	if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
+		_uIznos := _UNeto
+	endif
 
 	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove

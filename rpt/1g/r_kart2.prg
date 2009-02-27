@@ -505,11 +505,11 @@ if gPrBruto=="D"
 	nUkIspl := ROUND2(nOporDoh - nPor, 1)
 
 	// minimalac
-	//if cRTipRada $ " #I#N"
-	//	if nOsnZaBr < parobr->minld
-	//		nUkIspl := nOsnZaBr
-	//	endif
-	//endif
+	if cRTipRada $ " #I#N"
+		if nOsnZaBr < parobr->minld
+			nUkIspl := nOsnZaBr
+		endif
+	endif
 
 	@ prow(),60+LEN(cLMSK) SAY nUkIspl pict gpici
 
