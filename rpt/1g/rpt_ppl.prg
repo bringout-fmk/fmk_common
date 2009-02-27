@@ -39,7 +39,7 @@ cIdMinuli:="17"
 cKontrola:="N"
 Box(,11,75)
 @ m_x+1,m_y+2 SAY Lokal( "Radna jedinica (prazno-sve): ")  GET cIdRJ
-@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cmjesec  pict "99"
+@ m_x+2,m_y+2 SAY "Mjesec: "  GET  cMjesec  pict "99"
 IF lViseObr
   @ m_x+2,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
 ENDIF

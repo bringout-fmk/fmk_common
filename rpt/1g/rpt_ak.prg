@@ -611,6 +611,11 @@ do while !eof() .and. field->godina = cGodina .and. ;
 			nTrosk := gUgTrosk
 		endif
 
+		// ako se ne koriste troskovi onda ih i nema !
+		if cTrosk == "N"
+			nTrosk := 0
+		endif
+
 		// prihod
 		nPrihod := bruto_osn( nNeto, cT_tiprada, nL_odb, nil, cTrosk ) 
 		
