@@ -562,7 +562,9 @@ do while !eof() .and. field->godina = cGodina .and. ;
 
 	cR_jmb := radn->matbr
 	cR_naziv := ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ) 
-	
+
+	lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
+
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
 	ParObr( cMjesec )
 
@@ -583,6 +585,8 @@ do while !eof() .and. field->godina = cGodina .and. ;
 
 		// uvijek provjeri tip rada
 		cT_tiprada := g_tip_rada( field->idradn, field->idrj )
+		
+		lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
 		
 		// uzmi samo odgovarajuce tipove rada
 		if ( cVRada == "1" .and. !(cT_tiprada $ "A#U") )
@@ -611,6 +615,10 @@ do while !eof() .and. field->godina = cGodina .and. ;
 			nTrosk := gUgTrosk
 		endif
 
+		if lInRS == .t.
+			nTrosk := 0
+		endif
+
 		// ako se ne koriste troskovi onda ih i nema !
 		if cTrosk == "N"
 			nTrosk := 0
@@ -628,12 +636,19 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		// ukupno dopr iz 
 		nDoprIz := u_dopr_iz( nDohodak, cT_tiprada )
 		
+	
 		// osnovica za porez
 		nPorOsn := ( nDohodak - nDoprIz ) - nL_odb
-		
+
 		// porez je ?
 		nPorez := izr_porez( nPorOsn, "B" )
-		
+	
+		if lInRS == .t.
+			nDoprIz := 0
+			nPorOsn := 0
+			nPorez := 0
+		endif
+	
 		select ld
 		
 		// ocitaj doprinose, njihove iznose
@@ -644,6 +659,11 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		nIDopr1X := round2( nDohodak * nDopr1X / 100, gZaok2 )
 		nIDopr2X := round2( nDohodak * nDopr2X / 100, gZaok2 )
  
+		if lInRS == .t.
+			// nema doprinosa za zdravstvo !
+			nIDopr1X := 0
+		endif
+
  		select ld
 
 		// ubaci u tabelu podatke

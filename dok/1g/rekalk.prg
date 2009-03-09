@@ -29,6 +29,9 @@ cMjesec:=gMjesec
 cGodina:=gGodina
 cObracun:=gObracun
 
+O_RJ
+O_POR
+O_DOPR
 O_RADN
 O_PAROBR
 O_LD
@@ -115,8 +118,8 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
  next
 
  // test verzija
-_usati:=0
-for i:=1 to cLDPolja
+ _usati:=0
+ for i:=1 to cLDPolja
    cPom:=padl(alltrim(str(i)),2,"0")
    select tippr; seek cPom
    if tippr->(found()) .and. tippr->aktivan=="D"
@@ -124,13 +127,105 @@ for i:=1 to cLDPolja
        _USati+=_s&cPom
      endif
    endif
-next
-select ld
+ next
 
+ // ako je nova varijanta obraËuna i ovo treba uvrstiti...
+ if gVarObracun == "2"
+
+	nKLO := radn->klo
+	cTipRada := g_tip_rada( _idradn, _idrj )
+	nSPr_koef := 0
+	nTrosk := 0
+	nBrOsn := 0
+	cOpor := " "
+	cTrosk := " "
+
+	// radnik oporeziv ?
+	if radn->(FIELDPOS("opor")) <> 0
+		cOpor := radn->opor
+	endif
+	
+	// koristi troskove ?
+	if radn->(FIELDPOS("trosk")) <> 0
+		cTrosk := radn->trosk
+	endif
+
+	// samostalni djelatnik
+	if cTipRada == "S"
+		if radn->(FIELDPOS("SP_KOEF")) <> 0
+			nSPr_koef := radn->sp_koef
+		endif
+	endif
+
+	// ako su ovi tipovi primanja - nema odbitka !
+	if cTipRada $ "A#U#P#S"
+		_ULicOdb := 0
+	endif
+
+	// bruto osnova
+	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
+
+	nBrOsn := _UBruto2
+
+	// ugovor o djelu
+	if cTipRada == "U" .and. cTrosk <> "N"
+		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
+		nBrOsn := _UBruto2 - nTrosk 
+	endif
+
+	// autorski honorar
+	if cTipRada == "A" .and. cTrosk <> "N"
+		nTrosk := ROUND2( _UBruto2 * (gAhTrosk / 100), gZaok2 )
+		nBrOsn := _UBruto2 - nTrosk
+	endif
+
+	// uiznos je sada sa uracunatim brutom i ostalim
+	
+	// ukupno doprinosi IZ place
+	nUDoprIZ := u_dopr_iz( nBrOsn, cTipRada )
+	
+	// poreska osnovica
+	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
+
+	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id )
+		nPorOsnovica := 0
+	endif
+
+	// porez
+	nPorez := izr_porez( nPorOsnovica, "B" )
+
+	// nema poreza
+	if cOpor == "N"
+		nPorez := 0
+	endif
+
+	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, gZaok2 )
+
+	// ako je minimalac - ide ista isplata...
+	if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
+		_uIznos := _UNeto
+	endif
+
+	if cTipRada $ "U#A" .and. cTrosk <> "N"
+		// kod ovih vrsta dodaj i troskove
+		_uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
+	endif
+
+	if cTipRada $ "S"
+		// neto je za isplatu
+		_uIznos := _UNeto
+	endif
+
+ endif
+
+ select ld
 
  Gather()
+
  @ m_x+1,m_y+2 SAY ++nljudi pict "99999"
- skip
+
+skip
+
 enddo
 
 if lLogRekPrimanja
@@ -143,13 +238,10 @@ BoxC()
 lRekalk:=.f.
 closeret
 return
-*}
-
 
 
 
 function RekalkProcenat()
-*{
 local i,nArrm,nLjudi
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKPROCENAT")
@@ -245,7 +337,6 @@ do while !eof() .and.  cgodina==godina .and. cidrj==idrj .and.;
     endif                                   //    ..
 
     nNoviIznos := _i&cPom := round(nStariIznos*(1+nProcPrim/100),gZaok)
-    ///*******Izracunaj(@_i&cPom)            //  preracunaj ovu stavku
 
     if tippr->fiksan=="P"
       // preraüunaj i procenat
@@ -300,13 +391,11 @@ Beep(1); inkey(1)
 BoxC()
 closeret
 return
-*}
 
 
 
 
 function RekalkFormula()
-*{
 local i,nArrm,nLjudi
 
 if Logirati(goModul:oDataBase:cName,"DOK","REKALKFORMULA")

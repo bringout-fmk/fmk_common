@@ -89,6 +89,9 @@ nTrosk:=0
 nTrProc:=0
 nOsnZaBr := nOsnNeto
 
+// radi li se o RS-u ?
+lInRS := in_rs(radn->idopsst, radn->idopsrad)
+
 // bruto sa troskovima
 nBSaTr := bruto_osn( nOsnZaBr, cRTipRada, nLicOdbitak, nil, cTrosk )
 
@@ -105,7 +108,16 @@ if cTrosk == "N"
 	nTrProc := 0
 endif
 
+if lInRS == .t.
+	nTrProc := 0
+endif
+
 nTrosk := nBSaTr * ( nTrProc / 100 )
+
+// ako je RS, nema troskova
+if lInRS == .t.
+	nTrosk := 0
+endif
 
 // bruto osnovica za obracun doprinosa i poreza
 nBo :=  nBSaTr - nTrosk 
@@ -141,10 +153,15 @@ nPom := 0
 nDopr := 0
 nUkDoprIz := 0
 nC1 := 20 + LEN(cLMSK)
-	
+
 do while !eof()
 	
 	if dopr->tiprada <> cRTipRada
+		skip
+		loop
+	endif
+
+	if lInRS == .t. .and. LEFT( dopr->id, 1 ) <> "2"
 		skip
 		loop
 	endif
@@ -222,8 +239,12 @@ do while !eof()
 		
 enddo
 
-
 nOporDoh := nBo - nUkDoprIz
+
+if lInRS == .t.
+	nOporDoh := 0
+endif
+
 
 // oporezivi dohodak ......
 	
@@ -283,8 +304,13 @@ enddo
 @ prow(),60+LEN(cLMSK) SAY nPor pict gpici
 
 // ukupno za isplatu ....
-nZaIsplatu := ROUND2( ( nOporDoh - nPor ) + nTrosk , 1 )
-	
+nZaIsplatu := ROUND2( ( nOporDoh - nPor ) + nTrosk , gZaok2 )
+
+if lInRS == .t.
+	// ispalata = neto
+	nZaIsplatu := nOsnZaBr
+endif
+
 ?
 
 ? cMainLine

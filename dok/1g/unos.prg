@@ -353,6 +353,8 @@ if gVarObracun == "2"
 	nBrOsn := 0
 	cOpor := " "
 	cTrosk := " "
+	lInRS := .f.
+	lInRs := in_rs(radn->idopsst, radn->idopsrad)
 
 	// radnik oporeziv ?
 	if radn->(FIELDPOS("opor")) <> 0
@@ -384,12 +386,19 @@ if gVarObracun == "2"
 	// ugovor o djelu
 	if cTipRada == "U" .and. cTrosk <> "N"
 		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
+		if lInRS == .t.
+			nTrosk := 0
+		endif
 		nBrOsn := _UBruto2 - nTrosk 
 	endif
 
 	// autorski honorar
 	if cTipRada == "A" .and. cTrosk <> "N"
+		
 		nTrosk := ROUND2( _UBruto2 * (gAhTrosk / 100), gZaok2 )
+		if lInRS == .t.
+			nTrosk := 0
+		endif
 		nBrOsn := _UBruto2 - nTrosk
 	endif
 
@@ -397,7 +406,7 @@ if gVarObracun == "2"
 	
 	// ukupno doprinosi IZ place
 	nUDoprIZ := u_dopr_iz( nBrOsn, cTipRada )
-	
+
 	// poreska osnovica
 	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
 
@@ -413,7 +422,7 @@ if gVarObracun == "2"
 		nPorez := 0
 	endif
 
-	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, 1 )
+	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, gZaok2 )
 
 	// ako je minimalac - ide ista isplata...
 	if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
@@ -422,7 +431,11 @@ if gVarObracun == "2"
 
 	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove
-		_uIznos := ROUND2( _uiznos + nTrosk, 1 )
+		_uIznos := ROUND2( _uiznos + nTrosk, gZaok2 )
+		// ako je u RS, onda je isplata ista kao i neto!
+		if lInRS == .t.
+			_uIznos := _UNeto
+		endif
 	endif
 
 	if cTipRada $ "S"

@@ -288,9 +288,10 @@ private nDopr2
 ? Lokal("2. OBRACUN DOPRINOSA")
 ? cMainLine
 
+
 cLinija := cDoprLine
 // obracunaj i prikazi doprinose
-obr_doprinos( @nDopr, @nDopr2 )
+obr_doprinos( @nDopr, @nDopr2, cRTipRada )
 
 // oporezivi dohodak
 nOporDohod := nBO - nUDoprIz 
@@ -354,7 +355,7 @@ nPorOp1 += nPorOps
 nPorOp2 += nPorOps2
 nPorOl1 += nUPorOl
 
-nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM
+nUZaIspl := ( nOporDohod - nPor ) + nUOdbiciM + nUOdbiciP
 
 ? cMainLine
 ? Lokal("6. UKUPNO ZA ISPLATU (NETO NA RUKE)")
@@ -377,8 +378,11 @@ nPorOp2 += nPorOps2
 nPorOl1 += nUPorOl
 
 ? cMainLine
-? Lokal("8. UKUPNI ODBICI IZ PLATE:")
+? Lokal("8. UKUPNO ODBICI/OSTALE NAKNADE:")
+? Lokal("             ODBICI:")
 @ prow(), 60 SAY nUOdbiciM PICT gpici
+? Lokal("     OSTALE NAKNADE:")
+@ prow(), 60 SAY nUOdbiciP PICT gpici
 ? cMainLine
 
 // ukupno za isplatu
@@ -387,14 +391,14 @@ if cRTipRada $ "A#U"
 	? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + troskovi):")
 	@ prow(), 60 SAY nUZaIspl+nURTrosk PICT gpici
 else
-	? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + odbici):")
+	? Lokal("9. UKUPNO ZA ISPLATU (op.doh - porez + odbici + naknade):")
 	@ prow(), 60 SAY nUZaIspl PICT gpici
 endif
 ? cMainLine
 
 ?
 
-cLinija := "--------------------------------------------"
+cLinija := "-----------------------------------------------------------"
 
 ? cLinija
 ? "     " + Lokal("NETO PRIMANJA:")
@@ -404,7 +408,7 @@ cLinija := "--------------------------------------------"
 ?? "," + Lokal("Obustave:")
 @ prow(),pcol()+1 SAY -nUOdbiciM pict gpici
 ?? ")"
-? " " + Lokal("PRIMANJA VAN NETA:")
+? "    " + Lokal("OSTALE NAKNADE:")
 @ prow(),pcol()+1 SAY nUOdbiciP pict gpici  // dodatna primanja van neta
 ? cLinija
 ? " " + Lokal("OPOREZIVI DOHODAK (1):")
@@ -430,8 +434,8 @@ IF cUmPD=="D"
 	? Lokal(" POTREBNA SREDSTVA (1 + 3 + 4):")
 	@ prow(),pcol()+1 SAY nOporDohod+(nPorR)+nDopr-nPorez2-nDopr2    pict gpici
 ELSE
-	? Lokal(" POTREBNA SREDSTVA (1 + 3 + 4):")
-	@ prow(),pcol()+1 SAY nOporDohod+(nPorR)+nDopr    pict gpici
+	? Lokal(" POTREBNA SREDSTVA (1 + 3 + 4 + ost.nakn.):")
+	@ prow(),pcol()+1 SAY nOporDohod+(nPorR)+nDopr+nUOdbiciP pict gpici
 ENDIF
 ? cLinija
 ?
@@ -546,6 +550,9 @@ do while !eof() .and. eval(bUSlov)
 
 	cTrosk := radn->trosk
 
+	// RS ?
+	lInRS := in_rs( radn->idopsst, radn->idopsrad ) .and. cTipRada $ "A#U"
+
  	// vrati osnovicu za neto i ostala primanja
  	for i:=1 to cLDPolja
  		
@@ -612,6 +619,10 @@ do while !eof() .and. eval(bUSlov)
 			elseif cTipRada == "U"
 				nTrosk := gUgTrosk
 			endif
+			// ako je u rs-u
+			if lInRS == .t.
+				nTrosk := 0
+			endif
 		endif
 	endif
 
@@ -638,9 +649,17 @@ do while !eof() .and. eval(bUSlov)
 	// moram vidjeti i koliko su doprinosi IZ
 	nRadn_diz := u_dopr_iz( nRadn_bo , cTipRada )
 	
+	if lInRS == .t.
+		nRadn_diz := 0
+	endif
+
 	// osnovica za poreze
 	nRadn_posn := ROUND2( (nRadn_bo - nRadn_diz ) - nRadn_lod, gZaok2 )
 	
+	if lInRS == .t.
+		nRadn_posn := 0
+	endif
+
 	// ovo je total poreske osnove za radnika
 	nPorOsnova := nRadn_posn
 
@@ -699,6 +718,11 @@ do while !eof() .and. eval(bUSlov)
  	// porez na ruke osnova
 	// BRUTO - DOPR_IZ - POREZ
 	nPorNROsnova := ROUND2 ( (nRadn_bo - nRadn_diz) - nPor, gZaok2 )
+	
+	if lInRS == .t.
+		nPorNROsnova := 0
+	endif
+	
 	nUPorNROsnova += nPorNROsnova
 
  	

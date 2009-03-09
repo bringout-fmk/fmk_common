@@ -226,6 +226,10 @@ for i:=1 to cLDPolja
 					P_12CPI
 				ENDIF
 				
+				if !lSkrivena .and. prow()>55+gPStranica
+					FF
+				endif
+
 				select ld
 			endif
 		endif
@@ -502,7 +506,7 @@ if gPrBruto=="D"
 	? cMainLine
 	? cLMSK + Lokal("6. UKUPNO ZA ISPLATU (2 - 5)")
 
-	nUkIspl := ROUND2(nOporDoh - nPor, 1)
+	nUkIspl := ROUND2(nOporDoh - nPor, gZaok2)
 
 	// minimalac
 	if cRTipRada $ " #I#N"
@@ -522,7 +526,7 @@ if gPrBruto=="D"
 
 
 	// ukupno za isplatu ....
-	nZaIsplatu := ROUND2( nUkIspl + nOsnOstalo, 1 )
+	nZaIsplatu := ROUND2( nUkIspl + nOsnOstalo, gZaok2 )
 	
 	?
 

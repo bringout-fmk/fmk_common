@@ -44,8 +44,8 @@ nGodina := gGodina
 
 cObracun:=gObracun
 
-cDopr1:="10"
-cDopr2:="11"
+cDopr1:="1X"
+cDopr2:="2X"
 
 cFirmNaz:=SPACE(35)
 cFirmAdresa:=SPACE(35)
@@ -216,10 +216,34 @@ nBrOsnDr := 0
 nPNaPlPov := 0
 nPNaPlDr := 0
 
+// prvo resetuj stare ini vrijednosti
+nPom := 0
+UzmiIzIni(cIniName,'Varijable','POVPRIH', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POVRASH', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POVDOH', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DRDOH', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POVDZ', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POVDP', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DRDZDR', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DRDPIO', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DZDRU', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DPIOU', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POVPOSN', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POVPIZN', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DRPOSN', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','DRPIZN', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','POREZ', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','U016', nPom, 'WRITE')
+UzmiIzIni(cIniName,'Varijable','UKOBAV', nPom, 'WRITE')
+
+
 DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
    
 	SELECT RADN
    	HSEEK LD->idradn
+	SELECT OPS
+	HSEEK radn->idopsst
+	SELECT RADN
    	cRTR := g_tip_rada(ld->idradn, ld->idrj)
    
    	// ugovor o djelu, aut.honorar i predsjednici
@@ -229,8 +253,12 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
 		loop
 	endif
 
+	altd()
+
 	nRSpr_koef := 0
 	nTrosk := 0
+	
+	lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cRTR $ "A#U"
 
 	// da li koristi troskove
 	cKTrosk := radn->trosk
@@ -261,6 +289,10 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
 	elseif cRTR == "A"
 		nPTrosk := gAHTrosk
 	else
+		nPTrosk := 0
+	endif
+
+	if cRTR $ "A#U" .and. lInRS == .t.
 		nPTrosk := 0
 	endif
 
@@ -341,7 +373,9 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
 
 	if cRTR $ "A#U"
 		// povremeni poslovi doprinosi
-		nPovD1X := round2(nBrOsnPov * nkD1X / 100, gZaok2)
+		if lInRS == .f.
+			nPovD1X := round2(nBrOsnPov * nkD1X / 100, gZaok2)
+		endif
  		nPovD2X := round2(nBrOsnPov * nkD2X / 100, gZaok2)
 	else
 		// ostali poslovi doprinosi
@@ -372,6 +406,9 @@ DO WHILE STR(nGodina,4)+STR(nMjesec,2)==STR(godina,4)+STR(mjesec,2)
 
 	if cRTR $ "A#U"
 		nOsnPov := ( nBO - nPojD1X )
+		if lINRS == .t.
+			nOsnPov := 0
+		endif
 		nUOsnPov += nOsnPov
 	else
  		nOsnDr := ( nBO - nPojD1X )

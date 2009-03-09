@@ -73,8 +73,12 @@ return nU_dop_na
 // ------------------------------------------
 // obracunaj i prikazi doprinose
 // ------------------------------------------
-function obr_doprinos( nDopr, nDopr2 )
+function obr_doprinos( nDopr, nDopr2, cTRada )
 local nIznos := 0
+
+if cTRada == nil
+	cTRada := " "
+endif
 
 m:="----------------------- -------- ----------- -----------"
 
@@ -189,6 +193,9 @@ do while !eof()
 		
 				if gVarObracun == "2"
 					nBOOps := br_osn
+					if ops->reg == "2" .and. cTRada $ "A#U"
+						nBOOps := 0
+					endif
 				else
 					nBOOps := bruto_osn( nIznos, cRTipRada, nKoefLO )
 				endif
@@ -256,6 +263,13 @@ do while !eof()
           				Rekapld("DOPR"+dopr->id,cgodina,cmjesec,nDoprOps,nOOD,,"("+ALLTRIM(STR(nPOLjudi))+")")
         			endif
       			endif
+			
+			if dopr->id == "1X"
+				if ops->reg == "2" .and. cTRada $ "A#U"
+					nPom := 0
+				endif
+				nUDoprIz += nPom
+			endif
 			
       			? cLinija
       			
