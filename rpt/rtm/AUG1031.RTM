@@ -21,7 +21,6 @@ object ppReport: TppReport
   DeviceType = 'Screen'
   OnCancel = ppReportPreviewFormClose
   OnPreviewFormClose = ppReportPreviewFormClose
-  OnPrintDialogClose = ppReportPrintDialogClose
   OutlineSettings.CreateNode = True
   OutlineSettings.CreatePageNodes = True
   OutlineSettings.Enabled = False
