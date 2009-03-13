@@ -156,6 +156,7 @@ cFirmNaz:=SPACE(35)
 cFirmAdresa:=SPACE(35)
 cFirmOpc:=SPACE(35)  
 cFirmVD:=SPACE(50)  
+cIsplata := "A"
 // naziv, sjediste i broj racuna isplatioca
 nLimG1:=0
 nLimG2:=0
@@ -216,6 +217,7 @@ RPar("l4",@nLimG4)
 RPar("l5",@nLimG5)
 RPar("qj",@qqIdRJ)
 RPar("st",@qqOpSt)
+RPar("IS",@cIsplata)
 
 qqIdRj:=PadR(qqIdRj,80) 
 qqOpSt:=PadR(qqOpSt,80)
@@ -223,6 +225,7 @@ qqOpSt:=PadR(qqOpSt,80)
 cMatBr:=IzFmkIni("Specif","MatBr","--",KUMPATH)
 cMatBR:=padr(cMatBr,13) 
 dDatIspl := date()
+
 
 do while .t.
 	Box(,22+IF(gVarSpec=="1",0,1),75)
@@ -273,16 +276,18 @@ do while .t.
      		@ m_x+13,m_y+ 2 SAY "Dod.dopr.pio" GET cDDoprPio PICT "@S35"
      		@ m_x+14,m_y+ 2 SAY "Dod.dopr.zdr" GET cDDoprZdr PICT "@S35"
 		
-		@ m_x+16,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
-     		@ m_x+18,m_y+ 2 SAY " 1." GET ccOO1
-     		@ m_x+18,m_y+30 GET cnOO1
-     		@ m_x+19,m_y+ 2 SAY " 2." GET ccOO2
-     		@ m_x+19,m_y+30 GET cnOO2
-     		@ m_x+20,m_y+ 2 SAY " 3." GET ccOO3
-     		@ m_x+20,m_y+30 GET cnOO3
-     		@ m_x+21,m_y+ 2 SAY " 4." GET ccOO4
-     		@ m_x+21,m_y+30 GET cnOO4
+		@ m_x+15,m_y+ 2 SAY "Ost.obaveze: NAZIV                  USLOV"
+     		@ m_x+16,m_y+ 2 SAY " 1." GET ccOO1
+     		@ m_x+16,m_y+30 GET cnOO1
+     		@ m_x+17,m_y+ 2 SAY " 2." GET ccOO2
+     		@ m_x+17,m_y+30 GET cnOO2
+     		@ m_x+18,m_y+ 2 SAY " 3." GET ccOO3
+     		@ m_x+18,m_y+30 GET cnOO3
+     		@ m_x+19,m_y+ 2 SAY " 4." GET ccOO4
+     		@ m_x+19,m_y+30 GET cnOO4
      		
+		@ m_x+21, m_y+2 SAY "Isplata: 'A' doprinosi+porez, 'B' samo doprinosi, 'C' samo porez" GET cIsplata VALID cIsplata $ "ABC" PICT "@!"
+
 		if gVarSpec=="2"
        			@ m_x+23,m_y+2 SAY "Limit za gr.posl.1" GET nLimG1 PICT "9999.99"
        			@ m_x+23,m_y+29 SAY "2" GET nLimG2 PICT "9999.99"
@@ -332,6 +337,7 @@ WPar("l2",nLimG2)
 WPar("l3",nLimG3)
 WPar("l4",nLimG4)
 WPar("l5",nLimG5)
+WPar("IS",cIsplata)
 
 qqIdRj:=TRIM(qqIdRj)
 qqOpSt:=TRIM(qqOpSt)
@@ -658,29 +664,29 @@ ENDIF
  // ukupni doprinosi iz plate
  nUkDoprIZ := nPom	
 
- UzmiIzIni(cIniName,'Varijable','D11I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D11I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  nPom:=nDopr1X
- UzmiIzIni(cIniName,'Varijable','D11_1I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D11_1I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  nPom:=nDopr2X
- UzmiIzIni(cIniName,'Varijable','D11_2I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D11_2I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  nPom:=nDopr3X
- UzmiIzIni(cIniName,'Varijable','D11_3I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D11_3I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
  nPom:=nDopr5X+nDopr6X+nDopr7X+nDodDoprP+nDodDoprZ
- UzmiIzIni(cIniName,'Varijable','D12I',FormNum2(nPom,16,gPici2) , 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12I',FormNum2(_ispl_d(nPom,cIsplata),16,gPici2) , 'WRITE')
  nPom:=nDopr5X
- UzmiIzIni(cIniName,'Varijable','D12_1I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_1I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  nPom:=nDopr6X
- UzmiIzIni(cIniName,'Varijable','D12_2I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_2I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  nPom:=nDopr7X
- UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_3I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
  // dodatni doprinos zdr i pio
  nPom:=nDodDoprP
- UzmiIzIni(cIniName,'Varijable','D12_4I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_4I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
  nPom:=nDodDoprZ
- UzmiIzIni(cIniName,'Varijable','D12_5I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D12_5I', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
  nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
@@ -796,13 +802,12 @@ ENDIF
  SELECT POR; SEEK "01"
  UzmiIzIni(cIniName,'Varijable','D13_1N',FormNum2(POR->IZNOS,16,gpici3)+"%",'WRITE')
 
- altd()
  nPom=nPorNaPlatu-nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','D13I',FormNum2(nPom,16,gPici2),'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D13I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
  nPom=nPorNaPlatu
- UzmiIzIni(cIniName,'Varijable','D13_1I',FormNum2(nPom,16,gPici2),'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D13_1I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
  nPom:=nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','D13_2I',FormNum2(nPom,16,gPici2),'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D13_2I',FormNum2(_ispl_p(nPom,cIsplata),16,gPici2),'WRITE')
  nPom:=nBolPreko
  UzmiIzIni(cIniName,'Varijable','N17I',FormNum2(nPom,16,gPici2),'WRITE')
 
@@ -815,11 +820,25 @@ ENDIF
  nOstOb4        := ABS( nOstOb4        )
  nOstaleObaveze := ABS( IF( nOstaleObaveze==0, nOstOb1+nOstOb2+nOstOb3+nOstOb4, nOstaleObaveze ) )
 
- nPom:=nDopr1X+nDopr2x+nDopr3x+;
-       nDopr5x+nDopr6x+nDopr7x+;
-       nPorNaPlatu+nPorezOstali-;
-       nPorOlaksice+nOstaleOBaveze+nDodDoprP+nDodDoprZ;
- 
+ if cIsplata == "A"
+ 	// sve obaveze
+ 	nPom := nDopr1X+nDopr2x+nDopr3x+;
+       		nDopr5x+nDopr6x+nDopr7x+;
+       		nPorNaPlatu+nPorezOstali-;
+       		nPorOlaksice+nOstaleOBaveze+nDodDoprP+nDodDoprZ
+
+ elseif cIsplata == "B"
+ 	// samo doprinosi
+  	nPom := nDopr1X+nDopr2x+nDopr3x+;
+       		nDopr5x+nDopr6x+nDopr7x+;
+       		nDodDoprP+nDodDoprZ
+
+ elseif cIsplata == "C"
+ 	// samo porez
+  	nPom := nPorNaPlatu+nPorezOstali-nPorOlaksice+nOstaleOBaveze
+
+ endif
+
  // ukupno obaveze
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
@@ -858,41 +877,48 @@ ENDIF
 
  // PIO iz + PIO na placu
  nPom:=nDopr1x+nDopr5x+nDodDoprP
- UzmiIzIni(cIniName,'Varijable','D20', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D20', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
  // zdravsveno iz + zdravstveno na placu
  nPom:=nDopr2x+nDopr6x+nDodDoprZ
  nPom2 := nPom
- UzmiIzIni(cIniName,'Varijable','D21', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D21', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
  // zdravstvo za RS
  nPom := nPom2 * 0.09
  nD21a := nPom
- UzmiIzIni(cIniName,'Varijable','D21a', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D21a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
  
  // nezaposlenost iz + nezaposlenost na placu
  nPom:=nDopr3x+nDopr7x
  nPom2 := nPom
- UzmiIzIni(cIniName,'Varijable','D22', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D22', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
  
  // nezaposlenost za RS
  nPom := nPom2 * 0.30
  nD22a := nPom
- UzmiIzIni(cIniName,'Varijable','D22a', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','D22a', FormNum2(_ispl_d(nPom,cIsplata),16,gPici2), 'WRITE')
 
  nPom=nPorNaPlatu-nPorOlaksice
- UzmiIzIni(cIniName,'Varijable','P23', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','P23', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
 
 
  nPom=nPorezOstali
- UzmiIzIni(cIniName,'Varijable','O14_1I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','O14_1I', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
 
  nPom=nOstaleObaveze + nPorezOstali
- UzmiIzIni(cIniName,'Varijable','O14I', FormNum2(nPom,16,gPici2), 'WRITE')
+ UzmiIzIni(cIniName,'Varijable','O14I', FormNum2(_ispl_p(nPom,cIsplata),16,gPici2), 'WRITE')
 
  // ukupno za RS obaveze
- nPom := nDopr1x+nDopr5x+nD21a+nDopr3x+nDopr7x+nD22a+nPorNaPlatu
+ if cIsplata == "A"
+ 	nPom := nDopr1x+nDopr5x+nD21a+nDopr3x+nDopr7x+nD22a+nPorNaPlatu
+ elseif cIsplata == "B"
+ 	nPom := nDopr1x+nDopr5x+nD21a+nDopr3x+nDopr7x+nD22a
+ elseif cIsplata == "C"
+ 	nPom := nPorNaPlatu
+ endif
+ 
  UzmiIzIni(cIniName,'Varijable','URSOB', FormNum2(nPom,16,gPici2), 'WRITE')
  
  IniRefresh()
@@ -935,5 +961,35 @@ if lastkey()!=K_ESC .and.  pitanje(,"Aktivirati Win Report ?","D")=="D"
 endif
 
 CLOSERET
+
+
+// ---------------------------------------------
+// isplata doprinosa, kontrola iznosa
+// ---------------------------------------------
+function _ispl_d( nIzn, cIspl )
+
+if cIspl $ "AB"
+	return nIzn
+else
+	return 0
+endif
+
+return
+
+// ---------------------------------------------
+// isplata poreza, kontrola iznosa
+// ---------------------------------------------
+function _ispl_p( nIzn, cIspl )
+
+if cIspl $ "AC"
+	return nIzn
+else
+	return 0
+endif
+
+return
+
+
+
 
 

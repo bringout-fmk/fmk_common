@@ -802,6 +802,13 @@ do while !eof() .and. field->godina = cGodina
 					field->mjesec )
 		endif
 
+		nIsplata := (((nBruto + nPrihOst) - nIDopr1X) - nPorez)
+		
+		// da li se radi o minimalcu ?
+		if cTipRada $ " #I#N#" .and. nNeto < parobr->minld
+			nIsplata := nNeto
+		endif
+
 		// ubaci u tabelu podatke
 		_ins_tbl( cT_radnik, ;
 				"placa", ;
@@ -820,7 +827,7 @@ do while !eof() .and. field->godina = cGodina
 				nL_Odb, ;
 				nPorOsn, ;
 				nPorez, ;
-				((nBruto + nPrihOst) - nIDopr1X) - nPorez)
+				nIsplata )
 				
 		select ld
 		skip
