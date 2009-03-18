@@ -117,8 +117,11 @@ go top
 seek cDopr
 do while !EOF() .and. dopr->id == cDopr
 	
-	if dopr->tiprada <> cTipRada
-		skip
+	// provjeri tip rada
+	if EMPTY( dopr->tiprada ) .and. cTipRada $ tr_list() 
+		// ovo je u redu...
+	elseif ( cTipRada <> dopr->tiprada )
+		skip 
 		loop
 	endif
 	

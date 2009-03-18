@@ -121,6 +121,8 @@ private Izbor:=1
 
 AADD(opc,"1. pregled plata                                  ")
 AADD(opcexe,{|| PregPl()})
+AADD(opc,"1a. pregled plata za vise mjeseci  ")
+AADD(opcexe,{|| ppl_vise() })
 AADD(opc,"2. pregled odredjenog primanja")
 AADD(opcexe,{|| PregPrim()})
 AADD(opc,"3. platni spisak")
