@@ -264,7 +264,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 		
 		// porez
 		nPorez := 0
-		if cOpor <> "N" .and. cRTipRada <> "S"
+		if radn_oporeziv( ld->idradn, ld->idrj ) .and. cRTipRada <> "S"
 			nPorez := izr_porez( nOporDoh - nLicOdb, "B" )
 		endif
 		

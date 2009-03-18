@@ -690,7 +690,7 @@ ENDIF
 
  nPojPorOsn := ( nPojBrOsn - nPojDoprIz ) - nKoefLO
  
- if nPojPorOsn >= 0 .and. radn_oporeziv( radn->id )
+ if nPojPorOsn >= 0 .and. radn_oporeziv( radn->id, ld->idrj )
 
  	// osnovica za porez na platu
  	//nPorOsnovica := ( nBrutoOsnova - nUKDoprIZ ) - nULicOdbitak

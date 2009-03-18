@@ -451,7 +451,7 @@ if gPrBruto=="D"
 	nPorOsnovica := ( nOporDoh - nLicOdbitak )
 	
 	// ako je negativna onda je 0
-	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id )
+	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id, ld->idrj )
 		nPorOsnovica := 0
 	endif
 

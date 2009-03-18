@@ -10,6 +10,9 @@ return "I#N"
 
 // -----------------------------------------------------------
 // vraca tip rada za radnika i gleda i radnu jedinicu
+// RJ->TIPRADA = " " - gledaj sif.radnika
+// RJ->TIPRADA $ "IAUP.." - uzmi za radnu jedinicu vrijednost
+//                          tipa rada 
 // -----------------------------------------------------------
 function g_tip_rada( cRadn, cRj )
 local cTipRada := " "
@@ -33,6 +36,38 @@ endif
 
 select (nTArea)
 return cTipRada
+
+
+// -----------------------------------------------------------
+// vraca oporezivost za radnika i gleda i radnu jedinicu
+// RJ->OPOR = " " - gledaj sif.ranika
+//            "D" - oporeziva kompletna radna jedinica
+//            "N" - nije oporeziva radna jedinica
+// -----------------------------------------------------------
+function g_oporeziv( cRadn, cRj )
+local cOpor := " "
+local nTArea := SELECT()
+
+select rj
+go top
+seek cRJ
+
+if rj->(fieldpos("opor")) <> 0
+	cOpor := rj->opor
+endif
+
+// ako je prazno oporeziv, gledaj sifrarnik radnika
+if EMPTY( cOpor )
+	select radn
+	go top
+	seek cRadn
+	cOpor := radn->opor
+endif
+
+select (nTArea)
+return cOpor
+
+
 
 // -------------------------------------------------------
 // poruka - informacije o dostupnim tipovima rada
@@ -101,17 +136,16 @@ return nIzn
 // --------------------------------------------
 // da li je radnik oporeziv ?
 // --------------------------------------------
-function radn_oporeziv( cRadn )
+function radn_oporeziv( cRadn, cRj )
 local lRet := .t.
 local nTArea := SELECT()
+local cOpor
 
-if radn->(FIELDPOS("OPOR")) <> 0
-	select radn
-	seek cRadn
-	// nije oporeziv ako je "N"
-	if field->opor == "N"
-		lRet := .f.
-	endif
+// izvuci vrijednost da li je radnik oporeziv ?
+cOpor := g_oporeziv( cRadn, cRj )
+
+if cOpor == "N"
+	lRet := .f.
 endif
 
 select (nTArea)

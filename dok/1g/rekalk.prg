@@ -139,11 +139,6 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
 	nBrOsn := 0
 	cOpor := " "
 	cTrosk := " "
-
-	// radnik oporeziv ?
-	if radn->(FIELDPOS("opor")) <> 0
-		cOpor := radn->opor
-	endif
 	
 	// koristi troskove ?
 	if radn->(FIELDPOS("trosk")) <> 0
@@ -187,7 +182,7 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
 	// poreska osnovica
 	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
 
-	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id )
+	if nPorOsnovica < 0 .or. !radn_oporeziv( _idradn, _idrj )
 		nPorOsnovica := 0
 	endif
 
@@ -195,7 +190,7 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
 	nPorez := izr_porez( nPorOsnovica, "B" )
 
 	// nema poreza
-	if cOpor == "N"
+	if !radn_oporeziv( _idradn, _idrj )
 		nPorez := 0
 	endif
 

@@ -124,6 +124,8 @@ return
 
 function PrikaziBox(lSaveObracun)
 local nULicOdb
+local cTrosk
+local cOpor
 private cIdRj
 private cGodina
 private cIdRadn
@@ -197,7 +199,12 @@ Box(,21,77)
 	select radn
 	
 	if gVarObracun == "2"
+		// tip rada
 		cTR := g_tip_rada( cIdRadn, cIdRj )
+		// oporeziv
+		cOpor := g_oporeziv( cIdRadn, cIdrj )
+		// koristi troskove
+		cTrosk := radn->trosk
 		nULicOdb := ( radn->klo * gOsnLOdb )
 		// ovi tipovi nemaju odbitka !
 		if cTR $ "A#U#S"
@@ -232,6 +239,10 @@ Box(,21,77)
 		_mjesec:=cMjesec
   		if gVarObracun == "2"
 			_ulicodb := nULicOdb
+			if LD->(FIELDPOS("TROSK")) <> 0
+				_trosk := cTrosk
+				_opor := cOpor
+			endif
 		endif
 		if lViseObr
 			_obr := cObracun
@@ -410,7 +421,7 @@ if gVarObracun == "2"
 	// poreska osnovica
 	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
 
-	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id )
+	if nPorOsnovica < 0 .or. !radn_oporeziv( _idradn, _idrj )
 		nPorOsnovica := 0
 	endif
 
@@ -418,7 +429,7 @@ if gVarObracun == "2"
 	nPorez := izr_porez( nPorOsnovica, "B" )
 
 	// nema poreza
-	if cOpor == "N"
+	if !radn_oporeziv( _idradn, _idrj )
 		nPorez := 0
 	endif
 

@@ -410,6 +410,9 @@ AADD(ImeKol, { padr("Naziv",35), {||  naz}, "naz" } )
 if rj->(FieldPos("TIPRADA")) <> 0
 	AADD(ImeKol, { "tip rada" , {||  tiprada }, "tiprada"  } )
 endif
+if rj->(FieldPos("OPOR")) <> 0
+	AADD(ImeKol, { "oporeziv" , {||  opor }, "opor"  } )
+endif
 
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)

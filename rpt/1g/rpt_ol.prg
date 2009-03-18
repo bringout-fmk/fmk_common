@@ -770,7 +770,7 @@ do while !eof() .and. field->godina = cGodina
 		nPorOsn := ( (nBruto + nPrihOst) - nDoprIz ) - nL_odb
 		
 		// ako je neoporeziv radnik, nema poreza
-		if radn->opor == "N" .or. ;
+		if !radn_oporeziv( radn->id, ld->idrj ) .or. ;
 			( (nBruto-nPrihOst) - nDoprIz ) < nL_odb
 			nPorOsn := 0
 		endif

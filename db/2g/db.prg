@@ -469,6 +469,8 @@ if !file(KUMPATH+"RJ.DBF")
    aDBf:={}
    AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
    AADD(aDBf,{ 'NAZ'                 , 'C' ,  35 ,  0 })
+   AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  0 })
+   AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  0 })
    DBCREATE2(KUMPATH+'RJ.DBF',aDbf)
 endif
 CREATE_INDEX("ID","id",KUMPATH+"RJ")
@@ -637,6 +639,9 @@ AADD(aDBf,{ 'UIZNOS'              , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'UNETO2'              , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'UBRUTO2'             , 'N' ,  13 ,  2 })
 AADD(aDBf,{ 'ULICODB'             , 'N' ,  13 ,  2 })
+AADD(aDBf,{ 'TIPRADA'             , 'C' ,   1 ,  2 })
+AADD(aDBf,{ 'OPOR'                , 'C' ,   1 ,  2 })
+AADD(aDBf,{ 'TROSK'               , 'C' ,   1 ,  2 })
 AADD(aDBf,{ 'VAROBR'              , 'C' ,   1 ,  0 })
 
 if !file(KUMPATH+'LD.DBF')
