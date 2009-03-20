@@ -23,15 +23,24 @@ return
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
-static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt )
+static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, ;
+			cRadnik, cTipRpt, cObr )
 local cFilter := ""
 
+if lViseObr
+	if !EMPTY(cObr)
+		cFilter += "obr == " + cm2str(cObr)
+	endif
+endif
+
 if !EMPTY(cRj)
-	cFilter := Parsiraj(cRj,"IDRJ")
+	cFilter += Parsiraj(cRj,"IDRJ")
+endif
+
+if !EMPTY(cFilter)
 	set filter to &cFilter
 	go top
 endif
-
 
 if EMPTY(cRadnik) 
 	if cTipRpt $ "1#2"
@@ -141,6 +150,7 @@ local cDopr11 := "11"
 local cDopr12 := "12"
 local cDopr1X := "1X"
 local cTipRpt := "1"
+local cObracun := gObracun
 
 // kreiraj pomocnu tabelu
 cre_tmp_tbl()
@@ -176,6 +186,11 @@ Box("#OBRACUNSKI LISTOVI RADNIKA", 15, 75)
 @ m_x + 2, col() + 2 SAY "do:" GET cMjesecDo pict "99" ;
 	VALID cMjesecDo >= cMjesec
 @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina pict "9999"
+
+if lViseObr
+  	@ m_x+3,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+endif
+
 @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
 	VALID EMPTY(cRadnik) .or. P_RADN(@cRadnik)
 @ m_x + 5, m_y + 2 SAY "Prihodi u stvarima kolone: " GET cPrihodi pict "@S30"
@@ -212,11 +227,11 @@ WPar("i2", cPredAdr)
 select ld
 
 // sortiraj tabelu i postavi filter
-ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt )
+ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt, cObracun )
 
 // nafiluj podatke obracuna
 fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cPrihodi, ;
-	cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt )
+	cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun )
 
 // printaj obracunski list
 if cTipRpt == "1"
@@ -669,7 +684,8 @@ return
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
 static function fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
-	cRadnik, cPrihodi, cDopr10, cDopr11, cDopr12, cDopr1X, cRptTip )
+	cRadnik, cPrihodi, cDopr10, cDopr11, cDopr12, cDopr1X, cRptTip, ;
+	cObracun )
 local i
 local cPom
 local aPrim := {}
@@ -710,7 +726,7 @@ do while !eof() .and. field->godina = cGodina
 	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec )
+	ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
 
 	select radn
 	seek cT_radnik
@@ -741,6 +757,8 @@ do while !eof() .and. field->godina = cGodina
 		
 		// uvijek provjeri tip rada, ako ima vise obracuna
 		cTipRada := g_tip_rada( ld->idradn, ld->idrj )
+		
+		ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
 		
 		if !( cTipRada $ " #I#N") 
 			skip

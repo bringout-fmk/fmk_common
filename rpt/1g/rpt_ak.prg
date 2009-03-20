@@ -19,11 +19,20 @@ return
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
-static function ld_sort( cRj, cGodina, cMjesec )
+static function ld_sort( cRj, cGodina, cMjesec, cObr )
 local cFilter := ""
 
+if lViseObr
+	if !EMPTY(cObr)
+		cFilter += "ld->obr == " + cm2str(cObr)
+	endif
+endif
+	
 if !EMPTY(cRj)
-	cFilter := Parsiraj(cRj, "IDRJ")
+	cFilter += Parsiraj(cRj, "IDRJ")
+endif
+
+if !EMPTY(cFilter)
 	set filter to &cFilter
 	go top
 endif
@@ -97,6 +106,7 @@ local cDopr1X := "1X"
 local cDopr2X := "2X"
 local cTipRada := "1"
 local cVarPrn := "2"
+local cObracun := gObracun
 
 // kreiraj pomocnu tabelu
 cre_tmp_tbl()
@@ -129,6 +139,11 @@ Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75)
 @ m_x + 1, m_y + 2 SAY "Radne jedinice: " GET cRj pict "@S25"
 @ m_x + 2, m_y + 2 SAY "Za mjesec:" GET cMjesec pict "99"
 @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina pict "9999"
+
+if lViseObr
+  	@ m_x+3,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+endif
+
 @ m_x + 5, m_y + 2 SAY "   Doprinos zdr: " GET cDopr1X
 @ m_x + 6, m_y + 2 SAY "   Doprinos pio: " GET cDopr2X
 
@@ -136,9 +151,9 @@ Box("#RPT: AKONTACIJA POREZA PO ODBITKU...", 13, 75)
 @ m_x + 8, col()+1 SAY "JID: " GET cPredJMB
 @ m_x + 9, m_y + 2 SAY "Adresa: " GET cPredAdr pict "@S30"
 
-@ m_x + 11, m_y + 2 SAY "(1) povremene samost.dj. (2) druge samost.dj." ;
+@ m_x + 11, m_y + 2 SAY "(1) AUG-1031 (2) ASD-1032 (3) PDN-1033" ;
 	GET cTipRada ;
-	VALID cTipRada $ "1#2" 
+	VALID cTipRada $ "1#2#3" 
 
 @ m_x + 12, m_y + 2 SAY "Varijanta stampe (txt/drb):" GET cVarPrn PICT "@!" VALID cVarPrn $ "12"
 
@@ -163,11 +178,11 @@ WPar("i2", cPredAdr)
 select ld
 
 // sortiraj tabelu i postavi filter
-ld_sort( cRj, cGodina, cMjesec )
+ld_sort( cRj, cGodina, cMjesec, cObracun )
 
 // nafiluj podatke obracuna
 fill_data( cRj, cGodina, cMjesec, ;
-	cDopr1X, cDopr2X, cTipRada )
+	cDopr1X, cDopr2X, cTipRada, cObracun )
 
 
 dDatIspl := DATE()
@@ -238,7 +253,9 @@ go top
 do while !EOF()
 
 	? jmb
+	
 	@ prow(), pcol() + 1 SAY PADR( naziv, 30 )
+	
 	if cTipRada == "1"
 		@ prow(), nPoc:=pcol()+1 SAY STR(prihod,12,2)
 		@ prow(), pcol()+1 SAY STR(rashod,12,2)
@@ -246,10 +263,15 @@ do while !EOF()
 	else
 		@ prow(), nPoc:=pcol()+1 SAY STR(dohodak,12,2)
 	endif
-	@ prow(), pcol()+1 SAY STR(dop_zdr,12,2)
-	@ prow(), pcol()+1 SAY STR(osn_por,12,2)
-	@ prow(), pcol()+1 SAY STR(izn_por,12,2)
-	@ prow(), pcol()+1 SAY STR(dop_pio,12,2)
+
+	if cTipRada $ "1#2"
+		@ prow(), pcol()+1 SAY STR(dop_zdr,12,2)
+		@ prow(), pcol()+1 SAY STR(osn_por,12,2)
+		@ prow(), pcol()+1 SAY STR(izn_por,12,2)
+		@ prow(), pcol()+1 SAY STR(dop_pio,12,2)
+	else
+		@ prow(), pcol()+1 SAY STR(izn_por,12,2)
+	endif
 
 	if ( nPageNo = 1 .and. prow() > 38 ) .or. ;
 		( nPageNo <> 1 .and. prow() > 40 )
@@ -265,10 +287,15 @@ do while !EOF()
 		else
 			@ prow(), nPoc SAY STR(nUdohodak,12,2)
 		endif
-		@ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
-		@ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
-		@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
-		@ prow(), pcol()+1 SAY STR(nUDopPio,12,2)
+		
+		if cTipRada $ "1#2"
+			@ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
+			@ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
+			@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
+			@ prow(), pcol()+1 SAY STR(nUDopPio,12,2)
+		else
+			@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
+		endif
 
 		? cLine
 		
@@ -303,10 +330,14 @@ else
 
 endif
 
-@ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
-@ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
-@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
-@ prow(), pcol()+1 SAY STR(nUDopPio,12,2)
+if cTipRada $ "1#2"
+	@ prow(), pcol()+1 SAY STR(nUDopZdr,12,2)
+	@ prow(), pcol()+1 SAY STR(nUOsnPor,12,2)
+	@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
+	@ prow(), pcol()+1 SAY STR(nUDopPio,12,2)
+else
+	@ prow(), pcol()+1 SAY STR(nUIznPor,12,2)
+endif
 
 ? cLine
 
@@ -376,8 +407,10 @@ use
 
 if cTipRada == "1"
 	cRtm := "aug1031"
-else
+elseif cTipRada == "2"
 	cRtm := "asd1032"
+elseif cTipRada == "3"
+	cRtm := "pdn1033"
 endif
 
 cKom := "delphirb " + cRtm + " " + PRIVPATH + "  r_export  1" 
@@ -424,9 +457,11 @@ if cVRada == "1"
 	AADD( aLines, { REPLICATE("-", 12) } )
 endif
 AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
+if cVRada $ "1#2"
+	AADD( aLines, { REPLICATE("-", 12) } )
+	AADD( aLines, { REPLICATE("-", 12) } )
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
 AADD( aLines, { REPLICATE("-", 12) } )
 
 if cVRada == "1"
@@ -439,7 +474,7 @@ if cVRada == "1"
 	AADD( aTxt, { "Osnovica", "za porez", "(11 - 12)", "13" })
 	AADD( aTxt, { "Iznos", "poreza", "(13 x 0.1)", "14" })
 	AADD( aTxt, { "PIO", "", "(11 x 0.06)", "15" })
-else
+elseif cVRada == "2"
 	AADD( aTxt, { "JMB poreznog", "obveznika", "", "6" })
 	AADD( aTxt, { "Prezime i ime", "poreznog obveznika", "", "7" })	
 	AADD( aTxt, { "Iznos", "dohotka", "", "8" })
@@ -447,6 +482,11 @@ else
 	AADD( aTxt, { "Osnovica", "za porez", "(8 - 9)", "10" })
 	AADD( aTxt, { "Iznos", "poreza", "(10 x 0.1)", "11" })
 	AADD( aTxt, { "PIO", "", "(8 x 0.06)", "12" })
+elseif cVRada == "3"
+	AADD( aTxt, { "JMB poreznog", "obveznika", "", "6" })
+	AADD( aTxt, { "Prezime i ime", "poreznog obveznika", "", "7" })	
+	AADD( aTxt, { "Isplaceni", "iznos", "", "8" })
+	AADD( aTxt, { "Iznos", "poreza", "(8 x 0.1)", "9" })
 endif
 
 for i := 1 to LEN( aLines )
@@ -491,6 +531,9 @@ if cTipRada == "1"
 elseif cTipRada == "2"
 	cObrazac := "Obrazac ASD-1032"
 	cInfo := "NA PRIHODE OD DRUGIH SAMOSTALNIH DJELATNOSTI"
+elseif cTipRada == "3"
+	cObrazac := "Obrazac PDN-1033"
+	cInfo := "POVREMENE DJELATNOSTI U REPUBLICI SRPSKOJ"
 endif
 
 ?
@@ -532,7 +575,7 @@ return
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
 static function fill_data( cRj, cGodina, cMjesec, ;
-	cDopr1X, cDopr2X, cVRada )
+	cDopr1X, cDopr2X, cVRada, cObr )
 
 local cPom
 
@@ -547,8 +590,10 @@ do while !eof() .and. field->godina = cGodina .and. ;
 	select radn
 	seek cT_radnik
 	
+	lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
+
 	// uzmi samo odgovarajuce tipove rada
-	if ( cVRada == "1" .and. !(cT_tiprada $ "A#U") )
+	if ( cVRada $ "1#3" .and. !(cT_tiprada $ "A#U") )
 		select ld
 		skip
 		loop
@@ -560,13 +605,20 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		loop
 	endif
 
+	// da li je u rs-u, koji obrazac ?
+	if ( lInRS == .t. .and. cVRada <> "3" ) .or. ;
+		( lInRS == .f. .and. cVRada == "3" )
+		select ld
+		skip 
+		loop
+	endif
+
 	cR_jmb := radn->matbr
 	cR_naziv := ALLTRIM( radn->naz ) + " " + ALLTRIM( radn->ime ) 
 
-	lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec )
+	ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
 
 	select ld
 
@@ -587,7 +639,10 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		cT_tiprada := g_tip_rada( field->idradn, field->idrj )
 		
 		lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
-		
+	
+		// samo pozicionira bazu PAROBR na odgovarajuci zapis
+		ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+	
 		// uzmi samo odgovarajuce tipove rada
 		if ( cVRada == "1" .and. !(cT_tiprada $ "A#U") )
 			skip

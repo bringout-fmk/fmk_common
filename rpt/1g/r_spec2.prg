@@ -912,9 +912,9 @@ ENDIF
 
  // ukupno za RS obaveze
  if cIsplata == "A"
- 	nPom := nDopr1x+nDopr5x+nD21a+nDopr3x+nDopr7x+nD22a+nPorNaPlatu
+ 	nPom := nDopr1x+nDopr5x+nD21a+nD22a+nPorNaPlatu
  elseif cIsplata == "B"
- 	nPom := nDopr1x+nDopr5x+nD21a+nDopr3x+nDopr7x+nD22a
+ 	nPom := nDopr1x+nDopr5x+nD21a+nD22a
  elseif cIsplata == "C"
  	nPom := nPorNaPlatu
  endif

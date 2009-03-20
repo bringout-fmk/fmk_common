@@ -23,15 +23,23 @@ return
 // ---------------------------------------------------------
 // sortiranje tabele LD
 // ---------------------------------------------------------
-static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik )
+static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
 local cFilter := ""
 
+if lViseObr
+	if !EMPTY(cObr)
+		cFilter += "obr == " + cm2str(cObr)
+	endif
+endif
+
 if !EMPTY(cRj)
-	cFilter := Parsiraj(cRj,"IDRJ")
+	cFilter += Parsiraj(cRj,"IDRJ")
+endif
+
+if !EMPTY(cFilter)
 	set filter to &cFilter
 	go top
 endif
-
 
 if EMPTY(cRadnik) 
 	INDEX ON str(godina)+SortPrez(idradn)+str(mjesec)+idrj TO "TMPLD"
@@ -123,7 +131,7 @@ local cGodina
 local cDoprPio := "70"
 local cDoprZdr := "80"
 local cDoprNez := "90"
-local cDopr1X := "1X"
+local cObracun := gObracun
 
 // kreiraj pomocnu tabelu
 cre_tmp_tbl()
@@ -143,11 +151,17 @@ Box("#PREGLED PLATA ZA VISE MJESECI (M4)", 15, 75)
 @ m_x + 2, col() + 2 SAY "do:" GET cMjesecDo pict "99" ;
 	VALID cMjesecDo >= cMjesec
 @ m_x + 3, m_y + 2 SAY "Godina: " GET cGodina pict "9999"
+
+if lViseObr
+  	@ m_x+3,col()+2 SAY "Obracun:" GET cObracun WHEN HelpObr(.t.,cObracun) VALID ValObr(.t.,cObracun)
+endif
+
 @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
 	VALID EMPTY(cRadnik) .or. P_RADN(@cRadnik)
-@ m_x + 7, m_y + 2 SAY " Sifra doprinosa PIO : " GET cDoprPio 
-@ m_x + 8, m_y + 2 SAY " Sifra doprinosa ZDR.: " GET cDoprZdr
-@ m_x + 9, m_y + 2 SAY " Sifra doprinosa NEZ.: " GET cDoprNez
+@ m_x + 6, m_y + 2 SAY "Dodatni doprinosi za prikaz na izvjestaju: " 
+@ m_x + 7, m_y + 2 SAY " Sifra dodatnog doprinosa 1 : " GET cDoprPio 
+@ m_x + 8, m_y + 2 SAY " Sifra dodatnog doprinosa 2 : " GET cDoprZdr
+@ m_x + 9, m_y + 2 SAY " Sifra dodatnog doprinosa 3 : " GET cDoprNez
 
 read
 	
@@ -164,14 +178,14 @@ endif
 select ld
 
 // sortiraj tabelu i postavi filter
-ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik  )
+ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObracun )
 
 // nafiluj podatke obracuna
 fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
-	cDoprPio, cDoprZdr, cDoprNez  )
+	cDoprPio, cDoprZdr, cDoprNez, cObracun )
 
 // printaj izvjestaj
-ppv_print( cRj, cGodina, cMjesec, cMjesecDo )
+ppv_print( cRj, cGodina, cMjesec, cMjesecDo, cDoprPio, cDoprZdr, cDoprNez )
 
 return
 
@@ -180,7 +194,7 @@ return
 // ----------------------------------------------
 // stampa pregleda plata za vise mjeseci
 // ----------------------------------------------
-static function ppv_print( cRj, cGodina, cMjOd, cMjDo )
+static function ppv_print( cRj, cGodina, cMjOd, cMjDo, cDop1, cDop2, cDop3 )
 local cT_radnik := ""
 local cLine := ""
 
@@ -195,7 +209,7 @@ P_COND2
 
 ppv_zaglavlje(cRj, cGodina, cMjOd, cMjDo )
 
-cLine := ppv_header()
+cLine := ppv_header( cDop1, cDop2, cDop3 )
 
 nUSati := 0
 nUNeto := 0
@@ -285,7 +299,7 @@ return
 // ----------------------------------------
 // stampa headera tabele
 // ----------------------------------------
-static function ppv_header()
+static function ppv_header( cDop1, cDop2, cDop3 )
 local aLines := {}
 local aTxt := {}
 local i 
@@ -323,9 +337,9 @@ AADD( aTxt, { "Licni odbici", "", "", "9" })
 AADD( aTxt, { "Porez", "na dohodak", "(8-9) x 10%", "10" })
 AADD( aTxt, { "Odbici", "", "", "11" })
 AADD( aTxt, { "Za isplatu", "", "", "12" })
-AADD( aTxt, { "Doprinosi", "PIO", "", "13" })
-AADD( aTxt, { "Doprinosi", "zdravstvo", "",  "14" })
-AADD( aTxt, { "Doprinosi", "nezaposl.", "", "15" })
+AADD( aTxt, { "Dodatni", "dopr. 1", "D->"+cDop1, "13" })
+AADD( aTxt, { "Dodatni", "dopr. 2", "D->"+cDop2, "14" })
+AADD( aTxt, { "Dodatni", "dopr. 3", "D->"+cDop3, "15" })
 
 for i := 1 to LEN( aLines )
 	cLine += aLines[ i, 1 ] + SPACE(1)
@@ -380,9 +394,10 @@ return
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
 static function fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
-	cRadnik, cDoprPio, cDoprZdr, cDoprNez )
+	cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun )
 local i
 local cPom
+local lInRS := .f.
 
 select ld
 
@@ -398,6 +413,8 @@ do while !eof() .and. field->godina = cGodina
 
 	cT_radnik := field->idradn
 
+	lInRS := in_rs(radn->idopsst, radn->idopsrad) 
+	
 	if !EMPTY(cRadnik)
 		if cT_radnik <> cRadnik
 			skip
@@ -409,7 +426,7 @@ do while !eof() .and. field->godina = cGodina
 	cOpor := g_oporeziv( ld->idradn, ld->idrj ) 
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec )
+	ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
 
 	select radn
 	seek cT_radnik
@@ -439,8 +456,11 @@ do while !eof() .and. field->godina = cGodina
 		// uvijek provjeri tip rada, ako ima vise obracuna
 		cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 		cTrosk := radn->trosk
-		nPrKoef := 0
+		
+		ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
 
+		nPrKoef := 0
+		
 		// proisani koeficijent
 		if cTipRada == "S"
 			nPrKoef := radn->sp_koef
@@ -512,8 +532,6 @@ do while !eof() .and. field->godina = cGodina
 		// porez je ?
 		nPorez += izr_porez( nPorOsnP, "B" )
 	
-		altd()
-
 		// ocitaj doprinose, njihove iznose
 		nDoprPIO := get_dopr( cDoprPIO, cTipRada ) 
 		nDoprZDR := get_dopr( cDoprZDR, cTipRada ) 
