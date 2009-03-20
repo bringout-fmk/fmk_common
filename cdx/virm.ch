@@ -2,8 +2,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_VIRM_VERZIJA "02.05"
-#define D_VIRM_PERIOD '06.96-27.08.07'
+#define D_VIRM_VERZIJA "02.06"
+#define D_VIRM_PERIOD '06.96-30.03.09'
 
 #ifndef FMK_DEFINED
 	#include "fmk.ch"
