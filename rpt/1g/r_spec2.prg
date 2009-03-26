@@ -99,6 +99,7 @@ qqOpSt:=""
 
 nPorOlaksice:=0
 nBrutoOsnova:=0
+nBrutoDobra:=0
 nBrutoOsBenef := 0
 nPojBrOsn := 0
 nPojBrBenef := 0
@@ -130,8 +131,6 @@ cObracun:=gObracun
 cMRad:="17"
 cPorOl:="  "
 cBolPr:="  "
-cObust:=SPACE(60)
-cOstObav:=SPACE(60)
 
 ccOO1:=SPACE(20)
 ccOO2:=SPACE(20)
@@ -150,6 +149,7 @@ cDopr6:="21"
 cDopr7:="22"
 cDDoprPio:=SPACE(100)
 cDDoprZdr:=SPACE(100)
+cPrimDobra:=SPACE(100)
 cDoprOO:=""
 cPorOO:=""
 cFirmNaz:=SPACE(35)
@@ -192,8 +192,7 @@ cFirmOpc := PADR(cFirmOpc, 35)
 RPar("i0",@cFirmVD)
 cFirmVD := PADR(cFirmVD, 50)
 RPar("i4",@cMRad) 
-RPar("i7",@cObust)
-RPar("i8",@cOstObav)
+RPar("id",@cPrimDobra)
 RPar("d1",@cDopr1)
 RPar("d2",@cDopr2)
 RPar("d3",@cDopr3)
@@ -263,10 +262,10 @@ do while .t.
      		@ m_x+ 5,m_y+ 52 SAY "Dat.ispl:" GET dDatIspl
      		
 		
-		@ m_x+8,m_y+ 2 SAY "Obustave (nabrojati sifre - npr. 29;30;)" ;
-			GET cObust  PICT "@!S20"
-     		@ m_x+9,m_y+ 2 SAY "Ostale obaveze (nabrojati sifre - npr. D->AX;D->BX;)" GET cOstObav  PICT "@!S20"
-     		@ m_x+10,m_y+ 2 SAY "Dopr.pio (iz)" GET cDopr1
+		@ m_x+9,m_y+ 2 SAY "Prim.u usl.ili dobrima (npr: 12;14;)" ;
+			GET cPrimDobra  PICT "@!S20"
+     		
+		@ m_x+10,m_y+ 2 SAY "Dopr.pio (iz)" GET cDopr1
      		@ m_x+10,col()+ 2 SAY "Dopr.pio (na)" GET cDopr5
      		@ m_x+11,m_y+ 2 SAY "Dopr.zdr (iz)" GET cDopr2
      		@ m_x+11,col()+ 2 SAY "Dopr.zdr (na)" GET cDopr6
@@ -314,8 +313,7 @@ WPar("i2",cFirmAdresa)
 WPar("i3",cFirmOpc)
 WPar("i0",cFirmVD)
 WPar("i4",cMRad)
-WPar("i7",cObust)
-WPar("i8",cOstObav)
+WPar("id",cPrimDobra)
 WPar("d1",cDopr1)
 WPar("d2",cDopr2)
 WPar("d3",cDopr3)
@@ -383,8 +381,8 @@ else
 	cObracun:=""
 endif
 
-cPorOO:=Izrezi("P->",2,@cOstObav)
-cDoprOO:=Izrezi("D->",2,@cOstObav)
+//cPorOO:=Izrezi("P->",2,@cOstObav)
+//cDoprOO:=Izrezi("D->",2,@cOstObav)
 cDoprOO1:=Izrezi("D->",2,@cnOO1)
 cDoprOO2:=Izrezi("D->",2,@cnOO2)
 cDoprOO3:=Izrezi("D->",2,@cnOO3)
@@ -484,21 +482,7 @@ ENDIF
    ENDIF
 
    nP80 := nP81 := nP82 := nP83 := nP84 := nP85 := 0
-   IF !EMPTY(cObust) .or. !EMPTY(cOstObav)
-     altd()
-     FOR t:=1 TO 99
-       cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
-       IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
-         EXIT
-       ENDIF
-       nP80 += IF( cPom $ cObust   , LD->&("I"+cPom) , 0 )
-       nP81 += IF( cPom $ cOstObav , LD->&("I"+cPom) , 0 )
-       nP82 += IF( cPom $ cnOO1    , LD->&("I"+cPom) , 0 )
-       nP83 += IF( cPom $ cnOO2    , LD->&("I"+cPom) , 0 )
-       nP84 += IF( cPom $ cnOO3    , LD->&("I"+cPom) , 0 )
-       nP85 += IF( cPom $ cnOO4    , LD->&("I"+cPom) , 0 )
-     NEXT
-   ENDIF
+   
    IF LD->uneto>0  // zbog npr.bol.preko 42 dana koje ne ide u neto
      IF LEN(aPom)<1 .or. ( nPom := ASCAN(aPom,{|x| x[1]==LD->brbod}) ) == 0
        AADD( aPom , { LD->brbod , 1 , nP77 , LD->uneto } )
@@ -511,23 +495,41 @@ ENDIF
      ENDIF
    ENDIF
 
+   nPrDobra := 0
+   IF !EMPTY(cPrimDobra) 
+     FOR t:=1 TO 99
+       cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
+       IF LD->( FIELDPOS( "I" + cPom ) ) <= 0
+         EXIT
+       ENDIF
+       nPrDobra += IF( cPom $ cPrimDobra, LD->&("I"+cPom), 0 )
+     NEXT
+   ENDIF
+
    nUNeto+=ld->uneto
    nNetoOsn:=MAX(ld->uneto,PAROBR->prosld*gPDLimit/100)
    nUNetoOsnova+=nNetoOsn
   
- 
- // prvo doprinosi i bruto osnova ....
- nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
- 
- nBrutoOsnova += nPojBrOsn
- 
- // beneficirani radnici
- if UBenefOsnovu()
+   // prvo doprinosi i bruto osnova ....
+   nPojBrOsn := bruto_osn( nNetoOsn, cRTR, nKoefLO, nRSpr_koef )
+   
+   // pojedinacni bruto - dobra ili usluge
+   nPojBrDobra := 0
+   if nPrDobra > 0
+   	nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
+   endif
+
+   nBrutoOsnova += nPojBrOsn
+   
+   nBrutoDobra += nPojBrDobra
+
+   // beneficirani radnici
+   if UBenefOsnovu()
  	
 	nPojBrBenef := bruto_osn( nNetoOsn - IF(!EMPTY(gBFForm),&gBFForm,0), cRTR, nKoefLO, nRSpr_koef )
  	
  	nBrutoOsBenef += nPojBrBenef
- endif
+   endif
  
 
  // ukupno na ruke sto ide radniku...
@@ -589,27 +591,6 @@ ENDIF
    ENDIF
   
 
-   IF ID $ cDoprOO1  // Ostale obaveze - 1
-     IF EMPTY(ccOO1) .and. nOstOb1==0; ccOO1:=NAZ; ENDIF
-     nOstOb1 += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
-   ENDIF
-   
-   IF ID $ cDoprOO2  // Ostale obaveze - 2
-     IF EMPTY(ccOO2) .and. nOstOb2==0; ccOO2:=NAZ; ENDIF
-     nOstOb2 += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
-   ENDIF
-   
-   IF ID $ cDoprOO3  // Ostale obaveze - 3
-     IF EMPTY(ccOO3) .and. nOstOb3==0; ccOO3:=NAZ; ENDIF
-     nOstOb3 += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
-   ENDIF
-   IF ID $ cDoprOO4 // Ostale obaveze - 4
-     IF EMPTY(ccOO4) .and. nOstOb4==0; ccOO4:=NAZ; ENDIF
-     nOstOb4 += round2(MAX(DLIMIT,nBOO*iznos / 100), gZaok2)
-   ENDIF
-   IF ID $ cDoprOO   // Ostale obaveze
-     nOstaleObaveze += round2(MAX(DLIMIT,nBOO * iznos / 100), gZaok2)
-   ENDIF
    SKIP 1
  ENDDO
 
@@ -720,10 +701,6 @@ ENDIF
      ENDIF
      IF por->por_tip == "B"
        nPorNaPlatu  += POR->iznos * MAX(nPorOsnovica,PAROBR->prosld*gPDLimit/100) / 100
-     ELSE
-       IF ID $ cPorOO
-         nPorezOstali   += ROUND2(POR->iznos * MAX(ld->uneto,PAROBR->prosld*gPDLimit/100) / 100,gZaok2)
-       ENDIF
      ENDIF
      SKIP 1
    ENDDO
@@ -842,12 +819,12 @@ ENDIF
  // ukupno obaveze
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- nPom := nBrutoOsnova
+ nPom := nBrutoOsnova - nBrutoDobra
  nUUNR := nPom
  UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
  
  // ukupno ostalo
- nPom := 0
+ nPom := nBrutoDobra
  nUUsluge := nPom
  UzmiIzIni(cIniName,'Varijable','UNUS', FormNum2(nPom,16,gPici2), 'WRITE')
 

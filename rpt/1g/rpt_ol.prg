@@ -140,7 +140,7 @@ local cTPNaz
 local nKrug:=1
 local cRj := SPACE(60)
 local cRadnik := SPACE(_LR_) 
-local cPrihodi := SPACE(100)
+local cPrimDobra := SPACE(100)
 local cIdRj
 local cMjesec
 local cMjesecDo
@@ -193,7 +193,7 @@ endif
 
 @ m_x + 4, m_y + 2 SAY "Radnik (prazno-svi radnici): " GET cRadnik ;
 	VALID EMPTY(cRadnik) .or. P_RADN(@cRadnik)
-@ m_x + 5, m_y + 2 SAY "Prihodi u stvarima kolone: " GET cPrihodi pict "@S30"
+@ m_x + 5, m_y + 2 SAY "Isplate u usl. ili dobrima: " GET cPrimDobra pict "@S30"
 @ m_x + 7, m_y + 2 SAY "   Doprinos iz pio: " GET cDopr10 
 @ m_x + 8, m_y + 2 SAY "   Doprinos iz zdr: " GET cDopr11
 @ m_x + 9, m_y + 2 SAY "   Doprinos iz nez: " GET cDopr12
@@ -230,7 +230,7 @@ select ld
 ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cTipRpt, cObracun )
 
 // nafiluj podatke obracuna
-fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cPrihodi, ;
+fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cPrimDobra, ;
 	cDopr10, cDopr11, cDopr12, cDopr1X, cTipRpt, cObracun )
 
 // printaj obracunski list
@@ -397,7 +397,6 @@ do while !EOF()
 	nCount := 0
 
 	do while !EOF() .and. field->idradn == cT_radnik 
-	//	.and. IF(cMjesec<>cMjesecDo, field->mjesec = nMjesec, .t.)
 
 		? PADL( ALLTRIM( STR(++nCount)), 3 ) + ")"
 
@@ -684,18 +683,11 @@ return
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
 static function fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
-	cRadnik, cPrihodi, cDopr10, cDopr11, cDopr12, cDopr1X, cRptTip, ;
+	cRadnik, cPrimDobra, cDopr10, cDopr11, cDopr12, cDopr1X, cRptTip, ;
 	cObracun )
 local i
 local cPom
-local aPrim := {}
-
-// prihodi ostali
-local nPrihOst := 0
-
-if !EMPTY( cPrihodi )
-	aPrim := TokToNiz( ALLTRIM( cPrihodi ) , ";" )
-endif
+local nPrDobra
 
 lDatIspl := .f.
 if obracuni->(fieldpos("DAT_ISPL")) <> 0
@@ -740,14 +732,13 @@ do while !eof() .and. field->godina = cGodina
 	select ld
 
 	nBruto := 0
-	nPrihod := 0
-	nPrihOst := 0
 	nDoprStU := 0
 	nDopPio := 0
 	nDopZdr := 0
 	nDopNez := 0
 	nDopUk := 0
 	nNeto := 0
+	nPrDobra := 0
 	
 	do while !eof() .and. field->mjesec <= cMjesecDo ;
 		.and. field->mjesec >= cMjesec ;
@@ -765,15 +756,17 @@ do while !eof() .and. field->godina = cGodina
 			loop
 		endif
 		
-		// koliki je iznos prihoda
-		if !EMPTY( cPrihodi )
-			for i := 1 to LEN( aPrim )
-				if EMPTY( aPrim[i] )
-					loop
-				endif
-				nPrihOst += &(aPrim[i]) 
-			next
-		endif
+		nPrDobra := 0
+
+   		if !EMPTY( cPrimDobra ) 
+     		   for t:=1 to 99
+       			cPom := IF( t>9, STR(t,2), "0"+STR(t,1) )
+       			if ld->( FIELDPOS( "I" + cPom ) ) <= 0
+         			EXIT
+       			endif
+       			nPrDobra += IF( cPom $ cPrimDobra, LD->&("I"+cPom), 0 )
+     		   next
+   		endif
 
 		nNeto := field->uneto
 		nKLO := radn->klo
@@ -781,15 +774,22 @@ do while !eof() .and. field->godina = cGodina
 		
 		// bruto 
 		nBruto := bruto_osn( nNeto, cTipRada, nL_odb ) 
+		
+		// bruto primanja u uslugama ili dobrima
+		// za njih posebno izracunaj bruto osnovicu
+		if nPrDobra > 0
+			nBrDobra := bruto_osn( nPrDobra, cTipRada, nL_odb )
+		endif
+		
 		// ukupno dopr iz 31%
-		nDoprIz := u_dopr_iz( nBruto + nPrihOst, cTipRada )
+		nDoprIz := u_dopr_iz( nBruto, cTipRada )
 		
 		// osnovica za porez
-		nPorOsn := ( (nBruto + nPrihOst) - nDoprIz ) - nL_odb
+		nPorOsn := ( nBruto - nDoprIz ) - nL_odb
 		
 		// ako je neoporeziv radnik, nema poreza
 		if !radn_oporeziv( radn->id, ld->idrj ) .or. ;
-			( (nBruto-nPrihOst) - nDoprIz ) < nL_odb
+			( nBruto - nDoprIz ) < nL_odb
 			nPorOsn := 0
 		endif
 		
@@ -799,7 +799,7 @@ do while !eof() .and. field->godina = cGodina
 		select ld
 		
 		// na ruke je
-		nNaRuke := ( (nBruto + nPrihOst) - nDoprIz ) - nPorez
+		nNaRuke := ( nBruto - nDoprIz ) - nPorez
 
 		// ocitaj doprinose, njihove iznose
 		nDopr10 := Ocitaj( F_DOPR , cDopr10 , "iznos" , .t. )
@@ -808,10 +808,10 @@ do while !eof() .and. field->godina = cGodina
 		nDopr1X := Ocitaj( F_DOPR , cDopr1X , "iznos" , .t. )
 		
 		// izracunaj doprinose
-		nIDopr10 := round2((nBruto + nPrihOst) * nDopr10 / 100, gZaok2)
-		nIDopr11 := round2((nBruto + nPrihOst) * nDopr11 / 100, gZaok2)
-		nIDopr12 := round2((nBruto + nPrihOst) * nDopr12 / 100, gZaok2)
-		nIDopr1X := round2((nBruto + nPrihOst) * nDopr1X / 100, gZaok2)
+		nIDopr10 := round2(nBruto * nDopr10 / 100, gZaok2)
+		nIDopr11 := round2(nBruto * nDopr11 / 100, gZaok2)
+		nIDopr12 := round2(nBruto * nDopr12 / 100, gZaok2)
+		nIDopr1X := round2(nBruto * nDopr1X / 100, gZaok2)
 
 		dDatIspl := DATE()
 		if lDatIspl 
@@ -820,7 +820,7 @@ do while !eof() .and. field->godina = cGodina
 					field->mjesec )
 		endif
 
-		nIsplata := (((nBruto + nPrihOst) - nIDopr1X) - nPorez)
+		nIsplata := ((nBruto - nIDopr1X) - nPorez)
 		
 		// da li se radi o minimalcu ?
 		if cTipRada $ " #I#N#" .and. nNeto < parobr->minld
@@ -832,15 +832,15 @@ do while !eof() .and. field->godina = cGodina
 				"placa", ;
 				dDatIspl, ;
 				ld->mjesec, ;
+				nBruto - nBrDobra, ;
+				nBrDobra, ;
 				nBruto, ;
-				nPrihOst, ;
-				(nBruto + nPrihOst), ;
 				nDopr1X,;
 				nIDopr10, ;
 				nIDopr11, ;
 				nIDopr12, ;
 				nIDopr1X, ;
-				(nBruto + nPrihOst) - nIDopr1X, ;
+				nBruto - nIDopr1X, ;
 				nKLO, ;
 				nL_Odb, ;
 				nPorOsn, ;
