@@ -246,6 +246,9 @@ FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
 
 NEXT
 
+? p_potpis()
+
+
 END PRINT
 
 CLOSERET
@@ -532,6 +535,9 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
 	? m
 	FF
 next
+
+? p_potpis()
+
 
 if cZaBanku == "D"
 	CloseFileBanka(nH)	
@@ -820,6 +826,8 @@ do while !eof()
 	FF
 	
 enddo
+
+? p_potpis()
 
 if (IsMupZeDo() .and. cZaBanku=="D")
 	CloseFileBanka(nH)

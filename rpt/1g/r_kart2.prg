@@ -61,7 +61,7 @@ for i:=1 to cLDPolja
 		cUneto:="N"
 		
 		? cTprLine
-		? cLMSK+Lokal("Ukupna primanja u netu:")
+		? cLMSK+Lokal("Ukupna oporeziva primanja:")
 		@ prow(),nC1+8  SAY  _USati  pict gpics
 		?? SPACE(1) + Lokal("sati")
 		@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
@@ -134,7 +134,31 @@ for i:=1 to cLDPolja
 				
 				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
 			endif
-			
+	
+			// suma iz prethodnih obracuna !
+			if "_K" == RIGHT( ALLTRIM(tippr->opis), 2 )
+
+    				nKumPrim := KumPrim( _IdRadn, cPom )
+
+    				if SUBSTR(ALLTRIM(tippr->opis),2,1) == "1"
+      				  nKumPrim := nKumPrim + radn->n1
+    				elseif SUBSTR(ALLTRIM(tippr->opis),2,1) == "2"
+      				  nKumPrim := nKumPrim + radn->n2
+    				elseif SUBSTR(ALLTRIM(tippr->opis),2,1) == "3"
+      				  nKumPrim := nKumPrim + radn->n3
+    				endif
+
+    				IF tippr->uneto == "N"
+					nKumPrim := ABS( nKumPrim )
+				ENDIF
+    			
+				? cLPom:=cLMSK + "   ----------------------------- ----------------------------"
+        			? cLMSK + "    SUMA IZ PRETHODNIH OBRA¬UNA   UKUPNO (SA OVIM OBRA¬UNOM)"
+        			? cLPom
+        			? cLMSK + "   " + PADC(STR(nKumPrim - _i&cPom),29)+" "+PADC(STR(nKumPrim),28)
+        			? cLPom
+  			endif
+		
 			if tippr->(FIELDPOS("TPR_TIP")) <> 0
 			  // uzmi osnovice
 			  if tippr->tpr_tip == "N"
@@ -351,7 +375,8 @@ if gPrBruto=="D"
 		PozicOps(DOPR->poopst)
 			
 		// preskoci zbirne doprinose
-		if LEFT( dopr->id, 1 ) <> "1"
+		// ako je tako navedeno u parametrima
+		if gKarSDop == "N" .and. LEFT( dopr->id, 1 ) <> "1"
 			skip
 			loop 
 		endif

@@ -31,6 +31,10 @@ nLicOdbitak := ld->ulicodb
 nKoefOdbitka := radn->klo
 cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
+? cTprLine
+? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
+? cTprLine
+
 for i:=1 to cLDPolja
 	
 	cPom := padl(alltrim(str(i)),2,"0")
@@ -60,7 +64,50 @@ for i:=1 to cLDPolja
 			nOsnOstalo += _i&cPom
 		endif
 	endif
+	
+	if tippr->uneto=="N" .and. cUneto=="D"
+		
+		cUneto := "N"
+		
+		? cTprLine
+		? cLMSK+Lokal("Ukupna oporeziva primanja:")
+		@ prow(),nC1+8  SAY  _USati  pict gpics
+		?? SPACE(1) + Lokal("sati")
+		@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
+		?? "",gValuta
+		? cTprLine
+	
+	endif
+	
+	if tippr->(found()) .and. tippr->aktivan=="D"
+
+		if _i&cpom<>0 .or. _s&cPom<>0
+	
+			cTpNaz := tippr->naz
+
+			? cLMSK+tippr->id+"-"+padr(cTpNaz,len(tippr->naz)),tippr->opis
+			nC1:=pcol()
 			
+			if tippr->fiksan $ "DN"
+				
+				@ prow(),pcol()+8 SAY _s&cPom  pict gpics
+				?? " s"
+				@ prow(),60+LEN(cLMSK) say _i&cPom pict gpici
+			
+			elseif tippr->fiksan=="P"
+				
+				@ prow(),pcol()+8 SAY _s&cPom  pict "999.99%"
+				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+			elseif tippr->fiksan=="B"
+				
+				@ prow(),pcol()+8 SAY _s&cPom  pict "999999"; ?? " b"
+				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+			elseif tippr->fiksan=="C"
+				
+				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+			endif
+		endif
+	endif
 next
 
 select (F_POR)

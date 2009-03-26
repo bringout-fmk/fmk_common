@@ -50,7 +50,11 @@ ENDIF
 @ m_x+8,m_y+2 SAY Lokal("Sortirati po(1-sifri,2-prezime+ime)")  GET cVarSort VALID cVarSort$"12"  pict "9"
 @ m_x+9,m_y+2 SAY "Prikaz bruto iznosa ?" GET cPrBruto ;
 			VALID cPrBruto $ "DN" PICT "@!"
-@ m_x+11,m_y+2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola$"DN" PICT "@!"
+if gVarObracun == "2"
+	@ m_x+11,m_y+2 SAY "Kontrola (br.-dopr.-porez)+(prim.van neta)-(odbici)=(za isplatu)? (D/N)" GET cKontrola VALID cKontrola $ "DN" PICT "@!"
+else
+	@ m_x+11,m_y+2 SAY "Kontrolisati (neto)+(prim.van neta)-(odbici)=(za isplatu) ? (D/N)" GET cKontrola VALID cKontrola$"DN" PICT "@!"
+endif
 read; clvbox(); ESC_BCR
 BoxC()
 
@@ -306,8 +310,18 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
  	endif
  	
 	@ prow(),pcol()+1 SAY _uiznos pict gpici
- 	if cKontrola=="D" .and. _uiznos<>_uneto+nVanP+nVanM
-   		@ prow(),pcol()+1 SAY "ERR"
+
+ 	if cKontrola=="D" 
+		if gVarObracun == "2"
+			nKontrola := ( nBrOsn - nDoprIz - nPorez ) + nVanP + nVanM 
+			if ROUND(_uiznos,2) = ROUND(nKontrola,2) 
+				// nista
+			else
+				@ prow(),pcol()+1 SAY "ERR"
+			endif
+		elseif _uiznos <> _uneto + nVanP + nVanM
+   			@ prow(),pcol()+1 SAY "ERR"
+		endif
  	endif
 	
   	nT1+=_usati

@@ -297,6 +297,7 @@ public gFSpec:=PADR("SPEC.TXT",12)
 public gReKrOs:="X"
 public gReKrKP:="1"
 public gVarPP:="1"
+public gKarSDop:="N"
 public gPotpRpt:="N"
 public gPotp1:=PADR("PADL('Potpis:',70)",150)
 public gPotp2:=PADR("PADL('_________________',70)",150)
@@ -356,6 +357,7 @@ Rpar("P1",@gPotp1)
 Rpar("P2",@gPotp2)
 Rpar("t1",@gUgTrosk)
 Rpar("t2",@gAhTrosk)
+Rpar("ks",@gKarSDop)
 
 //Rpar("tB",@gTabela)
 

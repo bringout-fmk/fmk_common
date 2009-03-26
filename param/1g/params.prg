@@ -184,7 +184,7 @@ private GetList:={}
 gPotp1 := PADR(gPotp1, 150)
 gPotp2 := PADR(gPotp2, 150)
 
-Box(,9,77)
+Box(,10,77)
 	@ m_x+1,m_y+2 SAY "Krediti-rekap.po 'na osnovu' (D/N/X)?" GET gReKrOs VALID gReKrOs $ "DNX" PICT "@!"
       	@ m_x+2,m_y+2 SAY "Na kraju obrade odstampati listic D/N:" GET gListic  pict "@!" valid glistic $ "DN"
       	@ m_x+3,m_y+2 SAY "Prikaz bruto iznosa na kartici radnika (D/N/X) " GET gPrBruto pict "@!" valid gPrBruto $ "DNX"
@@ -200,6 +200,10 @@ Box(,9,77)
       		@ m_x+9,col()+1 SAY "red 2:" GET gPotp2 PICT "@S25"
 		read
 	endif
+      	
+	@ m_x+10,m_y+2 SAY "Kartica plate - svi doprinosi (D/N)" GET gKarSDop VALID gKarSDop$"DN" PICT "@!"
+	
+	read
 
 BoxC()
 
@@ -216,6 +220,7 @@ if (LastKey()<>K_ESC)
       	Wpar("pr",gPotpRpt)
       	Wpar("P1",gPotp1)
       	Wpar("P2",gPotp2)
+	Wpar("ks",gKarSDop)
 
       	//Wpar("tB",gTabela)
 endif
