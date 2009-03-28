@@ -732,6 +732,7 @@ do while !eof() .and. field->godina = cGodina
 	select ld
 
 	nBruto := 0
+	nBrDobra := 0
 	nDoprStU := 0
 	nDopPio := 0
 	nDopZdr := 0
