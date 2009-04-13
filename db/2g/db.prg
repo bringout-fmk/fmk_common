@@ -314,6 +314,7 @@ AADD(aDBf,{ 'STREETNAME'          , 'C' ,  40 ,  0 })
 AADD(aDBf,{ 'STREETNUM'           , 'C' ,   6 ,  0 })
 AADD(aDBf,{ 'HIREDFROM'           , 'D' ,   8 ,  0 })
 AADD(aDBf,{ 'HIREDTO'             , 'D' ,   8 ,  0 })
+AADD(aDBf,{ 'AKTIVAN'             , 'C' ,   1 ,  0 })
 
 if (nArea==-1 .or. nArea==(F_RADN))
 	//RADN.DBF & _RADN.DBF

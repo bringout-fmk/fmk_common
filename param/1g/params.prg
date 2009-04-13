@@ -121,7 +121,7 @@ private GetList:={}
 
 cVarPorol:=PADR(cVarPorol,2)
 
-Box(, 17, 77)
+Box(, 18, 77)
 	
 	@ m_x+nX,m_y+2 SAY "Varijanta obracuna" GET gVarObracun
       	
@@ -157,6 +157,8 @@ Box(, 17, 77)
       	@ m_x+nX,m_y+2 SAY "Obrada sihtarice ?" GET gSihtarica valid gSihtarica $ "DN" pict "@!"
       	++nX
       	@ m_x+nX,m_y+2 SAY "Obrada autorskih honorara ?" GET gAHonorar valid gAHonorar $ "DN" .and. ahon_ready() pict "@!"
+      	++nX
+      	@ m_x+nX,m_y+2 SAY "Filter 'aktivan' u sifraniku radnika ?" GET gRadnFilter valid gRadnFilter $ "DN" pict "@!"
 	read
 BoxC()
 
@@ -171,6 +173,7 @@ if (LastKey()<>K_ESC)
       	Wpar("Si",gSihtarica)
       	Wpar("aH",gAHonorar)
 	Wpar("ov",gvarObracun)
+	Wpar("rf",gRadnFilter)
 endif
 
 return

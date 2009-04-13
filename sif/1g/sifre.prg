@@ -2,9 +2,9 @@
 
 
 function P_Radn(cId,dx,dy)
-
 local i
 local nArr
+
 nArr:=SELECT()
 
 private imekol
@@ -14,6 +14,10 @@ select (F_RADN)
 if (!used())
 	O_RADN
 endif
+
+// filterisanje tabele radnika
+_radn_filter( .t. )
+
 select (nArr)
 
 ImeKol:={}
@@ -86,6 +90,11 @@ if radn->(fieldpos("STREETNAME")<>0)
   	AADD(ImeKol,{Lokal(padc("Zaposl.do",12 )),{|| hiredto},"hiredto"})
 endif
 
+
+if radn->(FIELDPOS("AKTIVAN")) <> 0
+	AADD(ImeKol, { "Aktivan?",{|| aktivan}, "aktivan" } )
+endif
+
 Kol:={}
 
 for i:=1 to LEN(ImeKol)
@@ -107,9 +116,37 @@ for i:=1 to 9
 next
 
 
-return PostojiSifra(F_RADN, 1, 12, 72, Lokal("Lista radnika"), ;
+return PostojiSifra(F_RADN, 1, 12, 72, Lokal("Lista radnika") + SPACE(5) + "<S> filter radnika on/off", ;
           @cId, dx, dy, ;
 	  {|Ch| RadBl(Ch)},,,,,{"ID"})
+
+
+
+// ------------------------------------------
+// filterisanje tabele radnika
+// ------------------------------------------
+static function _radn_filter( lFiltered )
+local cFilter := ""
+
+if radn->(FIELDPOS("aktivan")) = 0
+	return
+endif
+
+if lFiltered == nil
+	lFiltered := .t.
+endif
+
+cFilter := "aktivan $ ' #D'"
+
+if lFiltered == .t. .and. gRadnFilter == "D"
+	set filter to &cFilter
+	go top
+else
+	set filter to
+	go top
+endif
+
+return
 
 
 
@@ -135,10 +172,11 @@ if EMPTY(field->streetnum)
 	cStreetNum:=SPACE(5) + "0"
 endif
 return .t.
-*}
 
+// --------------------------------------------
+// radn. blok funkcije
+// --------------------------------------------
 function RadBl(Ch)
-*{
 local cMjesec:=gMjesec
 
 if (Ch==K_ALT_M)
@@ -158,17 +196,23 @@ if (Ch==K_ALT_M)
 	select radn
 	go top
 	do while !eof()
-		if Month(datOd)==cMjesec
-     			if pol=="M"
+		
+		if Month(datOd) == cMjesec
+     			
+			if pol=="M"
        				replace kminrad with kminrad+gMRM
      			elseif pol=="Z"
        				replace kminrad with kminrad+gMRZ
      			endif
-    		endif
-    		if kminrad>20   // ogranicenje minulog rada
+    		
+		endif
+    		
+		if kminrad > 20   
+			// ogranicenje minulog rada
       			replace kminrad with 20
     		endif
-    		skip
+    		
+		skip
 	enddo
 	
 	MsgC()
@@ -184,6 +228,21 @@ elseif (Ch==K_F2)
 	if ImaURadKr(radn->id,"2")
    		return 99
  	endif
+elseif ( UPPER(CHR(Ch))=="S" )
+	
+	// filter po radnicima
+	cTmp := DBFilter()
+
+	if EMPTY(cTmp)
+		msgbeep("prikazuju se samo aktivni radnici ...")
+		_radn_filter( .t. )
+		return DE_REFRESH
+	else
+		msgbeep("vracam filter na sve radnike ....")
+		_radn_filter( .f. )
+		return DE_REFRESH
+	endif
+
 endif
 
 return DE_CONT

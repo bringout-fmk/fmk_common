@@ -257,6 +257,9 @@ public gVarObracun := " "
 // default vrijednost osnovnog licnog odbitka 
 public gOsnLOdb := 300
 
+// filter po polju aktivan u tabeli RADN
+public gRadnFilter := "D"
+
 // trosak kod ugovora o djelu
 public gUgTrosk := 20
 // trosak kod autorskog honorara
@@ -358,6 +361,7 @@ Rpar("P2",@gPotp2)
 Rpar("t1",@gUgTrosk)
 Rpar("t2",@gAhTrosk)
 Rpar("ks",@gKarSDop)
+Rpar("rf",@gRadnFilter)
 
 //Rpar("tB",@gTabela)
 
