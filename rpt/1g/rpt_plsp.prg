@@ -242,11 +242,12 @@ FOR nDio:=1 TO IF(cDrugiDio=="D",2,1)
   		@ prow(),nC1 SAY  nT4 pict gpici
 	endif
 	? m
+	
+	? p_potpis()
+	
 	FF
 
 NEXT
-
-? p_potpis()
 
 
 END PRINT
@@ -533,10 +534,12 @@ for nDio:=1 to IF(cDrugiDio=="D",2,1)
   		@ prow(),nC1 SAY nT4 pict gpici
 	endif
 	? m
+	
+	? p_potpis()
+	
 	FF
 next
 
-? p_potpis()
 
 
 if cZaBanku == "D"
@@ -823,11 +826,13 @@ do while !eof()
   		@ prow(),nC1 SAY nT4 pict gpici
 	endif
 	? m
+	
+	? p_potpis()
+	
 	FF
 	
 enddo
 
-? p_potpis()
 
 if (IsMupZeDo() .and. cZaBanku=="D")
 	CloseFileBanka(nH)
