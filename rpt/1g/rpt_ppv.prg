@@ -26,14 +26,22 @@ return
 static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObr )
 local cFilter := ""
 
+private cObracun := cObr
+
 if lViseObr
-	if !EMPTY(cObr)
-		cFilter += "obr == " + cm2str(cObr)
+	if !EMPTY(cObracun)
+		cFilter += "obr == " + cm2str(cObracun)
 	endif
 endif
 
 if !EMPTY(cRj)
+
+	if !EMPTY(cFilter)
+		cFilter += " .and. "
+	endif
+	
 	cFilter += Parsiraj(cRj,"IDRJ")
+
 endif
 
 if !EMPTY(cFilter)
@@ -225,6 +233,8 @@ nULicOdb := 0
 nUIsplata := 0
 
 nRbr := 0
+nPoc := 10
+nCount := 0
 
 do while !EOF()
 	
@@ -270,6 +280,8 @@ do while !EOF()
 	@ prow(), pcol()+1 SAY STR(dop_nez,12,2)
 	nUDoprNez += dop_nez
 	
+	++nCount
+
 	skip
 enddo
 

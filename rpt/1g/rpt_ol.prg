@@ -27,6 +27,8 @@ static function ld_sort(cRj, cGodina, cMjesec, cMjesecDo, ;
 			cRadnik, cTipRpt, cObr )
 local cFilter := ""
 
+private cObracun := cObr
+
 if lViseObr
 	if !EMPTY(cObr)
 		cFilter += "obr == " + cm2str(cObr)
@@ -34,6 +36,11 @@ if lViseObr
 endif
 
 if !EMPTY(cRj)
+	
+	if !EMPTY(cFilter)
+		cFilter += " .and. "
+	endif
+	
 	cFilter += Parsiraj(cRj,"IDRJ")
 endif
 
