@@ -235,7 +235,7 @@ local nTRobaRec
 local cNoviProizvod
 local cIdTek
 local nTRec
-local nCnt
+local nCnt := 0
 
 nTRobaRec:=recno()
 
