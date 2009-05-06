@@ -176,6 +176,11 @@ AADD(aArr, {"VPDV",     "N", 15, 5})
 AADD(aArr, {"UKUPNO",    "N", 15, 5})
 AADD(aArr, {"POPTP",   "N", 8, 3})
 AADD(aArr, {"VPOPTP",   "N", 15, 5})
+AADD(aArr, {"C1",   "C", 100, 0})
+AADD(aArr, {"C2",   "C", 100, 0})
+AADD(aArr, {"C3",   "C", 100, 0})
+AADD(aArr, {"OPIS",   "C", 200, 0})
+
 return
 *}
 
@@ -346,7 +351,7 @@ return xRet
 // ---------------------------------
 // dodaj u rn.dbf
 // ---------------------------------
-function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca)
+function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca, cC1, cC2, cC3, cOpis)
 *{
 if !USED(F_RN)
 	O_RN
@@ -361,6 +366,10 @@ replace podbr with cPodBr
 replace idroba with cIdRoba
 replace robanaz with cRobaNaz
 replace jmj with cJmj
+replace c1 with cC1
+replace c2 with cC2
+replace c3 with cC3
+replace opis with cOpis
 replace kolicina with nKol
 replace cjenpdv with nCjenPdv
 replace cjenbpdv with nCjenBPdv
