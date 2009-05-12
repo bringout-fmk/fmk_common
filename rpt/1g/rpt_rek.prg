@@ -139,7 +139,7 @@ else
 endif
 
 // samo pozicionira bazu PAROBR na odgovarajuci zapis
-ParObr(cmjesec, IIF(lViseObr,cObracun,), IIF(!lSvi,cIdRj,))
+ParObr(cmjesec, cGodina, IIF(lViseObr,cObracun,), IIF(!lSvi,cIdRj,))
 
 private aRekap[cLDPolja,2]
 
@@ -1473,7 +1473,7 @@ do while !eof() .and. eval(bUSlov)
 		ELSE
 			nTObl:=SELECT()
 			nTRec := PAROBR->(RECNO())
-			ParObr(mjesec,IF(lViseObr,cObracun,),IF(!lSvi,cIdRj,))
+			ParObr(mjesec,godina,IF(lViseObr,cObracun,),IF(!lSvi,cIdRj,))
 			// samo pozicionira bazu PAROBR na odgovaraju†i zapis
 			AADD(aNetoMj,{mjesec,_uneto,_usati,PAROBR->k3,PAROBR->k1})
 			SELECT PAROBR

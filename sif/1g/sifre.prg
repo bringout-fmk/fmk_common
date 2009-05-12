@@ -274,18 +274,20 @@ if (!used())
 	O_PAROBR
 endif
 
-AADD(ImeKol,{ padr("ID",8), {|| id}, "id", {|| wid:=val(wid), .t. },{|| wid:=str(wid,2), .t.}  })
+AADD(ImeKol,{ padr("mjesec",8), {|| id}, "id", {|| wid:=val(wid), .t. },{|| wid:=str(wid,2), .t.}  })
+
+AADD(ImeKol, { "godina" , {|| godina} , "godina" } )
 
 if lViseObr
-  	AADD(ImeKol, { padr("Obracun",10) , {|| obr} , "obr" } )
+  	AADD(ImeKol, { padr("obracun",10) , {|| obr} , "obr" } )
 endif
 
 if IzFMKINI( "LD", "VrBodaPoRJ", "N", KUMPATH ) == "D"
-  	AADD(ImeKol, { "RJ" , {|| IDRJ} , "IDRJ" } )
+  	AADD(ImeKol, { "rj" , {|| IDRJ} , "IDRJ" } )
 endif
 
-AADD(ImeKol, { padr("Opis",10), {|| naz}, "naz" } )
-AADD(ImeKol, { padr(IF(gBodK == "1","Vrijednost boda","Vr.koeficijenta"),15),;
+AADD(ImeKol, { padr("opis",10), {|| naz}, "naz" } )
+AADD(ImeKol, { padr(IF(gBodK == "1","vrijednost boda","vr.koeficijenta"),15),;
 	{|| vrbod}, "vrbod" } )
 
 // ako postoji polje i ako je nova varijanta obracuna
@@ -299,14 +301,18 @@ if parobr->(FIELDPOS("K7")) <> 0 .and. gVarObracun == "2"
 	AADD(ImeKol, { padr("n.koef.4",8), {|| k8} , "k8"  } )
 endif
 
-AADD(ImeKol, { padr("Br.Sati",5), {|| k1} , "k1"  } )
-AADD(ImeKol, { padr("Koef2",5), {|| k2} , "k2"  } )
-AADD(ImeKol, { padr("Bruto osn.",6), {|| k3} , "k3"  }  )
-AADD(ImeKol, { padr("Koef4",6), {|| k4} , "k4"  } )
-AADD(ImeKol, { padr("Prosj.LD",12), {|| Prosld} , "PROSLD"  }  )
+AADD(ImeKol, { padr("br.sati",5), {|| k1} , "k1"  } )
+
+if gVarObracun <> "2"
+	AADD(ImeKol, { padr("Koef2",5), {|| k2} , "k2"  } )
+	AADD(ImeKol, { padr("Bruto osn.",6), {|| k3} , "k3"  }  )
+	AADD(ImeKol, { padr("Koef4",6), {|| k4} , "k4"  } )
+endif
+
+AADD(ImeKol, { padr("prosj.LD",12), {|| Prosld} , "PROSLD"  }  )
 
 if parobr->(FIELDPOS("MINLD")) <> 0 .and. gVarObracun == "2"
-	AADD(ImeKol, { padr("Min.LD",12), {|| minld} , "minld"  } )
+	AADD(ImeKol, { padr("min.bo",12), {|| minld} , "minld"  } )
 endif
 
 for i := 1 to LEN( ImeKol )

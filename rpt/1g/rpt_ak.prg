@@ -625,7 +625,7 @@ do while !eof() .and. field->godina = cGodina .and. ;
 
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+	ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )
 
 	select ld
 
@@ -648,7 +648,7 @@ do while !eof() .and. field->godina = cGodina .and. ;
 		lInRS := in_rs(radn->idopsst, radn->idopsrad) .and. cT_tipRada $ "A#U"
 	
 		// samo pozicionira bazu PAROBR na odgovarajuci zapis
-		ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+		ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )
 	
 		// uzmi samo odgovarajuce tipove rada
 		if ( cVRada == "1" .and. !(cT_tiprada $ "A#U") )

@@ -61,7 +61,7 @@ do while !eof() .and. godina=cGodina .and. mjesec=cMjesec
 	select ld
 	seek str(cGodina,4)+str(cMjesec,2)+cIdRadn
 	do while !eof() .and. godina=cGodina .and. mjesec=cMjesec .and. idRadn==cIdRadn
-		ParObr(cMjesec,IF(lViseObr,field->obr,),field->idRj)
+		ParObr(cMjesec,cGodina,IF(lViseObr,field->obr,),field->idRj)
 		_uNeto:=field->uNeto
 		for i:=1 to len(aSati)
 			altd()

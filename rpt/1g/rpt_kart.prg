@@ -164,7 +164,7 @@ IF lSkrivena
 	gRPL_Gusto()
 ENDIF
 
-ParObr(cmjesec,IF(lViseObr,cObracun,),cIdRj)
+ParObr(cmjesec,cGodina,IF(lViseObr,cObracun,),cIdRj)
 
 private lNKNS
 lNKNS:=(cNKNS=="D")

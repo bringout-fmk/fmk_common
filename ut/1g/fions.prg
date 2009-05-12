@@ -52,13 +52,14 @@ return (nil)
 
 
 
-/*! \fn ParObr(nMjesec, cObr, cIdRj)
+/*! \fn ParObr(nMjesec, nGodina, cObr, cIdRj)
  *  \brief Parametri obracuna
  *  \param nMjesec - mjesec
+ *  \param nGodina - godina
  *  \param cObr - broj obracuna
  *  \param cIdRj - id radna jedinica
  */
-function ParOBr(nMjesec,cObr,cIDRJ)
+function ParOBr(nMjesec,nGodina,cObr,cIdRj)
 *{
 local nNaz
 local nRec1:=0
@@ -75,8 +76,18 @@ endif
 
 nArr := SELECT()
 
-SELECT PAROBR
-SEEK STR(nMjesec,2)+cObr
+cMj := STR(nMjesec, 2)
+cGod := STR(nGodina, 4)
+
+select parobr
+seek cMj+cGod+cObr
+
+if !FOUND() .or. EOF()
+	// ponovo pretrazi ali bez godine
+	// ima godina = prazan zapis !!!
+	select parobr
+	seek cMj+SPACE(4)+cObr
+endif
 
 IF !FOUND() .or. EOF()
 	SKIP -1
@@ -84,7 +95,7 @@ ENDIF
 
 IF IzFMKINI("LD","VrBodaPoRJ","N",KUMPATH)=="D"
 	nRec1:=RECNO()
-   	DO WHILE !EOF() .and. id==STR(nMjesec,2)
+   	DO WHILE !EOF() .and. id==cMj .and. godina==cGod
      		IF lViseObr .and. cObr<>obr
       			SKIP 1
 			LOOP
@@ -109,7 +120,7 @@ ENDIF
 
 SELECT (nArr)
 RETURN
-*}
+
 
 
 /*! \fn Izracunaj(ixx, fPrikaz)

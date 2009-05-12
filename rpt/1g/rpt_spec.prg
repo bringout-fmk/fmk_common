@@ -301,7 +301,7 @@ cDoprOO4:=Izrezi("D->",2,@cnOO4)
 //   CLOSERET
 // ENDIF
 
-ParObr(nMjesec,cObracun,LEFT(qqIdRJ,2))
+ParObr(nMjesec,cGodina,cObracun,LEFT(qqIdRJ,2))
 
 // ----------- MS 07.04.01
 

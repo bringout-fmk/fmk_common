@@ -416,7 +416,8 @@ if (nArea==-1 .or. nArea==(F_PAROBR))
 
 	if !file(SIFPATH+"PAROBR.DBF")
    		aDBf:={}
-   		AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })  // mjesec
+   		AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })  
+   		AADD(aDBf,{ 'GODINA'              , 'C' ,   4 ,  0 })  
    		AADD(aDBf,{ 'NAZ'                 , 'C' ,  10 ,  0 })
    		AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
    		AADD(aDBf,{ 'VrBod'               , 'N' ,  15 ,  5 })
@@ -434,10 +435,11 @@ if (nArea==-1 .or. nArea==(F_PAROBR))
 	IF lVOBrisiCDX
   		DelSve("PAROBR.CDX",trim(cDirSif))
 	ENDIF
+
 	IF lViseObr
-  		CREATE_INDEX("ID","id+obr",SIFPATH+"PAROBR")
+  		CREATE_INDEX("ID","id+godina+obr",SIFPATH+"PAROBR")
 	ELSE
-  		CREATE_INDEX("ID","id",SIFPATH+"PAROBR")
+  		CREATE_INDEX("ID","id+godina",SIFPATH+"PAROBR")
 	ENDIF
 endif
 

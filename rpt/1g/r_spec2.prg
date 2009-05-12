@@ -393,7 +393,7 @@ cDodDoprP := Izrezi("D->",2,@cDDoprPio)
 // dodatni doprinos zdr
 cDodDoprZ := Izrezi("D->",2,@cDDoprZdr)
 
-ParObr(nMjesec,cObracun,LEFT(qqIdRJ,2))
+ParObr(nMjesec,nGodina,cObracun,LEFT(qqIdRJ,2))
 
 SELECT LD
 SET ORDER TO TAG (TagVO("2"))

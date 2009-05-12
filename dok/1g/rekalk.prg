@@ -80,7 +80,7 @@ Box(,1,12)
 do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .and. if(lViseObr,cObracun==obr,.t.)
 
  Scatter()
- ParObr(_mjesec,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
+ ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
  select ld
@@ -312,7 +312,7 @@ do while !eof() .and.  cgodina==godina .and. cidrj==idrj .and.;
          cmjesec=mjesec .and. IF(lViseObr,cObracun==obr,.t.)
 
  Scatter()
- ParObr(_mjesec,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
+ ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
  select ld
@@ -461,7 +461,7 @@ do while !eof() .and.  cgodina==godina .and. cidrj==idrj .and.;
          cmjesec=mjesec .and. IF(lViseObr,cObracun==obr,.t.)
 
  Scatter()
- ParObr(_mjesec,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
+ ParObr(_mjesec,_godina,IF(lViseObr,_obr,),cIdRj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
  select ld
@@ -592,7 +592,7 @@ do while !eof() .and.  cGodina==godina .and.  cmjesec=mjesec .and.;
          IF(lViseObr,cObracun==obr,.t.)
 
  Scatter()
- ParObr(_mjesec,IF(lViseObr,_obr,),_idrj)  // podesi parametre obra~una za ovaj mjesec
+ ParObr(_mjesec,_godina,IF(lViseObr,_obr,),_idrj)  // podesi parametre obra~una za ovaj mjesec
 
  select radn; hseek _idradn
  select ld

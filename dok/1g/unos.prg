@@ -260,7 +260,7 @@ Box(,21,77)
 		_idstrspr:=radn->idstrspr
 	endif
 
-	ParObr(cMjesec,IF(lViseObr,cObracun,),cIdRj)  
+	ParObr(cMjesec, cGodina, IF(lViseObr,cObracun,),cIdRj)  
 	// podesi parametre obracuna za ovaj mjesec
 	
 	if gTipObr=="1"

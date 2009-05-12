@@ -725,7 +725,7 @@ do while !eof() .and. field->godina = cGodina
 	cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+	ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )
 
 	select radn
 	seek cT_radnik
@@ -757,7 +757,7 @@ do while !eof() .and. field->godina = cGodina
 		// uvijek provjeri tip rada, ako ima vise obracuna
 		cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 		
-		ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+		ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )
 		
 		if !( cTipRada $ " #I#N") 
 			skip

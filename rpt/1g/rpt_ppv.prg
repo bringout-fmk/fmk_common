@@ -438,7 +438,7 @@ do while !eof() .and. field->godina = cGodina
 	cOpor := g_oporeziv( ld->idradn, ld->idrj ) 
 
 	// samo pozicionira bazu PAROBR na odgovarajuci zapis
-	ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+	ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )
 
 	select radn
 	seek cT_radnik
@@ -469,7 +469,7 @@ do while !eof() .and. field->godina = cGodina
 		cTipRada := g_tip_rada( ld->idradn, ld->idrj )
 		cTrosk := radn->trosk
 		
-		ParObr( cMjesec, IF(lViseObr, ld->obr,), ld->idrj )
+		ParObr( cMjesec, cGodina, IF(lViseObr, ld->obr,), ld->idrj )
 
 		nPrKoef := 0
 		

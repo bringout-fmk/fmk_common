@@ -1157,7 +1157,7 @@ if nSPr_koef == nil
 	nSPr_koef := 0
 endif
 
-ParObr(mjesec,IF(lViseObr,cObracun,),cIdRj)
+ParObr(mjesec,godina,IF(lViseObr,cObracun,),cIdRj)
   
 if gVarObracun == "2"
 	nBo:=bruto_osn( MAX(_UNeto,PAROBR->prosld*gPDLimit/100), cTipRada, nKlo, nSPr_koef ) 

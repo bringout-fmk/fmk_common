@@ -23,7 +23,7 @@ O_RADN
 O_LD
 O_PAROBR
 
-ParObr(cMjesec,IF(lViseObr,cObracun,),cIdRj)
+ParObr(cMjesec,cGodina,IF(lViseObr,cObracun,),cIdRj)
 
 O_PARAMS
 private cSection:="4"
