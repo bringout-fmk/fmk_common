@@ -731,7 +731,7 @@ else
 	nOsnov4 := _oosnneto	
 	nOsnov5 := nPorNROsnova	
 	nOstalo := _uodbici
-	nBrOsnova := nRadn_bo 
+	nBrOsnova := nMRadn_bo 
 endif
 
 select ops
@@ -1256,6 +1256,7 @@ nPorOl:=0
 nUPorOl:=0
 aNetoMj:={}
 nRadn_bo := 0
+nMRadn_bo := 0
 
 do while !eof() .and. eval(bUSlov)
 	
@@ -1585,13 +1586,21 @@ for i:=1 to cLDPolja
     		cUneto:="N"
     		? cLinija
     		if !lPorNaRekap
-       			? Lokal("UKUPNO NETO:")
+       			if gVarObracun == "2"
+				? Lokal("OPOREZIVA PRIMANJA:")
+			else
+				? Lokal("UKUPNO NETO:")
+			endif
 			@ prow(),nC1+8  SAY  nUSati  pict gpics
 			?? SPACE(1) + Lokal("sati")
        			@ prow(),60 SAY nUNeto pict gpici
 			?? "",gValuta
     		else
-       			? Lokal("UKUPNO NETO:")
+       			if gVarObracun == "2"
+				? Lokal("OPOREZIVA PRIMANJA:")
+			else
+				? Lokal("UKUPNO NETO:")
+			endif
 			@ prow(),nC1+5  SAY  nUSati  pict gpics
 			?? SPACE(1) + Lokal("sati")
        			@ prow(),42 SAY nUNeto pict gpici; ?? "",gValuta

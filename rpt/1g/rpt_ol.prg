@@ -783,6 +783,9 @@ do while !eof() .and. field->godina = cGodina
 		// bruto 
 		nBruto := bruto_osn( nNeto, cTipRada, nL_odb ) 
 		
+		// minimalni bruto
+		nMBruto := min_bruto( nBruto, field->usati )
+
 		// bruto primanja u uslugama ili dobrima
 		// za njih posebno izracunaj bruto osnovicu
 		if nPrDobra > 0
@@ -790,7 +793,7 @@ do while !eof() .and. field->godina = cGodina
 		endif
 		
 		// ukupno dopr iz 31%
-		nDoprIz := u_dopr_iz( nBruto, cTipRada )
+		nDoprIz := u_dopr_iz( nMBruto, cTipRada )
 		
 		// osnovica za porez
 		nPorOsn := ( nBruto - nDoprIz ) - nL_odb
@@ -816,10 +819,10 @@ do while !eof() .and. field->godina = cGodina
 		nDopr1X := Ocitaj( F_DOPR , cDopr1X , "iznos" , .t. )
 		
 		// izracunaj doprinose
-		nIDopr10 := round2(nBruto * nDopr10 / 100, gZaok2)
-		nIDopr11 := round2(nBruto * nDopr11 / 100, gZaok2)
-		nIDopr12 := round2(nBruto * nDopr12 / 100, gZaok2)
-		nIDopr1X := round2(nBruto * nDopr1X / 100, gZaok2)
+		nIDopr10 := round2(nMBruto * nDopr10 / 100, gZaok2)
+		nIDopr11 := round2(nMBruto * nDopr11 / 100, gZaok2)
+		nIDopr12 := round2(nMBruto * nDopr12 / 100, gZaok2)
+		nIDopr1X := round2(nMBruto * nDopr1X / 100, gZaok2)
 
 		dDatIspl := DATE()
 		if lDatIspl 
@@ -831,8 +834,8 @@ do while !eof() .and. field->godina = cGodina
 		nIsplata := ((nBruto - nIDopr1X) - nPorez)
 		
 		// da li se radi o minimalcu ?
-		if cTipRada $ " #I#N#" .and. nNeto < parobr->minld
-			nIsplata := nNeto
+		if cTipRada $ " #I#N#" 
+			nIsplata := min_neto( nIsplata , field->usati )
 		endif
 
 		// ubaci u tabelu podatke

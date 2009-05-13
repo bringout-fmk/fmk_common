@@ -65,6 +65,7 @@ local nNaz
 local nRec1:=0
 local nRec2:=0
 local nRec3:=0
+local nRet := 1
 
 if cObr==nil
 	cObr:=""
@@ -85,6 +86,7 @@ seek cMj+cGod+cObr
 if !FOUND() .or. EOF()
 	// ponovo pretrazi ali bez godine
 	// ima godina = prazan zapis !!!
+	nRet := 0
 	select parobr
 	seek cMj+SPACE(4)+cObr
 endif
@@ -119,7 +121,7 @@ IF IzFMKINI("LD","VrBodaPoRJ","N",KUMPATH)=="D"
 ENDIF
 
 SELECT (nArr)
-RETURN
+return nRet
 
 
 

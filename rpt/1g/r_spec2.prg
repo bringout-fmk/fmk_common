@@ -99,6 +99,7 @@ qqOpSt:=""
 
 nPorOlaksice:=0
 nBrutoOsnova:=0
+nMBrutoOsnova:=0
 nBrutoDobra:=0
 nBrutoOsBenef := 0
 nPojBrOsn := 0
@@ -519,9 +520,13 @@ ENDIF
    	nPojBrDobra := bruto_osn( nPrDobra, cRTR, nKoefLO, nRSpr_koef )
    endif
 
+   // minimalni bruto 
+   nMPojBrOsn := min_bruto( nPojBrOsn, field->usati )
+
    nBrutoOsnova += nPojBrOsn
-   
    nBrutoDobra += nPojBrDobra
+
+   nMBrutoOsnova += nMPojBrOsn
 
    // beneficirani radnici
    if UBenefOsnovu()
@@ -561,7 +566,7 @@ ENDIF
      NEXT
      nBOO := bruto_osn( nBOO, cRTR, nKoefLO )
    ELSE
-     nBOO := nBrutoOsnova
+     nBOO := nMBrutoOsnova
    ENDIF
 
    // dodatni doprinos PIO
@@ -627,16 +632,16 @@ ENDIF
  nPom:=nkDopZX
  UzmiIzIni(cIniName,'Varijable','D12_5B', FormNum2(nPom,16,gpici3)+"%", 'WRITE')
 
- nDopr1X := round2(nBrutoOsnova * nkD1X / 100, gZaok2)
- nDopr2X := round2(nBrutoOsnova * nkD2X / 100, gZaok2)
- nDopr3X := round2(nBrutoOsnova * nkD3X / 100, gZaok2)
- nDopr5X := round2(nBrutoOsnova * nkD5X / 100, gZaok2)
- nDopr6X := round2(nBrutoOsnova * nkD6X / 100, gZaok2)
- nDopr7X := round2(nBrutoOsnova * nkD7X / 100, gZaok2)
+ nDopr1X := round2(nMBrutoOsnova * nkD1X / 100, gZaok2)
+ nDopr2X := round2(nMBrutoOsnova * nkD2X / 100, gZaok2)
+ nDopr3X := round2(nMBrutoOsnova * nkD3X / 100, gZaok2)
+ nDopr5X := round2(nMBrutoOsnova * nkD5X / 100, gZaok2)
+ nDopr6X := round2(nMBrutoOsnova * nkD6X / 100, gZaok2)
+ nDopr7X := round2(nMBrutoOsnova * nkD7X / 100, gZaok2)
 
- nPojDoprIZ := round2((nPojBrOsn * nkD1X /100), gZaok2 ) + ;
- 		round2((nPojBrOsn * nkD2X / 100), gZaok2) + ;
-		round2((nPojBrOsn* nkD3X / 100), gZaok2 )
+ nPojDoprIZ := round2((nMPojBrOsn * nkD1X /100), gZaok2 ) + ;
+ 		round2((nMPojBrOsn * nkD2X / 100), gZaok2) + ;
+		round2((nMPojBrOsn* nkD3X / 100), gZaok2 )
 
  // iznos doprinosa
  

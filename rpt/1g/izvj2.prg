@@ -1167,6 +1167,8 @@ if gVarObracun == "2"
 		endif
 		nBFOsn := bruto_osn(_UNeto - IF(!EMPTY(gBFForm), &gBFForm,0), cTipRada, nKlo, nSPr_koef)
 	endif
+	// minimalni bruto osnov
+	nBo := min_bruto( nBo, _usati )
 else
   	nBo:=round2(parobr->k3/100*MAX(_UNeto,PAROBR->prosld*gPDLimit/100),gZaok2)
 endif

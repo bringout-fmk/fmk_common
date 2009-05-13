@@ -196,6 +196,17 @@ Box(,21,77)
 	clvbox()
 	ESC_BCR
 
+	// da li postoje uneseni parametri obracuna ?
+	if ParObr( cMjesec, cGodina, IF(lViseObr, cObracun, nil), cIdRj ) == 0
+
+		msgbeep("Ne postoje uneseni parametri obracuna za " + ;
+			STR(cMjesec,2) + "/" + STR(cGodina,4) + " !!")
+		
+		boxc()
+		return
+
+	endif
+	
 	select radn
 	
 	if gVarObracun == "2"
@@ -366,6 +377,27 @@ if gVarObracun == "2"
 	cTrosk := " "
 	lInRS := .f.
 	lInRs := in_rs(radn->idopsst, radn->idopsrad)
+	
+	// upisi oporeziva i neoporezive naknade
+	for i:=1 to 40
+
+		cTp := PADL(ALLTRIM(STR(i)), 2, "0")
+		xVar := "_I" + cTp
+
+		nTArea := SELECT()
+		
+		select tippr
+		seek cTp
+		
+		if tippr->uneto == "D"
+			_nakn_opor += &(xVar)
+		elseif tippr->uneto == "N"
+			_nakn_neop += &(xVar)
+		endif
+
+		select (nTArea)
+
+	next
 
 	// radnik oporeziv ?
 	if radn->(FIELDPOS("opor")) <> 0
@@ -390,55 +422,71 @@ if gVarObracun == "2"
 	endif
 
 	// bruto osnova
-	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
-
-	nBrOsn := _UBruto2
+	_UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
 
 	// ugovor o djelu
 	if cTipRada == "U" .and. cTrosk <> "N"
-		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
+		nTrosk := ROUND2( _UBruto * (gUgTrosk / 100), gZaok2 )
 		if lInRS == .t.
 			nTrosk := 0
 		endif
-		nBrOsn := _UBruto2 - nTrosk 
+		_UBruto := _UBruto - nTrosk 
 	endif
 
 	// autorski honorar
 	if cTipRada == "A" .and. cTrosk <> "N"
 		
-		nTrosk := ROUND2( _UBruto2 * (gAhTrosk / 100), gZaok2 )
+		nTrosk := ROUND2( _UBruto * (gAhTrosk / 100), gZaok2 )
 		if lInRS == .t.
 			nTrosk := 0
 		endif
-		nBrOsn := _UBruto2 - nTrosk
+		_UBruto := _UBruto - nTrosk
 	endif
 
 	// uiznos je sada sa uracunatim brutom i ostalim
 	
-	// ukupno doprinosi IZ place
-	nUDoprIZ := u_dopr_iz( nBrOsn, cTipRada )
+	nMinBO := _UBruto
+	if cTipRada $ " #I#N"
+		nMinBO := min_bruto( _UBruto, _USati )
+	endif
+
+	// ukupni doprinosi IZ place
+	nDop := u_dopr_iz( nMinBO, cTipRada )
+	_udopr := nDop
+
+	// doprinosi iz place - stopa
+	_udop_st := 31.0
 
 	// poreska osnovica
-	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
+	nPorOsnovica := ( (_ubruto - _udopr) - _ulicodb )
 
 	if nPorOsnovica < 0 .or. !radn_oporeziv( _idradn, _idrj )
 		nPorOsnovica := 0
 	endif
 
 	// porez
-	nPorez := izr_porez( nPorOsnovica, "B" )
+	_uporez := izr_porez( nPorOsnovica, "B" )
+	
+	// stopa poreza
+	_upor_st := 10.0
 
 	// nema poreza
 	if !radn_oporeziv( _idradn, _idrj )
-		nPorez := 0
+		_uporez := 0
+		_upor_st := 0
+	endif
+	
+	// neto plata
+	_uneto2 := ROUND( ( ( _ubruto - _udopr) - _uporez ), gZaok2 )
+	
+	// ako je prekoracen minimalni neto uzmi minimalni
+	if cTipRada $ " #I#N#" 
+		nMinNeto := min_neto( _uneto2, _usati )
+		_uneto2 := nMinNeto
 	endif
 
-	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, gZaok2 )
-
-	// ako je minimalac - ide ista isplata...
-	if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
-		_uIznos := _UNeto
-	endif
+	// ukupno za isplatu
+	_uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
 
 	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove

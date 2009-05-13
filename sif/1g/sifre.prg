@@ -311,8 +311,11 @@ endif
 
 AADD(ImeKol, { padr("prosj.LD",12), {|| Prosld} , "PROSLD"  }  )
 
-if parobr->(FIELDPOS("MINLD")) <> 0 .and. gVarObracun == "2"
-	AADD(ImeKol, { padr("min.bo",12), {|| minld} , "minld"  } )
+if parobr->(FIELDPOS("M_NET_SAT")) <> 0 .and. gVarObracun == "2"
+	AADD(ImeKol, { padr("mn sat.",12), {|| m_net_sat} , "m_net_sat"  } )
+endif
+if parobr->(FIELDPOS("M_BR_SAT")) <> 0 .and. gVarObracun == "2"
+	AADD(ImeKol, { padr("mb sat.",12), {|| m_br_sat} , "m_br_sat"  } )
 endif
 
 for i := 1 to LEN( ImeKol )

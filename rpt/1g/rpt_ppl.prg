@@ -164,7 +164,7 @@ nULicOdb := 0
 nUBruto := 0
 nUDoprIz := 0
 nUPorez := 0
-nUOpDoh := 0
+nUNetNr := 0
 
 do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .and.!( lViseObr .and. !EMPTY(cObracun) .and. obr<>cObracun )
 	
@@ -235,6 +235,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 	cOpor := ""
 	cTrosk := ""
 	nLicOdb := 0
+	nNetNr := 0
 
 	if gVarObracun == "2"
 		
@@ -248,8 +249,11 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 		
 		// napravi mali obracun
 		nBO := bruto_osn( _uneto, cRTipRada, nLicOdb, nPrKoef, cTrosk )
-		
-		nBrOsn := nBO
+	
+		// minimalna bruto osnova
+		nMBO := min_bruto( nBo, ld->usati )
+
+		nBrOsn := nBo
 
 		if cRTipRada == "A" .and. cTrosk <> "N"
 			nTrosk := nBO * (gAhTrosk / 100)
@@ -261,17 +265,15 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 
 
 		// doprinosi iz
-		nDoprIz := u_dopr_iz( nBrOsn, cRTipRada )
-		
-		// oporezivi dohodak
-		nOporDoh := nBrOsn - nDoprIZ
+		nDoprIz := u_dopr_iz( nMBO, cRTipRada )
 		
 		// porez
 		nPorez := 0
 		if radn_oporeziv( ld->idradn, ld->idrj ) .and. cRTipRada <> "S"
-			nPorez := izr_porez( nOporDoh - nLicOdb, "B" )
+			nPorez := izr_porez( nBrOsn - nDoprIz - nLicOdb, "B" )
 		endif
 		
+		nNetNr := ( nBrOsn - nDoprIz - nPorez )
 
 	endif
 
@@ -294,12 +296,12 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 		@ prow(),pcol()+1 SAY nBrOsn pict gpici
 		// doprinosi iz
 		@ prow(),pcol()+1 SAY nDoprIz pict gpici
-		// oporezivi dohodak
-		@ prow(),pcol()+1 SAY nOporDoh pict gpici
 		// licni odbici
 		@ prow(),pcol()+1 SAY nLicOdb pict gpici
 		// porez 10%
 		@ prow(),pcol()+1 SAY nPorez pict gpici
+		// neto na ruke
+		@ prow(),pcol()+1 SAY nNetNr pict gpici
 	endif
 
 	if gVarPP=="2"
@@ -337,7 +339,7 @@ do while !eof() .and.  cgodina==godina .and. idrj=cidrj .and. cmjesec=mjesec .an
 		nUBruto += nBrOsn
 		nUDoprIz += nDoprIz	
 		nUPorez += nPorez
-		nUOpDoh += nOporDoh
+		nUNetNr += nNetNr
 	endif
 
 	skip
@@ -362,9 +364,9 @@ ENDIF
 if gVarObracun == "2"
 	@ prow(),pcol()+1 SAY nUBruto pict gpici
 	@ prow(),pcol()+1 SAY nUDoprIz pict gpici
-	@ prow(),pcol()+1 SAY nUOpDoh pict gpici
 	@ prow(),pcol()+1 SAY nULicOdb pict gpici
 	@ prow(),pcol()+1 SAY nUPorez pict gpici
+	@ prow(),pcol()+1 SAY nUNetNR pict gpici
 endif
 
 IF gVarPP="2"
@@ -423,9 +425,9 @@ if gVarObracun == "2"
   		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Redovan *  Minuli   *   Neto    *       VAN NETA       * ZA ISPLATU*")
   		? Lokal("     *      *                                  *         *     rad   *   rad     *           * Primanja  * Obustave *           *")
 	ELSE
-  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   *   Neto    * Bruto pl. * Dopr (iz) * Opor.doh. * L.odbici  *  Porez    *  Odbici   * ZA ISPLATU*")
-  		      ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *   2 - 3   *           * (4-5)x10% *           *   4 - 6   *"
-  		      ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *    (5)    *   (6)     *   (7)     *    (8)    *"
+  		? Lokal(" Rbr * Sifra*         Naziv radnika            *  Sati   * Primanja  * Bruto pl. * Dopr (iz) * L.odbici  *  Porez    *   Neto    * Odbici   * ZA ISPLATU*")
+  		      ? "     *      *                                  *         *           * 1 x koef. *  1 x 31%  *           *    10%    *  (2-3-5)  *          *   (6+7)   *"
+  		      ? "     *      *                                  *         *    (1)    *    (2)    *    (3)    *    (4)    *   (5)     *   (6)     *    (7)   *     (8)   *"
 	ENDIF
 
 else

@@ -158,48 +158,63 @@ do while !eof() .and. cGodina==godina .and. cIdRj==idrj .and. cMjesec=mjesec .an
 	endif
 
 	// bruto osnova
-	_UBruto2 := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
-
-	nBrOsn := _UBruto2
+	_UBruto := bruto_osn( _UNeto, cTipRada, _ULicOdb, nSPr_koef, cTrosk ) 
 
 	// ugovor o djelu
 	if cTipRada == "U" .and. cTrosk <> "N"
-		nTrosk := ROUND2( _UBruto2 * (gUgTrosk / 100), gZaok2 )
-		nBrOsn := _UBruto2 - nTrosk 
+		nTrosk := ROUND2( _UBruto * (gUgTrosk / 100), gZaok2 )
+		if lInRS == .t.
+			nTrosk := 0
+		endif
+		_UBruto := _UBruto - nTrosk 
 	endif
 
 	// autorski honorar
 	if cTipRada == "A" .and. cTrosk <> "N"
-		nTrosk := ROUND2( _UBruto2 * (gAhTrosk / 100), gZaok2 )
-		nBrOsn := _UBruto2 - nTrosk
+		nTrosk := ROUND2( _UBruto * (gAhTrosk / 100), gZaok2 )
+		if lInRS == .t.
+			nTrosk := 0
+		endif
+		_UBruto := _UBruto - nTrosk
+	endif
+
+	nMinBO := _UBruto
+	if cTipRada $ " #I#N"
+		nMinBO := min_bruto( _Ubruto, _Usati )
 	endif
 
 	// uiznos je sada sa uracunatim brutom i ostalim
 	
 	// ukupno doprinosi IZ place
-	nUDoprIZ := u_dopr_iz( nBrOsn, cTipRada )
-	
+	nUDoprIZ := u_dopr_iz( nMinBO, cTipRada )
+	_UDopr := nUDoprIZ
+	_UDop_St := 31.0
+
 	// poreska osnovica
-	nPorOsnovica := ( (nBrOsn - nUDoprIz) - _ulicodb )
+	nPorOsnovica := ( (_UBruto - _Udopr) - _ulicodb )
 
 	if nPorOsnovica < 0 .or. !radn_oporeziv( _idradn, _idrj )
 		nPorOsnovica := 0
 	endif
 
 	// porez
-	nPorez := izr_porez( nPorOsnovica, "B" )
+	_UPorez := izr_porez( nPorOsnovica, "B" )
+	_UPor_st := 10.0
 
 	// nema poreza
 	if !radn_oporeziv( _idradn, _idrj )
-		nPorez := 0
+		_uporez := 0
+		_upor_st := 0
 	endif
 
-	_uiznos := ROUND2( ((nBrOsn - nUDoprIz) - nPorez ) + _UOdbici, gZaok2 )
+	// neto plata
+	_uneto2 := ROUND2( (_ubruto - _udopr) - _uporez , gZaok2)
 
-	// ako je minimalac - ide ista isplata...
-	if cTipRada $ " #I#N#" .and. _UNeto < parobr->minld
-		_uIznos := _UNeto
+	if cTipRada $ " #I#N"
+		_uneto2 := min_neto( _uneto2, _usati )
 	endif
+
+	_uiznos := ROUND2( _uneto2 + _UOdbici, gZaok2 )
 
 	if cTipRada $ "U#A" .and. cTrosk <> "N"
 		// kod ovih vrsta dodaj i troskove

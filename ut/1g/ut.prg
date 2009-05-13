@@ -186,18 +186,15 @@ if gVarObracun <> "2"
 	return nBrt
 endif
 
-if cTipRada $ " #I#N"
-	// da li je minimalac ?
-	nIzn := MAX( nIzn, parobr->minld )
-endif
-
 do case
 	// nesamostalni rad
 	case EMPTY(cTipRada)
 		nBrt := ROUND2( nIzn * parobr->k5 ,gZaok2 )
+
 	// neto placa (neto + porez )
 	case cTipRada == "N"
 		nBrt := ROUND2( nIzn * parobr->k6 , gZaok2 )
+
 	// nesamostalni rad, isti neto
 	case cTipRada == "I"
 		// ako je ugovoreni iznos manji od odbitka
@@ -207,7 +204,7 @@ do case
 			nBrt := ROUND2( ( (nIzn - nLOdb) / 0.9 + nLOdb ) ;
 				/ 0.69  ,gZaok2)
 		endif
-	
+		
 	// samostalni poslodavci
 	case cTipRada == "S"
 		nBrt := ROUND2( nIzn * nSKoef ,gZaok2 )
@@ -264,11 +261,6 @@ if cTrosk == nil
 	cTrosk := ""
 endif
 
-if cTipRada $ " #I#N"
-	// minimalac ?
-	nNeto := MAX( nNeto, parobr->minld )
-endif
-
 do case
 	// nesamostalni rad
 	case EMPTY(cTipRada)
@@ -282,8 +274,9 @@ do case
 
 	// nesamostalni rad - isti neto
 	case cTipRada == "I"
-		cPrn := ALLTRIM(STR(nNeto)) + " - " + ALLTRIM(STR(nLOdb)) + ;
-			" / 0.9 + " + ALLTRIM(STR(nLOdb)) + " / 0.69 = "
+		cPrn := "((( " + ALLTRIM(STR(nNeto)) + " - " + ;
+			ALLTRIM(STR(nLOdb)) + ")" + ;
+			" / 0.9 ) + " + ALLTRIM(STR(nLOdb)) + " ) / 0.69 = "
 		if ( nNeto < nLOdb ) 
 			cPrn := ALLTRIM(STR(nNeto)) + " * " + ;
 				ALLTRIM(STR(parobr->k6)) + " ="
@@ -327,6 +320,36 @@ do case
 endcase
 
 return cPrn
+
+
+// --------------------------------------------
+// minimalni bruto
+// --------------------------------------------
+function min_bruto( nBruto, nSati )
+local nRet
+local nMBO
+
+nMBO := ( nSati * parobr->m_br_sat )
+
+nRet := MAX( nBruto, nMBO )
+
+return nRet
+
+
+
+// --------------------------------------------
+// minimalni neto
+// --------------------------------------------
+function min_neto( nNeto, nSati )
+local nRet
+local nMNO
+
+nMNO := ( nSati * parobr->m_net_sat )
+
+nRet := MAX( nNeto, nMNO )
+
+return nRet
+
 
 
 // ---------------------------------------------------

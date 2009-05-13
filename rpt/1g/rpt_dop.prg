@@ -292,7 +292,7 @@ do while !eof()
 			
 			if gVarObracun == "2"
 
-				nBo := nURadn_bo
+				nBo := nUMRadn_bo
 				
 				// ako je beneficirani
 				if "BENEF" $ dopr->naz

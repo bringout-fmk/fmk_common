@@ -324,9 +324,13 @@ if gPrBruto=="D"
 		nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )
 	endif
 
+	// minimalni bruto
+	nBoMin := min_bruto( nBo, ld->usati )
+
 	// bruto placa iz neta...
 
 	? cMainLine
+	
 	? cLMSK + "1. BRUTO PLACA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
@@ -341,8 +345,17 @@ if gPrBruto=="D"
 	
 	// razrada doprinosa ....
 	
-	? cLmSK + cDoprSpace + Lokal("Obracun doprinosa:")
+	? cLmSK + Lokal("2. Obracun doprinosa:")
 	
+	if ( nBo < nBoMin )
+		
+		? cLMSK + SPACE(4) + Lokal("min.bruto osnova = minimalna bruto satnica * sati")
+
+		@ prow(),60+LEN(cLMSK) SAY nBoMin pict gpici
+
+		? cLmSk + cDoprLine
+	endif
+
 	select dopr
 	go top
 	
@@ -405,9 +418,9 @@ if gPrBruto=="D"
 				nC1:=pcol()+1
 				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBFO,gZaok2)) pict gpici
 			else
-				@ prow(),pcol()+1 SAY nBo pict gpici
+				@ prow(),pcol()+1 SAY nBoMin pict gpici
 				nC1:=pcol()+1
-				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBO,gZaok2)) pict gpici
+				@ prow(),pcol()+1 SAY nPom:=max(dlimit,round(iznos/100*nBOMin,gZaok2)) pict gpici
 			endif
 			
 			if dopr->id == "1X"
@@ -446,15 +459,6 @@ if gPrBruto=="D"
 	enddo
 
 
-	nOporDoh := nBo - nUkDoprIz
-
-	// oporezivi dohodak ......
-	
-	? cMainLine
-	?  cLMSK + Lokal("2. OPOREZIVI DOHODAK ( bruto - dopr.IZ )")
-	@ prow(),60+LEN(cLMSK) SAY nOporDoh pict gpici
-	? cMainLine
-	
 	// razrada licnog odbitka ....
 	
 	if nLicOdbitak > 0
@@ -473,14 +477,14 @@ if gPrBruto=="D"
 
 	? cMainLine
 
-	nPorOsnovica := ( nOporDoh - nLicOdbitak )
+	nPorOsnovica := ( nBO - nUkDoprIz - nLicOdbitak )
 	
 	// ako je negativna onda je 0
 	if nPorOsnovica < 0 .or. !radn_oporeziv( radn->id, ld->idrj )
 		nPorOsnovica := 0
 	endif
 
-	?  cLMSK + Lokal("4. OSNOVICA POREZA NA DOHODAK (2 - 3)")
+	?  cLMSK + Lokal("4. OSNOVICA POREZA NA DOHODAK (1-2-3)")
 	@ prow(),60+LEN(cLMSK) SAY nPorOsnovica pict gpici
 
 	? cMainLine
@@ -528,19 +532,19 @@ if gPrBruto=="D"
 	@ prow(),60+LEN(cLMSK) SAY nPor pict gpici
 
 	// neto na ruke
+	nUkIspl := ROUND2( nBO - nUkDoprIz - nPor, gZaok2 )
+
+	// minimalna neto isplata
+	nMUkIspl := min_neto( nUkIspl, ld->usati )
+
 	? cMainLine
-	? cLMSK + Lokal("6. UKUPNO ZA ISPLATU (2 - 5)")
-
-	nUkIspl := ROUND2(nOporDoh - nPor, gZaok2)
-
-	// minimalac
-	if cRTipRada $ " #I#N"
-		if nOsnZaBr < parobr->minld
-			nUkIspl := nOsnZaBr
-		endif
+	
+	if nUkIspl < nMUkIspl
+		? cLMSK + Lokal("6. Minimalna neto isplata : min.neto satnica * sati")
+	else
+		? cLMSK + Lokal("6. NETO PLATA (1-2-5)")
 	endif
-
-	@ prow(),60+LEN(cLMSK) SAY nUkIspl pict gpici
+	@ prow(),60+LEN(cLMSK) SAY nMUkIspl pict gpici
 
 
 	// ostala primanja 
@@ -551,12 +555,12 @@ if gPrBruto=="D"
 
 
 	// ukupno za isplatu ....
-	nZaIsplatu := ROUND2( nUkIspl + nOsnOstalo, gZaok2 )
+	nZaIsplatu := ROUND2( nMUkIspl + nOsnOstalo, gZaok2 )
 	
 	?
 
 	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA ODBICIMA ( 2 - 5 + 7 )")
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA ODBICIMA (6+7)")
 	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
 
 	? cMainLine

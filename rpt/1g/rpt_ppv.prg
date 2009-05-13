@@ -65,9 +65,9 @@ return
 // ---------------------------------------------
 // upisivanje podatka u pomocnu tabelu za rpt
 // ---------------------------------------------
-static function _ins_tbl( cRadnik, cIme, nSati, nNeto, ;
+static function _ins_tbl( cRadnik, cIme, nSati, nPrim, ;
 		nBruto, nDoprIz, nDopPio, ;
-		nDopZdr, nDopNez, nOporDoh, nLOdb, nPorez, ;
+		nDopZdr, nDopNez, nOporDoh, nLOdb, nPorez, nNeto, ;
 		nOdbici, nIsplata )
 
 local nTArea := SELECT()
@@ -80,6 +80,7 @@ replace idradn with cRadnik
 replace naziv with cIme
 replace sati with nSati
 replace neto with nNeto
+replace prim with nPrim
 replace bruto with nBruto
 replace dop_iz with nDoprIz
 replace dop_pio with nDopPio
@@ -105,6 +106,7 @@ local aDbf := {}
 AADD(aDbf,{ "IDRADN", "C", 6, 0 })
 AADD(aDbf,{ "NAZIV", "C", 20, 0 })
 AADD(aDbf,{ "SATI", "N", 12, 2 })
+AADD(aDbf,{ "PRIM", "N", 12, 2 })
 AADD(aDbf,{ "NETO", "N", 12, 2 })
 AADD(aDbf,{ "BRUTO", "N", 12, 2 })
 AADD(aDbf,{ "DOP_IZ", "N", 12, 2 })
@@ -221,12 +223,12 @@ cLine := ppv_header( cDop1, cDop2, cDop3 )
 
 nUSati := 0
 nUNeto := 0
+nUPrim := 0
 nUBruto := 0
 nUDoprPio := 0
 nUDoprZdr := 0
 nUDoprNez := 0
 nUDoprIZ := 0
-nUOpDoh := 0
 nUPorez := 0
 nUOdbici := 0
 nULicOdb := 0
@@ -247,8 +249,8 @@ do while !EOF()
 	@ prow(), nPoc:=pcol()+1 SAY STR(sati,12,2)
 	nUSati += sati
 
-	@ prow(), pcol()+1 SAY STR(neto,12,2) 
-	nUNeto += neto
+	@ prow(), pcol()+1 SAY STR(prim,12,2) 
+	nUPrim += prim
 	
 	@ prow(), pcol()+1 SAY STR(bruto,12,2)
 	nUBruto += bruto
@@ -256,15 +258,15 @@ do while !EOF()
 	@ prow(), pcol()+1 SAY STR(dop_iz,12,2)
 	nUDoprIz += dop_iz
 
-	@ prow(), pcol()+1 SAY STR(opordoh,12,2)
-	nUOpDoh += opordoh
-	
 	@ prow(), pcol()+1 SAY STR(l_odb,12,2)
 	nULicOdb += l_odb
 
 	@ prow(), pcol()+1 SAY STR(izn_por,12,2)
 	nUPorez += izn_por
 	
+	@ prow(), pcol()+1 SAY STR(neto,12,2)
+	nUNeto += neto
+
 	@ prow(), pcol()+1 SAY STR(odbici,12,2)
 	nUOdbici += odbici
 
@@ -289,12 +291,12 @@ enddo
 
 ? "UKUPNO:"
 @ prow(), nPoc SAY STR(nUSati,12,2)
-@ prow(), pcol()+1 SAY STR(nUNeto,12,2)
+@ prow(), pcol()+1 SAY STR(nUPrim,12,2)
 @ prow(), pcol()+1 SAY STR(nUBruto,12,2)
 @ prow(), pcol()+1 SAY STR(nUDoprIz,12,2)
-@ prow(), pcol()+1 SAY STR(nUOpDoh,12,2)
 @ prow(), pcol()+1 SAY STR(nULicOdb,12,2)
 @ prow(), pcol()+1 SAY STR(nUPorez,12,2)
+@ prow(), pcol()+1 SAY STR(nUNeto,12,2)
 @ prow(), pcol()+1 SAY STR(nUOdbici,12,2)
 @ prow(), pcol()+1 SAY STR(nUIsplata,12,2)
 @ prow(), pcol()+1 SAY STR(nUDoprPio,12,2)
@@ -341,14 +343,14 @@ AADD( aTxt, { "Red.", "br", "", "1" })
 AADD( aTxt, { "Sifra", "radn.", "", "2" })
 AADD( aTxt, { "Naziv", "radnika", "", "3" })
 AADD( aTxt, { "Sati", "", "", "4" })
-AADD( aTxt, { "Neto", "", "", "5" })
+AADD( aTxt, { "Primanja", "", "", "5" })
 AADD( aTxt, { "Bruto plata", "(5 x koef.)", "", "6" })
 AADD( aTxt, { "Doprinos", "iz place", "( 31% )", "7" })
-AADD( aTxt, { "Oporezivi", "dohodak", "( 6 - 7 )", "8" })
-AADD( aTxt, { "Licni odbici", "", "", "9" })
-AADD( aTxt, { "Porez", "na dohodak", "(8-9) x 10%", "10" })
+AADD( aTxt, { "Licni odbici", "", "", "8" })
+AADD( aTxt, { "Porez", "na dohodak", "10%", "9" })
+AADD( aTxt, { "Neto", "plata", "(6-7-9)", "10" })
 AADD( aTxt, { "Odbici", "", "", "11" })
-AADD( aTxt, { "Za isplatu", "", "", "12" })
+AADD( aTxt, { "Za isplatu", "", "(10+11)", "12" })
 AADD( aTxt, { "Dodatni", "dopr. 1", "D->"+cDop1, "13" })
 AADD( aTxt, { "Dodatni", "dopr. 2", "D->"+cDop2, "14" })
 AADD( aTxt, { "Dodatni", "dopr. 3", "D->"+cDop3, "15" })
@@ -448,12 +450,13 @@ do while !eof() .and. field->godina = cGodina
 
 	nSati := 0
 	nNeto := 0
+	nUNeto := 0
+	nPrim := 0
 	nBruto := 0
 	nUDopIz := 0
 	nIDoprPio := 0
 	nIDoprZdr := 0
 	nIDoprNez := 0
-	nOporDoh := 0
 	nOdbici := 0
 	nL_odb := 0
 	nPorez := 0
@@ -478,8 +481,8 @@ do while !eof() .and. field->godina = cGodina
 			nPrKoef := radn->sp_koef
 		endif
 		
-		// neto ?
-		nNeto += field->uneto
+		// primanja ?
+		nPrim += field->uneto
 		
 		// odbici ?
 		nOdbici += field->uodbici
@@ -521,18 +524,19 @@ do while !eof() .and. field->godina = cGodina
 			
 		endif
 
+
 		// bruto pojedinacno za radnika
 		nBrPoj := nBrutoST - nTrosk
 
+		// minimalni bruto
+		nMBrutoST := min_bruto( nBrPoj, field->usati )
+		
 		// ukupni bruto
 		nBruto += nBrPoj
 		
 		// ukupno dopr iz 31%
-		nDoprIz := u_dopr_iz( nBrPoj , cTipRada )
+		nDoprIz := u_dopr_iz( nMBrutoST , cTipRada )
 		nUDopIz += nDoprIz
-
-		// oporezivi dohodak
-		nOporDoh += ( nBrPoj - nDoprIz )
 
 		// osnovica za porez
 		nPorOsnP := ( nBrPoj - nDoprIz ) - nLOdbitak
@@ -542,17 +546,27 @@ do while !eof() .and. field->godina = cGodina
 		endif
 		
 		// porez je ?
-		nPorez += izr_porez( nPorOsnP, "B" )
+		nPorPoj := izr_porez( nPorOsnP, "B" )
+		nPorez += nPorPoj
 	
+
+		// neto isplata
+		nNeto := ( nBrPoj - nDoprIz - nPorPoj )
+		
+		// minimalni neto uslov
+		nNeto := min_neto( nNeto, field->usati )
+		
+		nUNeto += nNeto
+
 		// ocitaj doprinose, njihove iznose
 		nDoprPIO := get_dopr( cDoprPIO, cTipRada ) 
 		nDoprZDR := get_dopr( cDoprZDR, cTipRada ) 
 		nDoprNEZ := get_dopr( cDoprNEZ, cTipRada ) 
 		
 		// izracunaj doprinose
-		nIDoprPIO += round2(nBrPoj * nDoprPIO / 100, gZaok2)
-		nIDoprZDR += round2(nBrPoj * nDoprZDR / 100, gZaok2)
-		nIDoprNEZ += round2(nBrPoj * nDoprNEZ / 100, gZaok2)
+		nIDoprPIO += round2(nMBrutoST * nDoprPIO / 100, gZaok2)
+		nIDoprZDR += round2(nMBrutoST * nDoprZDR / 100, gZaok2)
+		nIDoprNEZ += round2(nMBrutoST * nDoprNEZ / 100, gZaok2)
 
 		select ld
 		skip
@@ -563,15 +577,16 @@ do while !eof() .and. field->godina = cGodina
 	_ins_tbl( cT_radnik, ;
 		cT_rnaziv, ;
 		nSati, ;
-		nNeto, ;
+		nPrim, ;
 		nBruto, ;
 		nUDopIZ,;
 		nIDoprPIO, ;
 		nIDoprZDR, ;
 		nIDoprNEZ, ;
-		nOporDoh, ;
+		0, ;
 		nL_Odb, ;
 		nPorez, ;
+		nUNeto, ;
 		nOdbici, ;
 		nIsplata )
 				
