@@ -324,14 +324,18 @@ if gPrBruto=="D"
 		nBFo := bruto_osn( nTmp2, cRTipRada, nLicOdbitak )
 	endif
 
-	// minimalni bruto
-	nBoMin := min_bruto( nBo, ld->usati )
+	nBoMin := nBo
+
+	if cRTipRada $ " #I#N"
+		// minimalni bruto
+		nBoMin := min_bruto( nBo, ld->usati )
+	endif
 
 	// bruto placa iz neta...
 
 	? cMainLine
 	
-	? cLMSK + "1. BRUTO PLACA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+	? cLMSK + "1. BRUTO PLATA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -534,8 +538,12 @@ if gPrBruto=="D"
 	// neto na ruke
 	nUkIspl := ROUND2( nBO - nUkDoprIz - nPor, gZaok2 )
 
-	// minimalna neto isplata
-	nMUkIspl := min_neto( nUkIspl, ld->usati )
+	nMUkIspl := nUkIspl
+
+	if cRTipRada $ " #I#N"
+		// minimalna neto isplata
+		nMUkIspl := min_neto( nUkIspl, ld->usati )
+	endif
 
 	? cMainLine
 	
