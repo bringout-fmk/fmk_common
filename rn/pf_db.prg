@@ -357,6 +357,19 @@ if !USED(F_RN)
 	O_RN
 endif
 
+if cC1 == nil
+	cC1 := ""
+endif
+if cC2 == nil
+	cC2 := ""
+endif
+if cC3 == nil
+	cC3 := ""
+endif
+if cOpis == nil
+	cOpis := ""
+endif
+
 select rn
 append blank
 
