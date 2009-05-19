@@ -46,7 +46,12 @@ nKoefOdbitka := radn->klo
 cRTipRada := g_tip_rada( ld->idradn, ld->idrj )
 
 ? cTprLine
-? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
+if gPrBruto == "X"
+	? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos            ukupno bruto")
+else
+	? cLMSK+ Lokal(" Vrsta                  Opis         sati/iznos             ukupno")
+endif
+
 ? cTprLine
 
 for i:=1 to cLDPolja
@@ -61,10 +66,16 @@ for i:=1 to cLDPolja
 		cUneto:="N"
 		
 		? cTprLine
-		? cLMSK+Lokal("Ukupna oporeziva primanja:")
+		if gPrBruto == "X"
+			? cLMSK+Lokal("Ukupno bruto:")
+		else
+			? cLMSK+Lokal("Ukupna oporeziva primanja:")
+		endif
+
 		@ prow(),nC1+8  SAY  _USati  pict gpics
 		?? SPACE(1) + Lokal("sati")
-		@ prow(),60+LEN(cLMSK) SAY _UNeto pict gpici
+		nPom := _calc_tpr( _UNeto, .t. )
+		@ prow(),60+LEN(cLMSK) SAY nPom pict gpici
 		?? "",gValuta
 		? cTprLine
 	
@@ -119,20 +130,27 @@ for i:=1 to cLDPolja
 					@ prow()+1,0 SAY Lokal("Odbici od bruta: ")
 					@ prow(), pcol()+48 SAY "-" + ALLTRIM(STR((_i&cPom * (parobr->k3)/100)-_i&cPom))
 				else
-					@ prow(),60+LEN(cLMSK) say _i&cPom pict gpici
+					
+					nPom := _calc_tpr( _i&cPom )
+					
+					@ prow(),60+LEN(cLMSK) say nPom pict gpici
 				endif
 			
 			elseif tippr->fiksan=="P"
 				
+				nPom := _calc_tpr( _i&cPom )
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999.99%"
-				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+				@ prow(),60+LEN(cLMSK) say nPom  pict gpici
+
 			elseif tippr->fiksan=="B"
 				
+				nPom := _calc_tpr( _i&cPom )
 				@ prow(),pcol()+8 SAY _s&cPom  pict "999999"; ?? " b"
-				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+				@ prow(),60+LEN(cLMSK) say nPom pict gpici
 			elseif tippr->fiksan=="C"
 				
-				@ prow(),60+LEN(cLMSK) say _i&cPom        pict gpici
+				nPom := _calc_tpr( _i&cPom )
+				@ prow(),60+LEN(cLMSK) say nPom pict gpici
 			endif
 	
 			// suma iz prethodnih obracuna !
@@ -290,7 +308,7 @@ if lRadniSati
 	?
 endif
 
-if gPrBruto=="D"  
+if gPrBruto $ "D#X"  
 	
 	// prikaz bruto iznosa
 	
@@ -335,7 +353,11 @@ if gPrBruto=="D"
 
 	? cMainLine
 	
-	? cLMSK + "1. BRUTO PLATA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+	if gPrBruto == "X"
+		? cLMSK + "1. BRUTO PLATA :  "
+	else
+		? cLMSK + "1. BRUTO PLATA :  ", bruto_isp( nOsnZaBr, cRTipRada, nLicOdbitak )
+	endif
 
 	@ prow(),60+LEN(cLMSK) SAY nBo pict gpici
 	
@@ -349,11 +371,11 @@ if gPrBruto=="D"
 	
 	// razrada doprinosa ....
 	
-	? cLmSK + Lokal("2. Obracun doprinosa:")
+	? cLmSK + Lokal("Obracun doprinosa: ")
 	
 	if ( nBo < nBoMin )
 		
-		? cLMSK + SPACE(4) + Lokal("min.bruto osnova = minimalna bruto satnica * sati")
+		??  Lokal("minimalna bruto satnica * sati")
 
 		@ prow(),60+LEN(cLMSK) SAY nBoMin pict gpici
 
@@ -412,7 +434,12 @@ if gPrBruto=="D"
 			loop
 		endif
 		
-		? cLMSK + cDoprSpace + id, "-", naz
+		if dopr->id == "1X"
+			? cLMSK + "2. " + id, "-", naz
+		else
+			? cLMSK + cDoprSpace + id, "-", naz
+		endif
+
 		@ prow(),pcol()+1 SAY iznos pict "99.99%"
 		
 		if empty(idkbenef) 
@@ -449,7 +476,6 @@ if gPrBruto=="D"
 		if right(id,1)=="X"
 			
 			? cDoprLine
-			?
 			nDopr += nPom
 		
 		endif
@@ -488,7 +514,7 @@ if gPrBruto=="D"
 		nPorOsnovica := 0
 	endif
 
-	?  cLMSK + Lokal("4. OSNOVICA POREZA NA DOHODAK (1-2-3)")
+	?  cLMSK + Lokal("4. OSNOVICA ZA POREZ NA PLATU (1-2-3)")
 	@ prow(),60+LEN(cLMSK) SAY nPorOsnovica pict gpici
 
 	? cMainLine
@@ -496,7 +522,7 @@ if gPrBruto=="D"
 	// razrada poreza na platu ....
 	// u ovom dijelu idu samo porezi na bruto TIP = "B"
 
-	? cLMSK + Lokal("5. AKONTACIJA POREZA NA DOHODAK")
+	? cLMSK + Lokal("5. POREZ NA PLATU")
 
 	select por
 	go top
@@ -626,7 +652,7 @@ if lSkrivena
 elseif c2K1L == "N"
 	FF
 // ako je prikaz bruto D obavezno FF
-elseif gPrBruto == "D"
+elseif gPrBruto $ "D#X"
 	FF
 // nova kartica novi list - obavezno FF
 elseif lNKNS

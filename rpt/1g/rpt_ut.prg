@@ -74,7 +74,8 @@ return
 function _gdoprline( cDoprSpace )
 local cLine
 cLine := cLMSK
-cLine += cDoprSpace
+cLine += REPLICATE("-", 2)
+cLine += SPACE(1)
 cLine += REPLICATE("-",23)
 cLine += SPACE(1)
 cLine += REPLICATE("-",8)

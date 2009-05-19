@@ -1,5 +1,25 @@
 #include "ld.ch"
 
+// -----------------------------------------------
+// preracunava postojeci iznos na bruto iznos
+// -----------------------------------------------
+function _calc_tpr( nIzn, lCalculate )
+local nRet := nIzn
+local cTR
+
+if lCalculate == nil
+	lCalculate := .f.
+endif
+
+cTR := g_tip_rada( ld->idradn, ld->idrj )
+
+if gPrBruto == "X" .and. ( tippr->uneto == "D" .or. lCalculate == .t. )
+	nRet := bruto_osn( nIzn, cTR, ld->ulicodb )
+endif
+
+return nRet
+
+
 // -------------------------------------------------------------------
 // lista tipova rada koji se mogu prikazivati pod jednim izvjestajem 
 // ili koji ce koristiti iste doprinose
