@@ -1324,7 +1324,7 @@ return gpIni == "#%INI__#"
 // --------------------------------
 static function	DSTR_KOREKCIJA()
 local nPom
-
+altd()
 nPom := ROUND(nDuzStrKorekcija, 0)
 if ROUND(nDuzStrKorekcija - nPom, 1) > 0.2
 	nPom ++
@@ -1338,6 +1338,13 @@ return nPom
 // --------------------------------
 static function	PICT_KOREKCIJA( nStr )
 local nPom
+
+if nPicHRow == nil
+	nPicHRow := 0
+endif
+if nPicFRow == nil
+	nPicFRow := 0
+endif
 
 if nStr == 1
 	nPom := ( nPicHRow + nPicFRow )
