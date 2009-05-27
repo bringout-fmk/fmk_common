@@ -68,7 +68,7 @@ return
 static function _ins_tbl( cRadnik, cIme, nSati, nPrim, ;
 		nBruto, nDoprIz, nDopPio, ;
 		nDopZdr, nDopNez, nOporDoh, nLOdb, nPorez, nNeto, ;
-		nOdbici, nIsplata )
+		nOdbici, nIsplata, nDop4, nDop5, nDop6 )
 
 local nTArea := SELECT()
 
@@ -86,6 +86,9 @@ replace dop_iz with nDoprIz
 replace dop_pio with nDopPio
 replace dop_zdr with nDopZdr
 replace dop_nez with nDopNez
+replace dop_4 with nDop4
+replace dop_5 with nDop5
+replace dop_6 with nDop6
 replace l_odb with nLOdb
 replace izn_por with nPorez
 replace opordoh with nOporDoh
@@ -113,6 +116,9 @@ AADD(aDbf,{ "DOP_IZ", "N", 12, 2 })
 AADD(aDbf,{ "DOP_PIO", "N", 12, 2 })
 AADD(aDbf,{ "DOP_ZDR", "N", 12, 2 })
 AADD(aDbf,{ "DOP_NEZ", "N", 12, 2 })
+AADD(aDbf,{ "DOP_4", "N", 12, 2 })
+AADD(aDbf,{ "DOP_5", "N", 12, 2 })
+AADD(aDbf,{ "DOP_6", "N", 12, 2 })
 AADD(aDbf,{ "IZN_POR", "N", 12, 2 })
 AADD(aDbf,{ "OPORDOH", "N", 12, 2 })
 AADD(aDbf,{ "L_ODB", "N", 12, 2 })
@@ -141,6 +147,7 @@ local cGodina
 local cDoprPio := "70"
 local cDoprZdr := "80"
 local cDoprNez := "90"
+local cDoprD4 := cDoprD5 := cDoprD6 := SPACE(2)
 local cObracun := gObracun
 
 // kreiraj pomocnu tabelu
@@ -172,6 +179,9 @@ endif
 @ m_x + 7, m_y + 2 SAY " Sifra dodatnog doprinosa 1 : " GET cDoprPio 
 @ m_x + 8, m_y + 2 SAY " Sifra dodatnog doprinosa 2 : " GET cDoprZdr
 @ m_x + 9, m_y + 2 SAY " Sifra dodatnog doprinosa 3 : " GET cDoprNez
+@ m_x + 10, m_y + 2 SAY " Sifra dodatnog doprinosa 4 : " GET cDoprD4 
+@ m_x + 11, m_y + 2 SAY " Sifra dodatnog doprinosa 5 : " GET cDoprD5
+@ m_x + 12, m_y + 2 SAY " Sifra dodatnog doprinosa 6 : " GET cDoprD6
 
 read
 	
@@ -192,10 +202,11 @@ ld_sort( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, cObracun )
 
 // nafiluj podatke obracuna
 fill_data( cRj, cGodina, cMjesec, cMjesecDo, cRadnik, ;
-	cDoprPio, cDoprZdr, cDoprNez, cObracun )
+	cDoprPio, cDoprZdr, cDoprNez, cObracun, cDoprD4, cDoprD5, cDoprD6 )
 
 // printaj izvjestaj
-ppv_print( cRj, cGodina, cMjesec, cMjesecDo, cDoprPio, cDoprZdr, cDoprNez )
+ppv_print( cRj, cGodina, cMjesec, cMjesecDo, cDoprPio, cDoprZdr, cDoprNez, ;
+	cDoprD4, cDoprD5, cDoprD6 )
 
 return
 
@@ -204,7 +215,9 @@ return
 // ----------------------------------------------
 // stampa pregleda plata za vise mjeseci
 // ----------------------------------------------
-static function ppv_print( cRj, cGodina, cMjOd, cMjDo, cDop1, cDop2, cDop3 )
+static function ppv_print( cRj, cGodina, cMjOd, cMjDo, cDop1, cDop2, cDop3, ;
+	cDop4, cDop5, cDop6 )
+
 local cT_radnik := ""
 local cLine := ""
 
@@ -219,7 +232,7 @@ P_COND2
 
 ppv_zaglavlje(cRj, cGodina, cMjOd, cMjDo )
 
-cLine := ppv_header( cDop1, cDop2, cDop3 )
+cLine := ppv_header( cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 
 nUSati := 0
 nUNeto := 0
@@ -228,6 +241,9 @@ nUBruto := 0
 nUDoprPio := 0
 nUDoprZdr := 0
 nUDoprNez := 0
+nUDoprD4 := 0
+nUDoprD5 := 0
+nUDoprD6 := 0
 nUDoprIZ := 0
 nUPorez := 0
 nUOdbici := 0
@@ -273,15 +289,36 @@ do while !EOF()
 	@ prow(), pcol()+1 SAY STR(isplata,12,2)
 	nUIsplata += isplata
 	
-	@ prow(), pcol()+1 SAY STR(dop_pio,12,2)
-	nUDoprPio += dop_pio
+	if !EMPTY(cDop1)
+		@ prow(), pcol()+1 SAY STR(dop_pio,12,2)
+		nUDoprPio += dop_pio
+	endif
+
+	if !EMPTY(cDop2)
+		@ prow(), pcol()+1 SAY STR(dop_zdr,12,2)
+		nUDoprZdr += dop_zdr
+	endif
+
+	if !EMPTY(cDop3)
+		@ prow(), pcol()+1 SAY STR(dop_nez,12,2)
+		nUDoprNez += dop_nez
+	endif
 	
-	@ prow(), pcol()+1 SAY STR(dop_zdr,12,2)
-	nUDoprZdr += dop_zdr
+	if !EMPTY( cDop4 )
+		@ prow(), pcol()+1 SAY STR(dop_4,12,2)
+		nUDoprD4 += dop_4
+	endif
 	
-	@ prow(), pcol()+1 SAY STR(dop_nez,12,2)
-	nUDoprNez += dop_nez
+	if !EMPTY( cDop5 )
+		@ prow(), pcol()+1 SAY STR(dop_5,12,2)
+		nUDoprD5 += dop_5
+	endif
 	
+	if !EMPTY( cDop6 )
+		@ prow(), pcol()+1 SAY STR(dop_6,12,2)
+		nUDoprD6 += dop_6
+	endif
+
 	++nCount
 
 	skip
@@ -299,9 +336,31 @@ enddo
 @ prow(), pcol()+1 SAY STR(nUNeto,12,2)
 @ prow(), pcol()+1 SAY STR(nUOdbici,12,2)
 @ prow(), pcol()+1 SAY STR(nUIsplata,12,2)
-@ prow(), pcol()+1 SAY STR(nUDoprPio,12,2)
-@ prow(), pcol()+1 SAY STR(nUDoprZdr,12,2)
-@ prow(), pcol()+1 SAY STR(nUDoprNez,12,2)
+
+if !EMPTY(cDop1)
+	@ prow(), pcol()+1 SAY STR(nUDoprPio,12,2)
+endif
+
+if !EMPTY(cDop2)
+	@ prow(), pcol()+1 SAY STR(nUDoprZdr,12,2)
+endif
+
+if !EMPTY(cDop3)
+	@ prow(), pcol()+1 SAY STR(nUDoprNez,12,2)
+endif
+
+if !EMPTY(cDop4)
+	@ prow(), pcol()+1 SAY STR(nUDoprD4,12,2)
+endif
+
+if !EMPTY(cDop5)
+	@ prow(), pcol()+1 SAY STR(nUDoprD5,12,2)
+endif
+
+if !EMPTY(cDop6)
+	@ prow(), pcol()+1 SAY STR(nUDoprD6,12,2)
+endif
+
 ? cLine
 
 FF
@@ -313,7 +372,7 @@ return
 // ----------------------------------------
 // stampa headera tabele
 // ----------------------------------------
-static function ppv_header( cDop1, cDop2, cDop3 )
+static function ppv_header( cDop1, cDop2, cDop3, cDop4, cDop5, cDop6 )
 local aLines := {}
 local aTxt := {}
 local i 
@@ -335,9 +394,25 @@ AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
 AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
-AADD( aLines, { REPLICATE("-", 12) } )
+
+if !EMPTY(cDop1)
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
+if !EMPTY(cDop2)
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
+if !EMPTY(cDop3)
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
+if !EMPTY(cDop4)
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
+if !EMPTY(cDop5)
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
+if !EMPTY(cDop6)
+	AADD( aLines, { REPLICATE("-", 12) } )
+endif
 
 AADD( aTxt, { "Red.", "br", "", "1" })
 AADD( aTxt, { "Sifra", "radn.", "", "2" })
@@ -351,9 +426,24 @@ AADD( aTxt, { "Porez", "na dohodak", "10%", "9" })
 AADD( aTxt, { "Neto", "plata", "(6-7-9)", "10" })
 AADD( aTxt, { "Odbici", "", "", "11" })
 AADD( aTxt, { "Za isplatu", "", "(10+11)", "12" })
-AADD( aTxt, { "Dodatni", "dopr. 1", "D->"+cDop1, "13" })
-AADD( aTxt, { "Dodatni", "dopr. 2", "D->"+cDop2, "14" })
-AADD( aTxt, { "Dodatni", "dopr. 3", "D->"+cDop3, "15" })
+if !EMPTY(cDop1)
+	AADD( aTxt, { "Doprinos", "1", get_d_proc(cDop1), "13" })
+endif
+if !EMPTY(cDop2)
+	AADD( aTxt, { "Doprinos", "2", get_d_proc(cDop2), "14" })
+endif
+if !EMPTY(cDop3)
+	AADD( aTxt, { "Doprinos", "3", get_d_proc(cDop3), "15" })
+endif
+if !EMPTY(cDop4)
+	AADD( aTxt, { "Doprinos", "4", get_d_proc(cDop4), "16" })
+endif
+if !EMPTY(cDop5)
+	AADD( aTxt, { "Doprinos", "5", get_d_proc(cDop5), "17" })
+endif
+if !EMPTY(cDop6)
+	AADD( aTxt, { "Doprinos", "6", get_d_proc(cDop6), "18" })
+endif
 
 for i := 1 to LEN( aLines )
 	cLine += aLines[ i, 1 ] + SPACE(1)
@@ -383,6 +473,25 @@ next
 return cLine
 
 
+// --------------------------------------
+// vraca procenat doprinosa
+// --------------------------------------
+static function get_d_proc( cDop )
+local cProc := ""
+local nTmp
+local nTArea := SELECT()
+
+// daj za tip rada " "
+nTmp := get_dopr( cDop, " " ) 
+
+if nTmp <> 0
+	cProc := ALLTRIM(STR(nTmp)) + " %"
+endif
+
+select (nTArea)
+
+return cProc
+
 
 // ----------------------------------------
 // stampa zaglavlja izvjestaja
@@ -408,7 +517,7 @@ return
 // napuni podatke u pomocnu tabelu za izvjestaj
 // ---------------------------------------------------------
 static function fill_data( cRj, cGodina, cMjesec, cMjesecDo, ;
-	cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun )
+	cRadnik, cDoprPio, cDoprZdr, cDoprNez, cObracun, cDop4, cDop5, cDop6 )
 local i
 local cPom
 local lInRS := .f.
@@ -457,6 +566,9 @@ do while !eof() .and. field->godina = cGodina
 	nIDoprPio := 0
 	nIDoprZdr := 0
 	nIDoprNez := 0
+	nIDoprD4 := 0
+	nIDoprD5 := 0
+	nIDoprD6 := 0
 	nOdbici := 0
 	nL_odb := 0
 	nPorez := 0
@@ -529,7 +641,7 @@ do while !eof() .and. field->godina = cGodina
 		nBrPoj := nBrutoST - nTrosk
 
 		// minimalni bruto
-		nMBrutoST := min_bruto( nBrPoj, field->usati )
+		nMBrutoST := min_bruto( nBrPoj, ld->usati )
 		
 		// ukupni bruto
 		nBruto += nBrPoj
@@ -554,19 +666,38 @@ do while !eof() .and. field->godina = cGodina
 		nNeto := ( nBrPoj - nDoprIz - nPorPoj )
 		
 		// minimalni neto uslov
-		nNeto := min_neto( nNeto, field->usati )
+		nNeto := min_neto( nNeto, ld->usati )
 		
 		nUNeto += nNeto
 
 		// ocitaj doprinose, njihove iznose
-		nDoprPIO := get_dopr( cDoprPIO, cTipRada ) 
-		nDoprZDR := get_dopr( cDoprZDR, cTipRada ) 
-		nDoprNEZ := get_dopr( cDoprNEZ, cTipRada ) 
-		
-		// izracunaj doprinose
-		nIDoprPIO += round2(nMBrutoST * nDoprPIO / 100, gZaok2)
-		nIDoprZDR += round2(nMBrutoST * nDoprZDR / 100, gZaok2)
-		nIDoprNEZ += round2(nMBrutoST * nDoprNEZ / 100, gZaok2)
+		if !EMPTY(cDoprPio)
+			nDoprPIO := get_dopr( cDoprPIO, cTipRada ) 
+			nIDoprPIO += round2(nMBrutoST * nDoprPIO / 100, gZaok2)
+		endif
+
+		if !EMPTY( cDoprZdr )
+			nDoprZDR := get_dopr( cDoprZDR, cTipRada ) 
+			nIDoprZDR += round2(nMBrutoST * nDoprZDR / 100, gZaok2)
+		endif
+
+		if !EMPTY( cDoprNez )
+			nDoprNEZ := get_dopr( cDoprNEZ, cTipRada ) 
+			nIDoprNEZ += round2(nMBrutoST * nDoprNEZ / 100, gZaok2)
+		endif
+
+		if !EMPTY( cDop4 )
+			nDoprD4 := get_dopr( cDop4, cTipRada ) 
+			nIDoprD4 += round2(nMBrutoST * nDoprD4 / 100, gZaok2)
+		endif
+		if !EMPTY( cDop4 )
+			nDoprD5 := get_dopr( cDop5, cTipRada ) 
+			nIDoprD5 += round2(nMBrutoST * nDoprD5 / 100, gZaok2)
+		endif
+		if !EMPTY( cDop4 )
+			nDoprD6 := get_dopr( cDop6, cTipRada ) 
+			nIDoprD6 += round2(nMBrutoST * nDoprD6 / 100, gZaok2)
+		endif
 
 		select ld
 		skip
@@ -588,7 +719,10 @@ do while !eof() .and. field->godina = cGodina
 		nPorez, ;
 		nUNeto, ;
 		nOdbici, ;
-		nIsplata )
+		nIsplata, ;
+		nIDoprD4, ;
+		nIDoprD5, ;
+		nIDoprD6 )
 				
 enddo
 

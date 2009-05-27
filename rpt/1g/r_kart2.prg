@@ -66,11 +66,7 @@ for i:=1 to cLDPolja
 		cUneto:="N"
 		
 		? cTprLine
-		if gPrBruto == "X"
-			? cLMSK+Lokal("Ukupno bruto:")
-		else
-			? cLMSK+Lokal("Ukupna oporeziva primanja:")
-		endif
+		? cLMSK+Lokal("Ukupno:")
 
 		@ prow(),nC1+8  SAY  _USati  pict gpics
 		?? SPACE(1) + Lokal("sati")
@@ -488,19 +484,27 @@ if gPrBruto $ "D#X"
 		
 	enddo
 
+	// oporezivi dohodak
+	nOporDoh := nBO - nUkDoprIz
+
+	// oporezivi dohodak
+	? cLMSK + Lokal("3. OPOREZIVI DOHODAK (1-2)")
+	@ prow(),60+LEN(cLMSK) SAY nOporDoh pict gpici
+	
+	? cMainLine
 
 	// razrada licnog odbitka ....
 	
 	if nLicOdbitak > 0
 
-	  ? cLMSK + Lokal("3. LICNI ODBITAK"), SPACE(14) + ;
+	  ? cLMSK + Lokal("4. LICNI ODBITAK"), SPACE(14) + ;
 		ALLTRIM(STR(gOsnLOdb)) + " * koef. " + ;
 		ALLTRIM(STR(nKoefOdbitka)) + " = "
 	  @ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
 	
 	else
 	  
-          ? cLMSK + Lokal("3. LICNI ODBITAK")
+          ? cLMSK + Lokal("4. LICNI ODBITAK")
 	  @ prow(),60+LEN(cLMSK) SAY nLicOdbitak pict gpici
 	
 	endif
@@ -514,7 +518,7 @@ if gPrBruto $ "D#X"
 		nPorOsnovica := 0
 	endif
 
-	?  cLMSK + Lokal("4. OSNOVICA ZA POREZ NA PLATU (1-2-3)")
+	?  cLMSK + Lokal("5. OSNOVICA ZA POREZ NA PLATU (1-2-4)")
 	@ prow(),60+LEN(cLMSK) SAY nPorOsnovica pict gpici
 
 	? cMainLine
@@ -522,7 +526,7 @@ if gPrBruto $ "D#X"
 	// razrada poreza na platu ....
 	// u ovom dijelu idu samo porezi na bruto TIP = "B"
 
-	? cLMSK + Lokal("5. POREZ NA PLATU")
+	? cLMSK + Lokal("6. POREZ NA PLATU")
 
 	select por
 	go top
@@ -574,16 +578,16 @@ if gPrBruto $ "D#X"
 	? cMainLine
 	
 	if nUkIspl < nMUkIspl
-		? cLMSK + Lokal("6. Minimalna neto isplata : min.neto satnica * sati")
+		? cLMSK + Lokal("7. Minimalna neto isplata : min.neto satnica * sati")
 	else
-		? cLMSK + Lokal("6. NETO PLATA (1-2-5)")
+		? cLMSK + Lokal("7. NETO PLATA (1-2-6)")
 	endif
 	@ prow(),60+LEN(cLMSK) SAY nMUkIspl pict gpici
 
 
 	// ostala primanja 
 	? cMainLine
-	? cLMSK + Lokal("7. UKUPNO ODBICI IZ PLATE")
+	? cLMSK + Lokal("8. UKUPNO ODBICI IZ PLATE")
 
 	@ prow(),60+LEN(cLMSK) SAY nOsnOstalo pict gpici
 
@@ -594,7 +598,7 @@ if gPrBruto $ "D#X"
 	?
 
 	? cMainLine
-	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA ODBICIMA (6+7)")
+	?  cLMSK + Lokal("UKUPNO ZA ISPLATU SA ODBICIMA (7+8)")
 	@ prow(),60+LEN(cLMSK) SAY nZaIsplatu pict gpici
 
 	? cMainLine

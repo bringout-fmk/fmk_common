@@ -302,9 +302,18 @@ obr_doprinos( @nDopr, @nDopr2, cRTipRada )
 
 nstr()
 
+// oporezivi dohodak
+nTOporDoh := nURadn_bo - nUDoprIz
+
+// oporezivi dohodak
+? cMainLine
+? Lokal("3. UKUPNI OPOREZIVI DOHODAK (bruto-dopr.iz)")
+@ prow(), 60 SAY nTOporDoh PICT gPici
+
+
 // LICNI ODBITCI
 ? cMainLine
-? Lokal("3. LICNI ODBICI UKUPNO")
+? Lokal("4. LICNI ODBICI UKUPNO")
 @ prow(), 60 SAY nULOdbitak PICT gPici
 
 nstr()
@@ -313,7 +322,7 @@ nPorOsn := nURadn_bo - nUDoprIz - nULOdbitak
 
 // osnovica za porez na dohodak
 ? cMainLine
-? Lokal("4. OSNOVICA ZA OBRACUN POREZA NA DOHODAK (1-2-3)")
+? Lokal("5. OSNOVICA ZA OBRACUN POREZA NA PLATU (1-2-4)")
 @ prow(), 60 SAY nPorOsn PICT gPici
 ? cMainLine
 
@@ -356,7 +365,7 @@ nNetoIspl := nUPorNROsnova
 nUZaIspl := ( nNetoIspl ) + nUOdbiciM + nUOdbiciP
 
 ? cMainLine
-? Lokal("5. UKUPNA NETO PLATA")
+? Lokal("6. UKUPNA NETO PLATA")
 @ prow(), 60 SAY nNetoIspl PICT gpici 
 
 // obracun ostalog poreza na neto
