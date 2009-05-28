@@ -1587,7 +1587,7 @@ for i:=1 to cLDPolja
     		? cLinija
     		if !lPorNaRekap
        			if gVarObracun == "2"
-				? Lokal("OPOREZIVA PRIMANJA:")
+				? Lokal("Ukupno:")
 			else
 				? Lokal("UKUPNO NETO:")
 			endif
@@ -1597,7 +1597,7 @@ for i:=1 to cLDPolja
 			?? "",gValuta
     		else
        			if gVarObracun == "2"
-				? Lokal("OPOREZIVA PRIMANJA:")
+				? Lokal("Ukupno:")
 			else
 				? Lokal("UKUPNO NETO:")
 			endif

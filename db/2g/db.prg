@@ -354,8 +354,8 @@ if (nArea==-1 .or. nArea==(F_RADKR))
 	CREATE_INDEX("1","str(godina)+str(mjesec)+idradn+idkred+naosnovu",KUMPATH+"RADKR")
 	CREATE_INDEX("2","idradn+idkred+naosnovu+str(godina)+str(mjesec)",KUMPATH+"RADKR")
 	CREATE_INDEX("3","idkred+naosnovu+idradn+str(godina)+str(mjesec)",KUMPATH+"RADKR")
+	CREATE_INDEX("4","str(godina)+str(mjesec)+idradn+naosnovu",KUMPATH+"RADKR")
 endif
-
 
 
 // REKLD

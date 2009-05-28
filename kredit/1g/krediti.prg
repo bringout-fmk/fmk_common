@@ -247,8 +247,121 @@ return nRet
 *}
 
 
+// --------------------------------------------
+// redefiniranje kredita, rate
+// --------------------------------------------
+function kr_redef()
+local GetList := {}
+local nTRata
+local nNRata
+local cNaOsnovu := SPACE(20)
+
+Box(,6, 60)
+	
+	@ m_x + 1, m_y + 2 SAY "*** podaci o kreditu" COLOR "I"
+	
+	@ m_x + 3, m_y + 2 SAY "kredit na osnovu" GET cNaOsnovu 
+
+	read
+
+	select radkr
+	set order to tag "4"
+	seek STR(_godina,4)+STR(_mjesec,2)+_idradn+cNaOsnovu
+
+	nTRata := field->iznos
+	nNRata := nTRata
+
+	@ m_x + 4, m_y + 2 SAY "tekuæa rata kredita = " + ;
+		ALLTRIM(STR( nTRata )) + " KM"
+	@ m_x + 5, m_y + 2 SAY "rata kredita za obracun" GET nNRata VALID nNRata <> 0
+	read
+BoxC()
+
+if nNRata <> nTRata
+	
+	// ponovo rekalkulisi rate u otplatnom planu
+	select radkr
+	set order to tag "4"
+	seek STR(_godina,4)+STR(_mjesec,2)+_idradn+cNaOsnovu
+
+	cKreditor := idkred
+	cIdRadn := idradn
+
+	set order to tag "2"
+	seek cIdRadn+cKreditor+cNaOsnovu+STR(_godina,4)+STR(_mjesec,2)
+
+	nTotalKr := 0
+	
+	// koliko ima rata kredita jos do kraja	
+	do while !eof() .and. cKreditor==idkred ;
+			.and. idradn=_idradn ;
+			.and. naosnovu == cNaOsnovu
+
+			nTotalKr += iznos
+			
+			// brisi zapis
+			delete
+
+ 		skip
+	enddo
+
+	nOstalo := nTotalKr
+	nTekMj:=_mjesec
+	nTekGodina:=_godina
+
+	i:=0
+	nTekMj := nMjesec - 1
+	
+	do while .t.
+		if nTeKMj + 1 > 12
+    			nTekMj:=1
+    			++nTekGodina
+  		else
+   			nTekMj++
+  		endif
+
+  		nIRata := nNRata
+  		
+		if nIRata>0 .and. (nOstalo-nIRata<0)  
+			// rata je pozitivna
+    			nIRata:=nOstalo
+  		endif
+  		
+		if nIRata<0 .and. (nOstalo-nIRata>0)  
+			// rata je negativna
+    			nIRata:=nOstalo
+  		endif
+  		
+		if round(nIRata,2)<>0
+   			
+			append blank
+   			
+			replace idradn with cIdRadn
+			replace mjesec with nTekMj
+			replace godina with nTekGodina
+			replace idkred with cKreditor
+			replace iznos with nIRata
+			replace naosnovu with cNaOsnovu
+
+   			++i
+  		endif
+
+		nOstalo := nOstalo - nIRata
+  		
+		if round(nOstalo,2)==0
+    			exit
+  		endif
+	enddo
+
+endif
+
+return nNRata
 
 
+
+// ----------------------------------------------------
+// funkcija koja vraca kredit u unosu podataka
+// ----------------------------------------------------
 function SumKredita()
 local fUsed:=.t.
 local cTRada := " "
@@ -268,6 +381,12 @@ if gVarObracun == "2"
 	endif
 endif
 
+//if gVarObracun == "2"
+	// redefiniranje kredita
+//	kr_redef()
+//endif
+
+set order to tag "1"
 seek str(_godina,4)+str(_mjesec,2)+_idradn
 
 nIznos:=0

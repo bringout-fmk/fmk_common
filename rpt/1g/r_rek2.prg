@@ -287,14 +287,17 @@ get_bruto( nURadn_bo )
 private nDopr
 private nDopr2
 
-? Lokal("2. OBRACUN DOPRINOSA")
-? cMainLine
+? Lokal("2. OBRACUN DOPRINOSA:")
 
 // bruto osnova minimalca
 if nURadn_bo < nUMRadn_bo
-	? Lokal("min.bruto osnova za obracun doprinosa")
+
+	?? " min.bruto satnica * sati"
 	@ prow(), 60 SAY nUMRadn_bo PICT gPici
+
 endif
+
+? cMainLine
 
 cLinija := cDoprLine
 // obracunaj i prikazi doprinose
@@ -307,7 +310,7 @@ nTOporDoh := nURadn_bo - nUDoprIz
 
 // oporezivi dohodak
 ? cMainLine
-? Lokal("3. UKUPNI OPOREZIVI DOHODAK (bruto-dopr.iz)")
+? Lokal("3. UKUPNO BRUTO - DOPRINOSI IZ PLATE")
 @ prow(), 60 SAY nTOporDoh PICT gPici
 
 

@@ -129,7 +129,7 @@ do while !eof()
      		? cLinija
   	endif
   	
-	? id,"-",naz
+	? "  " + id,"-",naz
 	@ prow(), pcol()+1 SAY iznos pict "99.99%"
   	
 	nC1 := pcol() + 1
@@ -176,7 +176,7 @@ do while !eof()
 					LOOP
         			ENDIF
         			
-				? idops, ops->naz
+				? "  " + idops, ops->naz
 				
 				if dopr->(Fieldpos("DOP_TIP")) <> 0
 				  if dopr->dop_tip == "N" .or. ;
@@ -247,7 +247,7 @@ do while !eof()
 			select dopr
       			
 			? cLinija
-      			? Lokal("UKUPNO") + SPACE(1),DOPR->ID
+      			? "  " + Lokal("UKUPNO") + SPACE(1),DOPR->ID
       			
 			@ prow(),nC1 SAY nOOD pict gpici
       			@ prow(),pcol()+1 SAY nDoprOps pict gpici
@@ -371,7 +371,7 @@ do while !eof()
 enddo
 
 ? cLinija 
-? Lokal("Ukupno Doprinosi")
+? "  " + Lokal("Ukupno Doprinosi")
 @ prow(),nc1 SAY space(len(gpici))
 @ prow(),pcol()+1 SAY nDopr  pict gpici
 

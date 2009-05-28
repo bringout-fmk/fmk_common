@@ -541,7 +541,7 @@ ENDIF
  //uNaRuke += ld->_uiznos
 
  // ukupno bruto
- nPom := nBrutoOsnova
+ nPom := nMBrutoOsnova
 
  nDodDoprZ := 0
  nDodDoprP := 0
@@ -824,7 +824,7 @@ ENDIF
  // ukupno obaveze
  UzmiIzIni(cIniName,'Varijable','U15I', FormNum2(nPom,16,gPici2), 'WRITE')
 
- nPom := nBrutoOsnova - nBrutoDobra
+ nPom := nMBrutoOsnova - nBrutoDobra
  nUUNR := nPom
  UzmiIzIni(cIniName,'Varijable','UNR', FormNum2(nPom,16,gPici2), 'WRITE')
  

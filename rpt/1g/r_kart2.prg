@@ -488,7 +488,7 @@ if gPrBruto $ "D#X"
 	nOporDoh := nBO - nUkDoprIz
 
 	// oporezivi dohodak
-	? cLMSK + Lokal("3. OPOREZIVI DOHODAK (1-2)")
+	? cLMSK + Lokal("3. BRUTO - DOPRINOSI IZ PLATE (1-2)")
 	@ prow(),60+LEN(cLMSK) SAY nOporDoh pict gpici
 	
 	? cMainLine
