@@ -12,6 +12,7 @@ liball:
 	make -C exp_dbf
 	make -C lokal
 	make -C message
+	make -C fiscal
 
 
 cleanall:
@@ -27,6 +28,7 @@ cleanall:
 	cd exp_dbf; make clean
 	cd lokal; make clean
 	cd message; make clean
+	cd fiscal; make clean
 	rm -f *.obj
 
 fmk: cleanall liball 
