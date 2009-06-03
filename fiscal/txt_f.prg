@@ -66,13 +66,7 @@ do case
 
 	case cFileName == "RACUN_MEM"
 		
-		// red 1
-		AADD( aRet, { "C", 32, 0 })
-		// red 2
-		AADD( aRet, { "C", 32, 0 })
-		// red 3
-		AADD( aRet, { "C", 32, 0 })
-		// red 4
+		// slobodan red teksta
 		AADD( aRet, { "C", 32, 0 })
 
 	case cFileName == "SEMAFOR"

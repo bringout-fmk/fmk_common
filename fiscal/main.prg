@@ -1,18 +1,18 @@
 #include "sc.ch"
 
 static F_RN_TXT := "RACUN_TXT"
-static _F_VRN_TXT := "F_V_R1.TXT"
-static _F_MRN_TXT := "F_M_R1.TXT"
+static _F_VRN_TXT := "FV*.TXT"
+static _F_MRN_TXT := "FM*.TXT"
 static F_RN_PLA := "RACUN_PLA"
-static _F_VRN_PLA := "F_V_R1.PLA"
-static _F_MRN_PLA := "F_M_R1.PLA"
+static _F_VRN_PLA := "FV*.PLA"
+static _F_MRN_PLA := "FM*.PLA"
 static F_RN_MEM := "RACUN_MEM"
-static _F_VRN_MEM := "F_V_R1.MEM"
-static _F_MRN_MEM := "F_M_R1.MEM"
+static _F_VRN_MEM := "FV*.MEM"
+static _F_MRN_MEM := "FM*.MEM"
 static F_SEMAFOR := "SEMAFOR"
-static _F_SEMAFOR := "F_SEM1.TXT"
+static _F_SEMAFOR := "FS*.TXT"
 static F_NIV := "NIVELACIJA"
-static _F_NIV := "F_NIV1.TXT"
+static _F_NIV := "FN*.TXT"
 
 static F_FPOR := "POREZI"
 static _F_FPOR := "F_POR.TXT"
@@ -27,10 +27,10 @@ static F_FROBGR := "ROBAGRUPE"
 static _F_FROBGR := "F_GRUPE.TXT"
 
 static F_FOBJ := "OBJEKTI"
-static _F_FOBJ := "F_OBJEKT.TXT"
+static _F_FOBJ := "F_OBJ.TXT"
 
 static F_FOPER := "OPERATERI"
-static _F_FOPER := "F_OPERA.TXT"
+static _F_FOPER := "F_OPER.TXT"
 
 // komande semafora 
 // -------------------------------------------
@@ -114,22 +114,42 @@ aS_rn_pla := _g_f_struct( F_RN_PLA )
 aS_semafor := _g_f_struct( F_SEMAFOR )
 
 
+// broj racuna
+nInvoice := aItems[1, 1]
+
+cPom := _filename( _F_VRN_TXT, nInvoice )
+
 // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-_a_to_file( cFPath, _F_VRN_TXT, aS_rn_txt, aItems )
+_a_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
 if LEN(aTxt) <> 0
+	
+	cPom := _filename( _F_VRN_MEM, nInvoice )
 	// upisi zatim stavke u fajl "F_V_RACUN.MEM"
-	_a_to_file( cFPath, _F_VRN_MEM, aS_rn_mem, aTxt )
+	_a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
 endif
-
+	
+cPom := _filename( _F_VRN_PLA, nInvoice )
 // upisi zatim stavke u fajl "F_V_RACUN.PLA"
-_a_to_file( cFPath, _F_VRN_PLA, aS_rn_pla, aPla_Data )
+_a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
+cPom := _filename( _F_SEMAFOR, nInvoice )
 // upisi i semafor "F_SEMAFOR.TXT"
-_a_to_file( cFPath, _F_SEMAFOR, aS_semafor, aSem_Data ) 
+_a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
 
 
 return
+
+// ----------------------------------------------------
+// sredjuje naziv fajla za fiskalni stampac
+// ----------------------------------------------------
+static function _filename( cPattern, nInvoice )
+local cRet := ""
+
+cRet := STRTRAN( cPattern, "*", ALLTRIM(STR(nInvoice)) )
+
+return cRet
+
 
 
 // ---------------------------------
@@ -147,20 +167,28 @@ aS_rn_pla := _g_f_struct( F_RN_PLA )
 // uzmi strukturu tabele za semafor
 aS_semafor := _g_f_struct( F_SEMAFOR )
 
+// broj racuna
+nInvoice := aItems[1, 1]
 
+
+cPom := _filename( _F_MRN_TXT, nInvoice )
 // upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-_a_to_file( cFPath, _F_VRN_TXT, aS_rn_txt, aItems )
+_a_to_file( cFPath, cPom, aS_rn_txt, aItems )
 
 if LEN(aTxt) <> 0
+
+	cPom := _filename( _F_MRN_MEM, nInvoice )
 	// upisi zatim stavke u fajl "F_V_RACUN.MEM"
-	_a_to_file( cFPath, _F_VRN_MEM, aS_rn_mem, aTxt )
+	_a_to_file( cFPath, cPom, aS_rn_mem, aTxt )
 endif
 
+cPom := _filename( _F_MRN_PLA, nInvoice )
 // upisi zatim stavke u fajl "F_V_RACUN.PLA"
-_a_to_file( cFPath, _F_VRN_PLA, aS_rn_pla, aPla_Data )
+_a_to_file( cFPath, cPom, aS_rn_pla, aPla_Data )
 
+cPom := _filename( _F_SEMAFOR, nInvoice )
 // upisi i semafor "F_SEMAFOR.TXT"
-_a_to_file( cFPath, _F_SEMAFOR, aS_semafor, aSem_Data ) 
+_a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
 
 return
 
@@ -176,11 +204,16 @@ aS_nivel := _g_f_struct( F_NIV )
 // uzmi strukturu tabele za semafor
 aS_semafor := _g_f_struct( F_SEMAFOR )
 
-// upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
-_a_to_file( cFPath, _F_NIV, aS_nivel, aItems )
+// broj nivelacije
+nInvoice := aSem_data[1, 1]
 
+cPom := _filename( _F_NIV, nInvoice )
+// upisi aItems prema aVRnTxt u PRIVPATH + "F_V_RACUN.TXT"
+_a_to_file( cFPath, cPom, aS_nivel, aItems )
+
+cPom := _filename( _F_SEMAFOR, nInvoice )
 // upisi i semafor "F_SEMAFOR.TXT"
-_a_to_file( cFPath, _F_SEMAFOR, aS_semafor, aSem_Data ) 
+_a_to_file( cFPath, cPom, aS_semafor, aSem_Data ) 
 
 return
 
@@ -200,8 +233,6 @@ aS_oper := _g_f_struct( F_FOPER )
 
 // upisi poreze
 _a_to_file( cFPath, _F_FPOR, aS_por, aPor ) 
-
-altd()
 
 // upisi robu
 _a_to_file( cFPath, _F_FROBA, aS_roba, aRoba ) 
