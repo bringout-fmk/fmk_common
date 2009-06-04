@@ -225,6 +225,8 @@
 #define F_PRIPNO   233
 #define F_LDNO	   234
 #define F_RJES	   235
+#define F_PK_RADN   236
+#define F_PK_DATA   237
 
 //kam
 #define F_KAMPRIPR 204

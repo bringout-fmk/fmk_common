@@ -62,6 +62,7 @@
 
 #xcommand O_IZDANJA => select (F_IZDANJA) ; use (SIFPATH+"IZDANJA"); set order to tag "ID"
 
+#xcommand O_PK_RADN => select (F_PK_RADN) ; use (KUMPATH+"PK_RADN"); set order to tag "1"
 
-
+#xcommand O_PK_DATA => select (F_PK_DATA) ; use (KUMPATH+"PK_DATA"); set order to tag "1"
 
