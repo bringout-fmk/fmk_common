@@ -10,6 +10,7 @@ liball:
 	make -C sif/1g
 	make -C param/1g
 	make -C ut/1g
+	make -C porkart
 	make -C ahon
 	make -C por
 	make -C 1g exe
@@ -25,6 +26,7 @@ cleanall:
 	make -C param/1g clean
 	make -C ut/1g clean
 	make -C ahon clean
+	make -C porkart clean
 	make -C por clean
 	make -C 1g clean
 

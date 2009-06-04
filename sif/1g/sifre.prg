@@ -9,6 +9,7 @@ nArr:=SELECT()
 
 private imekol
 private kol
+private cFooter := ""
 
 select (F_RADN)
 if (!used())
@@ -173,11 +174,42 @@ if EMPTY(field->streetnum)
 endif
 return .t.
 
+
+// ---------------------------------------------
+// ispisuje info o poreskoj kartici
+// ---------------------------------------------
+static function p_pkartica( cIdRadn )
+local nTA := SELECT()
+
+if gVarObracun == "1"
+	return
+endif
+
+O_PK_RADN
+select pk_radn
+seek cIdRadn
+
+if FOUND() .and. field->idradn == cIdRadn
+	@ prow()+8, pcol()+5 SAY "               " COLOR "W+/W"
+else
+	@ prow()+8, pcol()+5 SAY "pk: nepopunjena" COLOR "W+/R+"
+endif
+
+select (nTA)
+
+return
+
+
+
 // --------------------------------------------
 // radn. blok funkcije
 // --------------------------------------------
 function RadBl(Ch)
 local cMjesec:=gMjesec
+
+// ispisi info o poreskoj kartici
+p_pkartica( field->id )
+
 
 if (Ch==K_ALT_M)
 	Box(,4,60)
@@ -228,6 +260,16 @@ elseif (Ch==K_F2)
 	if ImaURadKr(radn->id,"2")
    		return 99
  	endif
+
+elseif ( UPPER(CHR(Ch)) == "P" )
+	// poreska kartica
+	
+	p_kartica( field->id )
+	
+	select radn
+	
+	return DE_CONT
+
 elseif ( UPPER(CHR(Ch))=="S" )
 	
 	// filter po radnicima

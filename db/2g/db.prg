@@ -178,6 +178,8 @@ Skloni(KUMPATH,"FMK.INI",cSezona,finverse,fda,fnul)
 Skloni(KUMPATH,"RADSIHT.DBF",cSezona,finverse,fda,fnul)
 Skloni(KUMPATH,"REKLD.DBF",cSezona,finverse,fda,fnul)
 Skloni(KUMPATH,"TPRSIHT.DBF",cSezona,finverse,fda,fnul)
+Skloni(KUMPATH,"PK_RADN.DBF",cSezona,finverse,fda,fnul)
+Skloni(KUMPATH,"PK_DATA.DBF",cSezona,finverse,fda,fnul)
 
 fNul:=.f.
 
@@ -230,6 +232,8 @@ public gaDbfs := {;
 { F_RJ     ,"RJ"      , P_KUMPATH     },;
 { F_NORSIHT,"NORSIHT" , P_KUMPATH     },;
 { F_TPRSIHT,"TPRSIHT" , P_KUMPATH     },;
+{ F_PK_RADN,"PK_RADN" , P_KUMPATH     },;
+{ F_PK_DATA,"PK_DATA" , P_KUMPATH     },;
 { F_OBRACUNI,"OBRACUNI", P_KUMPATH     },;
 { F_RADSAT ,"RADSAT"  , P_KUMPATH     },;
 { F_POR    ,"POR"     , P_SIFPATH     },;
@@ -306,7 +310,6 @@ AADD(aDBf,{ 'K1'                  , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K2'                  , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'K3'                  , 'C' ,   2 ,  0 })
 AADD(aDBf,{ 'K4'                  , 'C' ,   2 ,  0 })
-AADD(aDBf,{ 'POL'                 , 'C' ,   1 ,  0 })
 AADD(aDBf,{ 'RMJESTO'             , 'C' ,  30 ,  0 })
 AADD(aDBf,{ 'POROL'               , 'N' ,   5 ,  2 })
 AADD(aDBf,{ 'IDRJ'                , 'C' ,   2 ,  0 })
@@ -906,6 +909,8 @@ if gAHonorar == "D"
 	
 endif
 
+// kreiraj tabele poreskih kartica
+pk_dbcre()
 
 return
 
@@ -930,6 +935,10 @@ lIdiDalje:=.f.
 
 if i==F__LD .or. i==F__RADN .or. i==F__RADKR .or. i==F_LDSM .or. i==F_OPSLD 
 	lIdiDalje:=.t.
+endif
+
+if i==F_PK_RADN .or. i==F_PK_DATA
+	lIdiDalje := .t.
 endif
 
 if i==F_LD .or. i=F_RADN .or. i==F_RADKR .or. i==F_RJ .or. i==F_RADSIHT .or. i==F_NORSIHT .or. i==F_TPRSIHT 
@@ -1055,7 +1064,7 @@ else
 endif
 
 aPriv:= {}
-aKum:= {F_LD, F_RADKR, F_RADN, F_RJ}
+aKum:= { F_LD, F_RADKR, F_RADN, F_RJ, F_PK_RADN, F_PK_DATA }
 aSif:={F_PAROBR, F_TIPPR, F_TIPPR, F_STRSPR, F_KBENEF, F_VPOSLA, F_OPS, F_POR, F_DOPR, F_RJ, F_KRED, F_LDSM }
 
 if cSif=="N"
@@ -1101,5 +1110,5 @@ FF
 END PRINT
 
 return
-*}
+
 
