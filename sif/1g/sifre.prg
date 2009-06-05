@@ -10,10 +10,10 @@ nArr:=SELECT()
 private imekol
 private kol
 private cFooter := ""
-private lPInfo := .t.
+private lPInfo := .f.
 
 if PCount() = 0
-	lPInfo := .f.
+	lPInfo := .t.
 endif
 
 select (F_RADN)
