@@ -13,6 +13,7 @@ static I_CL_PI := "4"
 function p_kartica( cIdRadn )
 local nZ_id := 0
 local lNew := .t.
+local nRet := 0
 
 o_pk_tbl()
 
@@ -32,9 +33,9 @@ if lNew == .t.
 endif
 
 // unos osnovnih podataka
-unos_osn( lNew, cIdRadn, nZ_id )
+nRet := unos_osn( lNew, cIdRadn, nZ_id )
 
-return
+return nRet
 
 // ----------------------------------------------
 // unos osnovnih podataka
@@ -88,7 +89,9 @@ Box(, 22, 77)
 	
 	++ nX
 
-	@ m_x + nX, m_y + 2 SAY "jmb" GET _r_jmb
+	@ m_x + nX, m_y + 2 SAY "jmb" GET _r_jmb ;
+		VALID {|| d_from_jmb( @_r_drodj, _r_jmb ) }
+
 	@ m_x + nX, col() + 1 SAY "adresa" GET _r_adr PICT "@S30"
 	
 	++ nX
@@ -133,7 +136,7 @@ Box(, 22, 77)
 	// izadji ako je kraj...
 	if LastKey() == K_ESC
 		BoxC()
-		return
+		return -1
 	endif
 
 	if cClan == "D"
@@ -180,7 +183,7 @@ Box(, 22, 77)
 BoxC()
 
 if LastKey() == K_ESC
-	return
+	return -1
 endif
 
 if lNew == .t.
@@ -189,7 +192,7 @@ endif
 
 gather()
 
-return
+return field->lo_ufakt
 
 
 
@@ -199,14 +202,35 @@ return
 // vraca naziv firme
 // ---------------------------------------
 static function _g_firma()
-return ""
+local nTA := SELECT()
+local cFNaziv := ""
+local cFAdresa := ""
+
+O_PARAMS
+select params
+
+private cSection:="4"
+private cHistory:=" "
+private aHistory:={}
+
+RPar( "i1", @cFNaziv )
+RPar( "i2", @cFAdresa)  
+
+select (nTA)
+
+return cFNaziv
 
 
 // ---------------------------------------
 // vraca naziv firme
 // ---------------------------------------
 static function _g_f_jib()
-return ""
+local cFJmb := ""
+
+cFJMB := IzFmkIni( "Specif", "MatBr", "--", KUMPATH )
+cFJMB := PADR( cFJMB, 13 )
+
+return cFJMB
 
 
 // ---------------------------------------
@@ -242,8 +266,28 @@ select (nTArea)
 return cRet
 
 
+// ------------------------------------
+// vraca datum iz maticnog broja
+// ------------------------------------
+static function d_from_jmb( dDate, cJmb )
+local cDay
+local cMonth
+local cYear
 
+if Empty( cJmb )
+	return .t.
+endif
 
+// jmb: 0305978190028
+// date: 03.05.78
+
+cDay := SUBSTR( cJmb, 1, 2 )
+cMonth := SUBSTR( cJmb, 3, 2 )
+cYear := SUBSTR( cJmb, 6, 2 )
+
+dDate := CTOD( cDay + "." + cMonth + "." + cYear )
+
+return .t.
 
 
 

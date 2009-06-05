@@ -156,14 +156,17 @@ Box(, 12,70,.f.)
 	
 	@ m_x + nX, m_y + 2 SAY PADL("'kod' sr.", nBoxLen) ;
 		GET _sr_kod ;
-		VALID {|| _sr_naz := PADR( g_srodstvo( _sr_kod ), ;
+		WHEN _ident $ "34" ;
+		VALID {|| sr_list(@_sr_kod), ;
+			_sr_naz := PADR( g_srodstvo( _sr_kod ), ;
 		LEN(_sr_naz)), .t. } ;
 		PICT "99"
 
 	++ nX
 	
 	@ m_x + nX, m_y + 2 SAY PADL("srodstvo", nBoxLen) ;
-		GET _sr_naz
+		GET _sr_naz ;
+		WHEN _ident $ "34" 
 	
 	++ nX
 	

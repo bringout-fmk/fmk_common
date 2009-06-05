@@ -262,12 +262,25 @@ elseif (Ch==K_F2)
  	endif
 
 elseif ( UPPER(CHR(Ch)) == "P" )
-	// poreska kartica
 	
-	p_kartica( field->id )
-	
+	// poreska kartica, vraca faktor odbitka...
+ 	nFakt := p_kartica( field->id )
+
 	select radn
 	
+	if nFakt >= 0 .and. nFakt <> radn->klo
+	  if Pitanje(,"Postaviti novi faktor licnog odbitka ?", "D") == "D"
+	    replace radn->klo with nFakt
+	  endif
+	endif
+	
+	return DE_CONT
+
+elseif ( UPPER(CHR(Ch)) == "D" ) 
+
+	pk_delete( field->id )
+	
+	select radn
 	return DE_CONT
 
 elseif ( UPPER(CHR(Ch))=="S" )

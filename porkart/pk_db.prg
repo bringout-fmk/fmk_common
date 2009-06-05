@@ -107,6 +107,50 @@ return
 
 
 
+// ------------------------------------------
+// brisanje poreske kartice radnika
+// ------------------------------------------
+function pk_delete( cIdRadn )
+local nTA
+
+if Pitanje(,"Izbrisati podatke poreske kartice radnika ?", "N") == "N"
+	return
+endif
+
+nTA := SELECT()
+nCnt := 0
+
+o_pk_tbl()
+
+// izbrisi pk_radn
+select pk_radn
+go top
+seek cIdRadn
+
+do while !EOF() .and. field->idradn == cIdRadn
+	delete
+	++ nCnt
+	skip
+enddo
+
+// izbrisi pk_data
+select pk_data
+go top
+seek cIdRadn
+
+do while !EOF() .and. field->idradn == cIdRadn
+	delete
+	++ nCnt
+	skip
+enddo
+
+if nCnt > 0 
+	msgbeep("Izbrisano " + ALLTRIM(STR(nCnt)) + " zapisa !")
+endif
+
+return 
+
+
 // ------------------------------------
 // vraca novi zahtjev 
 // ------------------------------------
@@ -182,6 +226,65 @@ AADD( aRet, { 18, "Pocerka" } )
 AADD( aRet, { 19, "Posinak" } )
 
 return aRet
+
+
+// -----------------------------------------
+// lista srodstva u GET rezimu na unosu
+// odabir srodstva
+// -----------------------------------------
+function sr_list( nSrodstvo )
+local nXX := m_x
+local nYY := m_y
+
+if nSrodstvo > 0
+	return .t.
+endif
+
+// napuni matricu sa srodstvima
+aSrodstvo := a_srodstvo()
+
+// odaberi element
+nSrodstvo := _pick_srodstvo( aSrodstvo )
+
+m_x := nXX
+m_y := nYY
+
+return .t.
+
+// -----------------------------------------
+// uzmi element...
+// -----------------------------------------
+static function _pick_srodstvo( aSr )
+local nChoice := 1
+local nRet
+local i
+local cPom
+private GetList:={}
+private izbor := 1
+private opc := {}
+private opcexe := {}
+
+for i:=1 to LEN( aSr )
+
+	cPom := PADL( ALLTRIM(STR( aSr[i, 1] )), 2 ) + ". " + PADR( aSr[i, 2] , 20 )
+	
+	AADD(opc, cPom)
+	AADD(opcexe, {|| nChoice := izbor, izbor := 0 })
+	
+next
+
+Menu_sc("izbor")
+
+if LastKey() == K_ESC
+
+	nChoice := 0
+	nRet := 0
+	
+else
+	nRet := aSr[ nChoice, 1 ]
+endif
+
+return nRet
 
 
 // -------------------------------------------------

@@ -38,6 +38,10 @@ if gVarObracun == "2"
 	AADD(opcexe,{|| r_obr_list() })
 	AADD(opc,"P. akontacije poreza (obrasci ASD i AUG)")
 	AADD(opcexe,{|| r_ak_list() })
+	
+	AADD(opc,"E. poreska kartica : export")
+	AADD(opcexe,{|| pk_export() })
+
 endif
 
 Menu_SC("izvj")
