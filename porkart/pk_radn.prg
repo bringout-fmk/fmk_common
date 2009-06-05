@@ -48,6 +48,8 @@ local cPkColor := "W+/G+"
 
 select pk_radn
 
+ustipke()
+
 scatter()
 
 if lNew == .t.
@@ -68,6 +70,13 @@ if lNew == .t.
 	_p_naziv := PADR( _g_firma(), LEN(_p_naziv) )
 	_p_jib := PADR( _g_f_jib(), LEN(_p_jib)) 
 	_lo_osn := 1
+	_lo_izdj := 0
+	_lo_brdr := 0
+	_lo_clp := 0
+	_lo_clpi := 0
+	_lo_ufakt := 0
+	_r_tel := 0
+
 
 endif
 
@@ -151,12 +160,13 @@ Box(, 22, 77)
 		_lo_izdj := lo_clan( I_IZ_DJ,  cIdRadn )
 		_lo_clp := lo_clan( I_CL_P, cIdRadn )
 		_lo_clpi := lo_clan( I_CL_PI, cIdRadn )
-		// total
-		_lo_ufakt := _lo_osn + _lo_brdr + ;
-				_lo_izdj + _lo_clp + _lo_clpi
 	
 	endif
 
+	// total
+	_lo_ufakt := _lo_osn + _lo_brdr + ;
+			_lo_izdj + _lo_clp + _lo_clpi
+	
 	++ nX
 	++ nX
 
