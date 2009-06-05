@@ -275,7 +275,7 @@ function ZaglKar()
 
 // nova stranica odredjuje odakle ce se poceti stampati
 // gura karticu do polovine stranice ako fali redova
-IF !lSkrivena .and. !lNKNS .and. gPrBruto<>"D" .and. c2K1L=="D" .and. (nRBrKart%2)==0
+IF !lSkrivena .and. !lNKNS .and. !(gPrBruto$"DX") .and. c2K1L=="D" .and. (nRBrKart%2)==0
 	DO WHILE prow() < 34
 		?
 	ENDDO

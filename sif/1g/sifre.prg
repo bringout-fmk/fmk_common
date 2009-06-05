@@ -10,6 +10,11 @@ nArr:=SELECT()
 private imekol
 private kol
 private cFooter := ""
+private lPInfo := .t.
+
+if PCount() = 0
+	lPInfo := .f.
+endif
 
 select (F_RADN)
 if (!used())
@@ -207,8 +212,10 @@ return
 function RadBl(Ch)
 local cMjesec:=gMjesec
 
-// ispisi info o poreskoj kartici
-p_pkartica( field->id )
+if lPInfo == .t.
+	// ispisi info o poreskoj kartici
+	p_pkartica( field->id )
+endif
 
 
 if (Ch==K_ALT_M)
