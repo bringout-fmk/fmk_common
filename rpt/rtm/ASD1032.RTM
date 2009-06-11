@@ -34,7 +34,7 @@ object ppReport: TppReport
   DataPipelineName = 'ppJITPipeline'
   object ppHeaderBand1: TppHeaderBand
     mmBottomOffset = 0
-    mmHeight = 1323
+    mmHeight = 8000
     mmPrintPosition = 0
   end
   object ppDetailBand1: TppDetailBand
