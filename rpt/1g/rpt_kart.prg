@@ -315,7 +315,14 @@ ELSE
 		?? Lokal("K.Min.rada:"), transform(kminrad,"99.99%")
 	endif
 	? IF(gBodK=="1",Lokal("Vrijednost boda:"), Lokal("Vr.koeficijenta:")), transform(parobr->vrbod,"99999.99999")
-	
+
+	if radn->n1 <> 0 .or. radn->n2 <> 0 
+		// prikaz dodatnih informacija
+		? Lokal("N1:"), transform(radn->n1, "99999999.9999")
+		?? space(2) + ;
+			Lokal("N2:"), transform(radn->n2, "99999999.9999")
+	endif
+
 	if __var_obr == "2"
 		?? SPACE(2) + Lokal("Koef.licnog odbitka:"), radn->klo	
 	endif
