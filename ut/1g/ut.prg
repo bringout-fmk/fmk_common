@@ -349,7 +349,7 @@ function min_bruto( nBruto, nSati )
 local nRet
 local nMBO
 
-nMBO := ( nSati * parobr->m_br_sat )
+nMBO := ROUND2( nSati * parobr->m_br_sat, gZaok2 )
 
 nRet := MAX( nBruto, nMBO )
 
@@ -364,7 +364,7 @@ function min_neto( nNeto, nSati )
 local nRet
 local nMNO
 
-nMNO := ( nSati * parobr->m_net_sat )
+nMNO := ROUND2( nSati * parobr->m_net_sat, gZaok2 )
 
 nRet := MAX( nNeto, nMNO )
 

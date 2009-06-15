@@ -743,8 +743,6 @@ do while !eof() .and. eval(bUSlov)
 		
  	enddo
 
-	altd()
-
  	// neto na ruke osnova
 	// BRUTO - DOPR_IZ - POREZ
 	nPorNROsnova := ROUND2 ( (nRadn_bo - nRadn_diz) - nPor, gZaok2 )
