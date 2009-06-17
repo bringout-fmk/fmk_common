@@ -655,7 +655,7 @@ do while !eof() .and. eval(bUSlov)
 		nUMRadn_bo += nMRadn_bo
 
 	else
-		nMRadn_bo := nRadn_no
+		nMRadn_bo := nRadn_bo
 		nUMRadn_bo += nRadn_bo
 	endif
 
