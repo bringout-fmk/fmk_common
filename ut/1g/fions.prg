@@ -424,6 +424,8 @@ local nMj1:=0,i:=0
 private cFormula
 PushWA()
 
+altd()
+
 if cF0=NIL
    cFormula:="0"
 else

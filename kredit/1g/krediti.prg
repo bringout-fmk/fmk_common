@@ -160,6 +160,7 @@ Box(,19,77)
 	set cursor on
 
 	@ m_x+1,m_y+2 SAY "KREDIT - pregled, ispravka"
+	@ m_x+1,col()+10 SAY "<R> redefinisanje rata"
 	@ m_x+2,m_y+2 SAY "Radnik:   " GET cIdRadn  valid {|| P_Radn(@cIdRadn),setpos(m_x+2,m_y+20),qqout(trim(radn->naz)+" ("+trim(radn->imerod)+") "+radn->ime),P_Krediti(cIdRadn,@cIdKred,@cNaOsnovu),.t.}
 	@ m_x+3,m_y+2 SAY "Kreditor: " GET cIdKred  valid P_Kred(@cIdKred,3,21) pict "@!"
 	@ m_x+4,m_y+2 SAY "Na osnovu:" GET cNaOsnovu pict "@!"
@@ -235,7 +236,10 @@ do case
        		nRet:=DE_REFRESH
   	case Ch==K_CTRL_T
     		nRet:=DE_REFRESH
-  	case Ch==K_CTRL_P
+	case ( UPPER(CHR(Ch)) == "R" )
+		// redefinisanje kredita....
+		nRet := kr_redef() 
+	case Ch==K_CTRL_P
      		PushWa()
          	//StRjes(radkr->idradn,radkr->idkred,radkr->naosnovu)
      		PopWA()
@@ -244,7 +248,7 @@ do case
   		nRet:=DE_REFRESH
 endcase
 return nRet
-*}
+
 
 
 // --------------------------------------------
@@ -254,48 +258,62 @@ function kr_redef()
 local GetList := {}
 local nTRata
 local nNRata
-local cNaOsnovu := SPACE(20)
+local cId_radn
+local xGodina
+local xMjesec
+local cNa_osn
 
-Box(,6, 60)
+Box(,3, 60)
 	
-	@ m_x + 1, m_y + 2 SAY "*** podaci o kreditu" COLOR "I"
-	
-	@ m_x + 3, m_y + 2 SAY "kredit na osnovu" GET cNaOsnovu 
-
-	read
-
-	select radkr
-	set order to tag "4"
-	seek STR(_godina,4)+STR(_mjesec,2)+_idradn+cNaOsnovu
-
 	nTRata := field->iznos
 	nNRata := nTRata
+	cId_radn := field->idradn
+	cNa_osn := field->naosnovu
+	xMjesec := field->mjesec
+	xGodina := field->godina
 
-	@ m_x + 4, m_y + 2 SAY "tekuæa rata kredita = " + ;
+	@ m_x + 1, m_y + 2 SAY "Kredit redefinisati pocevsi od" GET xMjesec
+	@ m_x + 1, col() + 1 SAY "/" GET xGodina
+
+
+	@ m_x + 2, m_y + 2 SAY "tekuca rata kredita = " + ;
 		ALLTRIM(STR( nTRata )) + " KM"
-	@ m_x + 5, m_y + 2 SAY "rata kredita za obracun" GET nNRata VALID nNRata <> 0
+	@ m_x + 3, m_y + 2 SAY "  nova rata kredita = " GET nNRata VALID nNRata <> 0
 	read
 BoxC()
+
+// ako izaðemo, nista od operacije
+if LastKey() == K_ESC
+	return DE_CONT
+endif
 
 if nNRata <> nTRata
 	
 	// ponovo rekalkulisi rate u otplatnom planu
 	select radkr
 	set order to tag "4"
-	seek STR(_godina,4)+STR(_mjesec,2)+_idradn+cNaOsnovu
+	seek STR(xGodina,4)+STR(xMjesec,2)+cId_radn+cNa_Osn
+
+	// ali obavezno provjeri da li ima placenih rata !
+	if ROUND(field->placeno,2) <> 0
+		
+		msgbeep("Od zadatog mjeseca nemoguce izvrsiti rekalkulaciju !")
+		return DE_CONT
+	
+	endif
 
 	cKreditor := idkred
 	cIdRadn := idradn
 
 	set order to tag "2"
-	seek cIdRadn+cKreditor+cNaOsnovu+STR(_godina,4)+STR(_mjesec,2)
+	seek cIdRadn+cKreditor+cNa_Osn+STR(xGodina,4)+STR(xMjesec,2)
 
 	nTotalKr := 0
 	
 	// koliko ima rata kredita jos do kraja	
 	do while !eof() .and. cKreditor==idkred ;
-			.and. idradn=_idradn ;
-			.and. naosnovu == cNaOsnovu
+			.and. idradn=cId_radn ;
+			.and. naosnovu == cNa_Osn
 
 			nTotalKr += iznos
 			
@@ -306,11 +324,12 @@ if nNRata <> nTRata
 	enddo
 
 	nOstalo := nTotalKr
-	nTekMj:=_mjesec
-	nTekGodina:=_godina
+	nTekMj:=xMjesec
+	nTekGodina:=xGodina
 
-	i:=0
-	nTekMj := nMjesec - 1
+	i := 0
+	
+	nTekMj := xMjesec - 1
 	
 	do while .t.
 		if nTeKMj + 1 > 12
@@ -336,12 +355,12 @@ if nNRata <> nTRata
    			
 			append blank
    			
-			replace idradn with cIdRadn
+			replace idradn with cId_Radn
 			replace mjesec with nTekMj
 			replace godina with nTekGodina
 			replace idkred with cKreditor
 			replace iznos with nIRata
-			replace naosnovu with cNaOsnovu
+			replace naosnovu with cNa_Osn
 
    			++i
   		endif
@@ -353,9 +372,10 @@ if nNRata <> nTRata
   		endif
 	enddo
 
+	return DE_REFRESH
 endif
 
-return nNRata
+return DE_CONT
 
 
 
