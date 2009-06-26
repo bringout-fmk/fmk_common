@@ -14,7 +14,6 @@ PRG_SOURCES= \
           sifre.prg \
           ut.prg \
           valute.prg \
-	  refer.prg \
           vn_vd.prg
 
 
