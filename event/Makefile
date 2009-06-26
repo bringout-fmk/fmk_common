@@ -1,11 +1,13 @@
-VERZIJA=CDX
-MODUL=fmk_evn
+ROOT = ../../harbour/harbour/
 
-SRCDOSROOT=c:\\dev\\fmk\\AF\\cl-AF\\event\\
+HB_INC_COMPILE += -I$(TOP)../../fmk_lib/include
 
-PRGS=db.prg main.prg mnu_evn.prg rpt_evn.prg
-CS=
-ASMS=
+PRG_SOURCES= \
+            db.prg main.prg mnu_evn.prg rpt_evn.prg
 
-include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
+LIBNAME=fmk_event
+
+include $(TOP)$(ROOT)config/lib.cf
+
+HB_FLAGS = -n -b -ufmk_std.ch -kM -gc0 -I$(TOP) -I$(HB_INC_COMPILE)
 

@@ -6,7 +6,8 @@ PRG_SOURCES= \
    adm_db.prg gvars.prg id_j.prg koncij.prg \
    sifk.prg sifre.prg trfp.prg rlabele.prg \
    barkod.prg \
-   ut.prg db_integracija.prg int_util.prg strings.prg label.prg label_1.prg label_2.prg
+   ut.prg db_integracija.prg int_util.prg \
+   strings.prg label.prg label_1.prg label_2.prg \
 
 LIBNAME=fmk_roba
 

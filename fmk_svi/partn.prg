@@ -25,6 +25,7 @@ AADD(ImeKol,{PADR("PTT",5),{|| PTT},"ptt"})
 AADD(ImeKol,{PADR("Mjesto",16),{|| MJESTO},"mjesto"})
 AADD(ImeKol,{PADR("Adresa",24),{|| ADRESA},"adresa"})
 
+
 if partn->(fieldpos("_kup")) <> 0
 	
 	AADD(ImeKol, { "kup?", {|| _kup }, "_kup", ;
@@ -57,7 +58,7 @@ if partn->(fieldpos("MOBTEL"))<>0
 	AADD(ImeKol,{padr("MobTel",20 ),{|| mobtel},"mobtel"})
 endif
 
-if partn->(fieldpos("IDOPS"))<>0 .and. (F_OPS)->(USED())
+if partn->(fieldpos("IDOPS"))<>0 
 	AADD (ImeKol,{padr("Opcina",20 ),{|| idops},"idops",{|| .t.},{||P_Ops(@widops)}})
 endif
 
@@ -71,6 +72,11 @@ endif
 
 if partn->(fieldpos("FIDBR"))<>0
 	AADD(ImeKol,{padr("Partn Firma ID",20 ),{|| mobtel},"fidbr"})
+endif
+
+if partn->(fieldpos("idrefer")) <> 0
+	AADD(ImeKol,{PADR("Referent",24),{|| idrefer},"idrefer", ;
+		{|| .t.}, {|| p_refer(widrefer)} })
 endif
 
 FOR i:=1 TO LEN(ImeKol)

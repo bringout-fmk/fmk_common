@@ -1,4 +1,4 @@
-#include "sc.ch"
+#include "fmk.ch"
 
 /*! \fn KarticaLog()
  *  \brief Stampa pregleda dogadjaja
@@ -19,14 +19,18 @@ private cFunkcija:=SPACE(30)
 private cSirokiIspis:="N"
 private cPrikUkupno:="N"
 private cKorisn:=PADR(nUser,3)
+private nNivoOd := 1
+private nNivoDo := 5
 
 Box(,10,60)
-	@ m_x+1,m_y+2 SAY "Od datuma: " GET dDatumOd
-	@ m_x+2,m_y+2 SAY "Do datuma: " GET dDatumDo
-	@ m_x+4,m_y+2 SAY "Modul (prazno-svi)      :" GET cModul PICT "@!"
-	@ m_x+5,m_y+2 SAY "Komponenta (prazno-sve) :" GET cKomponenta PICT "@!"
-	@ m_x+6,m_y+2 SAY "Funkcija (prazno-sve)   :" GET cFunkcija PICT "@!"
+	@ m_x+1,m_y+2 SAY "Datum od:" GET dDatumOd
+	@ m_x+1,col()+1 SAY "do:" GET dDatumDo
+	@ m_x+3,m_y+2 SAY "Modul (prazno-svi)      :" GET cModul PICT "@!"
+	@ m_x+4,m_y+2 SAY "Komponenta (prazno-sve) :" GET cKomponenta PICT "@!"
+	@ m_x+5,m_y+2 SAY "Funkcija (prazno-sve)   :" GET cFunkcija PICT "@!"
 	@ m_x+7,m_y+2 SAY "User (prazno-svi)       :" GET cKorisn //VALID {|| EMPTY(nUser) .or. P_User(@nUser)}
+	@ m_x+8,m_y+2 SAY "Nivo bitnosti od:" GET nNivoOd PICT "9"
+	@ m_x+8,col()+1 SAY "do:" GET nNivoDo PICT "9"
 	read
 	@ m_x+9,m_y+2 SAY "Detalji (D/N) :" GET cSirokiIspis VALID cSirokiIspis$"DN" PICT "@!"
 	if (!EMPTY(cModul) .and. !EMPTY(cKomponenta) .and. !EMPTY(cFunkcija) .and. !EMPTY(cKorisn))
@@ -39,25 +43,15 @@ if (LastKey()==K_ESC)
 	return
 endif
 
-IzvjEvents(dDatumOd,dDatumDo,cModul,cKomponenta,cFunkcija,cKorisn)
+IzvjEvents(dDatumOd,dDatumDo,cModul,cKomponenta,cFunkcija,cKorisn, ;
+		nNivoOd, nNivoDo )
 
 return
-*}
 
 
-
-/*! \fn IzvjEvents(dDatumOd,dDatumDo,cModul,cKomponenta,cFunkcija,nUser)
- *  \brief Stampa izvjestaja dogadjaja
- *  \param dDatumOd - datum od kojeg se pravi izvjestaj
- *  \param dDatumDo - datum do kojeg se pravi izvjestaj
- *  \param cModul - naziv modula-objekta (eg. LD)
- *  \param cKomponenta - naziv komponente (eg. DOK)
- *  \param cFunkcija - naziv funkcije (eg. UNOS)
- *  \param nKorisnik - korisnik 
- */
  
-function IzvjEvents(dDatumOd,dDatumDo,cModul,cKomponenta,cFunkcija,cKorisnik)
-*{
+function IzvjEvents(dDatumOd,dDatumDo,cModul,cKomponenta,cFunkcija,cKorisnik, ;
+		nNivoOd, nNivoDo )
 
 private cFilter:=".t."
 
@@ -68,7 +62,12 @@ if (!EMPTY(dDatumOd) .or. !EMPTY(dDatumDo))
 endif
 
 if (!EMPTY(cModul))
-	cFilter+=" .and. objekat=" + Cm2Str(cModul)
+	
+	// fmk uvijek ide u filter	
+	cFilter += " .and. ( objekat=" + Cm2Str(PADR("FMK",10))
+
+	cFilter += " .or. objekat=" + Cm2Str(cModul) + ")"
+
 endif
 
 if (!EMPTY(cKomponenta))
@@ -82,6 +81,8 @@ endif
 if (!EMPTY(cKorisnik))
 	cFilter+=" .and. user=" + Cm2Str(VAL(cKorisnik))
 endif
+
+
 
 if (cFilter=" .t. .and. ") 
 	cFilter:=SubStr(cFilter,9)
@@ -99,8 +100,8 @@ EOF CRET
 
 START PRINT CRET
 
-//         ID   USER    DATUM    VRIJEME   OBJEKAT      KOMPONENTA     FUNKCIJA                     
-cLinija:="---- ------ --------- --------- ---------- --------------- ------------------------------- "
+//         ID  USER                    DATUM     VRIJEME   OBJEKAT-KOMPONENTA-FUNKCIJA                     
+cLinija:="---- ----------------------- --------- --------- ----------------------------"
 
 ZaglKartEvent(cLinija)
 
@@ -125,6 +126,7 @@ endif
 
 // provrti filterisane zapise
 do while !eof() 
+	
 	if prow()>61	
 		FF
 		ZaglKartEvent(cLinija)
@@ -139,6 +141,15 @@ do while !eof()
 	select events
 	set order to tag "1"
 	seek cObj+cKomp+cFunc
+	
+	// provjeri bitnost
+	nNivo := field->bitnost
+	if nNivo < nNivoOd .or. nNivo > nNivoDo
+		select eventlog
+		skip
+		loop
+	endif
+	
 	if !(ASCAN(aGrupe,field->security1)>0) 
 		if !(ASCAN(aGrupe,field->security2)>0) 
 			if !(ASCAN(aGrupe,field->security3)>0)	
@@ -154,26 +165,85 @@ do while !eof()
 	
 	? SPACE(2)+STR(field->id,4)
 	?? SPACE(2)
-	@ prow(),pcol()+1 SAY STR(field->user,3)  
+	@ prow(),pcol()+1 SAY PADR( GetFullUserName( field->user ), 20 )  
 	@ prow(),pcol()+1 SAY SPACE(2)+DTOC(field->datum)
 	@ prow(),pcol()+1 SAY SPACE(2)+field->vrijeme+SPACE(3)
-	@ prow(),pcol()+1 SAY field->objekat
-	@ prow(),pcol()+1 SAY field->komponenta
-	@ prow(),pcol()+1 SAY field->funkcija
+	@ prow(),pcol()+1 SAY ALLTRIM(field->objekat) + "-" + ;
+				ALLTRIM(field->komponenta) + "-" + ;
+				ALLTRIM(field->funkcija)
 	if cSirokiIspis=="D"
-		?
-		? SPACE(8)+"* N1: "+STR(field->n1,10,2)+SPACE(5)+"N2: "+STR(field->n2,10,2)
-		nUkN1+=field->n1
-		nUkN2+=field->n2
-		? SPACE(8)+"* Count1: "+STR(field->count1,10,2)+" Count2: "+STR(field->count2,10,2)
-		nUkCount1+=field->count1
-		nUkCount1+=field->count2
-		? SPACE(8)+"* C1: "+field->c1 
-		? SPACE(8)+"* C2: "+field->c2 
-		? SPACE(8)+"* C3: "+field->c3 
-		? SPACE(8)+"* D1: "+DTOC(field->d1)+"  D2 : "+DTOC(field->d2)
+		
+		// pomocna numericka polja
+		if ( field->n1 + field->n2 <> 0 )
+		
+			?
+			? SPACE(8)+"* kolicina: "+STR(field->n1,10,2)+SPACE(5)+"cijena: "+STR(field->n2,10,2)
+			nUkN1+=field->n1
+			nUkN2+=field->n2
+		endif
+
+		// pomocna numericka polja
+		if (field->count1 + field->count2 <> 0 )
+			
+			? SPACE(8)+"* pr.vr.1: "+STR(field->count1,10,2)+" pr.vr.2: "+STR(field->count2,10,2)
+			nUkCount1+=field->count1
+			nUkCount1+=field->count2
+		endif
+
+		// pomocni tekst 1
+		cTxt := field->c1
+		if !EMPTY(cTxt)
+			aTxt := sjecistr(cTxt,70)
+			for i:=1 to LEN(aTxt)
+				if i = 1
+				  ? SPACE(8)+"* " + aTxt[i]
+				else
+				  ? SPACE(10) + aTxt[i]
+				endif
+			next
+		endif
+		
+		// pomocni tekst 2
+		cTxt := field->c2
+		if !EMPTY(cTxt)
+			aTxt := sjecistr(cTxt,70)
+			for i:=1 to LEN(aTxt)
+				if i = 1
+				  ? SPACE(8)+"* "
+				  ?? aTxt[i]
+				else
+				  ? SPACE(10) + aTxt[i]
+				endif
+
+			next
+		endif
+	
+		// pomocni tekst 3
+		cTxt := field->c3
+		if !EMPTY(cTxt)
+			aTxt := sjecistr(cTxt,70)
+			for i:=1 to LEN(aTxt)
+				if i = 1
+				  ? SPACE(8)+"* "
+				  ?? aTxt[i]
+				else
+				  ? SPACE(10) + aTxt[i]
+				endif
+
+			next
+		endif
+
+		// datumi
+		? SPACE(8) + "* datum (1): " + DTOC(field->d1) + ;
+			     "  datum (2): " + DTOC(field->d2)
+
+		// opis operacije
 		? SPACE(8)+"* Opis: "+ALLTRIM(field->opis)
-		? SPACE(8)+"* SQL/Ostalo: "+ALLTRIM(field->sql)
+		
+		// sql string - ako postoji
+		if !EMPTY(field->sql)
+			? SPACE(8) + "SQL/Ostalo: " + field->sql
+		endif
 		?
 	endif
 	skip
@@ -184,9 +254,9 @@ if prow()>59
 	ZaglKartEvent(cLinija)
 endif
 
-? SPACE(2)+cLinija
+? SPACE(2) + cLinija
 
-if cPrikUkupno=="D"
+if cPrikUkupno == "D"
 	UkIzvjEvents(nUkN1,nUkN2,nUkCount1,nUkCount2)
 
 endif
@@ -268,7 +338,7 @@ set century off
 P_12CPI
 
 ? SPACE(2)+cLinija
-? SPACE(2)+" Id   User    Datum    Vrijeme   Objekat    Komponenta      Funkcija "
+? SPACE(2)+" Id   User                    Datum    Vrijeme   Objekat-komponenta-funkcija"
 ? SPACE(2)+cLinija
 
 return
@@ -284,7 +354,7 @@ return
  */
  
 function UkIzvjEvents(nN1,nN2,nCnt1,nCnt2)
-*{
+
 ?
 ? SPACE(2)+"-----------------------------------------"
 ? SPACE(2)+"UKUPNO: "
@@ -295,4 +365,4 @@ function UkIzvjEvents(nN1,nN2,nCnt1,nCnt2)
 ? SPACE(2)+"-----------------------------------------"
 ?
 return
-*}
+

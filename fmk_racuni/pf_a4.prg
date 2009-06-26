@@ -242,6 +242,21 @@ do while !EOF()
 	    ?? PADR(aNazivDobra[2], LEN_NAZIV)
 	endif
 	
+	// opis
+	if !EMPTY( rn->opis )
+		? RAZMAK
+		?? " "
+		?? SPACE(LEN_RBR)
+		?? ALLTRIM(rn->opis)
+	endif
+	// c1, c2, c3
+	if !EMPTY( rn->c1 ) .or. !EMPTY( rn->c2 ) .or. !EMPTY( rn->c3 )
+		? RAZMAK
+		?? " "
+		?? SPACE(LEN_RBR)
+		?? ALLTRIM(rn->c1) + ", " + ALLTRIM(rn->c2) + ", " + ALLTRIM(rn->c3)
+	endif
+	
 	// provjeri za novu stranicu
 	if prow() > nDodRedova + LEN_STRANICA - DSTR_KOREKCIJA() - PICT_KOREKCIJA(nStr)
 		++nStr
@@ -1309,7 +1324,7 @@ return gpIni == "#%INI__#"
 // --------------------------------
 static function	DSTR_KOREKCIJA()
 local nPom
-
+altd()
 nPom := ROUND(nDuzStrKorekcija, 0)
 if ROUND(nDuzStrKorekcija - nPom, 1) > 0.2
 	nPom ++
@@ -1323,6 +1338,13 @@ return nPom
 // --------------------------------
 static function	PICT_KOREKCIJA( nStr )
 local nPom
+
+if nPicHRow == nil
+	nPicHRow := 0
+endif
+if nPicFRow == nil
+	nPicFRow := 0
+endif
 
 if nStr == 1
 	nPom := ( nPicHRow + nPicFRow )

@@ -39,7 +39,7 @@ if del_rndbf() == 0
 endif
 
 // provjeri da li postoji fajl DRN.DBF
-if !file(ToUnix(PRIVPATH + cDRnName))
+if !FILE(PRIVPATH + cDRnName)
 	// drn specifikacija polja
 	get_drn_fields(@aDRnField)
         // kreiraj tabelu
@@ -47,7 +47,7 @@ if !file(ToUnix(PRIVPATH + cDRnName))
 endif
 
 // provjeri da li postoji fajl RN.DBF
-if !file(ToUnix(PRIVPATH + cRnName))
+if !FILE(PRIVPATH + cRnName)
 	// rn specifikacija polja
 	get_rn_fields(@aRnField)
         // kreiraj tabelu
@@ -55,7 +55,7 @@ if !file(ToUnix(PRIVPATH + cRnName))
 endif
 
 // provjeri da li postoji fajl DRNTEXT.DBF
-if !file(ToUnix(PRIVPATH + cDRTxtName))
+if !FILE(PRIVPATH + cDRTxtName)
 	// rn specifikacija polja
 	get_dtxt_fields(@aDRTxtField)
         // kreiraj tabelu
@@ -79,7 +79,7 @@ function dokspf_create()
 *{
 local aDbf:={}
 
-if !file(ToUnix(KUMPATH + "\DOKSPF.DBF"))
+if !FILE(KUMPATH + "\DOKSPF.DBF")
 	AADD(aDbf, {"IDPOS", "C", 2, 0})
 	AADD(aDbf, {"IDVD",  "C", 2, 0})
 	AADD(aDbf, {"DATUM", "D", 8, 0})
@@ -176,6 +176,11 @@ AADD(aArr, {"VPDV",     "N", 15, 5})
 AADD(aArr, {"UKUPNO",    "N", 15, 5})
 AADD(aArr, {"POPTP",   "N", 8, 3})
 AADD(aArr, {"VPOPTP",   "N", 15, 5})
+AADD(aArr, {"C1",   "C", 100, 0})
+AADD(aArr, {"C2",   "C", 100, 0})
+AADD(aArr, {"C3",   "C", 100, 0})
+AADD(aArr, {"OPIS",   "C", 200, 0})
+
 return
 *}
 
@@ -218,6 +223,7 @@ return
 
 // dodaj u drn.dbf
 function add_drn(cBrDok, dDatDok, dDatVal, dDatIsp, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUkupno, nCSum, nUPopTp, nZaokr, nUkkol)
+*{
 local cnt1
 
 if !USED(F_DRN)
@@ -287,6 +293,7 @@ if glUgost
 endif
 
 return
+*}
 
 function add_drn_di(dDatIsp)
 
@@ -344,10 +351,23 @@ return xRet
 // ---------------------------------
 // dodaj u rn.dbf
 // ---------------------------------
-function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca)
+function add_rn(cBrDok, cRbr, cPodBr, cIdRoba, cRobaNaz, cJmj, nKol, nCjenPdv, nCjenBPdv, nCjen2Pdv, nCjen2BPdv, nPopust, nPPdv, nVPdv, nUkupno, nPopNaTeretProdavca, nVPopNaTeretProdavca, cC1, cC2, cC3, cOpis)
 *{
 if !USED(F_RN)
 	O_RN
+endif
+
+if cC1 == nil
+	cC1 := ""
+endif
+if cC2 == nil
+	cC2 := ""
+endif
+if cC3 == nil
+	cC3 := ""
+endif
+if cOpis == nil
+	cOpis := ""
 endif
 
 select rn
@@ -359,6 +379,10 @@ replace podbr with cPodBr
 replace idroba with cIdRoba
 replace robanaz with cRobaNaz
 replace jmj with cJmj
+replace c1 with cC1
+replace c2 with cC2
+replace c3 with cC3
+replace opis with cOpis
 replace kolicina with nKol
 replace cjenpdv with nCjenPdv
 replace cjenbpdv with nCjenBPdv
@@ -388,15 +412,15 @@ function drn_empty()
 *{
 O_DRN
 select drn
-zapp()
+zap
 
 O_RN
 select rn
-zapp()
+zap
 
 O_DRNTEXT
 select drntext
-zapp()
+zap
 
 return
 *}

@@ -92,11 +92,12 @@ if LEN( aUpdate ) == 0
 	? "Nema update-a.... "
 	quit
 endif
+
 @ 1, 2 SAY "----------------------"
-@ 2, 2 SAY "fmk.REFRESH ver. 01.20"
+@ 2, 2 SAY "fmk.REFRESH ver. 02.00"
 @ 3, 2 SAY "----------------------"
 
-@ 4, 2 SAY "Klijent putanja:" + cLocal + ", Server putanja: " + cServer 
+@ 4, 2 SAY "Klijent putanja: " + cLocal + ", Server putanja: " + cServer 
 
 @ 6, 2 SAY "Lista fajlova za osvjezenje"
 @ 7, 2 SAY "------------------------------------------"
@@ -120,6 +121,7 @@ return 1
 
 static function _chk_update( cLocal, cServer, aFList, aUpdate )
 local i
+local cFExt := ".ZIP"
 
 aUpdate := {}
 
@@ -132,8 +134,8 @@ endif
 
 for i := 1 to LEN( aFList )
 	
-	// "FIN"
-	cTmpFName := ALLTRIM( aFList[i] ) + ".EXE"
+	// "FIN.ZIP"
+	cTmpFName := ALLTRIM( aFList[i] ) + cFExt
 	
 	// "c:\sigma\fin.zip"
 	cTmpLocal := cLocal + SLASH + cTmpFName
@@ -142,28 +144,44 @@ for i := 1 to LEN( aFList )
 	cTmpServer := cServer + SLASH + cTmpFName
 
 	// filuj podatke o fajlovima
-	aLocal := DIRECTORY( cTmpLocal )
-	aServer := DIRECTORY( cTmpServer )
+	if FILE( cTmpLocal )
+		aLocal := DIRECTORY( cTmpLocal )
+	else
+		aLocal := nil
+	endif
 
-	// naziv FIN.exe (C)
+	if FILE( cTmpServer )
+		aServer := DIRECTORY( cTmpServer )
+	else
+		aServer := nil
+	endif
+
+	// naziv FIN.zip (C)
 	// velicina - 694656 (N)
 	// datum "11/29/07" (D)
 	// vrijeme "01:04:42" (C)
 	// tip "A" (C)
 
-	if LEN( aLocal ) == 0 .or. LEN( aServer ) == 0
+	if LEN( aServer ) == 0 
 		loop
 	endif
 	
 	cServDate := DTOS(aServer[ 1, 3 ])  
 	cServTime := aServer[ 1, 4 ]
 	
-	cLocDate :=  DTOS(aLocal[ 1, 3 ])
-	cLocTime := aLocal[ 1, 4]
-	
+	// ako nema lokalno zip fajla
+	if aLocal == nil
+		// inicijalne vrijednosti
+		cLocDate := "01/01/00"
+		cLocTime := "01:01:01"
+	else
+		cLocDate :=  DTOS(aLocal[ 1, 3 ])
+		cLocTime := aLocal[ 1, 4]
+	endif
+
 	if cServDate + cServTime > cLocDate + cLocTime
 		// odradi update
-		AADD( aUpdate, { cTmpServer, cLocal } )
+		AADD( aUpdate, { cTmpServer, cLocal, cTmpFName } )
 	endif
 	
 next
@@ -176,6 +194,7 @@ static function _get_update( cIni, aUpdate )
 local i
 local cFSys := UzmiIzIni( cIni, "OS", "Version", "XP", "READ" )
 private cTmp := ""
+private cTmpU := ""
 
 for i:=1 to LEN( aUpdate )
 
@@ -185,15 +204,25 @@ for i:=1 to LEN( aUpdate )
 	cTmp += aUpdate[i, 1] 
 	cTmp += " " 
 	cTmp += aUpdate[i, 2]
-	
+
 	@ 18, 2 SAY PADR( cTmp, 70 )
-	
+
 	// kopiraj fajl
 	run &cTmp
 
-	// kopiraj i chs
-	cTmp := STRTRAN( UPPER(cTmp), ".EXE", ".CHS" )
-	run &cTmp
+	// sada ga raspakuj lokalno !
+
+	cTmpU := "c:\progra~1\7-zip\7z"
+	cTmpU += " "
+	cTmpU += "e"
+	cTmpU += " "
+	cTmpU += "-y"
+	cTmpU += " "
+	cTmpU += aUpdate[i, 3]
+
+	@ 18, 2 SAY PADR( cTmpU, 70 )
+
+	run &cTmpU
 
 next
 

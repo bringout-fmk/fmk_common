@@ -122,5 +122,69 @@ enddo
 
 return dDatum
 
+// -------------------------------------------------------
+// ispisuje na ekranu box sa stanjem kupca
+// -------------------------------------------------------
+function g_box_stanje( cPartner, cKKup, cKDob )
+local nTArea
+local nSKup := 0
+local nSDob := 0
+local dDate := CTOD("")
+local nSaldo := 0
+local nX
+private GetList:={}
+
+nTArea := SELECT()
+
+nSKup := g_p_saldo( cPartner, cKKup )
+nSDob := g_p_saldo( cPartner, cKDob )
+dDate := g_dpupl_part( cPartner, cKKup )
+
+nSaldo := nSKup - nSDob
+
+if nSaldo = 0
+	select (nTArea)
+	return
+endif
+
+nX := 1
+
+Box(, 9, 50)
+
+	@ m_x + nX, m_y + 2 SAY "Trenutno stanje partnera:"
+
+    	++nX
+
+    	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+    		
+	++nX
+
+	@ m_x + nX, m_y + 2 SAY PADR( "(1) stanje na kontu " + cKKup + ": " + ALLTRIM(STR(nSKup, 12, 2)) + " KM", 45 ) COLOR IF(nSKup > 100, "W/R+", "W/G+")
+    	
+    	++nX
+
+	@ m_x + nX, m_y + 2 SAY PADR( "(2) stanje na kontu " + cKDob + ": " + ALLTRIM(STR(nSDob,12,2)) + " KM", 45 ) COLOR "W/GB+"
+
+	++nX
+
+	@ m_x + nX, m_y + 2 SAY "-----------------------------------------------"
+    	++nX
+
+	@ m_x + nX, m_y + 2 SAY "Total (1-2) = " + ALLTRIM(STR(nSaldo,12,2)) + " KM" COLOR IF(nSaldo > 100, "W/R+", "W/G+")
+	
+	nX += 2
+
+    	@ m_x + nX, m_y + 2 SAY "Datum zadnje uplate: " + DToC(dDate)
+		
+    	inkey(0)
+
+BoxC()
+
+select (nTArea)
+
+return
+
+
+
 
 

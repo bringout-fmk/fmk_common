@@ -21,7 +21,9 @@ if ops->(FieldPOS("IDJ")<>0)
 	AADD(ImeKol, {PADR("N0", 3), {|| idN0}, "idN0"})
 endif
 AADD(ImeKol, {PADR("Naziv", 20), {|| naz}, "naz"})
-
+if ops->(FieldPOS("REG"))<>0
+	AADD(ImeKol, {PADR("Region", 20), {|| reg}, "reg"})
+endif
 for i:=1 to LEN(ImeKol)
 	AADD(Kol, i)
 next

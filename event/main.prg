@@ -1,4 +1,4 @@
-#include "sc.ch"
+#include "fmk.ch"
 
 
 function EventLog(nUser,cModul,cKomponenta,cFunkcija,nN1,nN2,nCount1,nCount2,cC1,cC2,cC3,dDatum1,dDatum2,cSql,cOpis)

@@ -1,4 +1,4 @@
-#include "sc.ch"
+#include "fmk.ch"
 
 function CreSecurity(nArea)
 *{
@@ -26,6 +26,7 @@ aDbf:={}
 AADD(aDbf,{"ID","N",3,0})  
 AADD(aDbf,{"NAZ","C",15,0})  
 AADD(aDbf,{"PSW","C",15,0})  
+AADD(aDbf,{"FULLNAME","C",40,0})  
 AADD(aDbf,{"IDGRUPA1","N",3,0})  
 AADD(aDbf,{"IDGRUPA2","N",3,0})  
 AADD(aDbf,{"IDGRUPA3","N",3,0})  
@@ -46,6 +47,7 @@ if (users->(reccount2()<1))
 	Scatter()
 	_id:=0
 	_naz:="ADMINISTRATOR"
+	_fullname:="ADMINISTRATOR"
 	_psw:=CRYPT(PADR("SIGMAFMK",15),"SIGMASE")
 	_idgrupa1:=900
 	Gather()
@@ -135,6 +137,11 @@ select (nArr)
 
 AADD(ImeKol, { PADR("Id",3), {|| id}, "id", {|| IncId(@wId),.f.}, {|| .t.} , , "999"  })
 AADD(ImeKol, { PADR("Naziv",15), {|| naz}, "naz" })
+
+if users->(FIELDPOS("fullname")) <> 0
+	AADD(ImeKol, { PADR("Puni naziv",15), {||fullname}, "fullname" })
+endif
+
 AADD(ImeKol, { PADR("Lozinka",15), {|| psw}, "psw", {|| WhenPsw()}, {|| ValidPsw()} })
 AADD(ImeKol, { PADR("1.grupa",7), {|| idGrupa1}, "idGrupa1", {|| .t.}, {|| P_Groups(@wIdGrupa1)} })
 AADD(ImeKol, { PADR("2.grupa",7), {|| idGrupa2}, "idGrupa2", {|| .t.}, {|| EMPTY(wIdGrupa2) .or. P_Groups(@wIdGrupa2)} })
