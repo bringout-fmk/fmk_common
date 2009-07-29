@@ -51,6 +51,7 @@
 
 #xcommand O_PRIPT => select (F_PRIPT); usex (PRIVPATH+"pript")
 #xcommand O_TEMP => select (F_TEMP); usex (PRIVPATH+"temp")
+#xcommand O_CACHE => select (F_CACHE); usex (PRIVPATH+"cache")
 
 
 

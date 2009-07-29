@@ -271,6 +271,7 @@
 // vindija - auto import
 #define F_TEMP	236
 #define F_PRIPT	237
+#define F_CACHE	240
 // tops integritet
 #define F_DINTEG1 238
 #define F_DINTEG2 239
