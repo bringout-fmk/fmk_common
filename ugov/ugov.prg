@@ -245,7 +245,8 @@ return 0
 
 
 // -----------------------------------------------------------
-// generacija novog ugovora za partnera na osnovu prethodnog
+// automatsko generisanje nove robe ugovora po uzoru na 
+// postojecu
 // -----------------------------------------------------------
 function gen_ug_part()
 local cArtikal
@@ -253,15 +254,18 @@ local cArtikalOld
 local cDN
 local nTRec
 
-if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
+if Pitanje(,'Autom.generisanje novih stavki ugovora (D/N)?','N')=='D'
+	
 	select rugov
      	cArtikal:=idroba
      	cArtikalOld:=idroba
-     	cDN:="N"
-	Box(,3,50)
-      	@ m_x+1, m_y+5 SAY "Generisi ugovore za artikal: " GET cArtikal
-      	@ m_x+2, m_y+5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
-      	@ m_x+3, m_y+5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN valid cDN $ "DN"
+     	
+	cDN:="N"
+	
+	Box(,3,65)
+      	@ m_x+1, m_y+5 SAY "    Novi predmet ugovora (artikal): " GET cArtikal
+      	@ m_x+2, m_y+5 SAY "                Preuzmi podatke od: " GET cArtikalOld
+      	@ m_x+3, m_y+5 SAY "Gledati samo aktivne ugovore (D/N): " GET cDN valid cDN $ "DN"
       	read
      	BoxC()
 
@@ -273,22 +277,33 @@ if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
       		set relation to id into ugov
      	endif
 
-     	do while !eof()
-       		skip
-		nTrec:=recno()
+	set order to tag "idroba"
+	go top
+	seek cArtikalOld
+
+     	do while !eof() .and. field->idroba == cArtikalOld
+       		
+		skip
+		nTrec := recno()
 		skip -1
-        	if cDN=="D" .and. ugov->aktivan=="D" .and. cArtikalOld==idroba .or. cDN=="N" .and. cArtikalOld==idroba
-        		Scatter()
-        		append blank
-        		_idroba := cArtikal
-        		Gather()
-        		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
-        		go nTrec
-        	else
-        		go nTrec
-        	endif
-     	enddo
-     	set relation to
+        	
+		if cDN == "D" .and. ugov->aktivan == "N"
+			go (nTRec)
+			loop
+		endif
+		
+        	Scatter()
+        	append blank
+        	_idroba := cArtikal
+        	Gather()
+        	
+		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
+        	
+		go (nTrec)
+     	
+	enddo
+     	
+	set relation to
      	select ugov
 endif
 
