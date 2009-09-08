@@ -253,6 +253,7 @@ local cArtikal
 local cArtikalOld
 local cDN
 local nTRec
+local nCount := 0
 
 if Pitanje(,'Autom.generisanje novih stavki ugovora (D/N)?','N')=='D'
 	
@@ -291,13 +292,14 @@ if Pitanje(,'Autom.generisanje novih stavki ugovora (D/N)?','N')=='D'
 			go (nTRec)
 			loop
 		endif
-		
+	
+		++ nCount
         	Scatter()
         	append blank
         	_idroba := cArtikal
         	Gather()
         	
-		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
+		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nCount)
         	
 		go (nTrec)
      	
