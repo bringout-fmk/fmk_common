@@ -221,8 +221,8 @@ select (nTArea)
 private gTbDir:="N"
 bRoba:=gRobaBlock
 
-if !EMPTY(cSeek)
-	cPomTag := cSeek
+if !EMPTY(ALLTRIM(cSeek))
+	cPomTag := ALLTRIM(cSeek)
 else
 	cPomTag := IzFMKIni("SifRoba","SortTag","ID",SIFPATH)
 endif
