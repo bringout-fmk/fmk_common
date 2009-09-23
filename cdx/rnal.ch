@@ -2,8 +2,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_RN_VERZIJA "02.85"
-#define D_RN_PERIOD "06.06-21.05.09"
+#define D_RN_VERZIJA "02.86"
+#define D_RN_PERIOD "06.06-23.09.09"
 
 #ifndef FMK_DEFINED
 	#include "fmk.ch"
@@ -54,6 +54,7 @@
 #xcommand O_ELEMENTS => select(F_ELEMENTS); use (SIFPATH + "ELEMENTS"); set order to tag "1"
 #xcommand O_E_AOPS => select(F_E_AOPS); use (SIFPATH + "E_AOPS"); set order to tag "1"
 #xcommand O_E_ATT => select(F_E_ATT); use (SIFPATH + "E_ATT"); set order to tag "1"
+#xcommand O_RAL => select(F_RAL); use (SIFPATH + "RAL"); set order to tag "1"
 
 
 
