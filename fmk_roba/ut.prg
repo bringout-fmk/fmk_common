@@ -30,7 +30,7 @@ nDeleted:=0
 nAktivne:=0
 cDB:=goModul:oDataBase:cName
 
-OpenDB()
+_openDB()
 
 select roba
 set order to tag "ID"
@@ -73,7 +73,7 @@ return
 
 
 
-function OpenDB()
+static function _openDB()
 O_ROBA
 if (goModul:oDataBase:cName=="KALK")
 	O_KALK
