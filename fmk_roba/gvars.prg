@@ -1,4 +1,8 @@
+<<<<<<< HEAD:fmk_roba/gvars.prg
 #include "fmk.ch"
+=======
+#include "sc.ch"
+>>>>>>> clipper:roba/gvars.prg
 
 /*
  * ----------------------------------------------------------------

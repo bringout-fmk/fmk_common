@@ -1,4 +1,8 @@
+<<<<<<< HEAD:security/main.prg
 #include "fmk.ch"
+=======
+#include "sc.ch"
+>>>>>>> clipper:security/main.prg
 
 // ------------------------------------------------------
 // otvara login screen - prijavu korisnika

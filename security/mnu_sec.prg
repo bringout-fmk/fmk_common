@@ -1,4 +1,8 @@
+<<<<<<< HEAD:security/mnu_sec.prg
 #include "fmk.ch"
+=======
+#include "sc.ch"
+>>>>>>> clipper:security/mnu_sec.prg
 
 function MnuSecMain()
 *{

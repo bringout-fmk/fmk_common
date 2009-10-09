@@ -1,5 +1,10 @@
 #include "fmk.ch"
 
+/*
+ * ----------------------------------------------------------------
+ *                          Copyright Sigma-com software 1998-2006 
+ * ----------------------------------------------------------------
+ */
  
 /*! \fn Kurs(dDat,cValIz,cValU)
  *  \param dDat - datum na koji se trazi omjer

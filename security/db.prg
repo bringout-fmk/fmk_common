@@ -1,4 +1,8 @@
+<<<<<<< HEAD:security/db.prg
 #include "fmk.ch"
+=======
+#include "sc.ch"
+>>>>>>> clipper:security/db.prg
 
 function CreSecurity(nArea)
 *{

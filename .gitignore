@@ -1,4 +1,15 @@
+<<<<<<< HEAD:.gitignore
 */win/*
 win/*
 orig
 */linux/*
+=======
+*.bak
+*.BAK
+*.obj
+*.OBJ
+*.LIB
+*.lib
+lst
+LST
+>>>>>>> clipper:.gitignore

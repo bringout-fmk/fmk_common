@@ -1,11 +1,12 @@
 VERZIJA=CDX
 MODUL=partnst
 
-SRCDOSROOT=c:\\dev\\fmk\\\AF\\cl-AF\\partnst\\
+SRCDOSROOT=$(BASEDOS)\\fmk\\fmk_co~1\\partnst\\
 
 PRGS=db.prg main.prg
 CS=
 ASMS=
 
-include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
+
+include ../../fmk_lib/Makefile_clipper
 

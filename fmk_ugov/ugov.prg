@@ -11,6 +11,7 @@ local cHeader:=""
 local cFieldId
 
 private DFTkolicina:=1
+private DFTlabprn:="D"
 private DFTidroba:=PADR("",10)
 private DFTvrsta:="1"
 private DFTidtipdok:="10"
@@ -78,6 +79,10 @@ AADD(aImeKol, { "Opis", {|| PADR( trim(naz) + ": " + g_rugov_opis(id) , 30)  }, 
 AADD(aImeKol, { "DatumOd", {|| DatOd}, "DatOd" })
 AADD(aImeKol, { "DatumDo", {|| DatDo}, "DatDo" })
 AADD(aImeKol, { "Aktivan", {|| Aktivan}, "Aktivan", {|| .t.}, {|| wAKtivan $ "DN"}})
+
+if ugov->(fieldpos("LAB_PRN")) <> 0
+	AADD(aImeKol, { "Lab.print", {|| lab_prn}, "lab_prn" })
+endif
 
 AADD(aImeKol, { "TipDok", {|| IdTipdok}, "IdTipDok" })
 AADD(aImeKol, { "Vrsta", {|| vrsta}, "Vrsta" })
@@ -240,23 +245,28 @@ return 0
 
 
 // -----------------------------------------------------------
-// generacija novog ugovora za partnera na osnovu prethodnog
+// automatsko generisanje nove robe ugovora po uzoru na 
+// postojecu
 // -----------------------------------------------------------
 function gen_ug_part()
 local cArtikal
 local cArtikalOld
 local cDN
 local nTRec
+local nCount := 0
 
-if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
+if Pitanje(,'Autom.generisanje novih stavki ugovora (D/N)?','N')=='D'
+	
 	select rugov
      	cArtikal:=idroba
      	cArtikalOld:=idroba
-     	cDN:="N"
-	Box(,3,50)
-      	@ m_x+1, m_y+5 SAY "Generisi ugovore za artikal: " GET cArtikal
-      	@ m_x+2, m_y+5 SAY "Preuzmi podatke artikla: " GET cArtikalOld
-      	@ m_x+3, m_y+5 SAY "Zamjenu vrsiti samo za aktivne D/N: " GET cDN valid cDN $ "DN"
+     	
+	cDN:="N"
+	
+	Box(,3,65)
+      	@ m_x+1, m_y+5 SAY "    Novi predmet ugovora (artikal): " GET cArtikal
+      	@ m_x+2, m_y+5 SAY "                Preuzmi podatke od: " GET cArtikalOld
+      	@ m_x+3, m_y+5 SAY "Gledati samo aktivne ugovore (D/N): " GET cDN valid cDN $ "DN"
       	read
      	BoxC()
 
@@ -268,22 +278,34 @@ if Pitanje(,'Generisanje ugovora za partnere (D/N)?','N')=='D'
       		set relation to id into ugov
      	endif
 
-     	do while !eof()
-       		skip
-		nTrec:=recno()
+	set order to tag "idroba"
+	go top
+	seek cArtikalOld
+
+     	do while !eof() .and. field->idroba == cArtikalOld
+       		
+		skip
+		nTrec := recno()
 		skip -1
-        	if cDN=="D" .and. ugov->aktivan=="D" .and. cArtikalOld==idroba .or. cDN=="N" .and. cArtikalOld==idroba
-        		Scatter()
-        		append blank
-        		_idroba := cArtikal
-        		Gather()
-        		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nTrec)
-        		go nTrec
-        	else
-        		go nTrec
-        	endif
-     	enddo
-     	set relation to
+        	
+		if cDN == "D" .and. ugov->aktivan == "N"
+			go (nTRec)
+			loop
+		endif
+	
+		++ nCount
+        	Scatter()
+        	append blank
+        	_idroba := cArtikal
+        	Gather()
+        	
+		@ m_x+1, m_y+2 SAY "Obuhvaceno: " + STR(nCount)
+        	
+		go (nTrec)
+     	
+	enddo
+     	
+	set relation to
      	select ugov
 endif
 
@@ -342,6 +364,9 @@ if lNovi
 	_datod:=DATE()
    	_datdo:=CTOD("31.12.2059")
    	_aktivan:="D"
+	if ugov->(fieldpos("lab_prn")) <> 0
+		_lab_prn:="D"
+	endif
    	_dindem:=DFTdindem
    	_idtipdok:=DFTidtipdok
    	_zaokr:=DFTzaokr
@@ -391,6 +416,10 @@ endif
 ++ nX
 
 @ m_x + nX, m_y + 2 SAY PADL("Aktivan (D/N)", nBoxLen) GET _aktivan VALID _aktivan $ "DN"  PICT "@!"
+
+if ugov->(fieldpos("lab_prn")) <> 0
+	@ m_x + nX, col() + 2 SAY PADL("labela print (D/N)", nBoxLen) GET _lab_prn VALID _lab_prn $ "DN"  PICT "@!"
+endif
 
 ++ nX
 

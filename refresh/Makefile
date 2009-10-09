@@ -11,7 +11,8 @@ SCLIB_LIBS=sc1g_arh.lib sc1g_ba.lib sc1g_cui.lib sc1g_db.lib sc1g_os.lib sc1g_os
 MODUL_LIBS=
 
 EOBJCOPY=echo nemam sta kopirati !
-include $(SC_BUILD_HOME_DIR)/sclib/Makefile_clipper
+
+include ../../fmk_lib/Makefile_clipper
 
 install: lib exe
 
