@@ -1,4 +1,0 @@
-*OPS
-A PNE C 100
-A DNE C 100
-
