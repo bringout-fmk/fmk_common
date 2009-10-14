@@ -93,9 +93,9 @@ if LEN( aUpdate ) == 0
 	quit
 endif
 
-@ 1, 2 SAY "----------------------"
-@ 2, 2 SAY "fmk.REFRESH ver. 02.00"
-@ 3, 2 SAY "----------------------"
+@ 1, 2 SAY "------------------------------------------"
+@ 2, 2 SAY "fmk.REFRESH ver. 02.20  :  14.10.2009"
+@ 3, 2 SAY "------------------------------------------"
 
 @ 4, 2 SAY "Klijent putanja: " + cLocal + ", Server putanja: " + cServer 
 
@@ -147,13 +147,15 @@ for i := 1 to LEN( aFList )
 	if FILE( cTmpLocal )
 		aLocal := DIRECTORY( cTmpLocal )
 	else
-		aLocal := nil
+		aLocal := {}
+		AADD(aLocal, {"-99"})
 	endif
 
 	if FILE( cTmpServer )
 		aServer := DIRECTORY( cTmpServer )
 	else
-		aServer := nil
+		aServer := {}
+		AADD(aServer, {"-99"})
 	endif
 
 	// naziv FIN.zip (C)
@@ -162,7 +164,7 @@ for i := 1 to LEN( aFList )
 	// vrijeme "01:04:42" (C)
 	// tip "A" (C)
 
-	if LEN( aServer ) == 0 
+	if aServer[1,1] == "-99"
 		loop
 	endif
 	
@@ -170,7 +172,7 @@ for i := 1 to LEN( aFList )
 	cServTime := aServer[ 1, 4 ]
 	
 	// ako nema lokalno zip fajla
-	if aLocal == nil
+	if aLocal[1,1] == "-99"
 		// inicijalne vrijednosti
 		cLocDate := "01/01/00"
 		cLocTime := "01:01:01"
