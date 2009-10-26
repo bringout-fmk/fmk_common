@@ -627,6 +627,7 @@ local cBrDok
 local cBrNar
 local cBrOtp
 local cIdVd
+local cIdPm
 local i
 local cLinijaNarOtp 
 
@@ -698,7 +699,7 @@ cKAdresa:=get_dtxt_opis("K02")
 cKIdBroj:=get_dtxt_opis("K03")
 cDestinacija:=get_dtxt_opis("D08")
 cIdVd:=get_dtxt_opis("D09")
-
+cIdPm := get_dtxt_opis("D11")
 if nShowRj == 1
 	cIdRj:=get_dtxt_opis("D10")
 endif
@@ -838,6 +839,17 @@ if !EMPTY(cKTelFax)
 	p_line(SPACE(2), 10, .f., .t.)
 	P_12CPI
 	?? PADR(cKTelFax, LEN_KUPAC)
+endif
+
+if !EMPTY( cIdPm )
+	
+	// specificno za radni nalog
+	if "RN" $ cIdPm
+		cIdPm := "Veza, nalog: " + STRTRAN( cIdPm, "RN-", "" )	
+	endif
+
+	p_line( cIdpm, 10, .f. )
+
 endif
 
 if !EMPTY(cDestinacija)
