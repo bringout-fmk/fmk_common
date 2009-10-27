@@ -32,6 +32,9 @@ static _F_FOBJ := "F_OBJ.TXT"
 static F_FOPER := "OPERATERI"
 static _F_FOPER := "F_OPER.TXT"
 
+// pos komande
+static F_POS_RN := "POS_RN"
+
 // komande semafora 
 // -------------------------------------------
 // 0 - stampanje racuna maloprodaje
@@ -151,6 +154,13 @@ cRet := STRTRAN( cPattern, "*", ALLTRIM(STR(nInvoice)) )
 return cRet
 
 
+// ----------------------------------------
+// fajl za pos fiskalni stampac
+// ----------------------------------------
+static function _filepos()
+local cRet := "out.inp"
+return cRet
+
 
 // ---------------------------------
 // racun maloprodaje
@@ -251,5 +261,186 @@ _a_to_file( cFPath, _F_FOPER, aS_oper, aOper )
 
 return
 
+
+// -----------------------------------------------------
+// fiskalni racun pos
+// cFPath - putanja do fajla
+// aData - podaci racuna
+// -----------------------------------------------------
+function fc_pos_rn( cFPath, aData )
+local cSep := ";"
+local aPosData := {}
+local aStruct := {}
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+cPom := _filepos()
+
+// iscitaj pos matricu
+aPosData := __pos_rn( aData )
+
+_a_to_file( cFPath, cPom, aStruct, aPosData )
+
+return
+
+
+// -----------------------------------------------------
+// fisalno upisivanje robe
+// cFPath - putanja do fajla
+// aData - podaci racuna
+// -----------------------------------------------------
+function fc_pos_art( cFPath, aData )
+local cSep := ";"
+local aPosData := {}
+local aStruct := {}
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+cPom := _filepos()
+
+// iscitaj pos matricu
+aPosData := __pos_art( aData )
+
+_a_to_file( cFPath, cPom, aStruct, aPosData )
+
+return
+
+
+
+// ------------------------------------------------------
+// vraca popunjenu matricu za upis artikla u memoriju
+// ------------------------------------------------------
+static function __pos_art( aData )
+local aArr := {}
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local i
+
+// ocekivana struktura
+// aData = { idroba, nazroba, cijena, kolicina, porstopa }
+
+// nemam pojma sta ce ovdje biti logic ?
+cLogic := "1"
+
+for i := 1 to LEN( aData )
+	
+	cTmp := "U"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	// naziv artikla
+	cTmp += PADR( ALLTRIM(aData[i, 2]), 32)
+	cTmp += cSep
+	// cjena 0-99999.99
+	cTmp += ALLTRIM(STR( aData[i, 3], 12, 2 ))
+	cTmp += cSep
+	// kolicina 0-99999.99
+	cTmp += ALLTRIM(STR( aData[i, 4], 12, 2 ))
+	cTmp += cSep
+	// stand od 1-9
+	cTmp += PADR("1", 1)
+	cTmp += cSep
+	// grupa artikla 1-99
+	cTmp += PADR("1", 2)
+	cTmp += cSep
+	// poreska grupa artikala 1 - 4
+	cTmp += PADR("1", 1)
+	cTmp += cSep
+	// -0 ???
+	cTmp += PADR("-0", 2)
+	cTmp += cSep
+	// kod PLU
+	cTmp += ALLTRIM( aData[i, 1] )
+	cTmp += cSep
+
+	AADD( aArr, { cTmp } )
+
+next
+
+return aArr
+
+
+// ----------------------------------------
+// vraca popunjenu matricu za ispis raèuna
+// ----------------------------------------
+static function __pos_rn( aData )
+local aArr := {}
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local i
+
+// ocekuje se matrica formata
+// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa }
+
+// prakticno broj racuna
+cLogic := ALLTRIM( aData[1, 1] )
+
+for i := 1 to LEN( aData )
+	
+	cTmp := "S"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	// naziv artikla
+	cTmp += PADR( ALLTRIM(aData[i, 4]), 32)
+	cTmp += cSep
+	// cjena 0-99999.99
+	cTmp += ALLTRIM(STR( aData[i, 5], 12, 2 ))
+	cTmp += cSep
+	// kolicina 0-99999.99
+	cTmp += ALLTRIM(STR( aData[i, 6], 12, 2 ))
+	cTmp += cSep
+	// stand od 1-9
+	cTmp += PADR("1", 1)
+	cTmp += cSep
+	// grupa artikla 1-99
+	cTmp += PADR("1", 2)
+	cTmp += cSep
+	// poreska grupa artikala 1 - 4
+	cTmp += PADR("1", 1)
+	cTmp += cSep
+	// -0 ???
+	cTmp += PADR("-0", 2)
+	cTmp += cSep
+	// kod PLU
+	cTmp += ALLTRIM( aData[i, 3] )
+	cTmp += cSep
+
+	AADD( aArr, { cTmp } )
+
+next
+
+cTmp := "T"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+return aArr
 
 

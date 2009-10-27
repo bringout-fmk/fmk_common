@@ -171,6 +171,11 @@ do case
 		// poreski broj (130-160)
 		AADD( aRet, { "C", 31, 0 })
 
+	case cFileName := "POS_RN"
+		
+		// pos racun - stavke
+		AADD( aRet, { "C", 100, 0 } )
+		
 endcase
 
 return aRet
@@ -180,11 +185,16 @@ return aRet
 // ----------------------------------------------------------
 // upisi u fajl
 // ----------------------------------------------------------
-function _a_to_file( cFilePath, cFileName, aStruct, aData )
+function _a_to_file( cFilePath, cFileName, aStruct, aData, ;
+	cSeparator )
 local i 
 local ii
 local cLine := ""
 local nCount := 0
+
+if cSeparator == nil
+	cSeparator := ""
+endif
 
 cFile := ALLTRIM( cFilePath ) + ALLTRIM( cFileName )
 
@@ -215,7 +225,7 @@ for i := 1 to LEN( aData )
 			endif
 		endif
 
-		cLine += xVal
+		cLine += xVal + cSeparator
 	next
 
 	?? cLine
