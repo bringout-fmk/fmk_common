@@ -265,9 +265,10 @@ return
 // -----------------------------------------------------
 // fiskalni racun pos
 // cFPath - putanja do fajla
+// cFName - naziv fajla
 // aData - podaci racuna
 // -----------------------------------------------------
-function fc_pos_rn( cFPath, aData )
+function fc_pos_rn( cFPath, cFName, aData )
 local cSep := ";"
 local aPosData := {}
 local aStruct := {}
@@ -275,12 +276,10 @@ local aStruct := {}
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
-cPom := _filepos()
-
 // iscitaj pos matricu
 aPosData := __pos_rn( aData )
 
-_a_to_file( cFPath, cPom, aStruct, aPosData )
+_a_to_file( cFPath, cFName, aStruct, aPosData )
 
 return
 
@@ -290,7 +289,7 @@ return
 // cFPath - putanja do fajla
 // aData - podaci racuna
 // -----------------------------------------------------
-function fc_pos_art( cFPath, aData )
+function fc_pos_art( cFPath, cFName, aData )
 local cSep := ";"
 local aPosData := {}
 local aStruct := {}
@@ -298,12 +297,10 @@ local aStruct := {}
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
-cPom := _filepos()
-
 // iscitaj pos matricu
 aPosData := __pos_art( aData )
 
-_a_to_file( cFPath, cPom, aStruct, aPosData )
+_a_to_file( cFPath, cFName, aStruct, aPosData )
 
 return
 
@@ -339,7 +336,7 @@ for i := 1 to LEN( aData )
 	cTmp += REPLICATE("_", 2)
 	cTmp += cSep
 	// naziv artikla
-	cTmp += PADR( ALLTRIM(aData[i, 2]), 32)
+	cTmp += ALLTRIM(aData[i, 2])
 	cTmp += cSep
 	// cjena 0-99999.99
 	cTmp += ALLTRIM(STR( aData[i, 3], 12, 2 ))
@@ -348,16 +345,16 @@ for i := 1 to LEN( aData )
 	cTmp += ALLTRIM(STR( aData[i, 4], 12, 2 ))
 	cTmp += cSep
 	// stand od 1-9
-	cTmp += PADR("1", 1)
+	cTmp += "1"
 	cTmp += cSep
 	// grupa artikla 1-99
-	cTmp += PADR("1", 2)
+	cTmp += "1"
 	cTmp += cSep
 	// poreska grupa artikala 1 - 4
-	cTmp += PADR("1", 1)
+	cTmp += "1"
 	cTmp += cSep
-	// -0 ???
-	cTmp += PADR("-0", 2)
+	// 0 ???
+	cTmp += "0"
 	cTmp += cSep
 	// kod PLU
 	cTmp += ALLTRIM( aData[i, 1] )
@@ -400,7 +397,7 @@ for i := 1 to LEN( aData )
 	cTmp += REPLICATE("_", 2)
 	cTmp += cSep
 	// naziv artikla
-	cTmp += PADR( ALLTRIM(aData[i, 4]), 32)
+	cTmp += ALLTRIM(aData[i, 4])
 	cTmp += cSep
 	// cjena 0-99999.99
 	cTmp += ALLTRIM(STR( aData[i, 5], 12, 2 ))
@@ -412,13 +409,13 @@ for i := 1 to LEN( aData )
 	cTmp += PADR("1", 1)
 	cTmp += cSep
 	// grupa artikla 1-99
-	cTmp += PADR("1", 2)
+	cTmp += "1"
 	cTmp += cSep
 	// poreska grupa artikala 1 - 4
-	cTmp += PADR("1", 1)
+	cTmp += "1"
 	cTmp += cSep
 	// -0 ???
-	cTmp += PADR("-0", 2)
+	cTmp += "-0"
 	cTmp += cSep
 	// kod PLU
 	cTmp += ALLTRIM( aData[i, 3] )

@@ -171,7 +171,7 @@ do case
 		// poreski broj (130-160)
 		AADD( aRet, { "C", 31, 0 })
 
-	case cFileName := "POS_RN"
+	case cFileName == "POS_RN"
 		
 		// pos racun - stavke
 		AADD( aRet, { "C", 100, 0 } )
