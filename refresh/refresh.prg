@@ -7,6 +7,7 @@
 function Main()
 local cLocal 
 local cServer 
+local cTops
 local cFileList
 local aFileList
 local aUpdate
@@ -22,7 +23,7 @@ SetSCGVars()
 cls
 
 // uzmi prvo parametre
-if _get_params( @cLocal, @cServer, @cFileList, @cIni ) == 0
+if _get_params( @cLocal, @cTops, @cServer, @cFileList, @cIni ) == 0
 	quit
 endif
 
@@ -30,13 +31,13 @@ endif
 aFileList := a_fileList( cFileList )
 
 // provjeri za update
-if _chk_update( cLocal, cServer, aFileList, @aUpdate ) == 0
+if _chk_update( cLocal, cTops, cServer, aFileList, @aUpdate ) == 0
 	? "izlazim :: chk update "
 	quit
 endif
 
 // glavni prozor
-if main_window( cLocal, cServer, aUpdate ) == 1
+if main_window( cLocal, cTops, cServer, aUpdate ) == 1
 	
 	// odradi update
 	_get_update( cIni, aUpdate )
@@ -60,19 +61,21 @@ return aList
 // ---------------------------------------
 // get parametri
 // ---------------------------------------
-static function _get_params( cLocal, cServer, cFileList, cIni )
+static function _get_params( cLocal, cTops, cServer, cFileList, cIni )
 
 cIni := "c:\sigma\refresh.ini"
 
 cLocal := nil
 cServer := nil
+cTops := nil
 cFileList := nil
 
 // local path
 cLocal := UzmiIzIni( cIni, "Path", "Client", "c:\sigma", "READ" )
 // server path
 cServer := UzmiIzIni( cIni, "Path", "Server", "i:\fmk\update", "READ" )
-
+// tops path
+cTops := UzmiIzIni( cIni, "Path", "Pos", "c:\tops", "READ" )
 // lista fajlova za osvjezenje
 cFileList := UzmiIzIni( cIni, "Files", "List", "FIN;KALK;FAKT;", "READ" )
 
@@ -84,7 +87,7 @@ return 1
 // ---------------------------------------
 // glavni prozor aplikacije
 // ---------------------------------------
-static function main_window( cLocal, cServer, aUpdate )
+static function main_window( cLocal, cTops, cServer, aUpdate )
 local i
 local cUpdate
 
@@ -94,16 +97,18 @@ if LEN( aUpdate ) == 0
 endif
 
 @ 1, 2 SAY "------------------------------------------"
-@ 2, 2 SAY "fmk.REFRESH ver. 02.20  :  14.10.2009"
+@ 2, 2 SAY "fmk.REFRESH ver. 02.21  :  29.10.2009"
 @ 3, 2 SAY "------------------------------------------"
 
-@ 4, 2 SAY "Klijent putanja: " + cLocal + ", Server putanja: " + cServer 
+@ 4, 2 SAY "- Klijent putanja: " + cLocal
+@ 5, 2 SAY "-     POS putanja: " + cTops
+@ 6, 2 SAY "-  Server putanja: " + cServer 
 
-@ 6, 2 SAY "Lista fajlova za osvjezenje"
-@ 7, 2 SAY "------------------------------------------"
+@ 8, 2 SAY "Lista fajlova za osvjezenje"
+@ 9, 2 SAY "------------------------------------------"
 
 for i := 1 to LEN( aUpdate )
-	@ 7 + i, 2 SAY aUpdate[ i, 1 ]
+	@ 9 + i, 2 SAY aUpdate[ i, 1 ]
 next
 
 cUpdate := "D"
@@ -119,7 +124,7 @@ endif
 return 1
 
 
-static function _chk_update( cLocal, cServer, aFList, aUpdate )
+static function _chk_update( cLocal, cTops, cServer, aFList, aUpdate )
 local i
 local cFExt := ".ZIP"
 
@@ -140,6 +145,11 @@ for i := 1 to LEN( aFList )
 	// "c:\sigma\fin.zip"
 	cTmpLocal := cLocal + SLASH + cTmpFName
 	
+	// ako je u pitanju tops
+	if cTmpFName == "TOPS.ZIP"
+		cTmpLocal := cTops + SLASH + cTmpFName
+	endif
+
 	// "i:\fmk\update\fin.zip"
 	cTmpServer := cServer + SLASH + cTmpFName
 
@@ -183,7 +193,11 @@ for i := 1 to LEN( aFList )
 
 	if cServDate + cServTime > cLocDate + cLocTime
 		// odradi update
-		AADD( aUpdate, { cTmpServer, cLocal, cTmpFName } )
+		if cTmpFName == "TOPS.ZIP"
+			AADD( aUpdate, { cTmpServer, cTops, cTmpFName } )
+		else
+			AADD( aUpdate, { cTmpServer, cLocal, cTmpFName } )
+		endif
 	endif
 	
 next
@@ -219,6 +233,8 @@ for i:=1 to LEN( aUpdate )
 	cTmpU += "e"
 	cTmpU += " "
 	cTmpU += "-y"
+	cTmpU += "o"
+	cTmpU += aUpdate[i, 2]
 	cTmpU += " "
 	cTmpU += aUpdate[i, 3]
 
