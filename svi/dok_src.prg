@@ -15,7 +15,7 @@ if goModul:oDataBase:cName == "POS"
 endif
 
 // ako nije jedan od ponudjenih modula preskoci
-if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#POS")
+if !(goModul:oDataBase:cName $ "FIN#KALK#FAKT#POS#RNAL")
 	return
 endif
 
@@ -59,9 +59,14 @@ return
 function add_p_doksrc( cFirma, cTD, cBrDok, dDatDok, ;
 		cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, ;
 		dSrcDatDok, cSrcKto1, cSrcKto2, cSrcPartn, ;
-		cSrcOpis, cPath )
+		cSrcOpis, cPath, lAppend )
 
 local nTArea := SELECT()
+
+// uvijek dodaj u p_doksrc
+if lAppend == nil
+	lAppend := .f.
+endif
 
 // ako ne postoji doksrc, ne radi nista!
 if !is_doksrc()
@@ -72,7 +77,8 @@ cSrcModName := PADR(cSrcModName, 10)
 cSrcBrDok := PADR(ALLTRIM(cSrcBrDok), 8)
 
 // ako postoji zapis source-a u tabeli... preskoci
-if seek_p_src(cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, dSrcDatDok)
+if lAppend == .f. .and. ;
+	seek_p_src(cSrcModName, cSrcFirma, cSrcTD, cSrcBrDok, dSrcDatDok)
 	select (nTArea)
 	return
 endif
