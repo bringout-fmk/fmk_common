@@ -698,6 +698,8 @@ cKNaziv:=get_dtxt_opis("K01")
 cKAdresa:=get_dtxt_opis("K02")
 cKIdBroj:=get_dtxt_opis("K03")
 cDestinacija:=get_dtxt_opis("D08")
+cRNalID := get_dtxt_opis("O01")
+cRnalDesc := get_dtxt_opis("O02")
 cIdVd:=get_dtxt_opis("D09")
 cDokVeza := get_dtxt_opis("D11")
 if nShowRj == 1
@@ -841,11 +843,23 @@ if !EMPTY(cKTelFax)
 	?? PADR(cKTelFax, LEN_KUPAC)
 endif
 
-if !EMPTY( cDokVeza )
+if !EMPTY( cDokVeza ) .and. cDokVeza <> "-"
 	// specificno za radni nalog
 	cDokVeza := "Veza: " + ALLTRIM(cDokVeza)	
 	p_line(SPACE(2), 10, .f., .t.)
-	?? PADR(cDokVeza, 70)
+	?? ALLTRIM( cDokVeza )
+endif
+
+if !EMPTY( cRNalId ) .and. cRNalId <> "-"
+	
+	cPom := " R.nal.: "
+	cPom += cRNalDesc
+	
+	if EMPTY( cDokVeza )
+		p_line(SPACE(2), 10, .f., .t.)
+	endif
+
+	?? ALLTRIM( cPom )
 endif
 
 if !EMPTY(cDestinacija)

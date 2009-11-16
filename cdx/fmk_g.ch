@@ -343,6 +343,9 @@
 #define F__TMP2		154
 #define F_OBJECTS	155
 #define F_RAL		156
+#define F_DOC_IT2	238
+#define F__DOC_IT2	239
+#define F_T_DOCIT2	240
 
 // relation
 
