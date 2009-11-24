@@ -844,10 +844,16 @@ if !EMPTY(cKTelFax)
 endif
 
 if !EMPTY( cDokVeza ) .and. cDokVeza <> "-"
+	
 	// specificno za radni nalog
 	cDokVeza := "Veza: " + ALLTRIM(cDokVeza)	
-	p_line(SPACE(2), 10, .f., .t.)
-	?? ALLTRIM( cDokVeza )
+	
+	aDokVeza := SjeciStr( cDokVeza, 70 )
+	
+	for i := 1 to LEN( aDokVeza )
+		p_line(SPACE(2), 10, .f., .t.)
+		?? aDokVeza[ i ]
+	next
 endif
 
 if !EMPTY( cRNalId ) .and. cRNalId <> "-"
