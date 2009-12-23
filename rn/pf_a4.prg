@@ -492,6 +492,8 @@ cSLHead := REPLICATE("-", nSw3())
 nPRowsDelta := prow()
 // naziv
 cINaziv  := get_dtxt_opis("I01")
+// pomocni opis
+cIPNaziv  := get_dtxt_opis("I20")
 // adresa
 cIAdresa := get_dtxt_opis("I02")
 // idbroj
@@ -517,15 +519,31 @@ if "##" $ cIBanke
 else
         aIBanke  := SjeciStr(cIBanke, 68)
 endif
+
 cITelef  := get_dtxt_opis("I10") // telefoni
 cIWeb    := get_dtxt_opis("I11") // email-web
 cIText1  := get_dtxt_opis("I12") // sl.text 1
 cIText2  := get_dtxt_opis("I13") // sl.text 2
 cIText3  := get_dtxt_opis("I14") // sl.text 3
 
-
 p_line(cDLHead, 10, .t.)
-p_line(cINaziv, 10, .t.)
+
+cTmp := ALLTRIM( cINaziv )
+aTmp := SjeciStr( cTmp, 74 )
+// ispisi naziv firme u gornjem dijelu zaglavlja
+for i:=1 to LEN(aTmp)
+	p_line( aTmp[i], 10, .t.)
+next
+
+// ispisi dodatni tekst ispod naziva firme
+if !EMPTY( cIPNaziv )
+	cTmp := ALLTRIM( cIPNaziv )
+	aTmp := SjeciStr( cTmp, 74 )
+	i := 1
+	for i:=1 to LEN( aTmp )
+		p_line( aTmp[i], 10, .t. )
+	next
+endif
 
 if nSw2 == 1
 	// ako je 1 neka ima duzinu kao naziv firme
