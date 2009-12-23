@@ -17,7 +17,7 @@ O_RJ
 AADD(ImeKol, { PADR("Id",2), {|| id}, "id", {|| .t.}, {|| vpsifra(wId)} })
 AADD(ImeKol, { PADR("Naziv",35), {|| naz}, "naz" })
 
-if gModul == "FAKT"
+if gModul $ "FAKT#FIN"
 	AADD(ImeKol, { PADR("Tip cij.",10), {|| tip}, "tip" })
 	AADD(ImeKol, { PADR("Konto",10), {|| konto}, "konto" })
 	if gMjRJ=="D"
