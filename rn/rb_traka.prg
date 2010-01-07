@@ -87,11 +87,13 @@ if lJedanRacun
 endif
 
 return
-*}
 
 
-function get_rb_vars(nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije)
-*{
+
+// ----------------------------------------------
+// varijable za stampu racuna
+// ----------------------------------------------
+function get_rb_vars(nFeedLines, cOLadSkv, cSTrakSkv, nPdvCijene, lStampId, nVrRedukcije, lPrKupac )
 local cTmp
 
 // broj linija za odcjepanje trake
@@ -101,16 +103,24 @@ cSTrakSkv := get_dtxt_opis("P14") // sekv.za sjec.trake
 nPdvCijene := VAL(get_dtxt_opis("P20")) // cijene sa pdv, bez pdv
 cTmp := get_dtxt_opis("P21") // prikaz id artikal na racunu
 lStampId := .f.
+lPrKupac := .f.
+
 if ( cTmp == "D" )
 	lStampId := .t.
 endif
+
 nVrRedukcije := VAL(get_dtxt_opis("P22")) // redukcija trake
 
+// ispis kupca na racunu
+cTmp := get_dtxt_opis("P23")
+if cTmp == "D"
+	lPrKupac := .t.
+endif
+
 return
-*}
+
 
 function isAzurDok(lRet)
-*{
 local cTemp 
 cTemp := get_dtxt_opis("D01")
 if cTemp == "A"
@@ -179,6 +189,8 @@ local nPFeed
 
 // sekv.otvaranja ladice
 local cOtvLadSkv
+// prikaz kupca na racunu
+local lKupac
 
 // sekv.sjecenja trake
 local cSjeTraSkv 
@@ -205,9 +217,14 @@ endif
 rb_traka_line(@cLine)
 
 // uzmi glavne varijable
-get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija)
+get_rb_vars(@nPFeed, @cOtvLadSkv, @cSjeTraSkv, @nSetCijene, @lStRobaId, @nRedukcija, @lKupac)
 
 hd_rb_traka(nRedukcija)
+
+if lKupac == .t.
+	// ispis kupca ako je potreban
+	kup_rb_traka()
+endif
 
 select drn
 go top
@@ -437,8 +454,8 @@ cDuplaLin := REPLICATE("=", LEN_TRAKA - LEN_RAZMAK - 1)
 cINaziv := get_dtxt_opis("I01")
 cIAdresa := get_dtxt_opis("I02")
 cIIdBroj := get_dtxt_opis("I03")
-cIPM := get_dtxt_opis("I04")
-cITelef := get_dtxt_opis("I05")
+cIPM := ALLTRIM( get_dtxt_opis("I04") )
+cITelef := ALLTRIM( get_dtxt_opis("I05") )
 
 // stampaj header
 
@@ -459,14 +476,16 @@ if ( nRedukcija < 1 )
 	? cRaz2 + " " + REPLICATE("-", LEN_TRAKA - 11)
 endif
 
-if ( nRedukcija > 0 )
+if !EMPTY( cIPM ) .and. cIPM <> "-"
+  if ( nRedukcija > 0 )
 	? cRaz2 + "  PM:", cIPM
-else
+  else
 	? cRaz2 + " Prodajno mjesto:"
 	? cRaz2 + " " + cIPM
+  endif
 endif
 
-if !EMPTY(cITelef)
+if !EMPTY(cITelef) .and. cITelef <> "-"
 	? cRaz2 + " Telefon: " + cITelef
 endif
 

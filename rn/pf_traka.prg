@@ -261,24 +261,38 @@ return
 
 
 function kup_rb_traka()
-*{
 local cKNaziv
 local cKAdres
 local cKIdBroj
 local cRazmak := SPACE(2)
+local cDokVeza := ""
+local i
 
 cKNaziv := get_dtxt_opis("K01")
 cKAdres := get_dtxt_opis("K02")
 cKIdBroj := get_dtxt_opis("K03")
+cDokVeza := get_dtxt_opis("D11")
 
 ? cRazmak + "Kupac:"
 ? cRazmak + cKNaziv
 ? cRazmak + cKAdres 
 ? cRazmak + "Ident.br:" + cRazmak + cKIdBroj
+
+if !EMPTY(cDokVeza) .and. ALLTRIM(cDokVeza) <> "-"
+
+	cDokVeza := "veza: " + ALLTRIM( cDokVeza )
+
+	aTmp := SjeciStr( cDokVeza, 34 )
+
+	for i:=1 to LEN( aTmp )
+		? cRazmak + aTmp[ i ]
+	next
+
+endif
+
 ?
 
 return
-*}
 
 
 // vraca matricu sa dostupnim kupcima koji pocinju sa cKupac
