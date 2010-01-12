@@ -877,7 +877,7 @@ endif
 if !EMPTY( cRNalId ) .and. cRNalId <> "-"
 	
 	cPom := " R.nal.: "
-	cPom += cRNalDesc
+	cPom += "(" + cRNalId + ") " + cRNalDesc
 	
 	if EMPTY( cDokVeza )
 		p_line(SPACE(2), 10, .f., .t.)
