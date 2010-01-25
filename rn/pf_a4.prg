@@ -209,6 +209,9 @@ do while !EOF()
 	// idroba, naziv robe, kolicina, jmj
 	?? PADR( aNazivDobra[1], LEN_NAZIV) 
 	?? " "
+
+	nQty := pcol()
+	
 	?? show_number(rn->kolicina, PIC_KOLICINA) 
 	?? " "
 	
@@ -276,6 +279,12 @@ if prow() > nDodRedova + (LEN_STRANICA - LEN_REKAP_PDV) - DSTR_KOREKCIJA() - PIC
 endif	
 
 ? cLine
+
+if lSamoKol
+	// prikazi ukupno kolicinu
+	?
+	@ prow(), nQty SAY show_number(drn->ukkol, PIC_KOLICINA)
+endif
 
 if !lSamoKol
 	print_total(cValuta, cLine)
