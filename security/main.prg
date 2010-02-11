@@ -187,12 +187,16 @@ return lUGrupi
 
 
 function GetUserID()
+local nTArea := SELECT()
+local nRet := 0
 cUser:=goModul:oDataBase:cUser
 O_USERS
 select users
 set order to tag "NAZ"
 seek cUser
-return field->id
+nRet := field->id
+select (nTArea)
+return nRet
 
 
 // vraca username usera iz sec.systema
