@@ -99,7 +99,7 @@ if (nArea==-1 .or. nArea==F_RULES)
 	CREATE_INDEX("ID2","STR(id2,3)",cSecurPath+"rules.dbf",.t.)
 	CREATE_INDEX("1","objekat+komponenta+funkcija+STR(id,3)+STR(id2,3)",cSecurPath+"rules.dbf",.t.)
 	CREATE_INDEX("2","objekat+komponenta+funkcija+STR(id2,3)+STR(id,3)",cSecurPath+"rules.dbf",.t.)
-	CREATE_INDEX("ID","STR(id,3)+objekat",cSecurPath+"rules.dbf",.t.)
+	CREATE_INDEX("ID","STR(id,3)+objekat+komponenta+funkcija",cSecurPath+"rules.dbf",.t.)
 endif
 
 O_RULES
@@ -211,19 +211,20 @@ O_RULES
 
 select (nArr)
 
-AADD(ImeKol, { PADR("Id",3), {|| id}, "id" })
-AADD(ImeKol, { PADR("Id2",3), {|| id2}, "id2" })
-AADD(ImeKol, { PADR("Objekat",10), {|| objekat}, "objekat" })
-AADD(ImeKol, { PADR("Komponenta",15), {|| komponenta}, "komponenta" })
-AADD(ImeKol, { PADR("Funkcija",30), {|| funkcija}, "funkcija" })
-AADD(ImeKol, { PADR("Dozvola(D/N)",12), {|| dozvola}, "dozvola", {|| .t.}, {|| wdozvola$"DN"} })
+AADD(ImeKol, { PADR("id",3), {|| "(" + ALLTRIM( STR(id) ) + ")" + ;
+	secgr_naz( id ) }, "id" })
+AADD(ImeKol, { PADR("id2",3), {|| id2}, "id2" })
+AADD(ImeKol, { PADR("objekat",10), {|| objekat}, "objekat" })
+AADD(ImeKol, { PADR("komponenta",15), {|| komponenta}, "komponenta" })
+AADD(ImeKol, { PADR("funkcija",30), {|| funkcija}, "funkcija" })
+AADD(ImeKol, { PADR("dozvola(D/N)",12), {|| dozvola}, "dozvola", {|| .t.}, {|| wdozvola$"DN"} })
 AADD(ImeKol, { PADR("Log(D/N)",8), {|| log}, "log", {|| .t.}, {|| wlog$"DN"} })
 
 for i:=1 to LEN(ImeKol)	
 	AADD(Kol,i)
 next
 
-return PostojiSifra(F_RULES,1,10,70,"Rules - pravila za definisanje korisnika i korisnickih grupa",@cId,dx,dy,{|Ch| RulesBlock(Ch)},,,,,{"ID"})
+return PostojiSifra(F_RULES,1,17,70,"Rules - pravila za definisanje korisnika i korisnickih grupa",@cId,dx,dy,{|Ch| RulesBlock(Ch)},,,,,{"ID"})
 *}
 
 
@@ -231,7 +232,6 @@ return PostojiSifra(F_RULES,1,10,70,"Rules - pravila za definisanje korisnika i 
  *  \brief Povecava vrijednost polja ID za 1
  */
 static function IncID(wId)
-*{
 local nRet:=.t.
 if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
 	if (LastKey()==K_ESC)
@@ -242,8 +242,6 @@ if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
 	AEVAL(GetList,{|o| o:display()})
 endif
 return nRet
-*}
-
 
 
 /*! \fn LastID(nRecNo)
@@ -251,29 +249,29 @@ return nRet
  *  \param nRecNo - broj zapisa na koji se pointer treba vratiti poslije uzete vrijednosti
  */
 static function LastID(nRecNo)
-*{
 go bottom
 nLastID:=field->id
 go nRecNo
 return nLastID
-*}
 
 
 function AddSecgaSDBFs()
-*{
 AADD(gaSDBFs, {F_EVENTS,   "EVENTS",   P_SECPATH})
 AADD(gaSDBFs, {F_EVENTLOG, "EVENTLOG", P_SECPATH})
 AADD(gaSDBFs, {F_USERS,    "USERS",    P_SECPATH})
 AADD(gaSDBFs, {F_GROUPS,   "GROUPS",   P_SECPATH})
 AADD(gaSDBFs, {F_RULES,    "RULES",    P_SECPATH})
 return
-*}
+
 
 function RulesBlock(Ch)
-*{
 
-if (Ch==K_ALT_M)
+do case
+
+   case ( Ch == K_ALT_M )
+	
 	Box(,7,70)
+		
 		cExistingGroup:=SPACE(3)
 		cNewGroup:=SPACE(3)
 		cSetLicenceTo:=SPACE(1)
@@ -285,19 +283,54 @@ if (Ch==K_ALT_M)
 		@ 5+m_x, 2+m_y SAY "Set licence for new group to "
 		@ 6+m_x, 2+m_y SAY "(D or N or empty)            " GET cSetLicenceTo VALID cSetLicenceTo $ " DN"
 		read
+	
 	BoxC()
+
 	if LastKey()==K_ESC
 		return DE_CONT
 	endif
-	MigrateRulesForGroup(cExistingGroup, cNewGroup, cSetLicenceTo)
-	go top
-	return DE_REFRESH
 	
-endif
+	MigrateRulesForGroup(cExistingGroup, cNewGroup, cSetLicenceTo)
+	
+	go top
+	
+	return DE_REFRESH
+
+   case ( UPPER(CHR(Ch)) == "D" )
+   	
+	nGroup := 0
+
+	// brisanje podataka
+	Box(,2,50)
+		@ m_x + 1, m_y + 2 SAY "Brisanje pravila za grupu:"
+		@ m_x + 2, m_y + 2 SAY "Grupa:" GET nGroup PICT "999"
+		read
+	BoxC()
+
+	if LastKey() <> K_ESC .and. nGroup <> 0
+		
+		// pobrisi podatke	
+		select rules
+		set order to tag "ID"
+		go top
+		seek STR(nGroup,3)
+
+		do while !EOF() .and. field->id == nGroup
+			delete
+			skip
+		enddo
+		
+		go top
+
+		return DE_REFRESH
+
+	endif
+
+endcase
 
 
 return DE_CONT
-*}
+
 
 
 

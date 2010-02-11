@@ -304,6 +304,24 @@ BoxC()
 MsgBeep("Migrate " + STR(nBrojac) + " rules for group " + cNewGroup + "##Migrate operation completed successful!!!")
 
 return
-*}
+
+
+
+// ----------------------------------
+// vraca naziv grupe
+// ----------------------------------
+function secgr_naz( nGrId )
+local nTArea := SELECT()
+local cRet := PADR("",15)
+
+O_GROUPS
+select groups
+set order to tag "ID"
+seek STR(nGrId,3)
+
+cRet := PADR( field->naz, 15 )
+
+select (nTArea)
+return cRet
 
 
