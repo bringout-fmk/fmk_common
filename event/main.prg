@@ -111,18 +111,17 @@ set order to tag "1"
 hseek cModul+cKomponenta+cFunkcija
 
 if Found()
-	if ((field->logirati=="D") .or. (field->bitnost$"345") .and. (field->logirati=="N"))
+	if ( (field->logirati=="D") )
 		lLogirati:=.t.
 	endif
 
 endif
 select (nArr)
 return lLogirati
-*}
-
 
 
 function FmkEvVer()
-*{
 return DBUILD
-*}
+
+
+

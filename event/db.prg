@@ -52,6 +52,11 @@ if (nArea==-1 .or. nArea==F_EVENTS)
 	CREATE_INDEX("1","objekat+komponenta+funkcija",cPath+"events.dbf",.t.)
 endif
 
+O_EVENTS
+if reccount2() = 0
+	set_def_ev()
+endif
+
 // EVENTLOG.DBF
 aDbf:={}
 AADD(aDbf,{"ID","N",15,0})  
@@ -82,7 +87,7 @@ if (nArea==-1 .or. nArea==F_EVENTLOG)
 endif
 
 return
-*}
+
 
 
 
@@ -254,3 +259,101 @@ nNivo := field->bitnost
 select (nTArea)
 
 return nNivo
+
+
+// -----------------------------------------
+// upisi standardne evente
+// -----------------------------------------
+function set_def_ev()
+local nId := 0
+local cObj := ""
+
+// FMK generalno
+cObj := "FMK"
+_ins_event( ++ nId, cObj, "SIF", "PROMJENE", "promjene u sifrarniku", ;
+	5, "N", 900, 0, 0, "sve promjene unutar sifrarnika" )
+
+// FAKT
+cObj := "FAKT"
+_ins_event( ++ nId, cObj, "DOK", "AZUR", "azuriranje", ;
+	5, "N", 900, 0, 0, "azuriranje fakturnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "UNOS", "unos dok.", ;
+	5, "N", 900, 0, 0, "unos fakturnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "BRISANJE", "bris.dok.", ;
+	5, "N", 900, 0, 0, "brisanje fakturnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "BRISIDOK", "bris.pr.", ;
+	5, "N", 900, 0, 0, "brisanje kompletnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "SMECE", "dok.u sm.", ;
+	5, "N", 900, 0, 0, "prenos dokumenta u smece ili iz smeca" )
+_ins_event( ++ nId, cObj, "DOK", "POVRAT", "povrat dok.", ;
+	5, "N", 900, 0, 0, "povrat fakturnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "PRINT", "print dok.", ;
+	5, "N", 900, 0, 0, "stampa fakturnog dokumenta" )
+
+// FIN
+cObj := "FIN"
+_ins_event( ++ nId, cObj, "DOK", "AZUR", "azuriranje", ;
+	5, "N", 900, 0, 0, "azuriranje finansijskog naloga" )
+_ins_event( ++ nId, cObj, "DOK", "UNOS", "unos dok.", ;
+	5, "N", 900, 0, 0, "unos fin. dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "BRISANJE", "bris.dok.", ;
+	5, "N", 900, 0, 0, "brisanje fin. dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "BRISIDOK", "bris.pr.", ;
+	5, "N", 900, 0, 0, "brisanje kompletnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "SMECE", "dok.u sm.", ;
+	5, "N", 900, 0, 0, "prenos dokumenta u smece ili iz smeca" )
+_ins_event( ++ nId, cObj, "DOK", "POVRAT", "povrat dok.", ;
+	5, "N", 900, 0, 0, "povrat fin dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "PRINT", "print dok.", ;
+	5, "N", 900, 0, 0, "stampa fin dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "ASISTENT", "asistent", ;
+	5, "N", 900, 0, 0, "asistent fin.naloga" )
+
+
+// KALK
+cObj := "KALK"
+_ins_event( ++ nId, cObj, "DOK", "AZUR", "azuriranje", ;
+	5, "N", 900, 0, 0, "azuriranje kalk dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "UNOS", "unos dok.", ;
+	5, "N", 900, 0, 0, "unos kalk. dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "BRISANJE", "bris.dok.", ;
+	5, "N", 900, 0, 0, "brisanje kalk. dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "BRISIDOK", "bris.pr.", ;
+	5, "N", 900, 0, 0, "brisanje kompletnog dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "SMECE", "dok.u sm.", ;
+	5, "N", 900, 0, 0, "prenos dokumenta u smece ili iz smeca" )
+_ins_event( ++ nId, cObj, "DOK", "POVRAT", "povrat dok.", ;
+	5, "N", 900, 0, 0, "povrat kalk dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "PRINT", "print dok.", ;
+	5, "N", 900, 0, 0, "stampa kalk dokumenta" )
+_ins_event( ++ nId, cObj, "DOK", "GENERACIJA", "gener. dok.", ;
+	5, "N", 900, 0, 0, "generisanje kalk dokumenta" )
+
+
+return
+
+// -----------------------------------------
+// upisi dogadjaj u event
+// -----------------------------------------
+static function _ins_event( nId, cObj, cKomp, cFunc, cNaz, nBit, ;
+	cLog, nSec1, nSec2, nSec3, cOpis )
+
+local nTArea := SELECT()
+
+O_EVENTS
+append blank
+replace field->id with nId
+replace field->objekat with cObj
+replace field->komponenta with cKomp
+replace field->funkcija with cFunc
+replace field->naz with cNaz
+replace field->bitnost with nBit
+replace field->logirati with cLog
+replace field->security1 with nSec1
+replace field->security2 with nSec2
+replace field->security3 with nSec3
+replace field->opis with cOpis
+
+select (nTArea)
+return
+
