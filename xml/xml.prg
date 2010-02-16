@@ -58,19 +58,23 @@ return cTmp
 // ----------------------------------------------------
 // xml header
 // ----------------------------------------------------
-function xml_head( lWrite )
+function xml_head( lWrite, cTxt )
 local cTmp := '<?xml version="1.0" encoding="UTF-8"?>'
+
+if cTxt == nil
+	cTxt := cTmp
+endif
 
 if lWrite == nil
 	lWrite := .t.
 endif
 
 if lWrite == .t.
-	?? cTmp
+	?? cTxt
 	?
 endif
 
-return cTmp
+return cTxt
 
 
 // --------------------------------------------
@@ -113,4 +117,18 @@ set printer off
 set console on
 return
 
+
+// ----------------------------------------------
+// datum za xml dokument
+// ----------------------------------------------
+function xml_date( dDate )
+local cRet := ""
+
+cRet := ALLTRIM( STR( YEAR(dDate )) )
+cRet += "-"
+cRet += PADL( ALLTRIM( STR( MONTH(dDate)) ), 2, "0" )
+cRet += "-"
+cRet += PADL( ALLTRIM( STR( DAY(dDate)) ), 2, "0" )
+
+return cRet
 
