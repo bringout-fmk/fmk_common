@@ -206,6 +206,7 @@ local cUserName := ""
 O_USERS
 select users
 set order to tag "ID"
+go top
 seek STR(user_id, 3)
 cUserName := ALLTRIM(field->naz)
 select (nTArea)
@@ -219,6 +220,7 @@ local cUserName := ""
 O_USERS
 select users
 set order to tag "ID"
+go top
 seek STR(user_id, 3)
 if users->(FIELDPOS("fullname")) <> 0
 	cUserName := ALLTRIM(field->fullname)
