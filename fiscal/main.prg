@@ -262,22 +262,27 @@ _a_to_file( cFPath, _F_FOPER, aS_oper, aOper )
 return
 
 
-// -----------------------------------------------------
+// --------------------------------------------------------
 // fiskalni racun pos
 // cFPath - putanja do fajla
 // cFName - naziv fajla
 // aData - podaci racuna
-// -----------------------------------------------------
-function fc_pos_rn( cFPath, cFName, aData )
+// lStorno - da li se stampa storno ili ne (.T. ili .F. )
+// --------------------------------------------------------
+function fc_pos_rn( cFPath, cFName, aData, lStorno )
 local cSep := ";"
 local aPosData := {}
 local aStruct := {}
+
+if lStorno == nil
+	lStorno := .f.
+endif
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aPosData := __pos_rn( aData )
+aPosData := __pos_rn( aData, lStorno )
 
 _a_to_file( cFPath, cFName, aStruct, aPosData )
 
@@ -370,22 +375,45 @@ return aArr
 // ----------------------------------------
 // vraca popunjenu matricu za ispis raèuna
 // ----------------------------------------
-static function __pos_rn( aData )
+static function __pos_rn( aData, lStorno )
 local aArr := {}
 local cTmp := ""
 local cLogic
 local cLogSep := ","
 local cSep := ";"
 local i
+local cRek_rn := ""
 
 // ocekuje se matrica formata
-// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa }
+// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, rek_rn }
 
 // prakticno broj racuna
 cLogic := ALLTRIM( aData[1, 1] )
 
-for i := 1 to LEN( aData )
+if lStorno == .t.
 	
+	cRek_rn := ALLTRIM( aData[ 1, 8 ] )
+	
+	cTmp := "K"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	cTmp += cRek_rn
+
+	AADD( aArr, { cTmp } )
+
+endif
+
+for i := 1 to LEN( aData )
+
+	cT_porst := aData[ i, 7 ]
+
 	cTmp := "S"
 	cTmp += cLogSep
 	cTmp += cLogic
@@ -412,7 +440,11 @@ for i := 1 to LEN( aData )
 	cTmp += "1"
 	cTmp += cSep
 	// poreska grupa artikala 1 - 4
-	cTmp += "1"
+	if cT_porst == "E"
+		cTmp += "2"
+	else
+		cTmp += "1"
+	endif
 	cTmp += cSep
 	// -0 ???
 	cTmp += "-0"
@@ -424,6 +456,24 @@ for i := 1 to LEN( aData )
 	AADD( aArr, { cTmp } )
 
 next
+
+// podnozje
+cTmp := "Q"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += "1"
+cTmp += cSep
+cTmp += "pos rn: " + cLogic
+
+AADD( aArr, { cTmp } )
+
 
 cTmp := "T"
 cTmp += cLogSep
