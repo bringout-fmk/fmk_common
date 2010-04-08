@@ -655,6 +655,8 @@ local cBrNar
 local cBrOtp
 local cIdVd
 local cDokVeza
+local n
+local nLines
 local i
 local cLinijaNarOtp 
 
@@ -728,7 +730,14 @@ cDestinacija:=get_dtxt_opis("D08")
 cRNalID := get_dtxt_opis("O01")
 cRnalDesc := get_dtxt_opis("O02")
 cIdVd:=get_dtxt_opis("D09")
-cDokVeza := get_dtxt_opis("D11")
+
+nLines := VAL( get_dtxt_opis("D30") )
+cDokVeza := ""
+nTmp := 30
+for n := 1 to nLines
+	cDokVeza += get_dtxt_opis("D" + ALLTRIM(STR( nTmp + n )))
+next
+
 if nShowRj == 1
 	cIdRj:=get_dtxt_opis("D10")
 endif

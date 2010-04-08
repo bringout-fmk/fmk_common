@@ -190,9 +190,9 @@ if (LastKey() <> K_ESC)
 	set order to
         go top
         do while !EOF()
-        	if id2 == cOldS
-                	if ROUND(nKolic - kolicina, 5) = 0
-                        	replace kolicina with nKolic2
+        	if PADR( field->id2, 10 ) == PADR( cOldS, 10 )
+                	if ROUND(nKolic - field->kolicina, 5) = 0
+                        	replace field->kolicina with nKolic2
                        	endif
                 endif
                 skip

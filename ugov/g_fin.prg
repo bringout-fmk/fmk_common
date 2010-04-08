@@ -74,7 +74,7 @@ local dDatum
 
 // otvori suban kao ug_suban
 if use_suban() == 0
-	return 0
+	return CTOD("")
 endif
 
 select ug_suban
@@ -105,7 +105,7 @@ local dDatum
 
 // otvori suban kao ug_suban
 if use_suban() == 0
-	return 0
+	return CTOD("")
 endif
 
 select ug_suban
