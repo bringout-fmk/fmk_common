@@ -147,3 +147,4 @@
 
 #xcommand O_RELATION => SELECT (F_RELATION); USE (SIFPATH+"RELATION"); set order to tag "1"
 
+#xcommand O_TEMP => select (F_TEMP); usex (PRIVPATH+"temp")
