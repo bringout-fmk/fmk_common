@@ -128,6 +128,8 @@ DbCreate2(cTmpTbl, aDbf)
 
 if lIndex 
 	create_index("1","barkod", cTmpTbl )
+	create_index("2","idroba", cTmpTbl )
+	create_index("3","STR(status)", cTmpTbl )
 endif
 
 return
