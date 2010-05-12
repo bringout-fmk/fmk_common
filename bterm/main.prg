@@ -7,7 +7,7 @@
 function iBTerm_data( cI_File )
 local cPath := ""
 local aError := {}
-local cFilter := "*.txt"
+local cFilter := "r*.txt"
 
 cI_File := ""
 
@@ -90,5 +90,85 @@ END PRINT
 
 return aErr
 
+
+
+// ------------------------------------------------
+// generise txt fajl sa artiklima za terminal...
+// ------------------------------------------------
+function eBTerm_data()
+local aStruct := _gAStruct()
+local nTArea := SELECT()
+local cSeparator := ";"
+local aData := {}
+// trim podataka unutar niza
+local lTrimData := .t.
+// zadnji slog sa separatorom
+local lLastSeparator := .f.
+local cFileName := ""
+local cFilePath := ""
+local nScan 
+local cBK
+
+// aData
+// [1] barkod
+// [2] naziv
+// [3] kolicina
+// [4] cijena
+
+O_ROBA
+set order to tag "BARKOD"
+go top
+
+do while !EOF()
+	
+	cBK := field->barkod
+
+	if EMPTY( cBK )
+		skip
+		loop
+	endif
+	
+	nScan := ASCAN( aData, {| xVal | xVal[1] == cBK } )
+
+	if nScan = 0
+		AADD( aData, { ALLTRIM(field->barkod), ;
+			ALLTRIM(field->naz), ;
+			0, ;
+			field->vpc } )
+	endif
+
+	skip
+enddo
+
+_gExpPath( @cFilePath )
+cFileName := "ARTIKLI.TXT"
+
+// dodaj u fajl
+_a_to_file( cFilePath, cFileName, aStruct, aData, cSeparator, lTrimData, ;
+	lLastSeparator )
+
+msgbeep("Exportovao " + ALLTRIM(STR(LEN(aData))) + " zapisa robe !")
+
+select (nTArea)
+return 1
+
+
+
+// ----------------------------------------
+// artikli.txt struktura txt fajla
+// ----------------------------------------
+static function _gAStruct()
+local aRet := {}
+
+// BARKOD
+AADD( aRet, { "C", 13, 0 } )
+// NAZIV
+AADD( aRet, { "C", 25, 0 } )
+// TRENUTNA KOLICINA
+AADD( aRet, { "N", 12, 2 } )
+// TRENUTNA CIJENA
+AADD( aRet, { "N", 12, 2 } )
+
+return
 
 

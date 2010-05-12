@@ -186,14 +186,23 @@ return aRet
 // upisi u fajl
 // ----------------------------------------------------------
 function _a_to_file( cFilePath, cFileName, aStruct, aData, ;
-	cSeparator )
+	cSeparator, lTrim, lLastSep )
 local i 
 local ii
 local cLine := ""
 local nCount := 0
+local cNumFill := "0"
 
 if cSeparator == nil
 	cSeparator := ""
+endif
+
+if lTrim == nil
+	lTrim := .f.
+endif
+
+if lLastSep == nil
+	lLastSep := .t.
 endif
 
 cFile := ALLTRIM( cFilePath ) + ALLTRIM( cFileName )
@@ -218,14 +227,34 @@ for i := 1 to LEN( aData )
 		if cType == "C"
 			xVal := PADR( aData[i, ii], nLen )
 		elseif cType == "N"
+			
 			if nDec > 0
-				xVal := PADL( ALLTRIM(STR(aData[i, ii], nLen, nDec)), nLen, "0" )
+				xVal := ALLTRIM(STR(aData[i, ii], nLen, nDec))
 			else
-				xVal := PADL( ALLTRIM(STR(aData[i, ii])), nLen, "0" )
+				xVal := ALLTRIM(STR(aData[i, ii]))
 			endif
+		
+			if lTrim == .f.	
+				xVal := PADL( xVal, nLen, cNumFill )
+			endif
+
+			if lTrim == .t.
+				// zamjeni "." sa ","
+				xVal := STRTRAN( xVal, ".", "," )
+			endif
+
 		endif
 
-		cLine += xVal + cSeparator
+		if lTrim == .t.
+			xVal := ALLTRIM( xVal )
+		endif
+		
+		if ii = LEN( aStruct ) .and. lLastSep == .f.
+			cLine += xVal
+		else
+			cLine += xVal + cSeparator
+		endif
+
 	next
 
 	?? cLine
