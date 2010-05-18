@@ -7,13 +7,16 @@
 function iBTerm_data( cI_File )
 local cPath := ""
 local aError := {}
-local cFilter := "r*.txt"
+local cFilter := "p*.txt"
 
 cI_File := ""
 
 // pronadji fajl za import u export direktoriju
 _gExpPath( @cPath )
-_gFList( cFilter, cPath, @cI_File )
+
+if _gFList( cFilter, cPath, @cI_File ) = 0
+	return 0
+endif
 
 // prebaci iz TXT fajla u pomocnu tabelu
 Txt2TTerm( cI_File )
@@ -78,11 +81,12 @@ endif
 START PRINT CRET
 ?
 ? "Lista nepostojecih artikala:"
-? "----------------------------------"
+? "--------------------------------------------------------------"
 nCnt := 0
 for i:=1 to LEN( aErr )
 	? PADL( ALLTRIM(STR(++nCnt)), 3) + "."
 	@ prow(), pcol()+1 SAY "barkod: " + aErr[i,1]
+	@ prow(), pcol()+1 SAY "_________________________________"
 next
 
 FF
@@ -161,13 +165,13 @@ static function _gAStruct()
 local aRet := {}
 
 // BARKOD
-AADD( aRet, { "C", 13, 0 } )
+AADD( aRet, { "C", 20, 0 } )
 // NAZIV
-AADD( aRet, { "C", 25, 0 } )
+AADD( aRet, { "C", 40, 0 } )
 // TRENUTNA KOLICINA
-AADD( aRet, { "N", 12, 2 } )
+AADD( aRet, { "N", 8, 2 } )
 // TRENUTNA CIJENA
-AADD( aRet, { "N", 12, 2 } )
+AADD( aRet, { "N", 8, 2 } )
 
 return
 
