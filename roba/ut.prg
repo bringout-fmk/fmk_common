@@ -118,5 +118,28 @@ return nVrati
 
 
 
+// ----------------------------------------------------------
+// sredi sifru dobavljaca, poravnanje i popunjavanje
+//   ako je sifra manja od LEN(5) popuni na LEN(8) sa "0"
+// 
+// cSifra - sifra dobavljaca
+// nLen - na koliko provjeravati
+// cFill - cime popuniti
+// ----------------------------------------------------------
+function fix_sifradob( cSifra, nLen, cFill )
+local nTmpLen
+
+if gArtCDX = "SIFRADOB"
+
+  nTmpLen := LEN( roba->sifradob )
+
+  // dodaj prefiks ako je ukucano manje od 5
+  if LEN( ALLTRIM( cSifra ) ) < 5
+	cSifra := PADR( PADL( ALLTRIM(cSifra), nLen, cFill ) , nTmpLen )
+  endif
+endif
+
+return .t.
+
 
 
