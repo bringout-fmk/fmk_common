@@ -125,8 +125,15 @@ return VAL(cVal)
 
 // -------------------------------------------------------------
 // Provjera da li postoje sifre artikla u sifraniku FMK
+// 
+// lSifraDob - pretraga po sifri dobavljaca
 // -------------------------------------------------------------
-function TempArtExist()
+function TempArtExist( lSifraDob )
+
+if lSifraDob == nil
+	lSifraDob := .f.
+endif
+
 O_ROBA
 select temp
 go top
@@ -135,7 +142,12 @@ aRet:={}
 
 do while !EOF()
 
-	cTmpRoba := ALLTRIM(temp->idroba)
+	if lSifraDob == .t.
+		cTmpRoba := PADL( ALLTRIM( temp->idroba ), 5, "0" )
+	else
+		cTmpRoba := ALLTRIM(temp->idroba)
+	endif
+
 	cNazRoba := ""
 
 	// ako u temp postoji "NAZROBA"
@@ -145,6 +157,10 @@ do while !EOF()
 	
 	select roba
 	
+	if lSifraDob == .t.
+		set order to tag "ID_VSD"
+	endif
+
 	go top
 	seek cTmpRoba
 	
