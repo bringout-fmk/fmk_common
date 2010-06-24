@@ -1,65 +1,31 @@
 #include "sc.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/roba/rlabele.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.6 $
- * $Log: rlabele.prg,v $
- * Revision 1.6  2002/07/16 11:12:29  ernad
- *
- *
- * rlabele: uvedena GetVars() radi preglednosti, te jednostavnijeg uvodjenja novih varijanti
- *
- * Revision 1.5  2002/07/16 09:19:56  mirsad
- * razne korekcije po Ernadovim instrukcijama od 15.7.
- *
- * Revision 1.4  2002/07/12 14:02:57  mirsad
- * zavrsena dorada za labeliranje robe za Aden
- *
- * Revision 1.3  2002/07/12 10:50:00  mirsad
- * zavrseno kodiranje centralne funkcije labeliranja robe
- *
- * Revision 1.2  2002/07/12 09:28:37  mirsad
- * zavrseno kodiranje centralne funkcije labeliranja
- *
- * Revision 1.1  2002/07/11 13:36:00  mirsad
- * no message
- *
- *
- */
  
 
-/*! \file fmk/roba/rlabele.prg
- *  \brief Pravljenje labela robe
- *  Omogucava izradu naljepnica u dvije varijante:
- *  1 - prikaz naljepnica sa tekucom cijenom
- *  2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
- */
+// Omogucava izradu naljepnica u dvije varijante:
+// 1 - prikaz naljepnica sa tekucom cijenom
+// 2 - prikaz naljepnica sa novom cijenom, kao i prekrizenom starom cijenom
 
 
-/*! \fn RLabele()
- *  \brief Centralna funkcija za pravljenje labela robe
- */
 function RLabele()
-*{
 local cVarijanta
+local cKolicina
 
-cVarijanta:="1"
+cVarijanta := "1"
+cKolicina := "N"
 
 // kreiraj tabelu rLabele
 CreTblRLabele()
 
-if (GetVars(@cVarijanta)==0)
-	CLOSE ALL
+if GetVars( @cVarijanta, @cKolicina ) == 0 
+	close all
 	return
 endif
 
-// izvrsi funkciju koja filuje tabelu rLabele podacima a vraca varijantu (1-5)
-if (gModul=="KALK")
-	KaFillRLabele()
+// izvrsi funkciju koja filuje tabelu rLabele 
+// podacima a vraca varijantu ( 1-5 )
+if (gModul == "KALK")
+	KaFillRLabele( cKolicina )
 else
 	FaFillRLabele()
 endif
@@ -67,22 +33,24 @@ endif
 CLOSE ALL
 
 if (cVarijanta>"0" .and. cVarijanta<"3")
-	PrintRLabele(cVarijanta)
+	PrintRLabele( cVarijanta )
 endif
 
 return
-*}
 
 
-static function GetVars(cVarijanta)
-*{
+// --------------------------------------------------
+// uslovi generisanja labela
+// --------------------------------------------------
+static function GetVars( cVarijanta, cKolicina )
 local lOpened
 local cIdVd
 
-cIdVd:="XX"
-cVarijanta:="1"
+cIdVd := "XX"
+cVarijanta := "1"
+cKolicina := "N"
+lOpened := .t.
 
-lOpened:=.t.
 if (gModul=="KALK")
 
 	SELECT(F_PRIPR)
@@ -103,11 +71,19 @@ if (gModul=="KALK")
 	endif
 endif
 
-Box(,4,50)
-@ m_x+1, m_y+2 SAY "1 - standardna naljepnica"
-@ m_x+2, m_y+2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
-@ m_x+4, m_y+3 SAY "Odaberi zeljenu varijantu " GET cVarijanta VALID cVarijanta $ "12"
-READ
+Box(, 6, 65)
+	
+	@ m_x+1, m_y+2 SAY "Broj labela zavisi od kolicine artikla (D/N):" ;
+		GET cKolicina VALID cKolicina $ "DN" PICT "@!"
+
+	@ m_x+3, m_y+2 SAY "1 - standardna naljepnica"
+	@ m_x+4, m_y+2 SAY "2 - sa prikazom stare cijene (prekrizeno)"
+	
+	@ m_x+6, m_y+3 SAY "Odaberi zeljenu varijantu " ;
+		GET cVarijanta VALID cVarijanta $ "12"
+	
+	read
+
 BoxC()
 
 if (gModul=="KALK")
@@ -121,62 +97,14 @@ if (LASTKEY()==K_ESC)
 endif
 
 return 1
-*}
-
-
-/*! \var
- *  \brief tabela labela - naljepnica za artikle
- *  \ingroup db_fmk
- *  
- * \code
- *
- * CREATE TABLE (
- * 	idRoba Char(10),
- *	naz Char(40),
- * 	idTarifa Char(6),
- *	evBr Char(10),
- *	cijena Numeric(10,2),
- *	sCijena Numeric(10,2),
- *	skrNaziv Char(20),
- *	brojLabela Numeric(6,0),
- *	jmj Char(3),
- *	katBr Char(20),
- *	cAtribut Char(30),
- *	cAtribut2 Char(30),
- *	nAtribut  Numeric(10,2),
- *	nAtribut2 Numeric(10,2),
- *	vpc Numeric(8,2),
- *	mpc Numeric(8,2),
- *	porez Numeric(8,2),
- *	porez2 Numeric(8,2),
- *	porez3 Numeric(8,2)
- * );
- *
- * \endcode
- *
- * evBr - evidencioni broj tj. broj dokumenta
- *
- * sCijena - stara cijena tj. cijena prije tekuceg dokumenta nivelacije
- *
- * cijena - nova cijena tj. cijena koja se obavezno prikazuje na labeli robe
- *
- * porez    - iznos poreza u procentima
- *
- * cAtribut, cAtribut2 - karakteristike artikla koju treba prikazati na naljepnici (npr zelimo prikazati proizvodjaca: "Microsoft", "Ibm", "HP")
- * nAtribut, nAtribut2 - numericke karakteristike artikla koje treba prikazati (npr. Maksimalna temperatura pranja
- *
- * \note Lokacija tabele: privpath
- */
-*tbl tbl_rlabele;
 
 
 
 
-/*! \fn CreTblRLabele()
- *  \brief Kreira tabelu rLabele u privatnom direktoriju
- */
+// -------------------------------------------------------------
+// Kreira tabelu rLabele u privatnom direktoriju
+// -------------------------------------------------------------
 static function CreTblRLabele()
-*{
 local cPom, aDbf
 
 SELECT(F_RLABELE)
@@ -216,34 +144,61 @@ usex (cPom)
 index on idRoba tag "1"
 set order to tag "1"
 return nil
-*}
 
 
 
-/*! \fn KaFillRLabele()
- *  \brief Puni tabelu rLabele podacima na osnovu dokumenta iz pripreme modula KALK
- */
-static function KaFillRLabele()
-*{
+
+// -------------------------------------------------------------------------
+// Puni tabelu rLabele podacima na osnovu dokumenta iz pripreme modula KALK
+// 
+// cKolicina - D ili N, broj labela zavisi od kolicine robe
+// -------------------------------------------------------------------------
+static function KaFillRLabele( cKolicina )
 local cDok
+local nBr_labela := 0
+
 O_PRIPR
 O_ROBA
+
 select pripr
 go top
-cDok:=field->idFirma+field->idVd+field->brDok
-do while (!eof() .and. cDok==field->idFirma+field->idVd+field->brDok)
-	select rLabele
+
+cDok := ( field->idFirma + field->idVd + field->brDok )
+
+do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
+	field->brDok ) )
+	
+	nBr_labela := field->kolicina
+
+	// ako ne zavisi od kolicine artikla 
+	// uvijek je jedna labela
+
+	if cKolicina == "N"
+		nBr_labela := 1
+	endif
+
+	// pronadji ovu robu
+	select roba
 	seek pripr->idRoba
-	if (!found())
-		select roba
-		seek pripr->idRoba
+	
+	// pregledaj postoji li vec u rlabele.dbf !
+	select rLabele
+	seek pripr->idroba
+	
+	if ( cKolicina == "D" .or. ( cKolicina == "N" .and. !found() ) )
+		
+	  for i := 1 to nBr_labela
+		
 		select rLabele
 		append blank
+		
 		Scatter()
-		_idRoba:=pripr->idRoba
-		_naz:=LEFT(roba->naz, 40)
-		_idTarifa:=pripr->idTarifa
-		_evBr:=pripr->brDok
+		
+		_idRoba := pripr->idRoba
+		_naz := LEFT(roba->naz, 40)
+		_idTarifa := pripr->idTarifa
+		_evBr := pripr->brDok
+		
 		if (pripr->idVd=="19")
 			_cijena:=pripr->mpcSaPP+pripr->fCj
 			_sCijena:=pripr->fCj
@@ -251,38 +206,43 @@ do while (!eof() .and. cDok==field->idFirma+field->idVd+field->brDok)
 			_cijena:=pripr->mpcSaPP
 			_sCijena:=_cijena
 		endif
+		
 		Gather()
+	   
+	   next
+	
 	endif
+	
 	select pripr
 	skip 1
 enddo
+
 return nil
-*}
 
 
-
-
-/*! \fn FaFillRLabele()
- *  \brief Prodji kroz pripremu FAKT-a i napuni tabelu rLabele
- */
+// ---------------------------------------------------------------
+// Prodji kroz pripremu FAKT-a i napuni tabelu rLabele
+// ---------------------------------------------------------------
 static function FaFillRLabele()
-*{
-
 return nil
-*}
 
 
 
-/*! \fn PrintRLabele(cVarijanta)
- *  \brief Stampaj RLabele (delphirb)
- *  \param cVarijanta - varijanta izgleda labele robe: "1" - standardna; "2" - za dokument nivelacije - prikazuju snizenje, gdje se vidi i precrtana stara cijena
- */ 
-static function PrintRLabele(cVarijanta)
-*{
-// pozovi delphi rb i odgovarajuci rtm-fajl (rlab1 / rlab2) za kreiranje labela
+// -------------------------------------------------------------------
+// Stampaj RLabele (delphirb)
+//   cVarijanta - varijanta izgleda labele robe: 
+//       "1" - standardna; 
+//       "2" - za dokument nivelacije - prikazuju snizenje, 
+//             gdje se vidi i precrtana stara cijena
+// -------------------------------------------------------------------
+static function PrintRLabele( cVarijanta )
+// pozovi delphi rb i odgovarajuci rtm-fajl 
+// (rlab1 / rlab2) za kreiranje labela
 private cKomLin
+
 cKomLin:="DelphiRB "+"rlab"+cVarijanta+" "+PRIVPATH+"  rlabele 1"
+
 run &cKomLin
+
 return nil
-*}
 
