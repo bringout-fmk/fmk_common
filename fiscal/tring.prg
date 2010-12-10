@@ -16,7 +16,7 @@ static PIC_CIJENA := ""
 // <RacunZahtjev>
 //   <BrojZahtjeva></BrojZahtjeva>
 //   <VrstaZahtjeva></VrstaZahtjeva>
-//   <Racun>
+//   <NoviObjekat>
 //     <Datum></Datum>
 //     <Kupac>
 //        <IdBroj></IdBroj>
@@ -27,12 +27,13 @@ static PIC_CIJENA := ""
 //     </Kupac>
 //     <StavkeRacuna>
 //       <RacunStavka>
-//          <Artikal>
+//          <artikal>
 //             <Sifra></Sifra>
 //             <Naziv></Naziv>
+//             <JM></JM>
 //             <Cijena></Cijena>
 //             <Stopa></Stopa>
-//          </Artikal>
+//          </artikal>
 //          <Kolicina></Kolicina>
 //          <Rabat></Rabat>
 //       </RacunStavka>
@@ -46,8 +47,8 @@ static PIC_CIJENA := ""
 //           <Iznos></Iznos>
 //        </VrstaPlacanja>
 //     </VrstePlacanja>
-//     <Napomena></Napomena>
-//   </Racun>
+//     <BrojRacuna></BrojRacuna>
+//   </NoviObjekat>
 // </RacunZahtjev>
 
 
@@ -84,6 +85,7 @@ local i
 local cBr_zahtjeva 
 local cVr_zahtjeva
 local cVr_placanja
+local nVr_placanja
 local dRn_datum
 local nKolicina
 local nCijena
@@ -93,6 +95,16 @@ local cRoba_jmj
 local nRabat
 local lKupac := .f.
 local nErr_no := 0
+local cOperacija := ""
+local cRespFile := "C:\RESP.XML"
+
+cOperacija := "StampatiFiskalniRacun"
+cVr_zahtjeva := "0"
+
+if lStorno == .t.
+	cOperacija := "StampatiReklamiraniRacun"
+	cVr_zahtjeva := "2"
+endif
 
 PIC_KOLICINA := "9999999.99"
 PIC_VRIJEDNOST := "9999999.99"
@@ -102,15 +114,21 @@ if aKupac <> nil .and. LEN( aKupac ) > 0
 	lKupac := .t.
 endif
 
+// pobrisi response fajl
+erase_resp( cRespFile )
+
 cXML_tpl := 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
 
 // to je zapravo broj racuna !!!
 cBr_zahtjeva := aData[1, 1]
 
 // ako postoji ovaj joker, ubaci broj racuna
-if "$" $ cFName
-	cFName := ALLTRIM( STRTRAN( cFName, "$", cBr_zahtjeva ) )
-endif
+//if "$" $ cFName
+//	cFName := ALLTRIM( STRTRAN( cFName, "$", cBr_zahtjeva ) )
+//endif
+
+//cFName := ALLTRIM( cBr_zahtjeva ) + ".XML"
+cFName := "OUT.XML"
 
 // putanja do izlaznog xml fajla
 cXML := cFPath + cFName
@@ -128,10 +146,9 @@ xml_subnode("RacunZahtjev " + cXML_tpl, .f.)
   // 1 - stampa stavku po stavku
   // 
   // Mi cemo koristiti varijantu "0"
-  cVr_zahtjeva := "0"
   xml_node("VrstaZahtjeva", cVr_zahtjeva )
 
-  xml_subnode("Racun", .f.)
+  xml_subnode("NoviObjekat", .f.)
 
     cRacun_datum := _fix_date( aData[1, 10] )
     xml_node("Datum", cRacun_datum )
@@ -149,11 +166,6 @@ xml_subnode("RacunZahtjev " + cXML_tpl, .f.)
   	
 	xml_subnode("Kupac", .t.)	
 
-    else
-
-	// ako nema, onda se koristi prazan node
-    	xml_node("Kupac", "" )
-    
     endif
     
     xml_subnode("StavkeRacuna", .f.)
@@ -166,11 +178,11 @@ xml_subnode("RacunZahtjev " + cXML_tpl, .f.)
 	nCijena := aData[i, 5]
 	nKolicina := aData[i, 7]
 	nRabat := aData[i, 6]
-	cStopa := aData[i, 8]
+	cStopa := _g_tar ( aData[i, 8] )
 
 	xml_subnode("RacunStavka", .f.)
 	
-	  xml_subnode("Artikal", .f.)
+	  xml_subnode("artikal", .f.)
 	
 	    xml_node("Sifra", cRoba_id )
 	    xml_node("Naziv", strkzn( cRoba_naz, "8", "U" ) )
@@ -178,7 +190,7 @@ xml_subnode("RacunZahtjev " + cXML_tpl, .f.)
 	    xml_node("Cijena", show_number( nCijena, PIC_CIJENA ) )
 	    xml_node("Stopa", cStopa )
 	
-	  xml_subnode("Artikal", .t.)
+	  xml_subnode("artikal", .t.)
 
 	  xml_node("Kolicina", show_number( nKolicina, PIC_KOLICINA ) )
 	  xml_node("Rabat", show_number( nRabat, PIC_VRIJEDNOST ) )
@@ -199,19 +211,20 @@ xml_subnode("RacunZahtjev " + cXML_tpl, .f.)
     // iznos = 0, ako je 0 onda sve ide tom vrstom placanja
 
     cVr_placanja := _g_v_plac( 0 )
+    nVr_placanja := 0
 
     xml_subnode("VrstePlacanja", .f.)
       xml_subnode("VrstaPlacanja", .f.)
 
          xml_node("Oznaka", cVr_placanja ) 
-         xml_node("Iznos", "0" )
+         xml_node("Iznos", show_number( nVr_placanja, PIC_VRIJEDNOST ) )
 
       xml_subnode("VrstaPlacanja", .t.)
     xml_subnode("VrstePlacanja", .t.)
 
-    xml_node("Napomena", "" )
+    xml_node("BrojRacuna", cBr_zahtjeva )
 
-  xml_subnode("Racun", .t.)
+  xml_subnode("NoviObjekat", .t.)
 
 xml_subnode("RacunZahtjev", .t.)
 
@@ -222,6 +235,12 @@ if cError == "D"
 	// nErr_no := ...
 endif
 
+run_curl( cXml, cOperacija, cRespFile )
+
+sleep(gF_timeo)
+
+open_resp( cRespFile )
+
 return nErr_no
 
 
@@ -229,8 +248,46 @@ return nErr_no
 // vraca vrstu placanja na osnovu oznake
 // ------------------------------------------------
 static function _g_v_plac( nID )
-local cRet := "GOTOVINA"
+local cRet := "-"
+
+do case 
+	case nId = 0
+		cRet := "Gotovina"
+	case nId = 1
+		cRet := "Cek"		
+	case nId = 2
+		cRet := "Virman"
+	case nId = 3
+		cRet := "Kartica"
+
+endcase
+
 return cRet 
+
+
+
+// ---------------------------------------------
+// pobrisi response fajl
+// ---------------------------------------------
+function erase_resp( cFile )
+if FERASE( cFile ) == -1
+	msgbeep("Problem brisanja 'resp.xml' fajla !")
+endif
+return
+
+
+// ----------------------------------------------
+// otvori response fajl
+// ----------------------------------------------
+function open_resp( cFile )
+private cCmd := ""
+if FILE( cFile )
+	cCmd := "start c:\progra~1\mozill~1\firefox.exe " + cFile
+	run &cCmd
+else
+	msgbeep("'resp.xml' ne postoji !!!")
+endif
+return
 
 
 // ---------------------------------------------
@@ -238,8 +295,60 @@ return cRet
 // ---------------------------------------------
 static function _fix_date( dDate )
 local cRet := ""
+local nYear := YEAR( dDate )
+local nMonth := MONTH ( dDate )
+local nDay := DAY ( dDate )
 
-cRet := DTOC( dDate )
+cRet := ALLTRIM( STR ( nYear ) ) + "-" + ;
+	ALLTRIM( STR( nMonth) ) + "-" + ;
+	ALLTRIM( STR( nDay ) )
 
 return cRet
+
+
+
+// ------------------------------------------
+// vraca tarifu za fiskalni stampac
+// ------------------------------------------
+static function _g_tar( cIdTar )
+cF_tar := "E"
+do case
+	case UPPER(ALLTRIM(cIdTar)) = "PDV17"
+		// PDV je tarifna skupina "E"
+		cF_tar := "E"
+	// case 
+	// ....
+
+endcase
+
+return cF_tar
+
+// -----------------------------------------
+// pokreni curl komandu
+// -----------------------------------------
+function run_curl( cFileName, cFisCmd, cRespFile )
+local cIpAddr := "192.168.45.136"
+local cIpPort := "8085"
+private cCmd := ""
+
+// http adresa
+if !EMPTY( gFC_addr )
+	cIpAddr := ALLTRIM( gFC_addr )
+endif
+
+// http port
+if !EMPTY( gFC_port )
+	cIpPort := ALLTRIM( gFC_port )
+endif
+
+
+cCmd := "start curl -X POST -d @" + cFileName + ;
+	" http://" + cIpAddr + ":" + cIpPort + "/" + cFisCmd + ;
+	" -o " + cRespFile
+
+run &cCmd
+
+return
+
+
 

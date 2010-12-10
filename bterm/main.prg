@@ -112,6 +112,7 @@ local cFileName := ""
 local cFilePath := ""
 local nScan 
 local cBK
+local nCnt := 0
 
 // aData
 // [1] barkod
@@ -119,28 +120,42 @@ local cBK
 // [3] kolicina
 // [4] cijena
 
+// kreiraj pomocnu tabelu
+cre_tmp()
+
+select (249)
+use (PRIVPATH + "R_EXPORT") alias "exp"
+index on barkod TAG "ID" 
+
 O_ROBA
 set order to tag "BARKOD"
 go top
 
 do while !EOF()
 	
-	cBK := field->barkod
+	cBK := PADR( field->barkod, 20 )
 
 	if EMPTY( cBK )
 		skip
 		loop
 	endif
 	
-	nScan := ASCAN( aData, {| xVal | xVal[1] == cBK } )
-
-	if nScan = 0
-		AADD( aData, { ALLTRIM(field->barkod), ;
-			ALLTRIM(field->naz), ;
-			0, ;
-			field->vpc } )
+	select exp
+	go top
+	seek cBK
+	
+	if !FOUND()
+		
+		append blank
+		replace field->barkod with roba->barkod
+		replace field->naz with roba->naz
+		replace field->tk with 0
+		replace field->tc with roba->vpc
+	
+		++ nCnt
 	endif
 
+	select roba
 	skip
 enddo
 
@@ -148,10 +163,13 @@ _gExpPath( @cFilePath )
 cFileName := "ARTIKLI.TXT"
 
 // dodaj u fajl
-_a_to_file( cFilePath, cFileName, aStruct, aData, cSeparator, lTrimData, ;
-	lLastSeparator )
+_dbf_to_file( cFilePath, cFileName, aStruct, "R_EXPORT", ;
+	cSeparator, lTrimData, lLastSeparator )
 
-msgbeep("Exportovao " + ALLTRIM(STR(LEN(aData))) + " zapisa robe !")
+msgbeep("Exportovao " + ALLTRIM(STR(nCnt)) + " zapisa robe !")
+
+select (249)
+use
 
 select (nTArea)
 return 1
@@ -175,4 +193,19 @@ AADD( aRet, { "N", 8, 2 } )
 
 return
 
+
+// -------------------------------------------
+// kreiraj pomocnu tabelu
+// -------------------------------------------
+static function cre_tmp()
+local aFields := {}
+
+AADD( aFields, {"barkod", "C", 20, 0} )
+AADD( aFields, {"naz", "C", 40, 0} )
+AADD( aFields, {"tk", "N", 8, 2} )
+AADD( aFields, {"tc", "N", 8, 2} )
+
+t_exp_create( aFields )
+
+return
 
