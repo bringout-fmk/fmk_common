@@ -11,7 +11,7 @@ static F_POS_RN := "POS_RN"
 // aData - podaci racuna
 // lStorno - da li se stampa storno ili ne (.T. ili .F. )
 // --------------------------------------------------------
-function fp_pos_rn( cFPath, cFName, aData, lStorno, cError )
+function fp_pos_rn( cFPath, cFName, aData, aKupac, lStorno, cError )
 local cSep := ";"
 local aPosData := {}
 local aStruct := {}
@@ -26,17 +26,135 @@ if cError == nil
 endif
 
 // naziv fajla
-cFName := f_filepos( aData[ 1, 1] )
+cFName := fp_filename( aData[ 1, 1] )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aPosData := _fp_pos_rn( aData, lStorno )
+aPosData := _fp_pos_rn( aData, aKupac, lStorno )
 
 _a_to_file( cFPath, cFName, aStruct, aPosData )
 
 return nErr
+
+
+// ----------------------------------------------------
+// zatvori nasilno racun sa 0.0 KM iznosom
+// ----------------------------------------------------
+function fp_void( cFPath, cFName )
+local cSep := ";"
+local aVoid := {}
+local aStruct := {}
+
+// naziv fajla
+cFName := fp_filename( aData[ 1, 1] )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aVoid := _fp_void_rn()
+
+_a_to_file( cFPath, cFName, aStruct, aVoid )
+
+return
+
+
+// ----------------------------------------------------
+// zatvori racun
+// ----------------------------------------------------
+function fp_close( cFPath, cFName )
+local cSep := ";"
+local aClose := {}
+local aStruct := {}
+
+// naziv fajla
+cFName := fp_filename( aData[ 1, 1] )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aClose := _fp_close_rn()
+
+_a_to_file( cFPath, cFName, aStruct, aClose )
+
+return
+
+
+// ----------------------------------------------------
+// dnevni fiskalni izvjestaj
+// ----------------------------------------------------
+function fp_daily_rpt( cFPath, cFName )
+local cSep := ";"
+local aDaily := {}
+local aStruct := {}
+local nErr := 0
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aDaily := _fp_daily_rpt()
+
+_a_to_file( cFPath, cFName, aStruct, aDaily )
+
+// procitaj error
+nErr := fp_r_error( cFPath, gFC_tout, 0 )
+
+if nErr <> 0
+	msgbeep("Postoji greska !!!")
+endif
+
+return
+
+
+// ----------------------------------------------------
+// fiskalni izvjestaj za period
+// ----------------------------------------------------
+function fp_per_rpt( cFPath, cFName  )
+local cSep := ";"
+local aPer := {}
+local aStruct := {}
+local nErr := 0
+local dD_from := DATE() - 30
+local dD_to := DATE()
+private GetList:={}
+
+Box(,1,50)
+	@ m_x + 1, m_y + 2 SAY "Za period od" GET dD_from 
+	@ m_x + 1, col() + 1 SAY "do" GET dD_to
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aPer := _fp_per_rpt( dD_from, dD_to )
+
+_a_to_file( cFPath, cFName, aStruct, aPer )
+
+// procitaj error
+nErr := fp_r_error( cFPath, gFC_tout, 0 )
+
+if nErr <> 0
+	msgbeep("Postoji greska !!!")
+endif
+
+return
+
 
 
 
@@ -72,7 +190,7 @@ local cLogic
 local cLogSep := ","
 local cSep := ";"
 local i
-local cOption := "<2>"
+local cOption := "2"
 
 // ocekivana struktura
 // aData = { idroba, nazroba, cijena, kolicina, porstopa, plu }
@@ -137,7 +255,7 @@ return xRet
 // vraca popunjenu matricu za ispis raèuna
 // FPRINT driver
 // ----------------------------------------
-static function _fp_pos_rn( aData, lStorno )
+static function _fp_pos_rn( aData, aKupac, lStorno )
 local aArr := {}
 local cTmp := ""
 local cLogic
@@ -151,7 +269,10 @@ local cOp_pwd := "000000"
 
 // ocekuje se matrica formata
 // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
-//         rek_rn, plu, popust }
+//         rek_rn, plu, plu_cijena, popust }
+
+// prvo dodaj artikle za prodaju...
+_a_fp_articles( @aArr, aData, lStorno )
 
 // broj racuna
 cRnBroj := ALLTRIM( aData[1,1] )
@@ -179,7 +300,9 @@ cTmp += cOp_pwd
 cTmp += cSep
 
 if lStorno == .t.
+	
 	cRek_rn := ALLTRIM( aData[ 1, 8 ] )
+	cTmp += cSep
 	cTmp += cRek_rn
 	cTmp += cSep
 else
@@ -214,7 +337,7 @@ for i := 1 to LEN( aData )
 
 	// popust 0-99.99%
 	if aData[i, 10] > 0
-		cTmp += ALLTRIM(STR( aData[i, 10], 10, 2 ))
+		cTmp += "-" + ALLTRIM(STR( aData[i, 11], 10, 2 ))
 	endif
 	cTmp += cSep
 
@@ -255,9 +378,44 @@ cTmp += cSep
 
 AADD( aArr, { cTmp } )
 
+// 5. kupac - podaci
+if LEN( aKupac ) > 0
 
-// 5. zatvaranje racuna
-cTmp := "56"
+	// aKupac = { idbroj, naziv, adresa, ptt, mjesto }
+
+	// postoje podaci...
+	cTmp := "55"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	
+	// id broj
+	cTmp += ALLTRIM( aKupac[ 1, 1 ] )
+	cTmp += cSep
+
+	// naziv
+	cTmp += ALLTRIM( aKupac[ 1, 2 ] )
+	cTmp += cSep
+
+	// adresa, ptt, mjesto
+	cTmp += ALLTRIM( aKupac[ 1, 3 ] ) + ", " + ;
+		ALLTRIM( aKupac[ 1, 4 ] ) + " " + ;
+		ALLTRIM( aKupac[ 1, 5 ] )
+
+	cTmp += cSep
+
+	AADD( aArr, { cTmp } )
+
+endif
+
+// 6. otvaranje ladice
+cTmp := "106"
 cTmp += cLogSep
 cTmp += cLogic
 cTmp += cLogSep
@@ -271,5 +429,388 @@ cTmp += cSep
 AADD( aArr, { cTmp } )
 
 
+
+// 7. zatvaranje racuna
+cTmp := "56"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
 return aArr
+
+
+// ---------------------------------------------------
+// zatvori racun
+// ---------------------------------------------------
+static function _fp_close_rn()
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+
+cLogic := "1"
+
+// 7. zatvaranje racuna
+cTmp := "56"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+return aArr
+
+// --------------------------------------------------------
+// vraca formatiran datum za opcije izvjestaja
+// --------------------------------------------------------
+static function _fix_date( dDate )
+local cRet := ""
+local nM := MONTH( dDate )
+local nD := DAY( dDate )
+local nY := YEAR( dDate )
+
+// format datuma treba da bude DDMMYY
+cRet := PADL( ALLTRIM(STR(nD)), 2, "0" )
+cRet += PADL( ALLTRIM(STR(nM)), 2, "0" )
+cRet += RIGHT( ALLTRIM(STR(nY)), 2 )
+
+return cRet
+
+
+// ---------------------------------------------------
+// dnevni fiskalni izvjestaj
+// ---------------------------------------------------
+static function _fp_per_rpt( dD_from, dD_to )
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local cD_from
+local cD_to
+local aArr := {}
+
+// konvertuj datum
+cD_from := _fix_date( dD_from )
+cD_to := _fix_date( dD_to )
+
+cLogic := "1"
+
+cTmp := "79"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += cD_from
+cTmp += cSep
+cTmp += cD_to
+cTmp += cSep
+cTmp += cSep
+cTmp += cSep
+	
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+// ---------------------------------------------------
+// dnevni fiskalni izvjestaj
+// ---------------------------------------------------
+static function _fp_daily_rpt()
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+
+// 0 - "Z"
+// 2 - "X"
+
+local cType := "0"
+
+// "N" - 
+// "A" - 
+local cOper := "N"
+
+cLogic := "1"
+
+cTmp := "69"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += cType
+cTmp += cSep
+cTmp += cOper
+cTmp += cSep
+	
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+// ---------------------------------------------------
+// zatvori nasilno racun sa 0.0 iznosom
+// ---------------------------------------------------
+static function _fp_void_rn()
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+
+cLogic := "1"
+
+cTmp := "301"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+	
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+// ----------------------------------------------------
+// dodaj artikle za racun
+// ----------------------------------------------------
+static function _a_fp_articles( aArr, aData, lStorno )
+local i
+local cTmp := ""
+// opcija dodavanja artikla u printer <1|2> 
+// 1 - dodaj samo jednom
+// 2 - mozemo dodavati vise puta
+local cOp_add := "2"
+// opcija promjene cijene u printeru
+local cOp_ch := "4"
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+
+// ocekuje se matrica formata
+// aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
+//         rek_rn, plu, plu_cijena, popust }
+
+cLogic := "1"
+
+if lStorno == .t.
+	return
+endif
+
+for i:=1 to LEN( aData )
+	
+	// 1. dodavanje artikla u printer
+	
+	cTmp := "107"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	
+	// opcija dodavanja "2"
+	cTmp += cOp_add
+	cTmp += cSep
+	
+	// poreska stopa
+	cTmp += _g_tar( aData[ i, 7 ] )
+	cTmp += cSep
+	
+	// plu kod 
+	cTmp += ALLTRIM( STR( aData[ i, 9 ]) )
+	cTmp += cSep
+
+	// plu cijena
+	cTmp += ALLTRIM(STR( aData[ i, 10 ], 12, 2 ))
+	cTmp += cSep
+	
+	// plu naziv
+	cTmp += ALLTRIM( aData[ i, 4 ] ) 
+	cTmp += cSep
+
+	AADD( aArr, { cTmp } )
+	
+	// 2. dodavanje stavke promjena cijene - ako postoji
+	
+	cTmp := "107"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	
+	// opcija dodavanja "4"
+	cTmp += cOp_ch
+	cTmp += cSep
+	
+	// plu kod 
+	cTmp += ALLTRIM( STR( aData[ i, 9 ]) )
+	cTmp += cSep
+	
+	// plu cijena
+	cTmp += ALLTRIM(STR( aData[ i, 10 ], 12, 2 ))
+	cTmp += cSep
+
+	AADD( aArr, { cTmp } )
+
+next
+
+return
+
+
+// ----------------------------------------
+// fajl za pos fiskalni stampac
+// ----------------------------------------
+static function fp_filename( cBrRn )
+local cRet
+local cF_name := ALLTRIM( gFC_name )
+
+do case
+
+	case "$rn" $ cF_name
+		// broj racuna.txt
+		cRN := PADL( ALLTRIM( cBrRn ), 8, "0" )
+		cRet := STRTRAN( cF_name, "$rn", cRN )
+		cRet := UPPER( cRet )
+	otherwise 
+		// ono sta je navedeno u parametrima
+		cRet := cF_name
+
+endcase
+
+return cRet
+
+
+// ------------------------------------------------
+// citanje gresaka za FPRINT driver
+// vraca broj
+// 0 - sve ok
+// -9 - ne postoji answer fajl
+// 
+// nTimeOut - time out fiskalne operacije
+// nFisc_no - broj fiskalnog isjecka
+// ------------------------------------------------
+function fp_r_error( cPath, nTimeOut, nFisc_no )
+local nErr := 0
+local cF_name
+local i
+local nBrLin
+local nStart
+local cErr
+local aErr_read
+local aErr_data
+
+// sacekaj malo !
+sleep( nTimeOut )
+
+// primjer: c:\fprint\answer\answer.txt
+cF_name := cPath + "ANSWER" + SLASH + "ANSWER.TXT"
+
+// ova opcija podrazumjeva da je ukljuèena opcija 
+// prikaza greske tipa ER,OK...
+
+if !FILE( cF_name )
+	msgbeep("Fajl " + cF_name + " ne postoji !!!")
+	nErr := -9
+	return nErr
+endif
+
+nFisc_no := 0
+
+nBrLin := BrLinFajla( cF_name )
+nStart := 0
+
+cFisc_txt := ""
+
+// prodji kroz svaku liniju i procitaj zapise
+for i:=1 to nBrLin
+	
+	aErr_read := SljedLin( cF_name, nStart )
+      	nStart := aErr_read[ 2 ]
+
+	// uzmi u cErr liniju fajla
+	cErr := aErr_read[ 1 ]
+
+	// ovo je dodavanje artikla
+	if "107,1,00" $ cErr
+		// preskoci
+		loop
+	endif
+	
+	// ovu liniju zapamti, sadrzi fiskalni racun broj
+	if "48,1,00" $ cErr
+		cFisc_txt := cErr
+	endif
+
+	// ima neka greska !
+	if "Er;" $ cErr
+		msgbeep( ALLTRIM(cErr) )
+		nRet := 1
+		return nRet
+	endif
+	
+next
+
+// ako je sve ok, uzmi broj fiskalnog isjecka
+if !EMPTY( cFisc_txt )
+	nFisc_no := _g_fisc_no( cFisc_txt )
+endif
+
+return nErr
+
+
+
+// ------------------------------------------------
+// vraca broj fiskalnog isjecka
+// ------------------------------------------------
+static function _g_fisc_no( cTxt )
+local nFiscNO := 0
+local aTmp := {}
+local aFisc := {}
+local cFisc := ""
+
+aTmp := toktoniz( cTxt, ";" )
+cFisc := aTmp[2]
+aFisc := toktoniz( cFisc, "," )
+nFiscNO := VAL( aFisc[2] )
+
+return nFiscNO
+
 

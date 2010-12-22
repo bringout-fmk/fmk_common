@@ -23,7 +23,7 @@ if ((Ch==K_CTRL_N) .or. (Ch==K_F4))
 	nVal := nPlu + 1
 
 	select (nTArea)
-	set order to tag "1"
+	set order to tag "ID"
 	go (nTRec)
 
 	AEVAL(GetList,{|o| o:display()})
@@ -39,6 +39,8 @@ return .t.
 function gen_all_plu()
 local nPLU := 0
 local lReset := .f.
+local nP_PLU := 0
+local nCnt 
 
 O_ROBA
 select ROBA
@@ -53,6 +55,19 @@ if Pitanje(,"Resetovati postojece PLU", "N") == "D"
 	lReset := .t.
 endif
 
+// prvo mi nadji zadnji PLU kod
+select roba
+set order to tag "PLU"
+go top
+seek str(9999999999,10)
+skip -1
+nP_PLU := field->fisc_plu
+nCnt := 0
+
+select roba
+set order to tag "ID"
+go top
+
 Box(,1,50)
 do while !EOF()
 	
@@ -65,11 +80,13 @@ do while !EOF()
 		endif
 	endif
 	
-	++ nPLU
-	replace field->fisc_plu with nPLU
+	++ nCnt
+	++ nP_PLU
+
+	replace field->fisc_plu with nP_PLU
 
 	@ m_x + 1, m_y + 2 SAY PADR( "idroba: " + field->id + ;
-		" -> PLU: " + ALLTRIM( STR( nPLU ) ), 30 )
+		" -> PLU: " + ALLTRIM( STR( nP_PLU ) ), 30 )
 	
 	skip
 
@@ -77,7 +94,7 @@ enddo
 BoxC()
 
 if nPLU > 0
-	msgbeep("Generisao " + ALLTRIM(STR(nPLU)) + " PLU kodova.")
+	msgbeep("Generisao " + ALLTRIM(STR(nCnt)) + " PLU kodova.")
 	return .t.
 else
 	return .f.
