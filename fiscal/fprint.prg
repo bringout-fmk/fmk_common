@@ -84,6 +84,62 @@ return
 
 
 // ----------------------------------------------------
+// manualno zadavanje komandi
+// ----------------------------------------------------
+function fp_man_cmd( cFPath, cFName )
+local cSep := ";"
+local aManCmd := {}
+local aStruct := {}
+local nCmd := 0
+local cCond := SPACE(150)
+local cErr := "N"
+local nErr := 0
+private GetList:={}
+
+Box(,4, 65)
+	
+	@ m_x+1, m_y+2 SAY "**** manuelno zadavanje komandi ****" 
+	
+	@ m_x+2, m_y+2 SAY "   broj komande:" GET nCmd PICT "999" ;
+		VALID nCmd > 0
+	@ m_x+3, m_y+2 SAY "        komanda:" GET cCond PICT "@S40"
+	
+	@ m_x+4, m_y+2 SAY "provjera greske:" GET cErr PICT "@!" ;
+		VALID cErr $ "DN"
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aManCmd := _fp_man_cmd( nCmd, cCond )
+
+_a_to_file( cFPath, cFName, aStruct, aManCmd )
+
+if cErr == "D"
+	
+	// provjeri gresku
+	nErr := fp_r_error( cFPath, gFC_tout, 0 )
+
+	if nErr <> 0
+		msgbeep("Postoji greska !!!")
+	endif
+
+endif
+
+return
+
+
+
+// ----------------------------------------------------
 // dnevni fiskalni izvjestaj
 // ----------------------------------------------------
 function fp_daily_rpt( cFPath, cFName )
@@ -441,6 +497,43 @@ cTmp += REPLICATE("_", 1)
 cTmp += cLogSep
 cTmp += REPLICATE("_", 2)
 cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+
+// ---------------------------------------------------
+// manualno zadavanje komandi
+// ---------------------------------------------------
+static function _fp_man_cmd( nCmd, cCond )
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+
+cLogic := "1"
+
+// broj komande
+cTmp := ALLTRIM(STR(nCmd))
+
+// ostali regularni dio
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+
+if !EMPTY( cCond )
+	// ostatak komande
+	cTmp += ALLTRIM(cCond)
+endif
 
 AADD( aArr, { cTmp } )
 
