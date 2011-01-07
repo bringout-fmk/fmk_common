@@ -237,6 +237,11 @@ if Round(drn->ukpopust, 2) <> 0
 	? cRazmak + PADL("Uk.bez.PDV-popust (KM):", nLeft1), STR(drn->ukbpdvpop, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
 endif
 ? cRazmak + PADL("PDV 17% :", nLeft1), STR(drn->ukpdv, LEN_VRIJEDNOST, DEC_VRIJEDNOST)
+
+if ROUND(drn->zaokr, 2) <> 0
+	? cRazmak + PADL("zaokruzenje (+/-):", nLeft1), str(ABS(drn->zaokr), LEN_VRIJEDNOST, DEC_VRIJEDNOST )
+endif
+
 ? cLine
 ? cRazmak + PADL("UKUPNO ZA NAPLATU (KM):", nLeft1), PADL(TRANSFORM(drn->ukupno,"******9."+REPLICATE("9", DEC_VRIJEDNOST)), LEN_VRIJEDNOST)
 ? cLine

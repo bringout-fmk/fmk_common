@@ -161,8 +161,8 @@ if !lSamoKol
 	endif
 	? cRazmak + PADL("PDV 17% :", 95), PADL(TRANSFORM(drn->ukpdv, PicDem),26)
 	// zaokruzenje
-	if ROUND(drn->zaokr,4) <> 0
-			? cRazmak + PADL("Zaokruzenje :", 95), PADL(TRANSFORM(drn->zaokr, PicDem),26)
+	if ROUND(drn->zaokr,2) <> 0
+			? cRazmak + PADL("Zaokruzenje (+/-):", 95), PADL(TRANSFORM(ABS(drn->zaokr), PicDem),26)
 	endif
 	
 	? cLine

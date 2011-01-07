@@ -414,6 +414,10 @@ if Round(drn->ukpopust, 2) <> 0
 endif
 ? SPACE(LEN_RAZMAK) + PADL("PDV 17% :", LEN_TRAKA - LEN_UKUPNO - 1), show_number(drn->ukpdv, PIC_UKUPNO)
 
+if ROUND(drn->zaokr, 2) <> 0
+	? SPACE(LEN_RAZMAK) + PADL("zaokruzenje (+/-):", LEN_TRAKA - LEN_UKUPNO - 1), show_number(ABS(drn->zaokr), PIC_UKUPNO)
+endif
+
 ? cLine
 ? SPACE(LEN_RAZMAK) + PADL("UKUPNO ZA NAPLATU (KM):", LEN_TRAKA - LEN_UKUPNO - 1), PADL(show_number(drn->ukupno,"******9.99"), LEN_UKUPNO)
 ? cLine

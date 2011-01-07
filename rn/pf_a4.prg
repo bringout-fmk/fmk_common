@@ -1066,10 +1066,10 @@ endif
 ?? show_number(drn->ukpdv, PIC_VRIJEDNOST)
     
 // zaokruzenje
-if ROUND(drn->zaokr,4) <> 0
+if ROUND(drn->zaokr,2) <> 0
 	? RAZMAK 
-	?? PADL(lokal("Zaokruzenje :"), LEN_UKUPNO)
-	?? show_number(drn->zaokr, PIC_VRIJEDNOST)
+	?? PADL(lokal("Zaokruzenje (+/-):"), LEN_UKUPNO)
+	?? show_number(ABS(drn->zaokr), PIC_VRIJEDNOST)
 endif
 	
 ? cLine

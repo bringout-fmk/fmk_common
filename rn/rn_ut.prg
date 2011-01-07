@@ -157,8 +157,18 @@ if gPrinter <> "R"
 endif
 konvtable()
 return
-*}
 
 
+// ----------------------------------------------
+// zaokruzenje na 5 pf
+// ----------------------------------------------
+function zaokr_5pf( nIznos )
+local nRet := 0
+local nTmp := 0
+
+nTmp := ROUND( nIznos * 2, 1 ) / 2
+nRet := (nIznos - nTmp)
+
+return nRet
 
 
