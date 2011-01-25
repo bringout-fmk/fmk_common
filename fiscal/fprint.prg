@@ -38,6 +38,100 @@ _a_to_file( cFPath, cFName, aStruct, aPosData )
 
 return nErr
 
+// ----------------------------------------------------
+// fprint: unos pologa u printer
+// ----------------------------------------------------
+function fp_polog( cFPath, cFName )
+local cSep := ";"
+local aPolog := {}
+local aStruct := {}
+local nPolog := 0
+
+Box(,1,60)
+	@ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
+		PICT "999999.99"
+	read
+BoxC()
+
+if nPolog = 0
+	msgbeep("Polog mora biti <> 0 !")
+	return
+endif
+
+if LastKey() == K_ESC
+	return
+endif
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aPolog := _fp_polog( nPolog )
+
+_a_to_file( cFPath, cFName, aStruct, aPolog )
+
+return
+
+
+
+// ----------------------------------------------------
+// fprint: dupliciranje racuna
+// ----------------------------------------------------
+function fp_double( cFPath, cFName )
+local cSep := ";"
+local aDouble := {}
+local aStruct := {}
+local dD_from := DATE()
+local dD_to := dD_from
+local cT_from := TIME()
+local cT_to := cT_from
+local cType := "F"
+
+cT_from := STRTRAN( cT_from, ":", "" )
+cT_to := STRTRAN( cT_to, ":", "" )
+
+Box(,10,60)
+	
+	@ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from 
+	@ m_x + 1, col() + 1 SAY "vrijeme od (hhmmss):" GET cT_from
+	
+	@ m_x + 2, m_y + 2 SAY "         do:" GET dD_to
+	@ m_x + 2, col() + 1 SAY "vrijeme do (hhmmss):" GET cT_to
+
+	@ m_x + 3, m_y + 2 SAY "--------------------------------------"
+
+	@ m_x + 4, m_y + 2 SAY "A - duplikat svih dokumenata"
+	@ m_x + 5, m_y + 2 SAY "F - duplikat fiskalnog racuna"
+	@ m_x + 6, m_y + 2 SAY "R - duplikat reklamnog racuna"
+	@ m_x + 7, m_y + 2 SAY "Z - duplikat Z izvjestaja"
+	@ m_x + 8, m_y + 2 SAY "X - duplikat X izvjestaja"
+	@ m_x + 9, m_y + 2 SAY "P - duplikat periodicnog izvjestaja" ;
+		GET cType ;
+		VALID cType $ "AFRZXP" PICT "@!"
+
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aDouble := _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
+
+_a_to_file( cFPath, cFName, aStruct, aDouble )
+
+return
+
 
 // ----------------------------------------------------
 // zatvori nasilno racun sa 0.0 KM iznosom
@@ -48,7 +142,7 @@ local aVoid := {}
 local aStruct := {}
 
 // naziv fajla
-cFName := fp_filename( aData[ 1, 1] )
+cFName := fp_filename( "0" )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -70,7 +164,7 @@ local aClose := {}
 local aStruct := {}
 
 // naziv fajla
-cFName := fp_filename( aData[ 1, 1] )
+cFName := fp_filename( "0" )
 
 // uzmi strukturu tabele za pos racun
 aStruct := _g_f_struct( F_POS_RN )
@@ -548,6 +642,7 @@ local cTmp := ""
 local cLogic
 local cLogSep := ","
 local cSep := ";"
+local aArr := {}
 
 cLogic := "1"
 
@@ -658,6 +753,82 @@ cTmp += cSep
 cTmp += cType
 cTmp += cSep
 cTmp += cOper
+cTmp += cSep
+	
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+
+
+// ------------------------------------------------------------------
+// dupliciranje dokumenta
+// ------------------------------------------------------------------
+static function _fp_double( cType, dD_from, dD_to, cT_from, cT_to )
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+local cStart := ""
+local cEnd := ""
+
+// sredi start i end linije
+cStart := _fix_date(dD_from) + cT_from
+cEnd := _fix_date(dD_to) + cT_to
+
+cLogic := "1"
+
+cTmp := "109"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += cType
+cTmp += cSep
+cTmp += cStart
+cTmp += cSep
+cTmp += cEnd
+cTmp += cSep
+	
+AADD( aArr, { cTmp } )
+
+return aArr
+
+// ---------------------------------------------------
+// unos pologa u printer
+// ---------------------------------------------------
+static function _fp_polog( nIznos )
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+local cZnak := "+"
+
+if nIznos < 0
+	cZnak := ""
+endif
+
+cLogic := "1"
+
+cTmp := "70"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += cZnak + ALLTRIM(STR( nIznos ))
 cTmp += cSep
 	
 AADD( aArr, { cTmp } )
@@ -868,7 +1039,8 @@ for i:=1 to nBrLin
 	endif
 	
 	// ovu liniju zapamti, sadrzi fiskalni racun broj
-	if "48,1,00" $ cErr
+	// komanda 56, zatvaranje racuna
+	if "56,1,00" $ cErr
 		cFisc_txt := cErr
 	endif
 

@@ -36,23 +36,31 @@ return .t.
 // -------------------------------------------------------
 // generisi PLU kodove za postojece stavke sifraranika
 // -------------------------------------------------------
-function gen_all_plu()
+function gen_all_plu( lSilent )
 local nPLU := 0
 local lReset := .f.
 local nP_PLU := 0
 local nCnt 
 
+if lSilent == nil
+	lSilent := .f.
+endif
+
 O_ROBA
 select ROBA
 go top
 
-if !SigmaSIF("GENPLU")
+if lSilent == .f. .and. !SigmaSIF("GENPLU")
 	msgbeep("NE DIRAJ !!!")
 	return .f.
 endif
 
-if Pitanje(,"Resetovati postojece PLU", "N") == "D"
+if lSilent == .f. .and. Pitanje(,"Resetovati postojece PLU", "N") == "D"
 	lReset := .t.
+endif
+
+if lSilent == .t.
+	lReset := .f.
 endif
 
 // prvo mi nadji zadnji PLU kod
@@ -94,7 +102,9 @@ enddo
 BoxC()
 
 if nPLU > 0
-	msgbeep("Generisao " + ALLTRIM(STR(nCnt)) + " PLU kodova.")
+	if lSilent == .f.
+		msgbeep("Generisao " + ALLTRIM(STR(nCnt)) + " PLU kodova.")
+	endif
 	return .t.
 else
 	return .f.
