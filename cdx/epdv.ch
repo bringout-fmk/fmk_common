@@ -2,8 +2,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_EP_VERZIJA "01.22"
-#define D_EP_PERIOD '01.06-17.07.10'
+#define D_EP_VERZIJA "01.31"
+#define D_EP_PERIOD '01.06-09.02.11'
 
 #ifndef FMK_DEFINED
 	#include "fmk.ch"
