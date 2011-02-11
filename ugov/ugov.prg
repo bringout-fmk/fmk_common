@@ -351,8 +351,10 @@ local nX:=1
 local _fakt_do_mj := 0
 local _fakt_do_go := 0
 
+nRec:=RECNO()
+nTArea := SELECT()
+
 if lNovi
-	nRec:=RECNO()
 	GO BOTTOM
 	SKIP 1
 endif
@@ -503,6 +505,9 @@ BoxC()
 if LastKey() == K_ESC
 	return DE_CONT
 endif
+
+select (nTArea)
+go (nRec)
 
 if lNovi 
 	append blank

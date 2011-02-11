@@ -133,6 +133,7 @@ _a_to_file( cFPath, cFName, aStruct, aDouble )
 return
 
 
+
 // ----------------------------------------------------
 // zatvori nasilno racun sa 0.0 KM iznosom
 // ----------------------------------------------------
@@ -982,6 +983,23 @@ endcase
 return cRet
 
 
+
+// ----------------------------------------------
+// pobrisi answer fajl
+// ----------------------------------------------
+function fp_d_answer( cPath )
+local cF_name
+
+cF_name := cPath + "ANSWER" + SLASH + "ANSWER.TXT"
+
+if FERASE( cF_name ) = -1
+	msgbeep("Greska sa brisanjem answer.txt !")
+endif
+
+return
+
+
+
 // ------------------------------------------------
 // citanje gresaka za FPRINT driver
 // vraca broj
@@ -1000,15 +1018,37 @@ local nStart
 local cErr
 local aErr_read
 local aErr_data
+local nTime 
+
+nTime := nTimeOut
 
 // sacekaj malo !
-sleep( nTimeOut )
+//sleep( nTimeOut )
 
 // primjer: c:\fprint\answer\answer.txt
 cF_name := cPath + "ANSWER" + SLASH + "ANSWER.TXT"
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
 // prikaza greske tipa ER,OK...
+
+Box(,1,50)
+
+do while nTime > 0
+	
+	-- nTime
+
+	if FILE( cF_name )
+		// fajl se pojavio - izadji iz petlje !
+		exit
+	endif
+
+	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
+		ALLTRIM( STR(nTime) ), 48)
+
+	sleep(1)
+enddo
+
+BoxC()
 
 if !FILE( cF_name )
 	msgbeep("Fajl " + cF_name + " ne postoji !!!")
@@ -1017,7 +1057,6 @@ if !FILE( cF_name )
 endif
 
 nFisc_no := 0
-
 nBrLin := BrLinFajla( cF_name )
 nStart := 0
 
