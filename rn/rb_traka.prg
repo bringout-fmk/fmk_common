@@ -146,9 +146,12 @@ return
 *}
 
 
+// ---------------------------------------
+// vraca ukupan iznos racuna
+// ---------------------------------------
 function get_rb_ukupno()
-*{
 local nUkupno:=0
+local nTArea := SELECT()
 
 select drn
 go top
@@ -157,8 +160,8 @@ do while !EOF()
 	skip
 enddo
 
+select (nTArea)
 return nUkupno
-*}
 
 
 function get_rn_mjesto()

@@ -28,6 +28,31 @@ endif
 return cTmp
 
 
+// ------------------------------------
+// xml single node
+// ------------------------------------
+function xml_snode( cName, cData, lWrite )
+local cTmp
+
+if lWrite == nil
+	lWrite := .t.
+endif
+
+// eg. 
+// cName = position
+// cData = bcr="22" vat="33"
+// => <position bcr="22" vat="33" />
+
+cTmp := _sbracket( cName + " " + cData )
+
+if lWrite == .t.
+	?? cTmp
+	?
+endif
+
+return cTmp
+
+
 
 // ----------------------------------------------
 // xml subnode
@@ -75,6 +100,21 @@ if lWrite == .t.
 endif
 
 return cTxt
+
+
+// --------------------------------------------
+// stavi single string u zagrade (single node)
+// --------------------------------------------
+static function _sbracket( cStr )
+local cRet
+
+cRet := "<"
+
+cRet += cStr
+cRet += " /"
+cRet += ">"
+
+return cRet
 
 
 // --------------------------------------------

@@ -240,6 +240,9 @@
 #define F_REVAL    210
 #define F_PROMJ    211
 #define F_INVENT   212
+#define F_KARKON   213
+#define F_IZDEF    215
+#define F_IZOP     216
 
 //virm
 #define F_VIPRIPR 216
