@@ -91,7 +91,7 @@ function CreFmkSvi()
 // RJ
 if !file(KUMPATH+"RJ.DBF")
    	aDBf:={}
-   	if goModul:oDataBase:cName == "LD"
+   	if goModul:oDataBase:cName $ "LD#PORLD"
    		AADD(aDBf,{ 'ID'                  , 'C' ,   2 ,  0 })
    	else
    		AADD(aDBf,{ 'ID'                  , 'C' ,   6 ,  0 })

@@ -4,6 +4,25 @@
 // pos komande
 static F_POS_RN := "POS_RN"
 
+// ocekivana matrica
+// aData
+//
+// 1 - broj racuna
+// 2 - redni broj
+// 3 - id roba
+// 4 - roba naziv
+// 5 - cijena
+// 6 - kolicina
+// 7 - tarifa
+// 8 - broj racuna za storniranje
+// 9 - roba plu
+// 10 - plu cijena
+// 11 - popust
+// 12 - barkod
+// 13 - vrsta placanja
+// 14 - total racuna
+
+
 // --------------------------------------------------------
 // fiskalni racun pos (FPRINT)
 // cFPath - putanja do fajla
@@ -417,10 +436,15 @@ local cRek_rn := ""
 local cRnBroj
 local cOperator := "1"
 local cOp_pwd := "000000"
+local nTotal := 0
+local cVr_placanja := "0"
+
+cVr_placanja := ALLTRIM( aData[1, 13] )
+nTotal := aData[1, 14]
 
 // ocekuje se matrica formata
 // aData { brrn, rbr, idroba, nazroba, cijena, kolicina, porstopa, 
-//         rek_rn, plu, plu_cijena, popust }
+//         rek_rn, plu, plu_cijena, popust, barkod, vrsta plac, total racuna }
 
 // prvo dodaj artikle za prodaju...
 _a_fp_articles( @aArr, aData, lStorno )
@@ -494,7 +518,8 @@ for i := 1 to LEN( aData )
 
 	// dodaj u matricu prodaju...
 	AADD( aArr, { cTmp } )
-
+	
+	
 next
 
 // 3. subtotal
@@ -524,8 +549,26 @@ cTmp += REPLICATE("_", 1)
 cTmp += cLogSep
 cTmp += REPLICATE("_", 2)
 cTmp += cSep
-cTmp += cSep
-cTmp += cSep
+
+// 0 - cash
+// 1 - card
+// 2 - chek
+// 3 - virman
+
+if cVr_placanja <> "0"
+ 	
+	// imamo drugu vrstu placanja...
+	cTmp += cVr_placanja
+	cTmp += cSep
+	cTmp += ALLTRIM( STR( nTotal, 12, 2 ) )
+	cTmp += cSep
+
+else
+
+	cTmp += cSep
+	cTmp += cSep
+
+endif
 
 AADD( aArr, { cTmp } )
 
@@ -1052,6 +1095,7 @@ BoxC()
 
 if !FILE( cF_name )
 	msgbeep("Fajl " + cF_name + " ne postoji !!!")
+	nFisc_no := 0
 	nErr := -9
 	return nErr
 endif

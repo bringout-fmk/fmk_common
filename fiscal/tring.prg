@@ -237,7 +237,7 @@ endif
 
 run_curl( cXml, cOperacija, cRespFile )
 
-sleep(gF_timeo)
+sleep(gF_tout)
 
 open_resp( cRespFile )
 

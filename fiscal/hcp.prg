@@ -278,6 +278,16 @@ endif
 return nErr_no
 
 
+// ----------------------------------------------------
+// posalji cmd.ok
+// ----------------------------------------------------
+function hcp_s_cmd( cFPath )
+
+// kreiraj triger cmd.ok
+c_cmdok( cFPath )
+
+return
+
 
 // -------------------------------------------------------------------
 // hcp programiranje PLU

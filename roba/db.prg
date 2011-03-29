@@ -24,6 +24,8 @@ function CreRoba()
 aDbf:={}
 AADD(aDBf,{ 'ID'                  , 'C' ,  10 ,  0 })
 add_f_mcode(@aDbf)
+
+AADD(aDBf,{ 'FISC_PLU'            , 'N' ,  10 ,  0 })
 AADD(aDBf,{ 'NAZ'                 , 'C' , 250 ,  0 })
 AADD(aDBf,{ 'STRINGS'             , 'N' ,  10 ,  0 })
 AADD(aDBf,{ 'JMJ'                 , 'C' ,   3 ,  0 })
@@ -99,6 +101,15 @@ if fieldpos("SIFRADOB")<>0
   use
   CREATE_INDEX("SIFRADOB","SIFRADOB",SIFPATH+"ROBA") // roba, artikli
 endif
+
+O_ROBA
+if fieldpos("FISC_PLU")<>0
+  select (F_ROBA)
+  use
+  CREATE_INDEX("PLU","str(fisc_plu,10)",SIFPATH+"ROBA") // roba, artikli
+endif
+
+
 
 if IzFMKINI("ROBA","Planika","N",SIFPATH)=="D"
 	select (F_ROBA)
