@@ -57,6 +57,8 @@ _a_to_file( cFPath, cFName, aStruct, aPosData )
 
 return nErr
 
+
+
 // ----------------------------------------------------
 // fprint: unos pologa u printer
 // ----------------------------------------------------
@@ -175,6 +177,52 @@ _a_to_file( cFPath, cFName, aStruct, aVoid )
 return
 
 
+
+// ----------------------------------------------------
+// print non-fiscal tekst
+// ----------------------------------------------------
+function fp_nf_txt( cFPath, cFName, cTxt )
+local cSep := ";"
+local aTxt := {}
+local aStruct := {}
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aTxt := _fp_nf_txt( cTxt )
+
+_a_to_file( cFPath, cFName, aStruct, aTxt )
+
+return
+
+
+// ----------------------------------------------------
+// brisanje PLU iz uredjaja
+// ----------------------------------------------------
+function fp_del_plu( cFPath, cFName )
+local cSep := ";"
+local aDel := {}
+local aStruct := {}
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aDel := _fp_del_plu()
+
+_a_to_file( cFPath, cFName, aStruct, aDel )
+
+return
+
+
+
 // ----------------------------------------------------
 // zatvori racun
 // ----------------------------------------------------
@@ -262,6 +310,10 @@ local aDaily := {}
 local aStruct := {}
 local nErr := 0
 
+if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
+	return
+endif
+
 // naziv fajla
 cFName := fp_filename( "0" )
 
@@ -277,8 +329,23 @@ _a_to_file( cFPath, cFName, aStruct, aDaily )
 nErr := fp_r_error( cFPath, gFC_tout, 0 )
 
 if nErr <> 0
+
 	msgbeep("Postoji greska !!!")
+	
+	return
+
 endif
+
+// pokrecem komandu za brisanje artikala iz uredjaja
+// ovo je bitno za FP550 uredjaj
+// MP55LD ce ignorisati, nece se nista desiti!
+
+fp_del_plu( cFPath, cFName )
+
+// setuj brojac PLU na 0 u parametrima !
+auto_plu( .t. )
+
+msgbeep("Stanje fiskalnog uredjaju je nulirano.")
 
 return
 
@@ -411,11 +478,15 @@ return aArr
 // vraca tarifu
 // ------------------------------------------
 static function _g_tar( cStopa )
-local xRet := ""
+local xRet := "2"
 
 do case
-	case ALLTRIM( cStopa ) == "PDV17"
+	// obracun pdv-a
+	case ALLTRIM( cStopa ) $ "PDV17#PDV7NP#"
 		xRet := "2"
+	// nema pdv-a
+	case ALLTRIM( cStopa ) $ "PDV0#PDV0IZ#"
+		xRet := "4"
 endcase
 
 return xRet
@@ -519,7 +590,6 @@ for i := 1 to LEN( aData )
 	// dodaj u matricu prodaju...
 	AADD( aArr, { cTmp } )
 	
-	
 next
 
 // 3. subtotal
@@ -555,7 +625,7 @@ cTmp += cSep
 // 2 - chek
 // 3 - virman
 
-if cVr_placanja <> "0"
+if cVr_placanja <> "0" .and. !lStorno 
  	
 	// imamo drugu vrstu placanja...
 	cTmp += cVr_placanja
@@ -678,6 +748,106 @@ AADD( aArr, { cTmp } )
 return aArr
 
 
+
+// ---------------------------------------------------
+// printanje non-fiscal teksta na uredjaj
+// ---------------------------------------------------
+static function _fp_nf_txt( cTxt )
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+
+cLogic := "1"
+
+// otvori non-fiscal racun
+cTmp := "38"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+
+// ispisi tekst
+cTmp := "42"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += ALLTRIM( PADR( cTxt, 30 ) )
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+
+// zatvori non-fiscal racun
+cTmp := "39"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+
+// ---------------------------------------------------
+// brisi artikle iz uredjaja
+// ---------------------------------------------------
+static function _fp_del_plu()
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+// komanda za brisanje artikala je 3
+local cCmd := "3"
+local cCmdType := "1;80000"
+
+cLogic := "1"
+
+// brisanje PLU kodova iz uredjaja
+cTmp := "107"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += cCmd
+cTmp += cSep
+cTmp += cCmdType
+cTmp += cSep
+
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+
 // ---------------------------------------------------
 // zatvori racun
 // ---------------------------------------------------
@@ -780,7 +950,7 @@ local cType := "0"
 
 // "N" - 
 // "A" - 
-local cOper := "N"
+local cOper := "A"
 
 cLogic := "1"
 
@@ -930,9 +1100,9 @@ local cSep := ";"
 
 cLogic := "1"
 
-if lStorno == .t.
-	return
-endif
+//if lStorno == .t.
+//	return
+//endif
 
 for i:=1 to LEN( aData )
 	

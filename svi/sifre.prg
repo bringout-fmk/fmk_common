@@ -156,6 +156,8 @@ else
   return .f.
 endif
 
+
+
 // primjer: PdvParIIIF ( cIdPartner, 1.17, 1, 0)
 //         ako je partner pdv obvezinik return 1.17
 //         ako je no pdv return 1

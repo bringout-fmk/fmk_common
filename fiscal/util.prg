@@ -136,3 +136,39 @@ endif
 return cRet
 
 
+
+// --------------------------------------------------
+// generisanje novog plug kod-a inkrementalno
+// --------------------------------------------------
+function auto_plu( lReset )
+local nGenPlu := 0
+local nTArea := SELECT()
+
+private cSection:="X"
+private cHistory:=" "
+private aHistory:={}
+
+if lReset == nil
+	lReset := .f.
+endif
+
+O_PARAMS
+select params
+
+if lReset = .t.
+	nGenPlu := 0
+else
+	// iscitaj trenutni PLU KOD
+	RPar( "ap", @nGenPlu )
+	// uvecaj za 1
+	++ nGenPlu 
+endif
+
+// upisi generisani u parametre
+WPar( "ap", nGenPlu )
+
+select (nTArea)
+
+return nGenPlu
+
+
