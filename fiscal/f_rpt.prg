@@ -32,8 +32,13 @@ do case
     AADD(opcexe,{|| fp_void( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
     AADD(opc,"9. proizvoljna komanda ")
     AADD(opcexe,{|| fp_man_cmd( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
-    AADD(opc,"10. brisanje artikala iz uredjaja (FP550)")
-    AADD(opcexe,{|| fp_del_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    
+    if gFC_device == "P"
+    	AADD(opc,"10. brisanje artikala iz uredjaja (cmd 107)")
+    	AADD(opcexe,{|| ;
+		fp_del_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name), .f. ) })
+    endif
+
     AADD(opc,"11. reset PLU ")
     AADD(opcexe,{|| auto_plu( .t. ) })
     AADD(opc,"12. non-fiscal racun - test")

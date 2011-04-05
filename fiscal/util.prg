@@ -136,11 +136,26 @@ endif
 return cRet
 
 
+// --------------------------------------------------
+// vraca iz parametara zadnji PLU broj
+// --------------------------------------------------
+function last_plu()
+local nPLU := 0
+private cSection:="X"
+private cHistory:=" "
+private aHistory:={}
+O_PARAMS
+select params
+
+RPar( "ap", @nPLU )
+
+return nPLU
+
 
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-function auto_plu( lReset )
+function auto_plu( lReset, lSilent )
 local nGenPlu := 0
 local nTArea := SELECT()
 
@@ -152,16 +167,27 @@ if lReset == nil
 	lReset := .f.
 endif
 
+if lSilent == nil
+	lSilent := .f.
+endif
+
 O_PARAMS
 select params
 
 if lReset = .t.
-	nGenPlu := 0
+	nGenPlu := 1
 else
 	// iscitaj trenutni PLU KOD
 	RPar( "ap", @nGenPlu )
 	// uvecaj za 1
 	++ nGenPlu 
+endif
+
+if lReset = .t. .and. !lSilent
+	if !SigmaSif("RESET")
+		select (nTArea)
+		return nGenPlu
+	endif
 endif
 
 // upisi generisani u parametre

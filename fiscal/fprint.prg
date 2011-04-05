@@ -203,10 +203,20 @@ return
 // ----------------------------------------------------
 // brisanje PLU iz uredjaja
 // ----------------------------------------------------
-function fp_del_plu( cFPath, cFName )
+function fp_del_plu( cFPath, cFName, lSilent )
 local cSep := ";"
 local aDel := {}
 local aStruct := {}
+
+if lSilent == nil
+	lSilent := .t.
+endif
+
+if !lSilent 
+	if !SIGMASIF("RESET")
+		return
+	endif
+endif
 
 // naziv fajla
 cFName := fp_filename( "0" )
@@ -314,6 +324,9 @@ if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
 	return
 endif
 
+// pobrisi answer fajl
+fp_d_answer( cFPath )
+
 // naziv fajla
 cFName := fp_filename( "0" )
 
@@ -340,12 +353,33 @@ endif
 // ovo je bitno za FP550 uredjaj
 // MP55LD ce ignorisati, nece se nista desiti!
 
-fp_del_plu( cFPath, cFName )
+// ako je dinamicki PLU
+if gFC_acd == "D"
 
-// setuj brojac PLU na 0 u parametrima !
-auto_plu( .t. )
+	// ako je printer onda posalji ovu komandu !
+	if gFC_device == "P"
 
-msgbeep("Stanje fiskalnog uredjaju je nulirano.")
+		// pobrisi answer fajl
+		fp_d_answer( cFPath )
+
+		// posalji komandu za reset PLU u uredjaju
+		fp_del_plu( cFPath, cFName, .t. )
+	
+		// prekontrolisi gresku
+		// ovdje cemo koristiti veci timeout
+		nErr := fp_r_error( cFPath, 500, 0 )
+
+		if nErr <> 0
+			msgbeep("Postoji greska !!!")
+			return
+		endif
+	endif
+
+	// setuj brojac PLU na 0 u parametrima !
+	auto_plu( .t., .t. )
+	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
+
+endif
 
 return
 
@@ -488,6 +522,11 @@ do case
 	case ALLTRIM( cStopa ) $ "PDV0#PDV0IZ#"
 		xRet := "4"
 endcase
+
+// ako nije PDV obveznik onda je stopa "1" uvijek
+if gFC_pdv == "N"
+	xRet := "1"
+endif
 
 return xRet
 
@@ -641,6 +680,28 @@ else
 endif
 
 AADD( aArr, { cTmp } )
+
+// radi zaokruzenja kod virmanskog placanja 
+// salje se jos jedna linija 53 ali prazna
+if cVr_placanja <> "0" .and. !lStorno 
+	
+	cTmp := "53"
+	cTmp += cLogSep
+	cTmp += cLogic
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 6) 
+	cTmp += cLogSep	
+	cTmp += REPLICATE("_", 1) 
+	cTmp += cLogSep
+	cTmp += REPLICATE("_", 2)
+	cTmp += cSep
+	cTmp += cSep
+	cTmp += cSep
+
+	AADD( aArr, { cTmp } )
+
+endif
+
 
 // 5. kupac - podaci
 if LEN( aKupac ) > 0
@@ -822,7 +883,17 @@ local cSep := ";"
 local aArr := {}
 // komanda za brisanje artikala je 3
 local cCmd := "3"
-local cCmdType := "1;80000"
+local cCmdType := ""
+local nTArea := SELECT()
+local nLastPlu := 0
+
+// uzmi zadnji PLU iz parametara
+nLastPlu := last_plu()
+
+select (nTArea)
+
+// brisat ces sve od plu = 1 do zadnji plu
+cCmdType := "1;" + ALLTRIM(STR(nLastPlu))
 
 cLogic := "1"
 
@@ -1234,9 +1305,6 @@ local aErr_data
 local nTime 
 
 nTime := nTimeOut
-
-// sacekaj malo !
-//sleep( nTimeOut )
 
 // primjer: c:\fprint\answer\answer.txt
 cF_name := cPath + "ANSWER" + SLASH + "ANSWER.TXT"
