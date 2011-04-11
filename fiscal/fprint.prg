@@ -356,15 +356,21 @@ endif
 // ako je dinamicki PLU
 if gFC_acd == "D"
 
+	msgo("Nuliram stanje uredjaja ...")
+
 	// ako je printer onda posalji ovu komandu !
 	if gFC_device == "P"
 
 		// pobrisi answer fajl
 		fp_d_answer( cFPath )
 
+		// daj mu malo prostora
+		sleep(10)
+
 		// posalji komandu za reset PLU u uredjaju
 		fp_del_plu( cFPath, cFName, .t. )
-	
+
+
 		// prekontrolisi gresku
 		// ovdje cemo koristiti veci timeout
 		nErr := fp_r_error( cFPath, 500, 0 )
@@ -374,10 +380,14 @@ if gFC_acd == "D"
 			return
 		endif
 	endif
+	
+	msgc()
 
 	// setuj brojac PLU na 0 u parametrima !
 	auto_plu( .t., .t. )
 	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
+
+
 
 endif
 
@@ -1058,6 +1068,7 @@ local cSep := ";"
 local aArr := {}
 local cStart := ""
 local cEnd := ""
+local cParam := "0"
 
 // sredi start i end linije
 cStart := _fix_date(dD_from) + cT_from
@@ -1080,6 +1091,8 @@ cTmp += cSep
 cTmp += cStart
 cTmp += cSep
 cTmp += cEnd
+cTmp += cSep
+cTmp += cParam
 cTmp += cSep
 	
 AADD( aArr, { cTmp } )
@@ -1282,6 +1295,17 @@ endif
 
 return
 
+
+// ----------------------------------------------
+// pobrisi out fajl
+// ----------------------------------------------
+function fp_d_out( cFile )
+
+if FERASE( cFile ) = -1
+	msgbeep("Greska sa brisanjem izlaznog fajla !")
+endif
+
+return
 
 
 // ------------------------------------------------

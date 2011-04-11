@@ -647,6 +647,7 @@ local cKTelFax
 local aKupac
 local cMjesto
 local cDatDok
+local cFiscal
 local cDatIsp
 local cDatVal
 local cTipDok := lokal("FAKTURA br. ")
@@ -730,7 +731,8 @@ cDestinacija:=get_dtxt_opis("D08")
 cRNalID := get_dtxt_opis("O01")
 cRnalDesc := get_dtxt_opis("O02")
 cIdVd:=get_dtxt_opis("D09")
-
+cFiscal:=ALLTRIM( get_dtxt_opis("O10") )
+ 
 nLines := VAL( get_dtxt_opis("D30") )
 cDokVeza := ""
 nTmp := 30
@@ -920,6 +922,10 @@ if !EMPTY(cDestinacija)
 	B_OFF
 	
 	?
+endif
+
+if !EMPTY( cFiscal ) .and. cFiscal <> "0"
+	p_line( "   Broj fiskalnog racuna: " + ALLTRIM(cFiscal), 10, .f., .t.)
 endif
 
 P_10CPI

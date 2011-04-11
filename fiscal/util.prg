@@ -175,7 +175,8 @@ O_PARAMS
 select params
 
 if lReset = .t.
-	nGenPlu := 1
+	// uzmi inicijalni plu iz parametara
+	nGenPlu := gFC_pinit
 else
 	// iscitaj trenutni PLU KOD
 	RPar( "ap", @nGenPlu )
