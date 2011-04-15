@@ -107,20 +107,24 @@ local aDouble := {}
 local aStruct := {}
 local dD_from := DATE()
 local dD_to := dD_from
-local cT_from := TIME()
-local cT_to := cT_from
+local cTH_from := "12"
+local cTM_from := "30"
+local cTH_to := "12"
+local cTM_to := "31"
+local cT_from
+local cT_to
 local cType := "F"
 
-cT_from := STRTRAN( cT_from, ":", "" )
-cT_to := STRTRAN( cT_to, ":", "" )
 
 Box(,10,60)
 	
 	@ m_x + 1, m_y + 2 SAY "Za datum od:" GET dD_from 
-	@ m_x + 1, col() + 1 SAY "vrijeme od (hhmmss):" GET cT_from
+	@ m_x + 1, col() + 1 SAY "vrijeme od (hh:mm):" GET cTH_from
+	@ m_x + 1, col() SAY ":" GET cTM_from
 	
 	@ m_x + 2, m_y + 2 SAY "         do:" GET dD_to
-	@ m_x + 2, col() + 1 SAY "vrijeme do (hhmmss):" GET cT_to
+	@ m_x + 2, col() + 1 SAY "vrijeme do (hh:mm):" GET cTH_to
+	@ m_x + 2, col() SAY ":" GET cTM_to
 
 	@ m_x + 3, m_y + 2 SAY "--------------------------------------"
 
@@ -139,6 +143,10 @@ BoxC()
 if LastKey() == K_ESC
 	return
 endif
+
+// dodaj i sekunde na kraju
+cT_from := cTH_from + cTM_from + "00"
+cT_to := cTH_to + cTM_to + "00"
 
 // naziv fajla
 cFName := fp_filename( "0" )
@@ -312,15 +320,24 @@ return
 
 
 // ----------------------------------------------------
-// dnevni fiskalni izvjestaj
+// izvjestaj o prodanim PLU
 // ----------------------------------------------------
-function fp_daily_rpt( cFPath, cFName )
+function fp_sold_plu( cFPath, cFName )
 local cSep := ";"
-local aDaily := {}
+local aPlu := {}
 local aStruct := {}
 local nErr := 0
+local cType := "0"
 
-if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
+Box(,4,50)
+	@ m_x + 1, m_y + 2 SAY "**** pregled artikala ****" COLOR "I"
+	@ m_x + 3, m_y + 2 SAY "0 - samo u danasnjem prometu "
+	@ m_x + 4, m_y + 2 SAY "1 - svi programirani          -> " GET cType ;
+		VALID cType $ "01"
+	read
+BoxC()
+
+if LastKey() == K_ESC
 	return
 endif
 
@@ -334,7 +351,52 @@ cFName := fp_filename( "0" )
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aDaily := _fp_daily_rpt()
+aPlu := _fp_sold_plu( cType )
+
+_a_to_file( cFPath, cFName, aStruct, aPlu )
+
+
+return
+
+
+// ----------------------------------------------------
+// dnevni fiskalni izvjestaj
+// ----------------------------------------------------
+function fp_daily_rpt( cFPath, cFName )
+local cSep := ";"
+local aDaily := {}
+local aStruct := {}
+local nErr := 0
+local cType := "0"
+
+if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
+	return
+endif
+
+// uslovi
+Box(,4,50)
+	@ m_x + 1, m_y + 2 SAY "**** dnevni izvjestaj ****" COLOR "I"
+	@ m_x + 3, m_y + 2 SAY "0 - z-report"
+	@ m_x + 4, m_y + 2 SAY "2 - x-report  -> " GET cType ;
+		VALID cType $ "02"
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// pobrisi answer fajl
+fp_d_answer( cFPath )
+
+// naziv fajla
+cFName := fp_filename( "0" )
+
+// uzmi strukturu tabele za pos racun
+aStruct := _g_f_struct( F_POS_RN )
+
+// iscitaj pos matricu
+aDaily := _fp_daily_rpt( cType )
 
 _a_to_file( cFPath, cFName, aStruct, aDaily )
 
@@ -1014,24 +1076,64 @@ AADD( aArr, { cTmp } )
 return aArr
 
 
+
 // ---------------------------------------------------
-// dnevni fiskalni izvjestaj
+// izvjestaj o prodanim PLU-ovima
 // ---------------------------------------------------
-static function _fp_daily_rpt()
+static function _fp_sold_plu( cType )
 local cTmp := ""
 local cLogic
 local cLogSep := ","
 local cSep := ";"
 local aArr := {}
 
+// 0 - samo u toku dana
+// 1 - svi programirani
+
+if cType == nil
+	cType := "0"
+endif
+
+cLogic := "1"
+
+cTmp := "111"
+cTmp += cLogSep
+cTmp += cLogic
+cTmp += cLogSep
+cTmp += REPLICATE("_", 6) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 1) 
+cTmp += cLogSep
+cTmp += REPLICATE("_", 2)
+cTmp += cSep
+cTmp += cType
+cTmp += cSep
+	
+AADD( aArr, { cTmp } )
+
+return aArr
+
+
+
+
+// ---------------------------------------------------
+// dnevni fiskalni izvjestaj
+// ---------------------------------------------------
+static function _fp_daily_rpt( cType )
+local cTmp := ""
+local cLogic
+local cLogSep := ","
+local cSep := ";"
+local aArr := {}
+// "N" - bez ciscenja prodaje
+// "A" - sa ciscenjem prodaje
+local cOper := "A"
+
 // 0 - "Z"
 // 2 - "X"
-
-local cType := "0"
-
-// "N" - 
-// "A" - 
-local cOper := "A"
+if cType == nil
+	cType := "0"
+endif
 
 cLogic := "1"
 

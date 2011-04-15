@@ -14,12 +14,15 @@ do case
   // za FPRINT uredjaje (NSC)
   case ALLTRIM(gFc_type) == "FPRINT"
 
-    AADD(opc,"------ izvjestaji -----------------------")
+    AADD(opc,"------ izvjestaji ---------------------------------")
     AADD(opcexe,{|| .f. })
-    AADD(opc,"1. dnevni fiskalni izvjestaj           ")
+    AADD(opc,"1. dnevni izvjestaj  (Z-rep / X-rep)          ")
     AADD(opcexe,{|| fp_daily_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
-    AADD(opc,"2. fiskalni izvjestaj za period ")
+    AADD(opc,"2. periodicni izvjestaj")
     AADD(opcexe,{|| fp_per_rpt( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    AADD(opc,"3. pregled artikala ")
+    AADD(opcexe,{|| fp_sold_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+   
     AADD(opc,"------ ostale komande --------------------")
     AADD(opcexe,{|| .f. })
     AADD(opc,"5. unos pologa u uredjaj       ")

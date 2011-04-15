@@ -144,8 +144,8 @@ local nPLU := 0
 private cSection:="X"
 private cHistory:=" "
 private aHistory:={}
-O_PARAMS
-select params
+O_KPARAMS
+select kparams
 
 RPar( "ap", @nPLU )
 
@@ -171,8 +171,8 @@ if lSilent == nil
 	lSilent := .f.
 endif
 
-O_PARAMS
-select params
+O_KPARAMS
+select kparams
 
 if lReset = .t.
 	// uzmi inicijalni plu iz parametara
