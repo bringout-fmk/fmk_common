@@ -792,19 +792,24 @@ if LEN( aKupac ) > 0
 	cTmp += REPLICATE("_", 2)
 	cTmp += cSep
 	
-	// id broj
+	// 1. id broj
 	cTmp += ALLTRIM( aKupac[ 1, 1 ] )
 	cTmp += cSep
 
-	// naziv
-	cTmp += ALLTRIM( aKupac[ 1, 2 ] )
+	// 2. naziv
+	cTmp += ALLTRIM( PADR( aKupac[ 1, 2 ], 36 ) )
 	cTmp += cSep
 
-	// adresa, ptt, mjesto
-	cTmp += ALLTRIM( aKupac[ 1, 3 ] ) + ", " + ;
-		ALLTRIM( aKupac[ 1, 4 ] ) + " " + ;
+	// 3. adresa
+	cTmp += ALLTRIM( PADR( aKupac[ 1, 3 ], 36 ) )
+	cTmp += cSep
+	
+	// 4. ptt, mjesto
+	cTmp += ALLTRIM( aKupac[ 1, 4 ] ) + " " + ;
 		ALLTRIM( aKupac[ 1, 5 ] )
 
+	cTmp += cSep
+	cTmp += cSep
 	cTmp += cSep
 
 	AADD( aArr, { cTmp } )
