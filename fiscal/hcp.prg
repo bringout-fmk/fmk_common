@@ -629,6 +629,29 @@ return
 
 
 // -----------------------------------------------------
+// vraca broj fiskalnog racuna
+// -----------------------------------------------------
+function hcp_fisc_no( cFPath, cFName, cError )
+local cCmd
+local nFisc_no := 0
+local cFState := "BILL_S~1.XML"
+
+// posalji komandu za stanje fiskalnog racuna
+cCmd := 'CMD="RECEIPT_STATE"'
+nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
+
+// ako nema gresaka, iscitaj broj racuna
+if nErr = 0
+	// e sada iscitaj iz fajla
+	nFisc_no := hcp_r_bst( cFPath, cFState, gFC_tout )
+endif
+
+return nFisc_no
+
+
+
+
+// -----------------------------------------------------
 // reset prodaje
 // -----------------------------------------------------
 function hcp_reset( cFPath, cFName, cError )
@@ -805,6 +828,102 @@ if FERASE( cF_name ) < 0
 endif
 
 return
+
+
+// ------------------------------------------------
+// citanje fajla bill_state.xml
+// 
+// nTimeOut - time out fiskalne operacije
+// ------------------------------------------------
+function hcp_r_bst( cFPath, cFName, nTimeOut )
+local nErr := 0
+local cF_name
+local i
+local nBrLin
+local nStart
+local cErr
+local aBillState
+local aBillData
+local nTime 
+local cLine
+
+nTime := nTimeOut
+
+// primjer: c:\hcp\from_fp\bill_state.xml
+cF_name := cFPath + _answ_dir + SLASH + cFName
+
+Box(,1,50)
+
+do while nTime > 0
+	
+	-- nTime
+
+	if FILE( cF_name )
+		// fajl se pojavio - izadji iz petlje !
+		exit
+	endif
+
+	@ m_x + 1, m_y + 2 SAY PADR( "Cekam na fiskalni uredjaj: " + ;
+		ALLTRIM( STR(nTime) ), 48)
+
+	sleep(1)
+enddo
+
+BoxC()
+
+if !FILE( cF_name )
+	msgbeep("Fajl " + cF_name + " ne postoji !!!")
+	nErr := -9
+	return nErr
+endif
+
+nFisc_no := 0
+nBrLin := BrLinFajla( cF_name )
+nStart := 0
+
+// prodji kroz svaku liniju i procitaj zapise
+for i:=1 to nBrLin
+	
+	aBillState := SljedLin( cF_name, nStart )
+      	nStart := aBillState[ 2 ]
+
+	// uzmi u cLine liniju fajla
+	cLine := aBillState[ 1 ]
+
+	if UPPER("xml version") $ UPPER(cLine)
+		// ovo je prvi red, preskoci
+		loop
+	endif
+
+	// zamjeni ove znakove...
+	cLine := STRTRAN( cLine, ">", "" )
+	cLine := STRTRAN( cLine, "<", "" )
+	cLine := STRTRAN( cLine, "'", "" )
+
+	aBillData := TokToNiz( cLine, " " )
+
+	nScan := ASCAN( aBillData, { |xvar| "RECEIPT_NUMBER" $ xvar } )
+	
+	if nScan > 0
+		
+		aReceipt := TokToNiz( aBillData[ nScan], "=" )
+		
+		nFisc_no := VAL( aReceipt[2] )
+
+		msgbeep("Formiran fiskalni racun: " + ALLTRIM( STR( nFisc_no) ))
+		
+		exit
+
+	endif
+
+next
+
+// brisi fajl odgovora
+if nFisc_no > 0
+	FERASE( cF_name )
+endif
+
+return nFisc_no
 
 
 

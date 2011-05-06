@@ -61,6 +61,7 @@ do case
     			gFc_error ) })
     AADD(opc,"------ ostale komande --------------------")
     AADD(opcexe,{|| .f. })
+    
     AADD(opc,"5. kopija racuna    ")
     AADD(opcexe,{|| hcp_rn_copy( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
@@ -69,6 +70,11 @@ do case
     			gFc_error ) })
     AADD(opc,"7. posalji cmd.ok    ")
     AADD(opcexe,{|| hcp_s_cmd( ALLTRIM(gFC_path) ) })
+    
+    AADD(opc,"8. izbaci stanje racuna    ")
+    AADD(opcexe,{|| hcp_fisc_no( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFC_error ) })
+
 
     // za TREMOL uredjaje
   case ALLTRIM(gFc_type) == "TREMOL" 
