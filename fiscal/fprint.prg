@@ -3,6 +3,12 @@
 
 // pos komande
 static F_POS_RN := "POS_RN"
+static MAX_QT := 99999.999
+static MIN_QT := 1.000
+static MAX_PRICE := 999999.99
+static MIN_PRICE := 0.01
+static MAX_PERC := 99.99
+static MIN_PERC := -99.99
 
 // ocekivana matrica
 // aData
@@ -56,6 +62,102 @@ aPosData := _fp_pos_rn( aData, aKupac, lStorno )
 _a_to_file( cFPath, cFName, aStruct, aPosData )
 
 return nErr
+
+
+// ---------------------------------------------------------
+// vrsi provjeru vrijednosti cijena, kolicina itd...
+// ---------------------------------------------------------
+function fp_check( aData )
+local nRet := 0
+local nCijena := 0
+local nPluCijena := 0
+local nKolicina := 0
+local cNaziv := ""
+local nFix := 0
+
+// aData[4] - naziv
+// aData[5] - cijena
+// aData[6] - kolicina
+
+for i:=1 to LEN( aData )
+
+	nCijena := aData[ i, 5 ]	
+	nPluCijena := aData[i, 10]
+	nKolicina := aData[ i, 6 ]	
+	cNaziv := aData[i, 4]
+
+	if ( !_chk_qtty( nKolicina ) .or. !_chk_price( nCijena ) ) ;
+		.or. !_chk_price( nPluCijena )
+		
+		if gFc_chk > "1"
+			
+			// popravi kolicine, cijene
+			_fix_qtty( @nKolicina, @nCijena, @nPluCijena, @cNaziv )
+			
+			// promjeni u matrici podatke takodjer
+			aData[i, 5] := nCijena
+			aData[i, 10] := nPluCijena
+			aData[i, 6] := nKolicina
+			aData[i, 4] := cNaziv
+		
+		endif
+
+		++ nFix
+
+	endif
+
+next
+
+if nFix > 0 .and. gFc_chk > "1"
+
+	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
+
+elseif nFix > 0 .and. gFc_chk == "1"
+	
+	nRet := -99
+	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
+
+endif
+
+return nRet
+
+
+// -------------------------------------------------
+// provjerava da li zadovoljava kolicina
+// -------------------------------------------------
+static function _chk_qtty( nQtty )
+local lRet := .t.
+
+if nQtty > MAX_QT .or. nQtty < MIN_QT
+	lRet := .f.
+endif
+return lRet
+
+
+// -------------------------------------------------
+// provjerava da li zadovoljava cijena
+// -------------------------------------------------
+static function _chk_price( nPrice )
+local lRet := .t.
+
+if nPrice > MAX_PRICE .or. nPrice < MIN_PRICE
+	lRet := .f.
+endif
+
+return lRet
+
+
+// -------------------------------------------------
+// koriguj cijenu i kolicinu
+// -------------------------------------------------
+static function _fix_qtty( nQtty, nPrice, nPPrice, cName )
+
+nQtty := nQtty / 100
+nPrice := nPrice * 100
+nPPrice := nPPrice * 100
+cName := LEFT( ALLTRIM( cName ), 5 ) + " x100"
+
+return
 
 
 
