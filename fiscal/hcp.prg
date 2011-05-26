@@ -11,6 +11,14 @@ static _tr_plu := "PLU"
 static _tr_txt := "TXT"
 static _tr_rcp := "RCP"
 
+// min/max vrijednosti
+static MAX_QT := 99999.999
+static MIN_QT := 1.000
+static MAX_PRICE := 999999.99
+static MIN_PRICE := 0.01
+static MAX_PERC := 99.99
+static MIN_PERC := -99.99
+
 
 // fiskalne funkcije HCP fiskalizacije 
 
@@ -1095,5 +1103,63 @@ endif
 select (nTArea)
 return
 
+
+// ---------------------------------------------------------
+// vrsi provjeru vrijednosti cijena, kolicina itd...
+// ---------------------------------------------------------
+function hcp_check( aData )
+local nRet := 0
+local nCijena := 0
+local nPluCijena := 0
+local nKolicina := 0
+local cNaziv := ""
+local nFix := 0
+
+// aData[4] - naziv
+// aData[5] - cijena
+// aData[6] - plu cijena
+// aData[7] - kolicina
+
+for i:=1 to LEN( aData )
+
+	nCijena := aData[ i, 5 ]	
+	nPluCijena := aData[i, 6 ]
+	nKolicina := aData[ i, 7 ]	
+	cNaziv := aData[i, 4]
+
+	if ( !_chk_qtty( nKolicina ) .or. !_chk_price( nCijena ) ) ;
+		.or. !_chk_price( nPluCijena )
+		
+		if gFc_chk > "1"
+			
+			// popravi kolicine, cijene
+			_fix_qtty( @nKolicina, @nCijena, @nPluCijena, @cNaziv )
+			
+			// promjeni u matrici podatke takodjer
+			aData[i, 5] := nCijena
+			aData[i, 6] := nPluCijena
+			aData[i, 7] := nKolicina
+			aData[i, 4] := cNaziv
+		
+		endif
+
+		++ nFix
+
+	endif
+
+next
+
+if nFix > 0 .and. gFc_chk > "1"
+
+	msgbeep("Pojedini artikli na racunu su prepakovani na 100 kom !")
+
+elseif nFix > 0 .and. gFc_chk == "1"
+	
+	nRet := -99
+	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
+
+endif
+
+return nRet
 
 

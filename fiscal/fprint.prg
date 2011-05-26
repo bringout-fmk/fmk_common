@@ -125,7 +125,7 @@ return nRet
 // -------------------------------------------------
 // provjerava da li zadovoljava kolicina
 // -------------------------------------------------
-static function _chk_qtty( nQtty )
+function _chk_qtty( nQtty )
 local lRet := .t.
 
 if nQtty > MAX_QT .or. nQtty < MIN_QT
@@ -137,7 +137,7 @@ return lRet
 // -------------------------------------------------
 // provjerava da li zadovoljava cijena
 // -------------------------------------------------
-static function _chk_price( nPrice )
+function _chk_price( nPrice )
 local lRet := .t.
 
 if nPrice > MAX_PRICE .or. nPrice < MIN_PRICE
@@ -150,7 +150,7 @@ return lRet
 // -------------------------------------------------
 // koriguj cijenu i kolicinu
 // -------------------------------------------------
-static function _fix_qtty( nQtty, nPrice, nPPrice, cName )
+function _fix_qtty( nQtty, nPrice, nPPrice, cName )
 
 nQtty := nQtty / 100
 nPrice := nPrice * 100
