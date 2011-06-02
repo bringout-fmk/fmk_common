@@ -1429,7 +1429,7 @@ for i:=1 to LEN( aData )
 	cTmp += cSep
 	
 	// plu naziv
-	cTmp += ALLTRIM( aData[ i, 4 ] ) 
+	cTmp += ALLTRIM( PADR( aData[ i, 4 ], gFC_alen ) ) 
 	cTmp += cSep
 
 	AADD( aArr, { cTmp } )
