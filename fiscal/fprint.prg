@@ -4,7 +4,7 @@
 // pos komande
 static F_POS_RN := "POS_RN"
 static MAX_QT := 99999.999
-static MIN_QT := 1.000
+static MIN_QT := -99999.000
 static MAX_PRICE := 999999.99
 static MIN_PRICE := 0.01
 static MAX_PERC := 99.99
@@ -78,6 +78,8 @@ local nFix := 0
 // aData[4] - naziv
 // aData[5] - cijena
 // aData[6] - kolicina
+
+altd()
 
 for i:=1 to LEN( aData )
 
