@@ -4,7 +4,7 @@
 // pos komande
 static F_POS_RN := "POS_RN"
 static MAX_QT := 99999.999
-static MIN_QT := -99999.000
+static MIN_QT := 1.000
 static MAX_PRICE := 999999.99
 static MIN_PRICE := 0.01
 static MAX_PERC := 99.99
@@ -67,7 +67,7 @@ return nErr
 // ---------------------------------------------------------
 // vrsi provjeru vrijednosti cijena, kolicina itd...
 // ---------------------------------------------------------
-function fp_check( aData )
+function fp_check( aData, lStorno )
 local nRet := 0
 local nCijena := 0
 local nPluCijena := 0
@@ -79,7 +79,9 @@ local nFix := 0
 // aData[5] - cijena
 // aData[6] - kolicina
 
-altd()
+if lStorno == nil
+	lStorno := .f.
+endif
 
 for i:=1 to LEN( aData )
 
@@ -119,6 +121,12 @@ elseif nFix > 0 .and. gFc_chk == "1"
 	nRet := -99
 	msgbeep("Pojedinim artiklima je kolicina/cijena van dozvoljenog ranga#Prekidam operaciju !!!!")
 
+	if lStorno 
+		// ako je rijec o storno dokumentu, prikazi poruku
+		// ali ipak nastavi dalje...
+		nRet := 0
+	endif
+
 endif
 
 return nRet
@@ -133,6 +141,7 @@ local lRet := .t.
 if nQtty > MAX_QT .or. nQtty < MIN_QT
 	lRet := .f.
 endif
+
 return lRet
 
 
