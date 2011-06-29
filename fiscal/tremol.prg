@@ -171,16 +171,20 @@ nVr_placanja := 0
     // 
     // iznos = 0, ako je 0 onda sve ide tom vrstom placanja
 
-    //cVr_placanja := _g_v_plac( 0 )
-    //nVr_placanja := 0
+    cVr_placanja := _g_v_plac( VAL( aData[1, 13] ) )
+    nVr_placanja := 0
 
-    //cTmp := 'Type="' + cVr_placanja + '"'
-    //cTmp += _razmak1 + 'Amount="' + ALLTRIM( STR(nVr_placanja,12,2)) + '"'
+    if aData[1, 13] <> "0"
 
-    //xml_snode( "Payment", cTmp )	
+    	cTmp := 'Type="' + cVr_placanja + '"'
+    	cTmp += _razmak1 + 'Amount="' + ALLTRIM( STR(nVr_placanja,12,2)) + '"'
 
-    // dodatna linija, broj pos racuna
-    cTmp := 'Message="Broj POS racuna: ' + cBr_zahtjeva + '"'
+    	xml_snode( "Payment", cTmp )	
+
+    endif
+
+    // dodatna linija, broj veznog racuna
+    cTmp := 'Message="Vezni racun: ' + cBr_zahtjeva + '"'
 
     xml_snode( "AdditionalLine", cTmp )	
 
@@ -368,11 +372,11 @@ do case
 	case nId = 0
 		cRet := "Gotovina"
 	case nId = 1
-		cRet := "Kartica"		
+		cRet := "Cek"		
 	case nId = 2
-		cRet := ""
+		cRet := "Kartica"
 	case nId = 3
-		cRet := ""
+		cRet := "Virman"
 
 endcase
 
