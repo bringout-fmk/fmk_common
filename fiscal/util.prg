@@ -50,6 +50,11 @@ O_ROBA
 select ROBA
 go top
 
+// ako nema polja PLU izadji!
+if roba->(FIELDPOS("FISC_PLU")) = 0
+	return .f.
+endif
+
 if lSilent == .f. .and. !SigmaSIF("GENPLU")
 	msgbeep("NE DIRAJ !!!")
 	return .f.
