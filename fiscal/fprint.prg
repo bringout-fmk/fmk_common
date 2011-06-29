@@ -22,12 +22,12 @@ static MIN_PERC := -99.99
 // 7 - tarifa
 // 8 - broj racuna za storniranje
 // 9 - roba plu
-// 10 - plu cijena
+// 10 - plu cijena - cijena iz sifranika
 // 11 - popust
 // 12 - barkod
 // 13 - vrsta placanja
 // 14 - total racuna
-
+// 15 - datum racuna
 
 // --------------------------------------------------------
 // fiskalni racun pos (FPRINT)

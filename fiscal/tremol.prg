@@ -15,16 +15,17 @@ static _nema_out := -20
 // aData[3] - id roba
 // aData[4] - roba naziv
 // aData[5] - cijena
-// aData[6] - rabat
-// aData[7] - kolicina
-// aData[8] - tarifa
-// aData[9] - broj racuna za storniranje
-// aData[10] - datum racuna
-// aData[11] - roba jmj
-// aData[12] - roba plu
-// aData[13] - plu cijena
-// aData[14] - popust
-// aData[15] - barkod
+// aData[6] - kolicina
+// aData[7] - tarifa
+// aData[8] - broj racuna za storniranje
+// aData[9] - roba plu
+// aData[10] - plu cijena
+// aData[11] - popust
+// aData[12] - barkod
+// aData[13] - vrsta placanja
+// aData[14] - total
+// aData[15] - datum racuna
+// aData[16] - roba jmj
 
 // struktura matrice aKupac
 // 
@@ -124,15 +125,15 @@ nVr_placanja := 0
     
     for i:=1 to LEN( aData )
 
-	nRoba_plu := aData[i, 12]
-	cRoba_bk := aData[i, 15]
+	nRoba_plu := aData[i, 9]
+	cRoba_bk := aData[i, 12]
 	cRoba_id := aData[i, 3]
 	cRoba_naz := PADR( aData[i, 4], gFc_alen )
-	cRoba_jmj := _g_jmj( aData[i, 11] )
+	cRoba_jmj := _g_jmj( aData[i, 16] )
 	nCijena := aData[i, 5]
-	nKolicina := aData[i, 7]
-	nRabat := aData[i, 14]
-	cStopa := _g_tar ( aData[i, 8] )
+	nKolicina := aData[i, 6]
+	nRabat := aData[i, 11]
+	cStopa := _g_tar ( aData[i, 7] )
 	cDep := "1"
 	cTmp := ""
 
@@ -385,17 +386,12 @@ static function _g_jmj( cJmj )
 cF_jmj := ""
 do case
 	case UPPER(ALLTRIM(cJmj)) = "KOM"
-		// PDV je tarifna skupina "3"
 		cF_jmj := ""
-	
 	case UPPER(ALLTRIM(cJmj)) = "LIT"
-		// nePDV 
 		cF_jmj := "l"
 	case UPPER(ALLTRIM(cJmj)) = "GR"
-		// nePDV 
 		cF_jmj := "g"
 	case UPPER(ALLTRIM(cJmj)) = "KG"
-		// nePDV 
 		cF_jmj := "kg"
 
 	// case 
@@ -590,7 +586,7 @@ return lOut
 
 
 // ------------------------------------------------
-// citanje gresaka za HCP driver
+// citanje gresaka za TREMOL driver
 // 
 // nTimeOut - time out fiskalne operacije
 // nFisc_no - broj fiskalnog isjecka
@@ -717,6 +713,15 @@ endif
 FERASE( cF_name )
 
 return nErr
+
+
+
+// ----------------------------------------------
+// provjera ispravnosti matrice sa podacima
+// kolicine, cijene
+// ----------------------------------------------
+function trm_check( aData )
+return hcp_check( @aData )
 
 
 

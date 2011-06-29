@@ -30,16 +30,17 @@ static MIN_PERC := -99.99
 // aData[3] - id roba
 // aData[4] - roba naziv
 // aData[5] - cijena
-// aData[6] - rabat
-// aData[7] - kolicina
-// aData[8] - tarifa
-// aData[9] - broj racuna za storniranje
-// aData[10] - datum racuna
-// aData[11] - roba jmj
-// aData[12] - roba plu
-// aData[13] - plu cijena
-// aData[14] - popust
-// aData[15] - barkod
+// aData[6] - kolicina
+// aData[7] - tarifa
+// aData[8] - broj racuna za storniranje
+// aData[9] - roba plu
+// aData[10] - plu cijena
+// aData[11] - popust
+// aData[12] - barkod
+// aData[13] - vrsta placanja
+// aData[14] - total racuna
+// aData[15] - datum racuna
+// aData[16] - roba jmj
 
 // struktura matrice aKupac
 // 
@@ -132,15 +133,15 @@ nVr_placanja := 0
     
     for i:=1 to LEN( aData )
 
-	nRoba_plu := aData[i, 12]
-	cRoba_bk := aData[i, 15]
+	nRoba_plu := aData[i, 9]
+	cRoba_bk := aData[i, 12]
 	cRoba_id := aData[i, 3]
 	cRoba_naz := PADR( aData[i, 4], 32 )
-	cRoba_jmj := _g_jmj( aData[i, 11] )
+	cRoba_jmj := _g_jmj( aData[i, 16] )
 	nCijena := aData[i, 5]
-	nKolicina := aData[i, 7]
-	nRabat := aData[i, 6]
-	cStopa := _g_tar ( aData[i, 8] )
+	nKolicina := aData[i, 6]
+	nRabat := aData[i, 11]
+	cStopa := _g_tar ( aData[i, 7] )
 	cDep := "0"
 	cTmp := ""
 
@@ -322,12 +323,12 @@ xml_subnode("PLU")
 
 for i:=1 to LEN( aData )
 	
-	nRoba_plu := aData[i, 12]
+	nRoba_plu := aData[i, 9]
 	// cRoba_id := aData[i, 3]
 	cRoba_naz := PADR( aData[i, 4], 32 )
-	cRoba_jmj := _g_jmj( aData[i, 11] )
+	cRoba_jmj := _g_jmj( aData[i, 16] )
 	nCijena := aData[i, 5]
-	cStopa := _g_tar ( aData[i, 8] )
+	cStopa := _g_tar ( aData[i, 7] )
 	cDep := "0"
 	nLager := 0
 
@@ -539,11 +540,8 @@ static function _g_jmj( cJmj )
 cF_jmj := "0"
 do case
 	case UPPER(ALLTRIM(cJmj)) = "KOM"
-		// PDV je tarifna skupina "3"
 		cF_jmj := "0"
-	
 	case UPPER(ALLTRIM(cJmj)) = "LIT"
-		// nePDV 
 		cF_jmj := "1"
 	// case 
 	// ....
@@ -1104,6 +1102,7 @@ select (nTArea)
 return
 
 
+
 // ---------------------------------------------------------
 // vrsi provjeru vrijednosti cijena, kolicina itd...
 // ---------------------------------------------------------
@@ -1117,14 +1116,14 @@ local nFix := 0
 
 // aData[4] - naziv
 // aData[5] - cijena
-// aData[6] - plu cijena
-// aData[7] - kolicina
+// aData[10] - plu cijena
+// aData[6] - kolicina
 
 for i:=1 to LEN( aData )
 
 	nCijena := aData[ i, 5 ]	
-	nPluCijena := aData[i, 6 ]
-	nKolicina := aData[ i, 7 ]	
+	nPluCijena := aData[i, 10 ]
+	nKolicina := aData[ i, 6 ]	
 	cNaziv := aData[i, 4]
 
 	if ( !_chk_qtty( nKolicina ) .or. !_chk_price( nCijena ) ) ;
@@ -1137,8 +1136,8 @@ for i:=1 to LEN( aData )
 			
 			// promjeni u matrici podatke takodjer
 			aData[i, 5] := nCijena
-			aData[i, 6] := nPluCijena
-			aData[i, 7] := nKolicina
+			aData[i, 10] := nPluCijena
+			aData[i, 6] := nKolicina
 			aData[i, 4] := cNaziv
 		
 		endif
