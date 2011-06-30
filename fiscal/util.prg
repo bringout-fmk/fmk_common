@@ -204,3 +204,230 @@ select (nTArea)
 return nGenPlu
 
 
+
+// ---------------------------------------
+// kreiranje tabele fdevice.dbf
+// ---------------------------------------
+function c_fdevice()
+local aDbf := {}
+
+AADD( aDbf, { "ID", "N", 3, 0 } )
+AADD( aDbf, { "TIP", "C", 15, 0 } )
+AADD( aDbf, { "OZNAKA", "C", 15, 0 } )
+AADD( aDbf, { "IOSA", "C", 16, 0 } )
+AADD( aDbf, { "VRSTA", "C", 1, 0 } )
+AADD( aDbf, { "PATH", "C", 150, 0 } )
+AADD( aDbf, { "OUTPUT", "C", 20, 0 } )
+AADD( aDbf, { "DUZ_ROBA", "N", 3, 0 } )
+AADD( aDbf, { "ERROR", "C", 1, 0 } )
+AADD( aDbf, { "TIMEOUT", "N", 5, 0 } )
+AADD( aDbf, { "ZBIRNI", "N", 5, 0 } )
+AADD( aDbf, { "ST_PITANJE", "C", 1, 0 } )
+AADD( aDbf, { "ST_BRRB", "C", 1, 0 } )
+AADD( aDbf, { "ST_RAC", "C", 1, 0 } )
+AADD( aDbf, { "CHECK", "N", 1, 0 } )
+AADD( aDbf, { "ART_CODE", "C", 1, 0 } )
+AADD( aDbf, { "INIT_PLU", "N", 6, 0 } )
+AADD( aDbf, { "OPIS", "C", 150, 0 } )
+AADD( aDbf, { "DOKUMENTI", "C", 100, 0 } )
+AADD( aDbf, { "PDV", "C", 1, 0 } )
+AADD( aDbf, { "D_PAR_1", "C", 10, 0 } )
+AADD( aDbf, { "D_PAR_2", "C", 10, 0 } )
+AADD( aDbf, { "D_PAR_3", "C", 10, 0 } )
+AADD( aDbf, { "D_PAR_4", "C", 10, 0 } )
+AADD( aDbf, { "D_PAR_5", "C", 10, 0 } )
+AADD( aDbf, { "AKTIVAN", "C", 1, 0 } )
+
+if !file((KUMPATH+"FDEVICE.DBF"))
+	DBCREATE2(KUMPATH+"FDEVICE.DBF",aDbf)
+endif
+
+CREATE_INDEX("1","str(id)",KUMPATH+"FDEVICE.DBF",.t.)
+
+O_FDEVICE
+
+if fdevice->(RECCOUNT()) = 0
+	
+	// append u tabelu FPRINT uredjaja
+	select fdevice
+
+	append blank
+	replace field->id with 1
+	replace field->tip with "FPRINT"
+	replace field->oznaka with "FP-550"
+	replace field->iosa with "1234567890123456"
+	replace field->vrsta with "P"
+	replace field->path with "c:\fiscal\"
+	replace field->output with "out.txt"
+	replace field->duz_roba with 32
+	replace field->pdv with "D"
+	replace field->error with "D"
+	replace field->timeout with 300
+	replace field->zbirni with 0
+	replace field->st_pitanje with "D"
+	replace field->st_brrb with "N"
+	replace field->st_rac with "N"
+	replace field->check with 1
+	replace field->art_code with "D"
+	replace field->init_plu with 10
+	replace field->opis with "FPRINT uredjaj 1"
+	replace field->dokumenti with "10#11#"
+	replace field->aktivan with "N"
+
+	
+endif
+
+
+return
+
+
+
+// -----------------------------------------------------
+// vraca listu uredjaja i biramo zeljeni uredjaj
+// -----------------------------------------------------
+function list_device( cTipDok )
+local nDevice := 0
+local nTArea := SELECT()
+
+if gFc_dlist == "N"
+	return -1
+endif
+
+// izvuci mi listu uredjaja na osnovu tipa dokumenta
+O_FDEVICE
+select fdevice
+
+nStat := fdevice->(RECCOUNT())
+
+if nStat = 0
+	
+	// nema uredjaja, izadji...
+	nDevice := 0
+	return nDevice
+
+elseif nStat = 1
+
+	go top
+	
+	nDevice := field->id
+
+	if field->aktivan == "D"
+		if !EMPTY( cTipDok )
+			if cTipDok $ field->dokumenti
+				return nDevice
+			endif
+		endif
+		return nDevice
+	else
+		return 0
+	endif
+
+else
+
+	// odaberi listu, ima vise uredjaja
+
+	aOpcD := {}
+	select fdevice
+	go top
+
+	do while !EOF()
+		
+		if field->aktivan == "N"
+			skip
+			loop
+		endif
+
+		//if !EMPTY( cTipDok ) .and. cTipDok $ field->dokumenti
+		//else
+		//endif
+
+		AADD( aOpcD, PADR( ALLTRIM( STR( field->id )), 3 ) + ;
+			"- " + PADR( ALLTRIM( field->opis), 50 ) )
+
+		skip
+	enddo
+
+	h := ARRAY(LEN(aOpcD))
+	i := 1
+
+	for i := 1 to LEN( h )
+		h[i] := ""
+	next
+
+	// selekcija fajla
+	IzbF:=1
+	lRet := .f.
+
+	do while .t. .and. LastKey()!=K_ESC
+
+		IzbF := Menu("dev", aOpcD, IzbF, .f.)
+		
+		if IzbF == 0
+        		exit
+        	else
+        		nDevice := VAL( ALLTRIM( LEFT( aOpcD[IzbF], 3 )) )
+        		IzbF:=0
+			lRet:=.t.
+        	endif
+	enddo
+
+	if lRet
+		return nDevice
+	else
+		return 0
+	endif
+
+endif
+
+select (nTArea)
+
+return nDevice
+
+
+
+// ------------------------------------------------------
+// setuje globalne parametre stampe na osnovu uredjaja
+// ------------------------------------------------------
+function fdev_params( nDevice )
+local nTArea := SELECT()
+local nReturn := 0
+
+O_FDEVICE
+
+select fdevice
+go top
+seek str( nDevice, 3 )
+
+if FOUND()
+
+	nReturn := field->id
+	
+	// pronasao uredjaj, koristim njegove parametre
+	
+	// set global params...
+
+	gFc_type := ALLTRIM( field->tip )
+	gFc_device := ALLTRIM( field->vrsta ) 
+	gFC_Path := ALLTRIM( field->path )
+	gFC_Name := ALLTRIM( field->output )
+	gFc_pitanje := field->st_pitanje
+	gFc_error := field->error
+	gFc_tout := field->timeout
+	gIOSA := field->iosa
+	gFc_alen := field->duz_roba
+	gFc_pdv := field->pdv
+	gFc_nftxt := field->st_brrb
+	gFc_acd := field->art_code
+	gFC_pinit := field->init_plu
+	gFc_chk := field->check
+	gFc_faktura := field->st_rac
+	gFc_zbir := field->zbirni
+
+endif
+
+select (nTArea)
+return nReturn
+
+
+
+

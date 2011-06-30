@@ -125,6 +125,7 @@
 #define F_KALPOS    114
 #define F_CROBA     115
 #define F_POR       116
+#define F_FDEVICE   117
 
 //POS
 #define F_PDOKS     130

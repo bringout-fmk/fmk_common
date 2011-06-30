@@ -24,6 +24,8 @@
 
 #xcommand O_UGOV     => select(F_UGOV);  use  (KUMPATH+"UGOV")     ; set order to tag "ID"
 
+#xcommand O_FDEVICE     => select(F_FDEVICE);  use  (KUMPATH+"FDEVICE")     ; set order to tag "1"
+
 #xcommand O_RUGOV    => select(F_RUGOV);  use  (KUMPATH+"RUGOV")   ; set order to tag "ID"
 
 #xcommand O_GEN_UG   => select(F_GEN_UG);  use  (KUMPATH+"GEN_UG")  ; set order to tag "DAT_GEN"
