@@ -4,7 +4,7 @@
 // pos komande
 static F_POS_RN := "POS_RN"
 static MAX_QT := 99999.999
-static MIN_QT := 1.000
+static MIN_QT := 0.001
 static MAX_PRICE := 999999.99
 static MIN_PRICE := 0.01
 static MAX_PERC := 99.99

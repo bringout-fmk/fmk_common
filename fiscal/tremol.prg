@@ -61,6 +61,7 @@ local cC_id
 local cC_name
 local cC_addr
 local cC_city
+local nFisc_no := 0
 
 if cContinue == nil
 	cContinue := "0"
@@ -94,7 +95,7 @@ endif
 
 // ukljuci storno triger
 if lStorno == .t.
-	cOFR_txt := ' RefundReceipt="' + ALLTRIM( aData[1, 9] ) + '"'
+	cOFR_txt := ' RefundReceipt="' + ALLTRIM( aData[1, 8] ) + '"'
 endif
 
 // ukljuci kupac triger
@@ -191,21 +192,6 @@ nVr_placanja := 0
 xml_subnode("TremolFpServer", .t.)
 
 close_xml()
-
-if cError == "D"
-	
-	// provjeri greske...
-	// nErr_no := ...
-	
-	if _read_out( cFPath, cFName )
-		
-		// procitaj poruku greske
-		nErr_no := trm_r_error( cFPath, cFName, gFc_tout ) 
-		
-	else
-		nErr_no := _nema_out
-	endif
-endif
 
 return nErr_no
 
@@ -433,7 +419,7 @@ return cF_tar
 // ----------------------------------------
 // fajl za pos fiskalni stampac
 // ----------------------------------------
-static function trm_filename( cBrRn )
+function trm_filename( cBrRn )
 local cRet
 local cF_name := ALLTRIM( gFC_name )
 
@@ -442,6 +428,8 @@ do case
 	case "$rn" $ cF_name
 		// broj racuna.xml
 		cRN := PADL( ALLTRIM( cBrRn ), 8, "0" )
+		// ukini znak "/" ako postoji
+		cRN := STRTRAN( cRN, "/", "" )
 		cRet := STRTRAN( cF_name, "$rn", cRN )
 		cRet := UPPER( cRet )
 	
@@ -545,6 +533,14 @@ return
 
 
 
+// --------------------------------------------------------
+// cekanje na fajl odgovora, poziv za ostale module
+// --------------------------------------------------------
+function trm_read_out( cFPath, cFName, nTimeOut )
+return _read_out( cFPath, cFName, nTimeOut )
+
+
+
 // --------------------------------------------
 // cekanje na fajl odgovora
 // --------------------------------------------
@@ -552,6 +548,7 @@ static function _read_out( cFPath, cFName, nTimeOut )
 local lOut := .t.
 local cTmp
 local nTime
+local cAnswer := ""
 
 if nTimeOut == nil
 	nTimeOut := gFC_tout
@@ -559,7 +556,11 @@ endif
 
 nTime := nTimeOut
 
-cTmp := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "XML", "OUT" )
+if !EMPTY( _answ_dir )
+	cAnswer := _answ_dir + SLASH
+endif
+
+cTmp := cFPath + cAnswer + STRTRAN( cFName, "XML", "OUT" )
 
 Box(,1,50)
 
@@ -594,8 +595,9 @@ return lOut
 // 
 // nTimeOut - time out fiskalne operacije
 // nFisc_no - broj fiskalnog isjecka
+//
 // ------------------------------------------------
-function trm_r_error( cFPath, cFName, nTimeOut )
+function trm_r_error( cFPath, cFName, nTimeOut, nFisc_no )
 local nErr := 0
 local cF_name
 local i
@@ -604,7 +606,8 @@ local x
 local nBrLin
 local nStart
 local cErr
-local aErr
+local aLinija 
+local aErr := {}
 local aErr2
 local aErr_read
 local aErr_data
@@ -612,7 +615,7 @@ local aF_err := {}
 local cErrCode := ""
 local cErrDesc := ""
 
-// primjer: c:\fiscal\00001.OUT
+// primjer: c:\fiscal\00001.out
 cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "XML", "OUT" )
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
@@ -644,76 +647,106 @@ for i:=1 to nBrLin
 	cErr := STRTRAN( cErr, ">", "" )
 	cErr := STRTRAN( cErr, "<", "" )
 	cErr := STRTRAN( cErr, "/", "" )
+	cErr := STRTRAN( cErr, '"', "" )
 	cErr := STRTRAN( cErr, "TremolFpServerOutput", "" )
+	cErr := STRTRAN( cErr, "Output Change", "OutputChange" )
 
 	// dobijamo npr.
 	//
-	// ErrorCode="0" ErrorPOS="OPOS_SUCCESS" ErrorDescription="Uspjesno"
-	// Output Change="0.00" ReceiptNumber="00552" Total="51.20"
+	// ErrorCode=0 ErrorPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
+	// Output Change=0.00 ReceiptNumber=00552 Total=51.20
 
-	aErr := TokToNiz( cErr, SPACE(1) )
+	aLinija := TokToNiz( cErr, SPACE(1) )
 
-	for n := 1 to LEN( aErr )
-
-		// ErrorCode="0"
-		// 
-		// [1] = ErrorCode
-		// [2] = "0" - ove navode cu poslije ukinuti sa strtran()
-
-		aErr2 := TokToNiz( aErr[n], "=" )
-		
-		cE_tmp1 := ALLTRIM( aErr2[ 1 ] )
-		
-		if LEN( aErr2 ) > 1
-			cE_tmp2 := ALLTRIM( STRTRAN( aErr2[ 2 ], '"', '' ))
-		else
-			cE_tmp2 := ""
-		endif
-
-		// dodaj u globalnu matricu
-		AADD( aF_err, { cE_tmp1, cE_tmp2 } )
-
-	next
+	// dobit cemo
+	// 
+	// aLinija[1] = "ErrorCode=0"
+	// aLinija[2] = "ErrorPOS=OPOS_SUCCESS"
+	// ...
 	
+	// dodaj u generalnu matricu aErr
+	for m := 1 to LEN( aLinija )
+		AADD( aErr, aLinija[m] )
+	next
+
 next
 
-// sada kada imamo globalnu matricu, provjerimo prvo da li je 
-// komanda ok, trazimo OPOS_SUCCESS
-
-nScan := ASCAN( aF_err, {|xVal| xVal[ 2 ] = "OPOS_SUCCESS" } )
+// potrazimo gresku...
+nScan := ASCAN( aErr, {|xVal| "OPOS_SUCCESS" $ xVal } )
 
 if nScan > 0
+
 	// nema greske, komanda je uspjela !
+	// ako je rijec o racunu uzmi broj fiskalnog racuna
+        	
+	nScan := ASCAN( aErr, {|xVal| "ReceiptNumber" $ xVal } )
+	
+	if nScan <> 0
+		
+		// ReceiptNumber=241412
+		aTmp2 := {}
+		aTmp2 := TokToNiz( aErr[ nScan ], "=" )
+		
+		// ovo ce biti broj racuna
+		cTmp := ALLTRIM( aTmp2[2] )
+		
+		if !EMPTY( cTmp )
+			nFisc_no := VAL( cTmp )
+		endif
+
+	endif
+	
 	// pobrisi fajl, izdaji
 	FERASE( cF_name )
 	return nErr
+	
 endif
 
-// posto ima greska, daj mi razlog !
-
-nScan1 := ASCAN( aF_err, {|xVal| xVal[ 1 ] = "ErrorCode" } )
-nScan2 := ASCAN( aF_err, {|xVal| xVal[ 1 ] = "ErrorOPOS" } )
-nScan3 := ASCAN( aF_err, {|xVal| xVal[ 1 ] = "ErrorDescription" } )
-
+// imamo gresku !!! ispisi je
 cTmp := ""
 
-if nScan2 > 0
-	cTmp += "Greska: "
-	cTmp += ALLTRIM( aF_err[ nScan2, 2 ] )
+nScan := ASCAN( aErr, {|xVal| "ErrorCode" $ xVal } )
+	
+if nScan <> 0
+		
+	// ErrorCode=241412
+	aTmp2 := {}
+	aTmp2 := TokToNiz( aErr[ nScan ], "=" )
+		
+	cTmp += "ErrorCode: " + ALLTRIM( aTmp2[2] )
+		
+	// ovo je ujedino i error kod
+	nErr := VAL( aTmp2[2] )
+
+endif
+	
+nScan := ASCAN( aErr, {|xVal| "ErrorOPOS" $ xVal } )
+if nScan <> 0
+		
+	// ErrorOPOS=xxxxxxx
+	aTmp2 := {}
+	aTmp2 := TokToNiz( aErr[ nScan ], "=" )
+	
+	cTmp += " ErrorOPOS: " + ALLTRIM( aTmp2[2] )
+
+endif
+	
+nScan := ASCAN( aErr, {|xVal| "ErrorDescription" $ xVal } )
+if nScan <> 0
+		
+	// ErrorDescription=xxxxxxx
+	aTmp2 := {}
+	aTmp2 := TokToNiz( aErr[ nScan ], "=" )
+	
+	cTmp += " Description: " + ALLTRIM( aTmp2[2] )
+
 endif
 
-if nScan3 > 0
-	cTmp += " opis: "
-	cTmp += PADR( ALLTRIM( aF_err[ nScan3, 2 ] ), 30 )
+if !EMPTY( cTmp )
+	msgbeep( cTmp )
 endif
 
-// ispisi poruku !
-msgbeep( cTmp )
-
-if nScan1 > 0
-	nErr := VAL( aF_err[ nScan1, 2 ] )
-endif
-
+// obrisi fajl out na kraju !!!
 FERASE( cF_name )
 
 return nErr

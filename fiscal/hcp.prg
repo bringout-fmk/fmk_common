@@ -80,7 +80,7 @@ endif
 if lStorno = .t.
 	
 	// daj mi storno komandu
-	cRek_rn := ALLTRIM( aData[1, 9] )
+	cRek_rn := ALLTRIM( aData[1, 8] )
 	cCmd := _on_storno( cRek_rn )
 	// posalji storno komandu
 	nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )	
