@@ -619,6 +619,20 @@ local cCmd
 cCmd := 'CMD="Z_REPORT"'
 nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
 
+// ako se koristi opcija automatskog pologa
+if gFc_pauto > 0
+
+	msgo("Automatski unos pologa u uredjaj... sacekajte.")
+
+	// daj malo prostora
+	sleep(10)
+
+	// unesi polog
+	nErr := hcp_polog( cFPath, cFName, cError, gFc_pauto )
+
+	msgc()
+endif
+
 return
 
 
@@ -672,19 +686,25 @@ return
 // ---------------------------------------------------
 // polog pazara
 // ---------------------------------------------------
-function hcp_polog( cFPath, cFName, cError )
+function hcp_polog( cFPath, cFName, cError, nValue )
 local cCmd
-local nValue := 0
 
-// box - daj broj racuna
-Box(,1, 60)
+if nValue == nil
+	nValue := 0
+endif
+
+if nValue = 0
+  // box - daj broj racuna
+  Box(,1, 60)
 	@ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET nValue ;
 		PICT "99999.99"
 	read
-BoxC()
+  BoxC()
 
-if LastKey() == K_ESC .or. nValue = 0
+  if LastKey() == K_ESC .or. nValue = 0
 	return
+  endif
+
 endif
 
 if nValue < 0

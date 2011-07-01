@@ -199,22 +199,28 @@ return nErr_no
 
 // -------------------------------------------------------------------
 // -------------------------------------------------------------------
-function trm_polog( cFPath, cFName, cError )
+function trm_polog( cFPath, cFName, cError, nValue )
 local cXML
 local cBr_zahtjeva 
 local nErr_no := 0
 local cCmd := ""
-local nValue := 0
 
-// box - daj broj racuna
-Box(,1, 60)
+if nValue == nil
+	nValue := 0
+endif
+
+if nValue = 0
+  // box - daj iznos pologa
+  Box(,1, 60)
 	@ m_x + 1, m_y + 2 SAY "Unosim polog od:" GET nValue ;
 		PICT "99999.99"
 	read
-BoxC()
+  BoxC()
 
-if LastKey() == K_ESC .or. nValue = 0
+  if LastKey() == K_ESC .or. nValue = 0
 	return
+  endif
+
 endif
 
 if nValue < 0
@@ -475,6 +481,21 @@ local cCmd
 
 cCmd := 'Command="Report" Type="DailyZ" /'
 nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+
+// ako se koristi opcija automatskog pologa
+if gFc_pauto > 0
+	
+	msgo("Automatski unos pologa u uredjaj... sacekajte.")
+	
+	// daj mi malo prostora
+	sleep(10)
+	
+	// pozovi opciju pologa
+	nErr := trm_polog( cFPath, cFName, cError, gFc_pauto)
+	
+	msgc()
+
+endif
 
 return
 

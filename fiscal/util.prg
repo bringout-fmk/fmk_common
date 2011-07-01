@@ -228,6 +228,7 @@ AADD( aDbf, { "ST_RAC", "C", 1, 0 } )
 AADD( aDbf, { "CHECK", "N", 1, 0 } )
 AADD( aDbf, { "ART_CODE", "C", 1, 0 } )
 AADD( aDbf, { "INIT_PLU", "N", 6, 0 } )
+AADD( aDbf, { "AUTO_P", "N", 10, 2 } )
 AADD( aDbf, { "OPIS", "C", 150, 0 } )
 AADD( aDbf, { "DOKUMENTI", "C", 100, 0 } )
 AADD( aDbf, { "PDV", "C", 1, 0 } )
@@ -264,6 +265,7 @@ if fdevice->(RECCOUNT()) = 0
 	replace field->error with "D"
 	replace field->timeout with 300
 	replace field->zbirni with 0
+	replace field->auto_p with 0
 	replace field->st_pitanje with "D"
 	replace field->st_brrb with "N"
 	replace field->st_rac with "N"
@@ -422,6 +424,7 @@ if FOUND()
 	gFc_chk := field->check
 	gFc_faktura := field->st_rac
 	gFc_zbir := field->zbirni
+	gFc_pauto := field->auto_p
 
 endif
 

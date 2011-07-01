@@ -175,25 +175,33 @@ return
 // ----------------------------------------------------
 // fprint: unos pologa u printer
 // ----------------------------------------------------
-function fp_polog( cFPath, cFName )
+function fp_polog( cFPath, cFName, nPolog )
 local cSep := ";"
 local aPolog := {}
 local aStruct := {}
-local nPolog := 0
 
-Box(,1,60)
+if nPolog == nil
+	nPolog := 0
+endif
+
+// ako je polog 0, pozovi formu za unos
+if nPolog = 0
+
+   Box(,1,60)
 	@ m_x + 1, m_y + 2 SAY "Zaduzujem kasu za:" GET nPolog ;
 		PICT "999999.99"
 	read
-BoxC()
+   BoxC()
 
-if nPolog = 0
+   if nPolog = 0
 	msgbeep("Polog mora biti <> 0 !")
 	return
-endif
+   endif
 
-if LastKey() == K_ESC
+   if LastKey() == K_ESC
 	return
+   endif
+
 endif
 
 // naziv fajla
@@ -564,6 +572,20 @@ if gFC_acd == "D"
 
 
 
+endif
+
+// ako se koristi opcija automatskog pologa u ureðaj
+if gFc_pauto <> 0
+	
+	msgo("Automatski unos pologa u uredjaj... sacekajte.")
+	
+	// daj malo prostora
+	sleep(10)
+	
+	// odmah pozovi i automatski polog
+	fp_polog( cFPath, cFName, gFc_pauto )
+	
+	msgc()
 endif
 
 return
