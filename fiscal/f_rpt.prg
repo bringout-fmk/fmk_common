@@ -5,9 +5,24 @@
 // fiskalni izvjestaji i komande
 // ---------------------------------------------------------
 function fisc_rpt()
+local nDevice := 0
 private izbor := 1
 private opc := {}
 private opcexe := {}
+
+// ako se koristi lista uredjaja izaberi uredjaj
+if gFc_dlist == "D"
+
+	// listaj mi uredjaje koje imam
+	nDevice := list_device()
+
+	if nDevice > 0
+		// setuj parametre za dati uredjaj
+		fdev_params( nDevice )
+	endif
+
+endif
+
 
 do case 
 

@@ -295,6 +295,10 @@ if gFc_dlist == "N"
 	return -1
 endif
 
+if cTipDok == nil
+	cTipDok := ""
+endif
+
 // izvuci mi listu uredjaja na osnovu tipa dokumenta
 O_FDEVICE
 select fdevice
