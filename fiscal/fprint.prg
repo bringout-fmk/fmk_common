@@ -336,15 +336,28 @@ function fp_del_plu( cFPath, cFName, lSilent )
 local cSep := ";"
 local aDel := {}
 local aStruct := {}
+local nMaxPlu := 0
 
 if lSilent == nil
 	lSilent := .t.
 endif
 
 if !lSilent 
+	
 	if !SIGMASIF("RESET")
 		return
 	endif
+
+	// daj mi vrijednost plu do koje cu resetovati...
+	Box(,1,40)
+		@ m_x+1,m_y+2 SAY "Unesi max.plu vrijednost:" GET nMaxPlu
+		read
+	BoxC()
+
+	if LastKey() == K_ESC
+		return
+	endif
+
 endif
 
 // naziv fajla
@@ -354,7 +367,7 @@ cFName := fp_filename( "0" )
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aDel := _fp_del_plu()
+aDel := _fp_del_plu( nMaxPlu )
 
 _a_to_file( cFPath, cFName, aStruct, aDel )
 
@@ -1087,7 +1100,7 @@ return aArr
 // ---------------------------------------------------
 // brisi artikle iz uredjaja
 // ---------------------------------------------------
-static function _fp_del_plu()
+static function _fp_del_plu( nMaxPlu )
 local cTmp := ""
 local cLogic
 local cLogSep := ","
@@ -1099,8 +1112,13 @@ local cCmdType := ""
 local nTArea := SELECT()
 local nLastPlu := 0
 
-// uzmi zadnji PLU iz parametara
-nLastPlu := last_plu()
+if nMaxPlu <> 0
+	// ovo ce biti granicni PLU za reset
+	nLastPlu := nMaxPlu
+else
+	// uzmi zadnji PLU iz parametara
+	nLastPlu := last_plu()
+endif
 
 select (nTArea)
 
