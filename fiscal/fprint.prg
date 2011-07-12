@@ -1177,10 +1177,11 @@ AADD( aArr, { cTmp } )
 
 return aArr
 
+
 // --------------------------------------------------------
 // vraca formatiran datum za opcije izvjestaja
 // --------------------------------------------------------
-static function _fix_date( dDate )
+function _fix_date( dDate )
 local cRet := ""
 local nM := MONTH( dDate )
 local nD := DAY( dDate )

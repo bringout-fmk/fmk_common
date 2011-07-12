@@ -74,6 +74,12 @@ do case
     AADD(opc,"2. presjek stanja (X rep.)    ")
     AADD(opcexe,{|| hcp_x_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
+    
+    AADD(opc,"3. periodicni izvjestaj (Z rep.)    ")
+    AADD(opcexe,{|| hcp_s_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+
+    
     AADD(opc,"------ ostale komande --------------------")
     AADD(opcexe,{|| .f. })
     

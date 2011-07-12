@@ -92,13 +92,13 @@ if lStorno = .t.
 endif
 
 // programiraj artikal prije nego izdas racun
-if !lStorno
+//if !lStorno
 	nErr_no := fc_hcp_plu( cFPath, cFName, aData, cError )
 
 	if nErr_no > 0
 		return nErr_no
 	endif
-endif
+//endif
 
 if aKupac <> nil .and. LEN( aKupac ) > 0
 	lKupac := .t.
@@ -146,7 +146,7 @@ nVr_placanja := 0
 	cTmp := ""
 
 	// sta ce se koristiti za 'kod' artikla
-	if gFc_acd == "P"
+	if gFc_acd $ "P#D"
 		// PLU artikla
 		cTmp := 'BCR="' + ALLTRIM(STR(nRoba_plu)) + '"'
 	elseif gFc_acd == "I"
@@ -194,8 +194,15 @@ nVr_placanja := 0
     // 
     // iznos = 0, ako je 0 onda sve ide tom vrstom placanja
 
+   
     cVr_placanja := _g_v_plac( VAL( aData[1, 13] ) )
-    nVr_placanja := nTotal
+    nVr_placanja := ABS( nTotal )
+
+    if lStorno = .t.
+    	// ako je storno onda je placanje gotovina i iznos 0
+        cVr_placanja := "0"
+	nVr_placanja := 0
+    endif
 
     cTmp := 'PAY="' + cVr_placanja + '"'
     cTmp += _razmak1 + 'AMN="' + ALLTRIM( STR(nVr_placanja,12,2)) + '"'
@@ -551,21 +558,28 @@ endcase
 return cF_jmj
 
 
-
-
 // ------------------------------------------
 // vraca tarifu za fiskalni stampac
 // ------------------------------------------
 static function _g_tar( cIdTar )
-cF_tar := "3"
+cF_tar := "1"
 do case
 	case UPPER(ALLTRIM(cIdTar)) == "PDV17"
-		// PDV je tarifna skupina "3"
-		cF_tar := "1"
+		
+		// PDV je tarifna skupina "1"
+		// u pdv rezimu
+		if gFc_pdv == "D"
+			cF_tar := "1"
+		else
+			// u ne-pdv rezimu je "0"
+			cF_tar := "0"
+		endif
 	
 	case UPPER(ALLTRIM(cIdTar)) == "PDV0"
-		// nePDV 
-		cF_tar := "0"
+		
+		// INO ili oslobodjen je tarifna skupina "3"
+		cF_tar := "3"
+
 	// case 
 	// ....
 
@@ -619,13 +633,36 @@ local cCmd
 cCmd := 'CMD="Z_REPORT"'
 nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
 
+
+// ako se koriste dinamicki plu kodovi resetuj prodaju
+// pobrisi artikle
+if gFc_acd == "D"
+
+	msgo("resetujem prodaju...")
+
+	// reset sold plu
+	cCmd := 'CMD="RESET_SOLD_PLU"'
+	nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
+
+	// ako su dinamicki PLU kodovi
+	cCmd := 'CMD="DELETE_ALL_PLU"'
+	nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
+
+	// resetuj PLU brojac u bazi...
+	auto_plu( .t., .t. )
+
+	msgc()
+
+endif
+
+
 // ako se koristi opcija automatskog pologa
 if gFc_pauto > 0
 
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 
 	// daj malo prostora
-	sleep(10)
+	sleep(5)
 
 	// unesi polog
 	nErr := hcp_polog( cFPath, cFName, cError, gFc_pauto )
@@ -646,6 +683,36 @@ cCmd := 'CMD="X_REPORT"'
 nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
 
 return
+
+
+// -----------------------------------------------------
+// presjek stanja SUMMARY
+// -----------------------------------------------------
+function hcp_s_rpt( cFPath, cFName, cError )
+local cCmd
+local dD_from := DATE()-30
+local dD_to := DATE()
+local cD_from := ""
+local cD_to := ""
+
+Box(,1,50)
+	@ m_x+1, m_y+2 SAY "Datum od:" GET dD_from 
+	@ m_x+1, col()+1 SAY "do:" GET dD_to
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+cD_from := _fix_date( dD_from )
+cD_to := _fix_date( dD_to )
+
+cCmd := 'CMD="SUMMARY_REPORT" FROM="' + cD_from + '" TO="' + cD_to + '"'
+nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
+
+return
+
 
 
 // -----------------------------------------------------
