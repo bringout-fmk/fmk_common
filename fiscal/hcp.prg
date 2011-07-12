@@ -229,8 +229,11 @@ if cError == "D"
 	endif
 endif
 
-// ispis nefiskalnog teksta
-nErr_no := fc_hcp_txt( cFPath, cFName, cBr_Zahtjeva, cError )  
+if gFc_nftxt == "D"
+	// ispis nefiskalnog teksta
+	// veza broj racuna
+	nErr_no := fc_hcp_txt( cFPath, cFName, cBr_Zahtjeva, cError )  
+endif
 
 return nErr_no
 
@@ -577,8 +580,13 @@ do case
 	
 	case UPPER(ALLTRIM(cIdTar)) == "PDV0"
 		
-		// INO ili oslobodjen je tarifna skupina "3"
-		cF_tar := "3"
+		if gFc_pdv == "D"
+			// INO ili oslobodjen je tarifna skupina "3"
+			cF_tar := "3"
+		else
+			// ako nije u pdv rezimu onda je opet tarifa "0"
+			cF_tar := "0"
+		endif
 
 	// case 
 	// ....
