@@ -141,7 +141,7 @@ nVr_placanja := 0
 	// naziv artikla
 	cTmp += _razmak1 + 'Description="' + strkznutf8(cRoba_naz,"8") + '"'
 	//  kolicina artikla 
-	cTmp += _razmak1 + 'Quantity="' + ALLTRIM( STR( nKolicina, 12, 2)) + '"'
+	cTmp += _razmak1 + 'Quantity="' + ALLTRIM( STR( nKolicina, 12, 3)) + '"'
 	// cijena artikla
 	cTmp += _razmak1 + 'Price="' + ALLTRIM( STR( nCijena, 12, 2 )) + '"'
 	// poreska stopa
