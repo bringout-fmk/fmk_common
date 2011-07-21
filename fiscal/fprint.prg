@@ -64,6 +64,24 @@ _a_to_file( cFPath, cFName, aStruct, aPosData )
 return nErr
 
 
+
+// ---------------------------------------------------
+// ispravi naziv artikla
+// ---------------------------------------------------
+function fp_f_naz( cNaz )
+local xRet := ""
+
+xRet := cNaz
+
+// ukini ";"
+xRet := STRTRAN( xRet, ";", "" )
+
+return xRet
+
+
+
+
+
 // ---------------------------------------------------------
 // vrsi provjeru vrijednosti cijena, kolicina itd...
 // ---------------------------------------------------------
