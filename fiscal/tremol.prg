@@ -63,6 +63,9 @@ local cC_addr
 local cC_city
 local nFisc_no := 0
 
+// pobrisi tmp fajlove i ostalo sto je u input direktoriju
+trm_d_tmp()
+
 if cContinue == nil
 	cContinue := "0"
 endif
@@ -194,6 +197,28 @@ xml_subnode("TremolFpServer", .t.)
 close_xml()
 
 return nErr_no
+
+
+// ----------------------------------------------
+// brise fajlove iz ulaznog direktorija
+// ----------------------------------------------
+function trm_d_tmp()
+local cTmp 
+
+msgo("brisem tmp fajlove...")
+
+cF_path := ALLTRIM( gFc_path )
+cTmp := "*.*"
+
+AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
+	ALLTRIM( aFile[1]) ) })
+
+sleep(1)
+
+msgc()
+
+return
+
 
 
 
