@@ -118,17 +118,21 @@ do case
     AADD(opc,"4. izvjestaj po artiklima (X rep.)    ")
     AADD(opcexe,{|| trm_x_item( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
+    
+    AADD(opc,"5. periodicni izvjestaj (Z rep.)    ")
+    AADD(opcexe,{|| trm_p_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
    
     AADD(opc,"------ ostale komande --------------------")
     AADD(opcexe,{|| .f. })
 
-    AADD(opc,"5. kopija racuna    ")
+    AADD(opc,"K. kopija racuna    ")
     AADD(opcexe,{|| trm_rn_copy( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
-    AADD(opc,"6. reset artikala    ")
+    AADD(opc,"R. reset artikala    ")
     AADD(opcexe,{|| fc_trm_rplu( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
-    AADD(opc,"7. polog u uredjaj    ")
+    AADD(opc,"P. polog u uredjaj    ")
     AADD(opcexe,{|| trm_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
 

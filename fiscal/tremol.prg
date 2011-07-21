@@ -504,6 +504,10 @@ return
 function trm_z_rpt( cFPath, cFName, cError )
 local cCmd
 
+if Pitanje(,"Stampati dnevni izvjestaj", "D") == "N"
+	return
+endif
+
 cCmd := 'Command="Report" Type="DailyZ" /'
 nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
 
@@ -536,6 +540,65 @@ nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
 
 return
 
+
+// -----------------------------------------------------
+// periodicni izvjestaj
+// -----------------------------------------------------
+function trm_p_rpt( cFPath, cFName, cError )
+local cCmd
+local cStart
+local cEnd
+local dStart := DATE()-30
+local dEnd := DATE()
+
+if Pitanje(,"Stampati periodicni izvjestaj", "D") == "N"
+	return
+endif
+
+Box(,1,60)
+	@ m_x+1, m_y+2 SAY "Od datuma:" GET dStart
+	@ m_x+1, col()+1 SAY "do datuma:" GET dEnd
+	read
+BoxC()
+
+if LastKey() == K_ESC
+	return
+endif
+
+// 2010-10-01 : YYYY-MM-DD je format datuma
+cStart := _tfix_date( dStart )
+cEnd := _tfix_date( dEnd )
+
+cCmd := 'Command="Report" Type="Date" Start="' + cStart + ;
+	'" End="' + cEnd + '" /'
+
+nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
+
+
+return
+
+
+// ------------------------------------------------
+// sredjuje datum za tremol uredjaj xml
+// ------------------------------------------------
+static function _tfix_date( dDate )
+local xRet := ""
+local cTmp
+
+cTmp := ALLTRIM( STR( YEAR( dDate ) ))
+
+xRet += cTmp
+xRet += "-"
+
+cTmp := PADL( ALLTRIM( STR( MONTH( dDate )) ), 2, "0" )
+
+xRet += cTmp
+xRet += "-"
+
+cTmp := PADL( ALLTRIM( STR( DAY( dDate )) ), 2, "0" )
+xRet += cTmp
+
+return xRet
 
 
 // ---------------------------------------------------
