@@ -72,6 +72,9 @@ local nErr_no := 0
 local cOperacija := ""
 local cCmd := ""
 
+// brisi tmp fajlove ako su ostali...
+hcp_d_tmp()
+
 if nTotal == nil
 	nTotal := 0
 endif
@@ -236,6 +239,30 @@ if gFc_nftxt == "D"
 endif
 
 return nErr_no
+
+
+// ----------------------------------------------
+// brise fajlove iz ulaznog direktorija
+// ----------------------------------------------
+function hcp_d_tmp()
+local cTmp 
+
+msgo("brisem tmp fajlove...")
+
+cF_path := ALLTRIM( gFc_path ) + _inp_dir + SLASH
+cTmp := "*.*"
+
+AEVAL( DIRECTORY(cF_path + cTmp), {|aFile| FERASE( cF_path + ;
+	ALLTRIM( aFile[1]) ) })
+
+sleep(1)
+
+msgc()
+
+return
+
+
+
 
 
 // -------------------------------------------------------------------
