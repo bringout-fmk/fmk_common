@@ -217,7 +217,9 @@ AADD( aDbf, { "OZNAKA", "C", 15, 0 } )
 AADD( aDbf, { "IOSA", "C", 16, 0 } )
 AADD( aDbf, { "VRSTA", "C", 1, 0 } )
 AADD( aDbf, { "PATH", "C", 150, 0 } )
+AADD( aDbf, { "PATH2", "C", 150, 0 } )
 AADD( aDbf, { "OUTPUT", "C", 20, 0 } )
+AADD( aDbf, { "ANSWER", "C", 40, 0 } )
 AADD( aDbf, { "DUZ_ROBA", "N", 3, 0 } )
 AADD( aDbf, { "ERROR", "C", 1, 0 } )
 AADD( aDbf, { "TIMEOUT", "N", 5, 0 } )
@@ -260,6 +262,7 @@ if fdevice->(RECCOUNT()) = 0
 	replace field->vrsta with "P"
 	replace field->path with "c:\fiscal\"
 	replace field->output with "out.txt"
+	replace field->answer with "answer.txt"
 	replace field->duz_roba with 32
 	replace field->pdv with "D"
 	replace field->error with "D"
@@ -415,6 +418,8 @@ if FOUND()
 	gFc_type := ALLTRIM( field->tip )
 	gFc_device := ALLTRIM( field->vrsta ) 
 	gFC_Path := ALLTRIM( field->path )
+	gFC_Path2 := ALLTRIM( field->path2 )
+	gFC_answ := ALLTRIM( field->answer )
 	gFC_Name := ALLTRIM( field->output )
 	gFc_pitanje := field->st_pitanje
 	gFc_error := field->error

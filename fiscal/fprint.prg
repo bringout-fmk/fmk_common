@@ -459,7 +459,7 @@ _a_to_file( cFPath, cFName, aStruct, aManCmd )
 if cErr == "D"
 	
 	// provjeri gresku
-	nErr := fp_r_error( cFPath, gFC_tout, 0 )
+	nErr := fp_r_error( cFPath, cFName, gFC_tout, 0 )
 
 	if nErr <> 0
 		msgbeep("Postoji greska !!!")
@@ -494,7 +494,7 @@ if LastKey() == K_ESC
 endif
 
 // pobrisi answer fajl
-fp_d_answer( cFPath )
+fp_d_answer( cFPath, cFName )
 
 // naziv fajla
 cFName := fp_filename( "0" )
@@ -539,7 +539,7 @@ if LastKey() == K_ESC
 endif
 
 // pobrisi answer fajl
-fp_d_answer( cFPath )
+fp_d_answer( cFPath, cFName )
 
 // naziv fajla
 cFName := fp_filename( "0" )
@@ -553,7 +553,7 @@ aDaily := _fp_daily_rpt( cType )
 _a_to_file( cFPath, cFName, aStruct, aDaily )
 
 // procitaj error
-nErr := fp_r_error( cFPath, gFC_tout, 0 )
+nErr := fp_r_error( cFPath, cFName, gFC_tout, 0 )
 
 if nErr <> 0
 
@@ -576,7 +576,7 @@ if gFC_acd == "D"
 	if gFC_device == "P"
 
 		// pobrisi answer fajl
-		fp_d_answer( cFPath )
+		fp_d_answer( cFPath, cFName )
 
 		// daj mu malo prostora
 		sleep(10)
@@ -587,7 +587,7 @@ if gFC_acd == "D"
 
 		// prekontrolisi gresku
 		// ovdje cemo koristiti veci timeout
-		nErr := fp_r_error( cFPath, 500, 0 )
+		nErr := fp_r_error( cFPath, cFName, 500, 0 )
 
 		if nErr <> 0
 			msgbeep("Postoji greska !!!")
@@ -656,7 +656,7 @@ aPer := _fp_per_rpt( dD_from, dD_to )
 _a_to_file( cFPath, cFName, aStruct, aPer )
 
 // procitaj error
-nErr := fp_r_error( cFPath, gFC_tout, 0 )
+nErr := fp_r_error( cFPath, cFName, gFC_tout, 0 )
 
 if nErr <> 0
 	msgbeep("Postoji greska !!!")
@@ -1563,13 +1563,17 @@ return cRet
 // ----------------------------------------------
 // pobrisi answer fajl
 // ----------------------------------------------
-function fp_d_answer( cPath )
+function fp_d_answer( cPath, cFile )
 local cF_name
 
-cF_name := cPath + "ANSWER" + SLASH + "ANSWER.TXT"
+cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(gFc_answ)
+
+if EMPTY( ALLTRIM( gFc_answ ) )
+	cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(cFile)
+endif
 
 if FERASE( cF_name ) = -1
-	msgbeep("Greska sa brisanjem answer.txt !")
+	msgbeep("Greska sa brisanjem fajla odgovora !")
 endif
 
 return
@@ -1596,7 +1600,7 @@ return
 // nTimeOut - time out fiskalne operacije
 // nFisc_no - broj fiskalnog isjecka
 // ------------------------------------------------
-function fp_r_error( cPath, nTimeOut, nFisc_no )
+function fp_r_error( cPath, cFile, nTimeOut, nFisc_no )
 local nErr := 0
 local cF_name
 local i
@@ -1610,7 +1614,12 @@ local nTime
 nTime := nTimeOut
 
 // primjer: c:\fprint\answer\answer.txt
-cF_name := cPath + "ANSWER" + SLASH + "ANSWER.TXT"
+cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(gFc_answ)
+
+// ako se koristi isti answer kao i input fajl
+if EMPTY( ALLTRIM( gFc_answ ) )
+	cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(cFile)
+endif
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
 // prikaza greske tipa ER,OK...
