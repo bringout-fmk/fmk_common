@@ -1610,6 +1610,7 @@ local cErr
 local aErr_read
 local aErr_data
 local nTime 
+local cSerial := ALLTRIM(gFc_serial)
 
 nTime := nTimeOut
 
@@ -1666,14 +1667,14 @@ for i:=1 to nBrLin
 	cErr := aErr_read[ 1 ]
 
 	// ovo je dodavanje artikla
-	if "107,1,00" $ cErr
+	if "107,1," + cSerial $ cErr
 		// preskoci
 		loop
 	endif
 	
 	// ovu liniju zapamti, sadrzi fiskalni racun broj
 	// komanda 56, zatvaranje racuna
-	if "56,1,00" $ cErr
+	if "56,1," + cSerial $ cErr
 		cFisc_txt := cErr
 	endif
 
