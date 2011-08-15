@@ -242,11 +242,11 @@ AADD( aDbf, { "D_PAR_4", "C", 10, 0 } )
 AADD( aDbf, { "D_PAR_5", "C", 10, 0 } )
 AADD( aDbf, { "AKTIVAN", "C", 1, 0 } )
 
-if !file((KUMPATH+"FDEVICE.DBF"))
-	DBCREATE2(KUMPATH+"FDEVICE.DBF",aDbf)
+if !file((PRIVPATH+"FDEVICE.DBF"))
+	DBCREATE2(PRIVPATH+"FDEVICE.DBF",aDbf)
 endif
 
-CREATE_INDEX("1","str(id)",KUMPATH+"FDEVICE.DBF",.t.)
+CREATE_INDEX("1","str(id)",PRIVPATH+"FDEVICE.DBF",.t.)
 
 O_FDEVICE
 
@@ -264,7 +264,7 @@ if fdevice->(RECCOUNT()) = 0
 	replace field->path with "c:\fiscal\"
 	replace field->output with "out.txt"
 	replace field->answer with "answer.txt"
-	replace field->serial with "01010101"
+	replace field->serial with "010730"
 	replace field->duz_roba with 32
 	replace field->pdv with "D"
 	replace field->error with "D"
@@ -283,7 +283,6 @@ if fdevice->(RECCOUNT()) = 0
 
 	
 endif
-
 
 return
 

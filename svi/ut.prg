@@ -36,6 +36,7 @@ Kol := {}
 
 nTArea := SELECT()
 
+
 O_FDEVICE
 
 AADD(ImeKol, { PADC("id",3), {|| id}, "id", {|| .t. }, {|| .t. } })
