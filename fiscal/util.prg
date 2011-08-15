@@ -333,65 +333,102 @@ elseif nStat = 1
 	endif
 
 else
+	
+	// sacuvaj ove varijable
+	nX := m_x
+	nY := m_y
 
 	// odaberi listu, ima vise uredjaja
-
-	aOpcD := {}
-	select fdevice
-	go top
-
-	do while !EOF()
-		
-		if field->aktivan == "N"
-			skip
-			loop
-		endif
-
-		//if !EMPTY( cTipDok ) .and. cTipDok $ field->dokumenti
-		//else
-		//endif
-
-		AADD( aOpcD, PADR( ALLTRIM( STR( field->id )), 3 ) + ;
-			"- " + PADR( ALLTRIM( field->opis), 50 ) )
-
-		skip
-	enddo
-
-	h := ARRAY(LEN(aOpcD))
-	i := 1
-
-	for i := 1 to LEN( h )
-		h[i] := ""
-	next
-
-	// selekcija fajla
-	IzbF:=1
-	lRet := .f.
-
-	do while .t. .and. LastKey()!=K_ESC
-
-		IzbF := Menu("dev", aOpcD, IzbF, .f.)
-		
-		if IzbF == 0
-        		exit
-        	else
-        		nDevice := VAL( ALLTRIM( LEFT( aOpcD[IzbF], 3 )) )
-        		IzbF:=0
-			lRet:=.t.
-        	endif
-	enddo
-
-	if lRet
-		return nDevice
+	aFD_list := _afd_list( cTipDok )
+	
+	nSelect := _fd_list( aFD_list )
+	
+	if nSelect >= 0
+		// izaberi uredjaj iz liste
+		nDevice := aFD_list[ nSelect, 2 ]
 	else
-		return 0
+		nDevice := nSelect
 	endif
+
+	m_x := nX
+	m_y := nY
+
+	return nDevice
 
 endif
 
 select (nTArea)
 
 return nDevice
+
+
+// -----------------------------------
+// daj listu uredjaja
+// -----------------------------------
+static function _fd_list( aDevice )
+local cTmp := ""
+local i
+local nSelected
+private opc := {}
+private opcexe := {}
+private izbor := 1
+private GetList := {}
+
+for i:=1 to LEN(aDevice)
+
+	cTmp := PADR( ALLTRIM( STR( aDevice[i, 1] )), 3 ) + ;
+		"- " + PADR( ALLTRIM( aDevice[i, 3]), 50 )
+	AADD( opc, cTmp )
+	AADD( opcexe, { || nSelected := izbor, izbor := 0 })
+next
+
+menu_sc("fdev")
+
+if nSelected = nil
+	nSelected := -99
+endif
+
+return nSelected
+
+
+// -----------------------------------
+// vraca listu uredjaja
+// -----------------------------------
+static function _afd_list( cTipDok )
+local aDevice := {}
+local nCnt := 0
+
+select fdevice
+go top
+
+do while !EOF()
+		
+	if field->aktivan == "N"
+		skip
+		loop
+	endif
+
+	if !EMPTY( cTipDok ) 
+		if cTipDok $ field->dokumenti
+			// ovo je ok...
+			// idi dalje
+		else
+			skip
+			loop
+		endif
+	endif
+
+	// dodaj u fdevice matricu
+	AADD( aDevice, { ++nCnt, field->id, ALLTRIM(field->opis) } )
+	
+	skip
+
+enddo
+
+// dodaj i stavku za ponistavanje
+AADD( aDevice, { ++nCnt, -99, "--- ponisti operaciju ---"} )
+
+return aDevice
 
 
 
