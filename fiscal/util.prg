@@ -144,15 +144,24 @@ return cRet
 // --------------------------------------------------
 // vraca iz parametara zadnji PLU broj
 // --------------------------------------------------
-function last_plu()
+function last_plu( nDevice )
 local nPLU := 0
 private cSection:="X"
 private cHistory:=" "
 private aHistory:={}
+
+if nDevice == nil
+	nDevice := 0
+endif
+
 O_KPARAMS
 select kparams
 
-RPar( "ap", @nPLU )
+if nDevice = 0
+	RPar( "ap", @nPLU )
+else
+	RPar( "a" + ALLTRIM(STR(nDevice)), @nPLU )
+endif
 
 return nPLU
 
@@ -160,13 +169,17 @@ return nPLU
 // --------------------------------------------------
 // generisanje novog plug kod-a inkrementalno
 // --------------------------------------------------
-function auto_plu( lReset, lSilent )
+function auto_plu( lReset, lSilent, nDevice )
 local nGenPlu := 0
 local nTArea := SELECT()
 
 private cSection:="X"
 private cHistory:=" "
 private aHistory:={}
+
+if nDevice == nil
+	nDevice := 0
+endif
 
 if lReset == nil
 	lReset := .f.
@@ -183,8 +196,12 @@ if lReset = .t.
 	// uzmi inicijalni plu iz parametara
 	nGenPlu := gFC_pinit
 else
-	// iscitaj trenutni PLU KOD
-	RPar( "ap", @nGenPlu )
+	if nDevice = 0
+		// iscitaj trenutni PLU KOD
+		RPar( "ap", @nGenPlu )
+	else
+		RPar( "a" + ALLTRIM(STR(nDevice)), @nGenPlu )
+	endif
 	// uvecaj za 1
 	++ nGenPlu 
 endif
@@ -196,8 +213,12 @@ if lReset = .t. .and. !lSilent
 	endif
 endif
 
-// upisi generisani u parametre
-WPar( "ap", nGenPlu )
+if nDevice = 0
+	// upisi generisani u parametre
+	WPar( "ap", nGenPlu )
+else
+	WPar( "a" + ALLTRIM(STR(nDevice)), nGenPlu )
+endif
 
 select (nTArea)
 
@@ -452,7 +473,6 @@ if FOUND()
 	// pronasao uredjaj, koristim njegove parametre
 	
 	// set global params...
-
 	gFc_type := ALLTRIM( field->tip )
 	gFc_device := field->vrsta 
 	gFC_Path := field->path

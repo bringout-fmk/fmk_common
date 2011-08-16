@@ -32,7 +32,8 @@ do case
     AADD(opc,"------ izvjestaji ---------------------------------")
     AADD(opcexe,{|| .f. })
     AADD(opc,"1. dnevni izvjestaj  (Z-rep / X-rep)          ")
-    AADD(opcexe,{|| fp_daily_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opcexe,{|| fp_daily_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    	nDevice ) })
     AADD(opc,"2. periodicni izvjestaj")
     AADD(opcexe,{|| fp_per_rpt( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
     AADD(opc,"3. pregled artikala ")
@@ -54,7 +55,8 @@ do case
     if gFC_device == "P"
     	AADD(opc,"10. brisanje artikala iz uredjaja (cmd 107)")
     	AADD(opcexe,{|| ;
-		fp_del_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name), .f. ) })
+		fp_del_plu( ALLTRIM(gFc_path), ALLTRIM(gFc_name), .f., ;
+			nDevice ) })
     endif
 
     AADD(opc,"11. reset PLU ")

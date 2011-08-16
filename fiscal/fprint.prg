@@ -350,7 +350,7 @@ return
 // ----------------------------------------------------
 // brisanje PLU iz uredjaja
 // ----------------------------------------------------
-function fp_del_plu( cFPath, cFName, lSilent )
+function fp_del_plu( cFPath, cFName, lSilent, nDevice )
 local cSep := ";"
 local aDel := {}
 local aStruct := {}
@@ -358,6 +358,10 @@ local nMaxPlu := 0
 
 if lSilent == nil
 	lSilent := .t.
+endif
+
+if nDevice == nil
+	nDevice := 0
 endif
 
 if !lSilent 
@@ -385,7 +389,7 @@ cFName := fp_filename( "0" )
 aStruct := _g_f_struct( F_POS_RN )
 
 // iscitaj pos matricu
-aDel := _fp_del_plu( nMaxPlu )
+aDel := _fp_del_plu( nMaxPlu, nDevice )
 
 _a_to_file( cFPath, cFName, aStruct, aDel )
 
@@ -514,12 +518,16 @@ return
 // ----------------------------------------------------
 // dnevni fiskalni izvjestaj
 // ----------------------------------------------------
-function fp_daily_rpt( cFPath, cFName )
+function fp_daily_rpt( cFPath, cFName, nDevice )
 local cSep := ";"
 local aDaily := {}
 local aStruct := {}
 local nErr := 0
 local cType := "0"
+
+if nDevice == nil
+	nDevice := 0
+endif
 
 if Pitanje(,"Stampati dnevni izvjestaj ?", "D") == "N"
 	return
@@ -582,7 +590,7 @@ if gFC_acd == "D"
 		sleep(10)
 
 		// posalji komandu za reset PLU u uredjaju
-		fp_del_plu( cFPath, cFName, .t. )
+		fp_del_plu( cFPath, cFName, .t., nDevice )
 
 
 		// prekontrolisi gresku
@@ -598,7 +606,7 @@ if gFC_acd == "D"
 	msgc()
 
 	// setuj brojac PLU na 0 u parametrima !
-	auto_plu( .t., .t. )
+	auto_plu( .t., .t., nDevice )
 	msgbeep("Stanje fiskalnog uredjaju je nulirano.")
 
 
@@ -1118,7 +1126,7 @@ return aArr
 // ---------------------------------------------------
 // brisi artikle iz uredjaja
 // ---------------------------------------------------
-static function _fp_del_plu( nMaxPlu )
+static function _fp_del_plu( nMaxPlu, nDevice )
 local cTmp := ""
 local cLogic
 local cLogSep := ","
@@ -1135,7 +1143,7 @@ if nMaxPlu <> 0
 	nLastPlu := nMaxPlu
 else
 	// uzmi zadnji PLU iz parametara
-	nLastPlu := last_plu()
+	nLastPlu := last_plu( nDevice )
 endif
 
 select (nTArea)
