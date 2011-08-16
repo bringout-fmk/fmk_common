@@ -60,7 +60,7 @@ do case
     endif
 
     AADD(opc,"11. reset PLU ")
-    AADD(opcexe,{|| auto_plu( .t. ) })
+    AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
     AADD(opc,"12. non-fiscal racun - test")
     AADD(opcexe,{|| fp_nf_txt( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
     			"TEST") })
