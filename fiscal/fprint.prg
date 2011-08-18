@@ -1580,8 +1580,11 @@ if EMPTY( ALLTRIM( gFc_answ ) )
 	cF_name := cPath + "ANSWER" + SLASH + ALLTRIM(cFile)
 endif
 
-if FERASE( cF_name ) = -1
-	msgbeep("Greska sa brisanjem fajla odgovora !")
+// ako postoji fajl obrisi ga
+if FILE( cF_name )
+	if FERASE( cF_name ) = -1
+		msgbeep("Greska sa brisanjem fajla odgovora !")
+	endif
 endif
 
 return
@@ -1592,8 +1595,10 @@ return
 // ----------------------------------------------
 function fp_d_out( cFile )
 
-if FERASE( cFile ) = -1
+if FILE( cFile )
+ if FERASE( cFile ) = -1
 	msgbeep("Greska sa brisanjem izlaznog fajla !")
+ endif
 endif
 
 return
