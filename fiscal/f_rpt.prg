@@ -64,6 +64,9 @@ do case
     AADD(opc,"12. non-fiscal racun - test")
     AADD(opcexe,{|| fp_nf_txt( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
     			"TEST") })
+    AADD(opc,"13. test fisc. email")
+    AADD(opcexe,{|| _fisc_eml_test() })
+
 
   // za HCP uredjaje
   case ALLTRIM(gFc_type) == "HCP" 

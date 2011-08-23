@@ -1726,3 +1726,30 @@ nFiscNO := VAL( aFisc[2] )
 return nFiscNO
 
 
+// --------------------------------------------
+// test funkcija za poziv email skripte
+// --------------------------------------------
+function _fisc_eml_test()
+// uzmi podatke za email iz ini-ja
+local cEmail := IzFmkIni("Ruby", "FiscEmail", "c:\scruby\eFisc.rb")
+local cMessage
+local nFisc_rn := 156
+local cFakt_dok := "11-01252"
+local cKupac := "Ramaterm Gornji Vakuf"
+local nTotal := 1000.24
+local cEml_file := nil
+
+if EMPTY( cEmail ) .or. cEmail == "-"
+	return
+endif
+
+cMessage := '"Racun: ' +  ALLTRIM(STR(nFisc_rn)) + ;
+	', ' + cFakt_dok + ', ' + StrKzn( cKupac, "8", "W" ) + ;
+	', iznos: ' + ALLTRIM(STR(nTotal,12,2)) + ' KM"' 
+
+email_send("F", nil, nil, cMessage, nil, cEml_file )
+
+
+return
+
+
