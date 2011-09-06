@@ -141,6 +141,31 @@ do case
     AADD(opcexe,{|| trm_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
 
+  case ALLTRIM(gFc_type) == "TRING" 
+    
+    AADD(opc,"------ izvjestaji ---------------------------------")
+    AADD(opcexe,{|| .f. })
+    AADD(opc,"1. dnevni izvjestaj                               ")
+    AADD(opcexe,{|| trg_daily_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opc,"2. periodicni izvjestaj")
+    AADD(opcexe,{|| trg_per_rpt( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    AADD(opc,"3. presjek stanja")
+    AADD(opcexe,{|| trg_x_rpt( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+
+    AADD(opc,"------ ostale komande --------------------")
+    AADD(opcexe,{|| .f. })
+    AADD(opc,"5. unos pologa u uredjaj       ")
+    AADD(opcexe,{|| trg_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opc,"6. stampanje duplikata       ")
+    AADD(opcexe,{|| trg_double( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opc,"7. zatvori (ponisti) racun ")
+    AADD(opcexe,{|| trg_close_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    AADD(opc,"8. inicijalizacija ")
+    AADD(opcexe,{|| trg_init( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+    	"1", "" ) })
+    AADD(opc,"10. reset zahtjeva na PU serveru ")
+    AADD(opcexe,{|| trg_reset( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+
 
   // ostali uredjaji
   otherwise
