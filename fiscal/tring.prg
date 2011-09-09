@@ -200,8 +200,8 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
 	    xml_node("JM", PADR( cRoba_jmj, 2 ) )
 	    xml_node("Cijena", show_number( nCijena, PIC_CIJENA ) )
 	    xml_node("Stopa", cStopa )
-	    xml_node("Grupa", cGrupa )
-	    xml_node("PLU", cPLU )
+	    //xml_node("Grupa", cGrupa )
+	    //xml_node("PLU", cPLU )
 
 	  xml_subnode("artikal", .t.)
 
@@ -237,7 +237,7 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
       xml_subnode("VrstaPlacanja", .f.)
 
          xml_node("Oznaka", cVr_placanja ) 
-         xml_node("Iznos", show_number( nVr_placanja, PIC_VRIJEDNOST ) )
+         xml_node("Iznos", ALLTRIM(STR(nVr_placanja)) )
 
       xml_subnode("VrstaPlacanja", .t.)
     xml_subnode("VrstePlacanja", .t.)
