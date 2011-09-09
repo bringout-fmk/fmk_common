@@ -102,6 +102,7 @@ local nRabat
 local lKupac := .f.
 local nErr_no := 0
 local cSt_rn := ""
+local nTrigg
 
 // stampanje racuna
 cVr_zahtjeva := "0"
@@ -123,15 +124,21 @@ endif
 // to je zapravo broj racuna !!!
 cBr_zahtjeva := aData[1, 1]
 
+nTrigg := 1
+
 // putanja do izlaznog xml fajla
 if lStorno == .t.
 	cFName := trg_filename( _tr_rrac )
+	nTrigg := 2
 else
 	cFName := trg_filename( _tr_rac )
 endif
 
 // c:\tring\xml\sfr.001
 cXML := cFPath + cFName
+
+// brisi answer
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -160,7 +167,7 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
     
   	xml_subnode("Kupac", .f.)
 
-	  xml_node("IdBroj", aKupac[1, 1] )
+	  xml_node("IDBroj", aKupac[1, 1] )
 	  xml_node("Naziv", strkzn( aKupac[1, 2], "8", "U" ) )
 	  xml_node("Adresa", strkzn( aKupac[1, 3], "8", "U" ) )
 	  xml_node("PostanskiBroj", aKupac[1, 4] )
@@ -261,6 +268,7 @@ local cXml
 local cBr_zahtjeva := "0"
 local cVr_zahtjeva := "7"
 local nCash := 0
+local nTrigg := 6 
 
 Box(,1,50)
 	@ m_x + 1, m_y + 2 SAY "Unesi polog:" GET nCash ;
@@ -278,8 +286,11 @@ if nCash < 0
 	// ovo je povrat
 	cVr_zahtjeva := "8"
 	cF_out := trg_filename( _tr_p_out )
+	nTrigg := 7
 endif
 
+// brisi answer
+trg_d_answ( nTrigg )
 
 // c:\tring\xml\unosnovca.001
 cXML := cFPath + cF_out
@@ -318,6 +329,7 @@ local cXml
 local cBr_zahtjeva := "0"
 local cVr_zahtjeva := "3"
 local nFisc_no := 0
+local nTrigg := 8
 
 Box(,1,50)
 	@ m_x + 1, m_y + 2 SAY "Duplikat racuna:" GET nFisc_no
@@ -332,6 +344,9 @@ cF_out := trg_filename( _tr_dbl )
 
 // c:\tring\xml\stampatiperiodicniizvjestaj.001
 cXML := cFPath + cF_out
+
+// brisi answer
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -365,6 +380,7 @@ local cDatumOd := ""
 local cDatumDo := ""
 local dD_od := DATE()-30
 local dD_do := DATE()
+local nTrigg := 4
 
 Box(,1,50)
 	@ m_x + 1, m_y + 2 SAY "Od datuma:" GET dD_od
@@ -379,6 +395,9 @@ cF_out := trg_filename( _tr_prep )
 
 // c:\tring\xml\stampatiperiodicniizvjestaj.001
 cXML := cFPath + cF_out
+
+// brisi answer
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -418,11 +437,15 @@ return
 function trg_reset( cFPath, cFName )
 local cF_out
 local cXml
+local nTrigg := 9
 
 cF_out := trg_filename( _tr_x )
 
 // c:\tring\xml\reset.001
 cXML := cFPath + cF_out
+
+// brisi answer
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -444,11 +467,15 @@ return
 function trg_init( cFPath, cFName, cOper, cPwd )
 local cF_out
 local cXml
+local nTrigg := 10
 
 cF_out := trg_filename( _tr_init )
 
 // c:\tring\xml\inicijalizacija.001
 cXML := cFPath + cF_out
+
+// brisi answer
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -480,11 +507,15 @@ local cF_out
 local cXml
 local cBr_zahtjeva := "0"
 local cVr_zahtjeva := "9"
+local nTrigg := 11
 
 cF_out := trg_filename( _tr_crac )
 
 // c:\tring\xml\prekiniracun.001
 cXML := cFPath + cF_out
+
+// brisi out
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -514,11 +545,14 @@ local cF_out
 local cXml
 local cBr_zahtjeva := "0"
 local cVr_zahtjeva := "3"
+local nTrigg := 5 
 
 cF_out := trg_filename( _tr_xrpt )
 
 // c:\tring\xml\stampatidnevniizvjestaj.001
 cXML := cFPath + cF_out
+
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -548,6 +582,7 @@ local cF_out
 local cXml
 local cBr_zahtjeva := "0"
 local cVr_zahtjeva := "4"
+local nTrigg := 3
 
 if Pitanje(,"Stampati dnevni izvjestaj", "D") == "N"
 	return
@@ -557,6 +592,8 @@ cF_out := trg_filename( _tr_drep )
 
 // c:\tring\xml\stampatidnevniizvjestaj.001
 cXML := cFPath + cF_out
+
+trg_d_answ( nTrigg )
 
 // otvori xml
 open_xml( cXml )
@@ -584,8 +621,8 @@ return
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
 function trg_d_out( nTrigger )
-
-cF_path := ALLTRIM( gFc_path ) + trg_filename( nTrigger )
+local cTrig := trg_trig( nTrigger ) 
+cF_path := ALLTRIM( gFc_path ) + trg_filename( cTrig )
 
 if FILE( cF_path )
 	if FERASE( cF_path ) <> 0
@@ -599,9 +636,10 @@ return
 // brise fajlove iz direktorija odgovora
 // ----------------------------------------------
 function trg_d_answ( nTrigger )
+local cTrig := trg_trig( nTrigger )
 
 cF_path := ALLTRIM( gFc_path ) + ;
-	_d_answer + SLASH + trg_filename( nTrigger )
+	_d_answer + SLASH + trg_filename( cTrig )
 
 if FILE( cF_path )
 	if FERASE( cF_path ) <> 0
