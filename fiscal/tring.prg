@@ -167,11 +167,11 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
     
   	xml_subnode("Kupac", .f.)
 
-	  xml_node("IDBroj", aKupac[1, 1] )
-	  xml_node("Naziv", strkzn( aKupac[1, 2], "8", "U" ) )
-	  xml_node("Adresa", strkzn( aKupac[1, 3], "8", "U" ) )
+	  xml_node("IDbroj", aKupac[1, 1] )
+	  xml_node("Naziv", strkznutf8( aKupac[1, 2], "8" ) )
+	  xml_node("Adresa", strkznutf8( aKupac[1, 3], "8" ) )
 	  xml_node("PostanskiBroj", aKupac[1, 4] )
-	  xml_node("Grad", strkzn( aKupac[1, 5], "8", "U" ) )
+	  xml_node("Grad", strkznutf8( aKupac[1, 5], "8" ) )
   	
 	xml_subnode("Kupac", .t.)	
 
@@ -195,9 +195,9 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
 	
 	  xml_subnode("artikal", .f.)
 	
-	    xml_node("Sifra", cRoba_id )
-	    xml_node("Naziv", strkzn( cRoba_naz , "8", "U" ) )
-	    xml_node("JM", PADR( cRoba_jmj, 2 ) )
+	    xml_node("Sifra", cPLU )
+	    xml_node("Naziv", strkznutf8( cRoba_naz , "8" ) )
+	    xml_node("JM", strkznutf8( PADR( cRoba_jmj, 2 ), "8" ) )
 	    xml_node("Cijena", show_number( nCijena, PIC_CIJENA ) )
 	    xml_node("Stopa", cStopa )
 	    //xml_node("Grupa", cGrupa )
@@ -225,7 +225,7 @@ xml_subnode("RacunZahtjev " + __xml_head, .f.)
 
     cVr_pl := ALLTRIM( aData[1, 13] )
 
-    if cVr_pl == "3"
+    if cVr_pl == "3" .and. lStorno == .f.
        cVr_placanja := _g_v_plac( 2 )
     else
        cVr_placanja := _g_v_plac( 0 )
