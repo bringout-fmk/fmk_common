@@ -424,6 +424,7 @@ local cTipDok := "FAKTURA br. "
 local cBrDok
 local cBrNar
 local cBrOtp
+local cFiscal
 
 drn_open()
 select drn
@@ -445,6 +446,7 @@ cKIdBroj:=get_dtxt_opis("K03")
 //cKBrRjes:=get_dtxt_opis("K06")
 //cKBrUpisa:=get_dtxt_opis("K07")
 cKMjesto:=get_dtxt_opis("K10")+", " + get_dtxt_opis("K11")
+cFiscal:=ALLTRIM( get_dtxt_opis("O10") )
 
 aKupac:=Sjecistr(cKNaziv,30)
 
@@ -481,6 +483,12 @@ P_COND
 //? cRazmak
 //?? padc("Br.sud.Rj: " + cKBrRjes, 30)
 //?? padc("Br.upisa: " + cKBrUpisa, 30)
+
+if !EMPTY( cFiscal ) .and. cFiscal <> "0"
+	P_COND
+	? cRazmak
+	?? SPACE(12) + "Broj fiskalnog racuna: " + ALLTRIM(cFiscal)
+endif
 
 P_10CPI
 
