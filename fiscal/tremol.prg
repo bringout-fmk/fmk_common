@@ -211,6 +211,27 @@ close_xml()
 return nErr_no
 
 
+// restart tremol fp server
+function trm_restart()
+local cScr
+private cR_scr := ""
+
+if gFc_restart == "N"
+	return .f.
+endif
+
+cR_scr := "start " + EXEPATH + "fp_rest.bat"
+
+save screen to cScr
+clear screen
+
+? "Restartujem server..."
+run &cR_scr
+
+restore screen from cScr
+return .f.
+
+
 // ----------------------------------------------
 // brise fajlove iz ulaznog direktorija
 // ----------------------------------------------
@@ -670,6 +691,7 @@ local lOut := .t.
 local cTmp
 local nTime
 local cAnswer := ""
+local nRCnt := 0
 
 if nTimeOut == nil
 	nTimeOut := gFC_tout
@@ -688,6 +710,17 @@ Box(,1,50)
 do while nTime > 0
 	
 	-- nTime
+	
+	// provjeri kada bude trecina vremena...
+	if nTime = ( gFc_tout * 0.7 ) .and. nRCnt = 0
+		if Pitanje(,"Restartovati server", "D") == "D"
+			// pokreni restart proceduru
+			trm_restart()
+			// restartuj vrijeme
+			nTime := gFc_tout
+			++ nRCnt 
+		endif
+	endif
 
 	if FILE( cTmp )
 		// fajl se pojavio - izadji iz petlje !
