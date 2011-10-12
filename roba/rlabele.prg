@@ -134,6 +134,7 @@ aDBf:={}
 AADD(aDBf,{ 'idRoba'		, 'C', 10, 0 })
 AADD(aDBf,{ 'naz'		, 'C', 40, 0 })
 AADD(aDBf,{ 'idTarifa'		, 'C',  6, 0 })
+AADD(aDBf,{ 'barkod'		, 'C', 20, 0 })
 AADD(aDBf,{ 'evBr'		, 'C', 10, 0 })
 AADD(aDBf,{ 'cijena'		, 'N', 10, 2 })
 AADD(aDBf,{ 'sCijena'		, 'N', 10, 2 })
@@ -210,6 +211,12 @@ do while ( !eof() .and. cDok == ( field->idFirma + field->idVd + ;
 		_naz := LEFT(roba->naz, 40)
 		_idTarifa := pripr->idTarifa
 		_evBr := pripr->brDok
+
+		if roba->(FIELDPOS("barkod")) <> 0
+			if !EMPTY( roba->barkod )
+				_barkod := roba->barkod
+			endif
+		endif
 		
 		if (pripr->idVd=="19")
 			_cijena:=pripr->mpcSaPP+pripr->fCj
