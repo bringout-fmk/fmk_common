@@ -8,8 +8,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_FA_VERZIJA "03.61"
-#define D_FA_PERIOD  "11.94-28.09.11"
+#define D_FA_VERZIJA "03.62"
+#define D_FA_PERIOD  "11.94-19.10.11"
 #ifndef FMK_DEFINED
 	#include "fmk.ch"
 #endif
