@@ -220,6 +220,7 @@ endif
 
 if lReset = .t. .and. !lSilent
 	if !SigmaSif("RESET")
+		msgbeep("Unesena pogresna sifra !")
 		select (nTArea)
 		return nGenPlu
 	endif
@@ -230,6 +231,10 @@ if nDevice = 0
 	WPar( "ap", nGenPlu )
 else
 	WPar( "a" + ALLTRIM(STR(nDevice)), nGenPlu )
+endif
+
+if !lSilent
+	msgbeep("Setovan pocetni PLU na: " + ALLTRIM(STR(nGenPlu)))
 endif
 
 select (nTArea)

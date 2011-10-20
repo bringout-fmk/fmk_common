@@ -112,6 +112,8 @@ do case
     AADD(opc,"8. izbaci stanje racuna    ")
     AADD(opcexe,{|| hcp_fisc_no( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFC_error ) })
+    AADD(opc,"11. reset PLU ")
+    AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
 
 
     // za TREMOL uredjaje
@@ -152,6 +154,9 @@ do case
     AADD(opc,"P. polog u uredjaj    ")
     AADD(opcexe,{|| trm_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
+    
+    AADD(opc,"11. reset PLU ")
+    AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
 
   case ALLTRIM(gFc_type) == "TRING" 
     
@@ -177,6 +182,9 @@ do case
     	"1", "" ) })
     AADD(opc,"10. reset zahtjeva na PU serveru ")
     AADD(opcexe,{|| trg_reset( ALLTRIM(gFc_path), ALLTRIM(gFc_name) ) })
+    
+    AADD(opc,"11. reset PLU ")
+    AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
 
 
   // ostali uredjaji
