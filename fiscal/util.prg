@@ -233,7 +233,7 @@ else
 	WPar( "a" + ALLTRIM(STR(nDevice)), nGenPlu )
 endif
 
-if !lSilent
+if lReset = .t. .and. !lSilent
 	msgbeep("Setovan pocetni PLU na: " + ALLTRIM(STR(nGenPlu)))
 endif
 
