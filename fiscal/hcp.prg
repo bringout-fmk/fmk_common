@@ -573,12 +573,16 @@ local cRet := "-"
 
 do case 
 	case nId = 0
+		// gotovina
 		cRet := "0"
 	case nId = 1
+		// kartica
 		cRet := "1"		
 	case nId = 2
+		// cek
 		cRet := "2"
 	case nId = 3
+		// vaucer
 		cRet := "3"
 
 endcase
