@@ -22,6 +22,7 @@ static _tr_cmd := "CMD"
 static _tr_plu := "PLU"
 static _tr_txt := "TXT"
 static _tr_rcp := "RCP"
+static _tr_cli := "CLIENTS.XML"
 
 // min/max vrijednosti
 static MAX_QT := 99999.999
@@ -84,6 +85,10 @@ local nErr_no := 0
 local cOperacija := ""
 local cCmd := ""
 
+if aKupac <> nil .and. LEN( aKupac ) > 0
+	lKupac := .t.
+endif
+
 // brisi tmp fajlove ako su ostali...
 hcp_d_tmp()
 
@@ -107,16 +112,15 @@ if lStorno = .t.
 endif
 
 // programiraj artikal prije nego izdas racun
-//if !lStorno
-	nErr_no := fc_hcp_plu( cFPath, cFName, aData, cError )
+nErr_no := fc_hcp_plu( cFPath, cFName, aData, cError )
 
-	if nErr_no > 0
-		return nErr_no
-	endif
-//endif
+// programiraj klijenta prije nego izdas racun
+if lKupac = .t.
+	nErr_no := fc_hcp_cli( cFPath, cFName, aKupac, cError )
+endif
 
-if aKupac <> nil .and. LEN( aKupac ) > 0
-	lKupac := .t.
+if nErr_no > 0
+	return nErr_no
 endif
 
 if lKupac = .t.
@@ -661,7 +665,12 @@ do case
 		// odredjuje PLU ili CLI ili RCP na osnovu trigera
 		cRet := STRTRAN( cF_name, "TR$", cTriger )
 		cRet := UPPER( cRet )
-	
+		
+		// ako su klijenti onda daj puni naziv
+		if "CLIENT" $ cTriger 
+			cRet := cTriger
+		endif
+
 	otherwise 
 		// ono sta je navedeno u parametrima
 		cRet := cF_name
