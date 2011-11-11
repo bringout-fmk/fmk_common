@@ -129,6 +129,12 @@ if lKupac = .t.
 	// ....
 	cIBK := aKupac[1, 1]
 	cCmd := _on_partn( cIBK )
+	
+	nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )	
+	
+	if nErr_no > 0
+		return nErr_no
+	endif
 
 endif
 
@@ -428,7 +434,7 @@ local cXML
 local cBr_zahtjeva 
 local nErr_no := 0
 
-cCmd := 'TXT="POS RN: ' + ALLTRIM( cBrDok ) + '"'
+cCmd := 'TXT="Racun: ' + ALLTRIM( cBrDok ) + '"'
 
 cBr_zahtjeva := "0"
 cFName := hcp_filename( cBr_zahtjeva, _tr_txt )
