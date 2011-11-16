@@ -197,10 +197,22 @@ endcase
 
 Menu_SC("izvf")
 
-
-
 return
 
 
+
+// kopija fiskalnog racuna
+function fisc_rn_kopija()
+
+do case 
+
+  case ALLTRIM(gFc_type) == "FPRINT"
+      fp_double( ALLTRIM(gFC_path), ALLTRIM(gFC_name) )
+  case ALLTRIM(gFc_type) == "HCP"
+      hcp_rn_copy( ALLTRIM(gFC_path), ALLTRIM(gFC_name), gFc_error )
+
+endcase
+
+return
 
 
