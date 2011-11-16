@@ -110,8 +110,13 @@ do case
     AADD(opcexe,{|| hcp_s_cmd( ALLTRIM(gFC_path) ) })
     
     AADD(opc,"8. izbaci stanje racuna    ")
-    AADD(opcexe,{|| hcp_fisc_no( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
-    			gFC_error ) })
+    AADD(opcexe,{|| hcp_fisc_no( ALLTRIM(gFC_path), ;
+    				ALLTRIM(gFC_name), ;
+    				gFC_error, .f. ) , ;
+			hcp_fisc_no( ALLTRIM(gFc_path), ;
+				ALLTRIM(gFC_name), ;
+				gFc_error, .t. ) })
+
     AADD(opc,"11. reset PLU ")
     AADD(opcexe,{|| auto_plu( .t., nil, nDevice ) })
 

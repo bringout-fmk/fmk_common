@@ -784,10 +784,14 @@ return
 // -----------------------------------------------------
 // vraca broj fiskalnog racuna
 // -----------------------------------------------------
-function hcp_fisc_no( cFPath, cFName, cError )
+function hcp_fisc_no( cFPath, cFName, cError, lStorno )
 local cCmd
 local nFisc_no := 0
 local cFState := "BILL_S~1.XML"
+
+if lStorno == nil
+	lStorno := .f.
+endif
 
 // posalji komandu za stanje fiskalnog racuna
 cCmd := 'CMD="RECEIPT_STATE"'
@@ -796,7 +800,7 @@ nErr := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_cmd )
 // ako nema gresaka, iscitaj broj racuna
 if nErr = 0
 	// e sada iscitaj iz fajla
-	nFisc_no := hcp_r_bst( cFPath, cFState, gFC_tout )
+	nFisc_no := hcp_r_bst( cFPath, cFState, gFC_tout, lStorno )
 endif
 
 return nFisc_no
@@ -994,7 +998,7 @@ return
 // 
 // nTimeOut - time out fiskalne operacije
 // ------------------------------------------------
-function hcp_r_bst( cFPath, cFName, nTimeOut )
+function hcp_r_bst( cFPath, cFName, nTimeOut, lStorno )
 local nErr := 0
 local cF_name
 local i
@@ -1005,6 +1009,12 @@ local aBillState
 local aBillData
 local nTime 
 local cLine
+local cScanWhat 
+local cMessage
+
+if lStorno == nil
+	lStorno := .f.
+endif
 
 nTime := nTimeOut
 
@@ -1061,7 +1071,13 @@ for i:=1 to nBrLin
 
 	aBillData := TokToNiz( cLine, " " )
 
-	nScan := ASCAN( aBillData, { |xvar| "RECEIPT_NUMBER" $ xvar } )
+	cScanWhat := "RECEIPT_NUMBER"
+
+	if lStorno = .t.
+		cScanWhat := "REFOUND_RECEIPT_NUMBER"
+	endif
+
+	nScan := ASCAN( aBillData, { |xvar| cScanWhat $ xvar } )
 	
 	if nScan > 0
 		
@@ -1069,7 +1085,13 @@ for i:=1 to nBrLin
 		
 		nFisc_no := VAL( aReceipt[2] )
 
-		msgbeep("Formiran fiskalni racun: " + ALLTRIM( STR( nFisc_no) ))
+		cMessage := "Formiran "
+		if lStorno = .t.
+			cMessage += "rekl."
+		endif
+		cMessage += "fiskalni racun: "
+
+		msgbeep( cMessage + ALLTRIM( STR( nFisc_no) ) )
 		
 		exit
 
@@ -1170,8 +1192,6 @@ if !EMPTY( cErrCode )
 	nErr := VAL( cErrCode )
 	FERASE( cF_name )
 endif
-
-
 
 return nErr
 
