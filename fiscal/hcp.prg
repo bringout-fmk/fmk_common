@@ -23,6 +23,7 @@ static _tr_plu := "PLU"
 static _tr_txt := "TXT"
 static _tr_rcp := "RCP"
 static _tr_cli := "CLIENTS.XML"
+static _tr_foo := "FOOTER.XML"
 
 // min/max vrijednosti
 static MAX_QT := 99999.999
@@ -84,6 +85,7 @@ local lKupac := .f.
 local nErr_no := 0
 local cOperacija := ""
 local cCmd := ""
+local aFooter
 
 if aKupac <> nil .and. LEN( aKupac ) > 0
 	lKupac := .t.
@@ -114,6 +116,10 @@ endif
 // programiraj artikal prije nego izdas racun
 nErr_no := fc_hcp_plu( cFPath, cFName, aData, cError )
 
+if nErr_no > 0
+	return nErr_no
+endif
+
 // programiraj klijenta prije nego izdas racun
 if lKupac = .t.
 	nErr_no := fc_hcp_cli( cFPath, cFName, aKupac, cError )
@@ -140,6 +146,22 @@ endif
 
 // to je zapravo broj racuna !!!
 cBr_zahtjeva := aData[1, 1]
+
+// posalji footer komandu
+aFooter := {}
+AADD( aFooter, { "Broj rn: " + cBr_zahtjeva } )
+
+nErr_no := fc_hcp_footer( cFPath, cFName, aFooter, cError )
+if nErr_no > 0
+	return nErr_no
+endif
+
+cCmd := _off_footer()	
+nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_foo )	
+	
+if nErr_no > 0
+	return nErr_no
+endif
 
 cFName := hcp_filename( cBr_zahtjeva, _tr_rcp )
 
@@ -254,12 +276,6 @@ if cError == "D"
 	endif
 endif
 
-if gFc_nftxt == "D"
-	// ispis nefiskalnog teksta
-	// veza broj racuna
-	nErr_no := fc_hcp_txt( cFPath, cFName, cBr_Zahtjeva, cError )  
-endif
-
 return nErr_no
 
 
@@ -284,6 +300,59 @@ msgc()
 return
 
 
+// -------------------------------------------------------------------
+// hcp programiranje footer
+// -------------------------------------------------------------------
+function fc_hcp_footer( cFPath, cFName, aFooter, cError )
+local cXML
+local cBr_zahtjeva 
+local nErr_no := 0
+
+cBr_zahtjeva := "0"
+cFName := hcp_filename( cBr_zahtjeva, _tr_foo )
+
+// putanja do izlaznog xml fajla
+cXML := cFPath + _inp_dir + SLASH + cFName
+
+// otvori xml
+open_xml( cXml )
+
+// upisi header
+xml_head()
+
+xml_subnode("FOOTER")
+
+for i:=1 to LEN( aFooter )
+	
+
+	cTmp := 'TEXT="' + aFooter[i, 1] + '"'
+	cTmp += ' '
+	cTmp += 'BOLD="false"'
+
+	xml_snode( "DATA", cTmp )
+
+next
+
+xml_subnode("FOOTER", .t.)
+
+close_xml()
+
+// kreiraj triger cmd.ok
+c_cmdok( cFPath )
+
+if cError == "D"
+	// provjeri greske...
+	// nErr_no := ...
+	if _read_ok( cFPath, cFName ) = .f.
+		
+		// procitaj poruku greske
+		nErr_no := hcp_r_error( cFPath, cFName, gFc_tout, _tr_foo )
+
+	endif
+
+endif
+
+return nErr_no
 
 
 
@@ -557,6 +626,16 @@ cCmd := 'CMD="REFUND_OFF"'
 
 return cCmd
 
+// -------------------------------------------------
+// iskljuci zadnji footer
+// -------------------------------------------------
+static function _off_footer()
+local cCmd 
+
+cCmd := 'CMD="FOOTER_OFF"'
+
+return cCmd
+
 
 // -------------------------------------------------
 // ukljuci racun za klijenta
@@ -677,7 +756,7 @@ do case
 		cRet := UPPER( cRet )
 		
 		// ako su klijenti onda daj puni naziv
-		if "CLIENT" $ cTriger 
+		if ".XML" $ cTriger 
 			cRet := cTriger
 		endif
 
