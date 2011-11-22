@@ -144,23 +144,26 @@ if lKupac = .t.
 
 endif
 
-// to je zapravo broj racuna !!!
-cBr_zahtjeva := aData[1, 1]
-
-// posalji footer komandu
-aFooter := {}
-AADD( aFooter, { "Broj rn: " + cBr_zahtjeva } )
-
-nErr_no := fc_hcp_footer( cFPath, cFName, aFooter, cError )
-if nErr_no > 0
-	return nErr_no
-endif
-
+// posalji komandu za ciscenje footer-a
 cCmd := _off_footer()	
 nErr_no := fc_hcp_cmd( cFPath, cFName, cCmd, cError, _tr_foo )	
 	
 if nErr_no > 0
 	return nErr_no
+endif
+
+// to je zapravo broj racuna !!!
+cBr_zahtjeva := aData[1, 1]
+
+if gFc_nftxt == "D"
+	// posalji footer komandu
+ 	aFooter := {}
+ 	AADD( aFooter, { "Broj rn: " + cBr_zahtjeva } )
+
+ 	nErr_no := fc_hcp_footer( cFPath, cFName, aFooter, cError )
+ 	if nErr_no > 0
+		return nErr_no
+ 	endif
 endif
 
 cFName := hcp_filename( cBr_zahtjeva, _tr_rcp )
