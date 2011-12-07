@@ -190,7 +190,7 @@ nVr_placanja := 0
     cVr_placanja := _g_v_plac( VAL( aData[1, 13] ) )
     nVr_placanja := aData[ 1, 14 ]
 
-    if aData[1, 13] <> "0"
+    if aData[1, 13] <> "0" .and. !lStorno
 
     	cTmp := 'Type="' + cVr_placanja + '"'
     	cTmp += _razmak1 + 'Amount="' + ALLTRIM( STR(nVr_placanja,12,2)) + '"'
