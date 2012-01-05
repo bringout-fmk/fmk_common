@@ -174,6 +174,10 @@ if lSetParams .and. g_ug_params(@dDatObr, @dDatGen, @dDatVal, @dDatLUpl, @cKtoDu
 endif
 
 // otvori i fakt
+O_TARIFA
+O_SIFK
+O_SIFV
+O_ROBA
 O_FAKT
 O_PRIPR
 
@@ -239,8 +243,6 @@ cFaktDo := ""
 
 // precesljaj ugovore u UGOV
 do while !EOF()
-
-	altd()
 
 	// da li ima stavki za fakturisanje ???
 	if !ima_u_rugov( ugov->id, cIdArt )
