@@ -2,8 +2,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_RN_VERZIJA "03.04"
-#define D_RN_PERIOD "06.06-21.12.10"
+#define D_RN_VERZIJA "03.05"
+#define D_RN_PERIOD "06.06-05.01.12"
 
 #ifndef FMK_DEFINED
 	#include "fmk.ch"
