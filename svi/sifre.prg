@@ -98,6 +98,13 @@ else
 	AADD(opcexe, {|| MsgBeep(cZabrana)})
 endif
 
+AADD(opc,"11. vrste placanja")  
+if (ImaPravoPristupa("FMK","SIF","SIFKOPEN"))
+	AADD(opcexe, {|| P_VrsteP() } )
+else
+	AADD(opcexe, {|| MsgBeep(cZabrana)})
+endif
+
 if (IsRamaGlas() .or.  gModul=="FAKT".and. glRadNal )
 	AADD(opc, "R. radni nalozi")  
 	AADD(opcexe, {|| P_RNal() } )
