@@ -33,7 +33,7 @@ P_COND
 // prvo mi ispisi kontrolne zapise
 for i := 1 to LEN( a_ctrl )
 	? PADR( a_ctrl[ i, 1 ], 14 )
-	@ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 2 ], 15, 2 )
+	@ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 2 ], 15, 0 )
 	@ prow(), pcol() + 1 SAY STR( a_ctrl[ i, 3 ], 15, 2 )
 next
 
