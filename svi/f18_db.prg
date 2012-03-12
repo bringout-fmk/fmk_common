@@ -88,25 +88,25 @@ O_VALUTE
 O_KONCIJ
 
 select roba
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
 
 select partn
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
 
 select konto
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
 
 select ops
-set order to tag "1"
+set order to tag "ID"
 go top
 
 f18_sif_check( @data, @checksum )
