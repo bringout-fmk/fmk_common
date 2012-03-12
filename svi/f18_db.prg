@@ -118,7 +118,7 @@ return
 // ------------------------------------------
 // provjera sifrarnika 
 // ------------------------------------------
-static function f18_sif_check( data, checksum )
+function f18_sif_check( data, checksum )
 local _chk := "x-x"
 local _scan
 local _stavke := 0
