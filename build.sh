@@ -9,6 +9,7 @@ do
 
 cd $item
 make clean
-make ..
+make 
+cd ..
 
 done
