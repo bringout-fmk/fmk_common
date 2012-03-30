@@ -200,7 +200,7 @@ nVr_placanja := 0
     endif
 
     // dodatna linija, broj veznog racuna
-    cTmp := 'Message="Vezni racun: ' + cBr_zahtjeva + '"'
+    cTmp := 'Message="Vez.rn: ' + ALLTRIM( cBr_zahtjeva ) + '"'
 
     xml_snode( "AdditionalLine", cTmp )	
 
