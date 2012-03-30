@@ -7,6 +7,7 @@ ITEMS="message  bterm  partnst  security pi  svi proizv event rabat/1g ugov exp_
 for item in $ITEMS
 do
 
+echo $item
 cd $item
 #make clean
 make 
