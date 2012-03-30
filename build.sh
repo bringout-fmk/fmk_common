@@ -10,5 +10,6 @@ do
 cd $item
 #make clean
 make 
+cd ..
 
 done
