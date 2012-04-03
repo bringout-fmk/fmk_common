@@ -125,8 +125,6 @@ if cSamoBezSast=="D"
 
 else
 
-	altd()
-
 	select sast
 
 	if len(aUsl1)<>0
