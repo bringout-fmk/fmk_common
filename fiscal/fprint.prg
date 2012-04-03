@@ -874,8 +874,8 @@ for i := 1 to LEN( aData )
 	cTmp += ALLTRIM( STR( aData[i, 9] ) )
 	cTmp += cSep
 	
-	// kolicina 0-99999.99
-	cTmp += ALLTRIM(STR( aData[i, 6], 12, 2 ))
+	// kolicina 0-99999.999
+	cTmp += ALLTRIM(STR( aData[i, 6], 12, 3 ))
 	cTmp += cSep
 
 	// popust 0-99.99%
