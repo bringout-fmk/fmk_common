@@ -170,6 +170,13 @@ local lRet := .t.
 
 if nQtty > MAX_QT .or. nQtty < MIN_QT
 	lRet := .f.
+	return .f.
+endif
+
+// provjeri i decimale
+if ABS(nQtty) - ABS( VAL( STR( nQtty, 12, 3 ) ) ) <> 0 
+	lRet := .f.
+	return .f.
 endif
 
 return lRet
