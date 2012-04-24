@@ -211,14 +211,17 @@ nVr_placanja := 0
 
     xml_snode( "AdditionalLine", cTmp )	
 
-xml_subnode("TremolFpServer", .t.)
+xml_subnode( "TremolFpServer", .t. )
 
 close_xml()
 
 if gFc_tmpxml == "D"
+
 	// nakon sto je zavrsio treba napraviti 
 	// rename u pravu ekstenziju
-	_tmp_2_xml( cXML, cFName )
+
+	nErr_no := _tmp_2_xml( cXML, cFName )
+
 endif
 
 return nErr_no
@@ -242,19 +245,43 @@ return _ret
 static function _tmp_2_xml( xml_file, file_name )
 local _ext := RIGHT( ALLTRIM( file_name ), 4 )
 local _file := ""
+local _time := 30
 
 _file := STRTRAN( xml_file, ".tmp", _ext )
 
-if FRENAME( xml_file, _file ) == -1
-	msgbeep("Nisam uspio odraditi rename fajla !")
+// provjeri da li postoji fajl koji treba da napravim ?
+if FILE( _file )
+	
+	Box(, 1, 70 )
+	
+	do while .t.
+
+		-- _time
+		sleep(1)
+
+		@ m_x + 1, m_y + 2 SAY "Cekam na rename fajla... " + ;
+				PADL( ALLTRIM( STR( _time ) ), 3, "" ) + ;
+				" pritisni ESC za prekid"
+		if !FILE( _file )
+			exit
+		endif
+
+		if _time == 0 .or. LastKey() == K_ESC
+			BoxC()
+			MsgBeep( "Ne mogu uraditi rename fajla !")
+			return -1
+		endif
+
+	enddo
+
+	BoxC()
 endif
 
-//COPY FILE ( xml_file ) TO ( _file )
-//if FILE( _file )
-//	FERASE( xml_file )
-//endif
+if FRENAME( xml_file, _file ) == -1
+	msgbeep("FRENAME() cmd error !!!")
+endif
 
-return
+return 1
 
 
 // restart tremol fp server
@@ -362,7 +389,7 @@ xml_subnode("/TremolFpServer")
 close_xml()
 
 if gFc_tmpxml == "D"
-	_tmp_2_xml( cXML, cFName )
+	nErr_no := _tmp_2_xml( cXML, cFName )
 endif
 
 return nErr_no
@@ -414,10 +441,16 @@ xml_subnode("/TremolFpServer")
 close_xml()
 
 if gFC_tmpxml == "D"
-	_tmp_2_xml( cXML, cFName )
+
+	nErr_no := _tmp_2_xml( cXML, cFName )
+	if nErr_no < 0
+		return nErr_no
+	endif
+
 endif
 
 if cError == "D"
+
 	// provjeri greske...
 	// nErr_no := ...
 	if _read_out( cFPath, cFName )
@@ -462,7 +495,13 @@ xml_subnode("TremolFpServer " + cCmd )
 close_xml()
 
 if gFC_tmpxml == "D"
-	_tmp_2_xml( cXML, cFName )
+
+	nErr_no := _tmp_2_xml( cXML, cFName )
+
+	if nErr_no < 0
+		return nErr_no
+	endif
+
 endif
 
 if cError == "D"
@@ -615,7 +654,7 @@ cCmd := 'Command="Report" Type="DailyZ" /'
 nErr := fc_trm_cmd( cFPath, cFName, cCmd, cError )
 
 // ako se koristi opcija automatskog pologa
-if gFc_pauto > 0
+if gFc_pauto > 0 .and. nErr >= 0
 	
 	msgo("Automatski unos pologa u uredjaj... sacekajte.")
 	
