@@ -245,11 +245,14 @@ local _file := ""
 
 _file := STRTRAN( xml_file, ".tmp", _ext )
 
-COPY FILE ( xml_file ) TO ( _file )
-
-if FILE( _file )
-	FERASE( xml_file )
+if FRENAME( xml_file, _file ) == -1
+	msgbeep("Nisam uspio odraditi rename fajla !")
 endif
+
+//COPY FILE ( xml_file ) TO ( _file )
+//if FILE( _file )
+//	FERASE( xml_file )
+//endif
 
 return
 
