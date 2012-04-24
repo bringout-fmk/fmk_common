@@ -95,7 +95,7 @@ cFName := trm_filename( cBr_zahtjeva )
 // putanja do izlaznog xml fajla
 // izbaci mu ekstenziju...
 
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 if gFc_tmpxml == "D"
 	cXML := _xml_2_tmp( cXML, cFName )
@@ -336,7 +336,7 @@ cBr_zahtjeva := "0"
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 if gFC_tmpxml == "D"
 	cXML := _xml_2_tmp( cXML, cFName )
@@ -382,7 +382,7 @@ cBr_zahtjeva := "0"
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 if gFC_tmpxml == "D"
 	cXML := _xml_2_tmp( cXML, cFName )
@@ -442,7 +442,7 @@ cBr_zahtjeva := "0"
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
-cXML := cFPath + _inp_dir + SLASH + cFName
+cXML := cFPath + cFName
 
 if gFC_tmpxml == "D"
 	cXML := _xml_2_tmp( cXML, cFName )
@@ -757,7 +757,6 @@ static function _read_out( cFPath, cFName, nTimeOut )
 local lOut := .t.
 local cTmp
 local nTime
-local cAnswer := ""
 local nRCnt := 0
 
 if nTimeOut == nil
@@ -766,11 +765,7 @@ endif
 
 nTime := nTimeOut
 
-if !EMPTY( _answ_dir )
-	cAnswer := _answ_dir + SLASH
-endif
-
-cTmp := cFPath + cAnswer + STRTRAN( cFName, "xml", "out" )
+cTmp := cFPath + STRTRAN( ALLTRIM( cFName ), "xml", "out" )
 
 Box(,1,50)
 
@@ -803,7 +798,7 @@ enddo
 BoxC()
 
 if !FILE( cTmp )
-	msgbeep("Ne postoji fajl odgovora (OUT) !!!!")
+	msgbeep("Ne postoji fajl odgovora#" + cTmp )
 	lOut := .f.
 endif
 
@@ -837,7 +832,7 @@ local cErrCode := ""
 local cErrDesc := ""
 
 // primjer: c:\fiscal\00001.out
-cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "xml", "out" )
+cF_name := cFPath + STRTRAN( ALLTRIM( cFName ), "xml", "out" )
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
 // prikaza greske tipa OUT fajlovi...
