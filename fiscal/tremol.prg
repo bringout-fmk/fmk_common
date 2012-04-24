@@ -770,7 +770,7 @@ if !EMPTY( _answ_dir )
 	cAnswer := _answ_dir + SLASH
 endif
 
-cTmp := cFPath + cAnswer + STRTRAN( cFName, "XML", "OUT" )
+cTmp := cFPath + cAnswer + STRTRAN( cFName, "xml", "out" )
 
 Box(,1,50)
 
@@ -837,7 +837,7 @@ local cErrCode := ""
 local cErrDesc := ""
 
 // primjer: c:\fiscal\00001.out
-cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "XML", "OUT" )
+cF_name := cFPath + _answ_dir + SLASH + STRTRAN( cFName, "xml", "out" )
 
 // ova opcija podrazumjeva da je ukljuèena opcija 
 // prikaza greske tipa OUT fajlovi...
