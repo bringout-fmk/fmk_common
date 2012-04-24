@@ -74,6 +74,7 @@ local cC_name
 local cC_addr
 local cC_city
 local nFisc_no := 0
+local _ext
 
 // pobrisi tmp fajlove i ostalo sto je u input direktoriju
 trm_d_tmp()
@@ -92,7 +93,13 @@ cBr_zahtjeva := aData[1, 1]
 cFName := trm_filename( cBr_zahtjeva )
 
 // putanja do izlaznog xml fajla
+// izbaci mu ekstenziju...
+
 cXML := cFPath + _inp_dir + SLASH + cFName
+
+if gFc_tmpxml == "D"
+	cXML := _xml_2_tmp( cXML, cFName )
+endif
 
 // otvori xml
 open_xml( cXml )
@@ -208,7 +215,43 @@ xml_subnode("TremolFpServer", .t.)
 
 close_xml()
 
+if gFc_tmpxml == "D"
+	// nakon sto je zavrsio treba napraviti 
+	// rename u pravu ekstenziju
+	_tmp_2_xml( cXML, cFName )
+endif
+
 return nErr_no
+
+// --------------------------------------------
+// koriguj xml fajl xml->tmp
+// --------------------------------------------
+static function _xml_2_tmp( xml_file, file_name )
+local _ret
+local _ext := RIGHT( ALLTRIM( file_name ), 4 )
+
+_ret := STRTRAN( xml_file, _ext, ".tmp" )
+
+return _ret
+
+
+
+// ------------------------------------------
+// odradi move xml fajla
+// ------------------------------------------
+static function _tmp_2_xml( xml_file, file_name )
+local _ext := RIGHT( ALLTRIM( file_name ), 4 )
+local _file := ""
+
+_file := STRTRAN( xml_file, ".tmp", _ext )
+
+COPY FILE ( xml_file ) TO ( _file )
+
+if FILE( _file )
+	FERASE( xml_file )
+endif
+
+return
 
 
 // restart tremol fp server
@@ -295,6 +338,10 @@ cFName := trm_filename( cBr_zahtjeva )
 // putanja do izlaznog xml fajla
 cXML := cFPath + _inp_dir + SLASH + cFName
 
+if gFC_tmpxml == "D"
+	cXML := _xml_2_tmp( cXML, cFName )
+endif
+
 // otvori xml
 open_xml( cXml )
 
@@ -310,6 +357,10 @@ xml_snode("Cash", cCmd )
 xml_subnode("/TremolFpServer")
 
 close_xml()
+
+if gFc_tmpxml == "D"
+	_tmp_2_xml( cXML, cFName )
+endif
 
 return nErr_no
 
@@ -333,6 +384,10 @@ cFName := trm_filename( cBr_zahtjeva )
 // putanja do izlaznog xml fajla
 cXML := cFPath + _inp_dir + SLASH + cFName
 
+if gFC_tmpxml == "D"
+	cXML := _xml_2_tmp( cXML, cFName )
+endif
+
 // otvori xml
 open_xml( cXml )
 
@@ -354,6 +409,10 @@ xml_snode("DirectIO", cCmd )
 xml_subnode("/TremolFpServer")
 
 close_xml()
+
+if gFC_tmpxml == "D"
+	_tmp_2_xml( cXML, cFName )
+endif
 
 if cError == "D"
 	// provjeri greske...
@@ -385,6 +444,10 @@ cFName := trm_filename( cBr_zahtjeva )
 // putanja do izlaznog xml fajla
 cXML := cFPath + _inp_dir + SLASH + cFName
 
+if gFC_tmpxml == "D"
+	cXML := _xml_2_tmp( cXML, cFName )
+endif
+
 // otvori xml
 open_xml( cXml )
 
@@ -394,6 +457,10 @@ xml_head()
 xml_subnode("TremolFpServer " + cCmd )
 
 close_xml()
+
+if gFC_tmpxml == "D"
+	_tmp_2_xml( cXML, cFName )
+endif
 
 if cError == "D"
 	// provjeri greske...
