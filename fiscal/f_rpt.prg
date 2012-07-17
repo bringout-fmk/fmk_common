@@ -38,6 +38,20 @@ endif
 
 do case 
 
+  case ALLTRIM( gFc_type ) == "FLINK"
+
+    AADD(opc,"------ izvjestaji ---------------------------------")
+    AADD(opcexe,{|| .f. })
+    AADD(opc,"1. dnevni izvjestaj  (Z-rep / X-rep)          ")
+    AADD(opcexe,{|| fl_daily( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    	nDevice ) })
+    AADD(opc,"------ ostale komande --------------------")
+    AADD(opcexe,{|| .f. })
+    AADD(opc,"5. unos pologa u uredjaj       ")
+    AADD(opcexe,{|| fl_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+    AADD(opc,"6. ponisti otvoren racun      ")
+    AADD(opcexe,{|| fl_reset( ALLTRIM(gFC_path), ALLTRIM(gFC_name) ) })
+
   // za FPRINT uredjaje (NSC)
   case ALLTRIM(gFc_type) == "FPRINT"
 

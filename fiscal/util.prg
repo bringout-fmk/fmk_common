@@ -136,6 +136,7 @@ return
 function f_filename( cPattern, nInvoice )
 local cRet := ""
 cRet := STRTRAN( cPattern, "*", ALLTRIM(STR(nInvoice)) )
+
 return cRet
 
 
@@ -150,6 +151,7 @@ if ALLTRIM( gFC_Type ) == "FPRINT"
 else
 	cRet := PADL( ALLTRIM( cBrRn ), 8, "0" ) + ".inp"
 endif
+
 return cRet
 
 
