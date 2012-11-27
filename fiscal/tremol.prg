@@ -896,12 +896,9 @@ for i:=1 to nBrLin
 	// uzmi u cErr liniju fajla
 	cErr := aErr_read[ 1 ]
 
-	if "?xml" $ cErr
-		// prvu liniju preskoci !
-		loop
-	endif
-
 	// skloni "<" i ">"
+
+	cErr := STRTRAN( cErr, '<?xml version="1.0" ?>', "" )
 	cErr := STRTRAN( cErr, ">", "" )
 	cErr := STRTRAN( cErr, "<", "" )
 	cErr := STRTRAN( cErr, "/", "" )
@@ -909,6 +906,10 @@ for i:=1 to nBrLin
 	cErr := STRTRAN( cErr, "TremolFpServerOutput", "" )
 	cErr := STRTRAN( cErr, "Output Change", "OutputChange" )
 	cErr := STRTRAN( cErr, "Output Total", "OutputTotal" )
+	cErr := STRTRAN( cErr, CHR(10), "" )
+	cErr := STRTRAN( cErr, CHR(9), " " )
+
+	altd()
 
 	// dobijamo npr.
 	//
