@@ -909,8 +909,6 @@ for i:=1 to nBrLin
 	cErr := STRTRAN( cErr, CHR(10), "" )
 	cErr := STRTRAN( cErr, CHR(9), " " )
 
-	altd()
-
 	// dobijamo npr.
 	//
 	// ErrorCode=0 ErrorOPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
