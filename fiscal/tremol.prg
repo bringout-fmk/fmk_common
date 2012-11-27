@@ -935,7 +935,7 @@ nScan := ASCAN( aErr, {|xVal| "OPOS_SUCCESS" $ xVal } )
 
 if nScan == 0
 	// potrazi i "ErrorFP=0"
-	nScan := ASCAN( aErr, {|xVal| 'ErrorFP="0"' $ xVal } )
+	nScan := ASCAN( aErr, {|xVal| "ErrorFP=0" $ xVal } )
 endif
 
 if nScan > 0
