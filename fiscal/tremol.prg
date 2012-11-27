@@ -908,18 +908,19 @@ for i:=1 to nBrLin
 	cErr := STRTRAN( cErr, '"', "" )
 	cErr := STRTRAN( cErr, "TremolFpServerOutput", "" )
 	cErr := STRTRAN( cErr, "Output Change", "OutputChange" )
+	cErr := STRTRAN( cErr, "Output Total", "OutputTotal" )
 
 	// dobijamo npr.
 	//
-	// ErrorCode=0 ErrorPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
-	// Output Change=0.00 ReceiptNumber=00552 Total=51.20
+	// ErrorCode=0 ErrorOPOS=OPOS_SUCCESS ErrorDescription=Uspjesno kreiran
+	// OutputChange=0.00 ReceiptNumber=00552 Total=51.20
 
 	aLinija := TokToNiz( cErr, SPACE(1) )
 
 	// dobit cemo
 	// 
 	// aLinija[1] = "ErrorCode=0"
-	// aLinija[2] = "ErrorPOS=OPOS_SUCCESS"
+	// aLinija[2] = "ErrorOPOS=OPOS_SUCCESS"
 	// ...
 	
 	// dodaj u generalnu matricu aErr
@@ -931,6 +932,11 @@ next
 
 // potrazimo gresku...
 nScan := ASCAN( aErr, {|xVal| "OPOS_SUCCESS" $ xVal } )
+
+if nScan == 0
+	// potrazi i "ErrorFP=0"
+	nScan := ASCAN( aErr, {|xVal| 'ErrorFP="0"' $ xVal } )
+endif
 
 if nScan > 0
 
@@ -989,6 +995,17 @@ if nScan <> 0
 
 endif
 	
+nScan := ASCAN( aErr, {|xVal| "ErrorFP" $ xVal } )
+if nScan <> 0
+		
+	// ErrorFP=xxxxxxx
+	aTmp2 := {}
+	aTmp2 := TokToNiz( aErr[ nScan ], "=" )
+	
+	cTmp += " ErrorFP: " + ALLTRIM( aTmp2[2] )
+
+endif
+
 nScan := ASCAN( aErr, {|xVal| "ErrorDescription" $ xVal } )
 if nScan <> 0
 		
