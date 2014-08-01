@@ -144,9 +144,7 @@ endif
 
 xml_subnode( cOF_txt + cOFR_txt + cOFC_txt )
   
-nVr_placanja := 0
-    
-    for i:=1 to LEN( aData )
+for i:=1 to LEN( aData )
 
 	nRoba_plu := aData[i, 9]
 	cRoba_bk := aData[i, 12]
