@@ -143,8 +143,10 @@ if lKupac == .t.
 endif
 
 xml_subnode( cOF_txt + cOFR_txt + cOFC_txt )
+
+nVr_placanja := 0
   
-for i:=1 to LEN( aData )
+    for i:=1 to LEN( aData )
 
 	nRoba_plu := aData[i, 9]
 	cRoba_bk := aData[i, 12]
@@ -214,12 +216,7 @@ xml_subnode( "TremolFpServer", .t. )
 close_xml()
 
 if gFc_tmpxml == "D"
-
-	// nakon sto je zavrsio treba napraviti 
-	// rename u pravu ekstenziju
-
 	nErr_no := _tmp_2_xml( cXML, cFName )
-
 endif
 
 return nErr_no
