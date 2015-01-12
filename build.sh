@@ -12,7 +12,6 @@ echo build  $item
 echo ----------------------------------------
 cd $item
 
-#make clean
 make 
 
 cd $CUR_DIR
