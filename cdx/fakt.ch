@@ -9,7 +9,7 @@
 #endif
 
 #define D_FA_VERZIJA "03.81"
-#define D_FA_PERIOD  "11.94-11.09.12"
+#define D_FA_PERIOD  "11.94-04.01.16"
 #ifndef FMK_DEFINED
 	#include "fmk.ch"
 #endif
